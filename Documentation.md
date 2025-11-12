@@ -1404,6 +1404,130 @@ for prim in Usd.PrimRange(stage.getPseudoRoot()) {
 
 ---
 
+## Swift 6.2 Features (Future)
+
+Swift 6.2 introduces significant enhancements to C++ interoperability that SwiftUSD can leverage for improved safety and performance. These features are currently experimental but provide a roadmap for future development.
+
+### Safe C++ Interoperability
+
+Swift 6.2 introduces safe abstractions for working with C++ pointers and views through the `SafeInteropWrappers` experimental feature.
+
+**Enable in Package.swift**:
+```swift
+.target(
+  name: "PixarUSD",
+  swiftSettings: [
+    .interoperabilityMode(.Cxx),
+    .unsafeFlags([
+      "-enable-experimental-feature", "SafeInteropWrappers"
+    ])
+  ]
+)
+```
+
+### Span and MutableSpan Types
+
+Non-escapable types providing zero-overhead, compile-time safe views into C++ collections:
+
+```swift
+// Hypothetical future USD API with lifetime annotations
+func processStageGeometry(_ stage: UsdStageRefPtr) {
+    // Returns Span<UsdPrim> with compile-time lifetime checking
+    let prims = stage.getAllPrims()
+
+    for prim in prims where prim.isA(UsdGeom.Gprim.self) {
+        // Safe: compiler ensures prim doesn't outlive stage
+        print("Processing: \(prim.getPath())")
+    }
+
+    // Compiler prevents: Cannot escape parent's lifetime
+    // globalPrims = prims  // COMPILE ERROR
+}
+```
+
+**Benefits**:
+- Zero overhead (same as raw pointers)
+- Compile-time lifetime safety
+- No heap allocations
+- Automatic bounds checking in debug mode
+
+### InlineArray for USD Math Types
+
+Fixed-size, stack-allocated arrays with C-compatible layout:
+
+```swift
+// Define Swift-native USD math types
+typealias Matrix4d = InlineArray<Double, 16>
+typealias Vec3d = InlineArray<Double, 3>
+typealias Color3f = InlineArray<Float, 3>
+
+// Usage
+var matrix = Matrix4d.identity
+matrix[0] = 1.0  // Direct subscript access
+
+var color: Color3f = [1.0, 0.5, 0.0]  // RGB
+```
+
+**Benefits**:
+- Stack-allocated (no heap)
+- C-compatible memory layout
+- Native Swift type
+- SIMD optimization potential
+
+### Lifetime Annotations
+
+C++ APIs can be annotated to communicate lifetime relationships:
+
+```cpp
+// USD C++ header with lifetime annotations
+class UsdStage {
+public:
+    // Return value's lifetime bound to 'this'
+    const UsdPrim& GetPseudoRoot() const __lifetimebound;
+
+    // View's lifetime bound to 'this'
+    std::span<const UsdPrim> GetAllPrims() const __lifetimebound;
+};
+```
+
+```swift
+// Swift automatically understands lifetime relationships
+func safeUsage(_ stage: UsdStageRefPtr) {
+    let root = stage.getPseudoRoot()  // OK: used within stage's scope
+
+    // This would be a compile error:
+    // func unsafeEscape() -> Usd.Prim {
+    //     return root  // ERROR: Cannot escape parent's lifetime
+    // }
+}
+```
+
+### Migration Path
+
+**Current (Swift 6.0/6.1)**:
+- ✅ Fully compatible, no changes required
+- Continue using existing C++ interop patterns
+
+**Swift 6.2 Experimental**:
+- Test safe interop features in non-critical code
+- Measure performance impact
+- Provide feedback to Swift team
+
+**Swift 6.2 Stable (Future)**:
+- Adopt Span/MutableSpan for USD collections
+- Use InlineArray for mathematical types
+- Annotate USD headers with lifetime bounds
+- Refactor APIs for improved safety
+
+### Resources
+
+For complete details on Swift 6.2 migration:
+- [SWIFT_6.2_MIGRATION.md](./SWIFT_6.2_MIGRATION.md) - Comprehensive migration guide
+- [SWIFT_6.2_EXAMPLES.md](./SWIFT_6.2_EXAMPLES.md) - Before/after code examples
+- [Swift Safe C++ Interop Documentation](https://www.swift.org/documentation/cxx-interop/safe-interop/)
+
+---
+
 ## Examples
 
 ### Example 1: Create Scene with Multiple Objects
