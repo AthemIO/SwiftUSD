@@ -36,6 +36,7 @@ public enum Hydra
 
     /// External camera controller (set after initialization)
     public weak var cameraController: CameraController?
+    public weak var cameraControllerV2: CameraControllerV2?
 
     private var worldCenter: Pixar.GfVec3d = .init(0.0, 0.0, 0.0)
     private var worldSize: Double = 1.0
@@ -76,20 +77,44 @@ public enum Hydra
       setupCamera()
     }
 
+    /// Set the V2 camera controller
+    public func setCameraControllerV2(_ controller: CameraControllerV2)
+    {
+      cameraControllerV2 = controller
+    }
+
     public func render(at timeCode: Double, viewSize: CGSize) -> Pixar.HgiTextureHandle
     {
       // draws the scene using hydra.
-      guard let camera = cameraController else
-      {
+      let viewMatrix: Pixar.GfMatrix4d
+      let projMatrix: Pixar.GfMatrix4d
+
+      if let cameraV2 = cameraControllerV2 {
+        // Use V2 camera (eye/at/up approach)
+        viewMatrix = cameraV2.getViewMatrix()
+
+        // Compute projection matrix
+        let fov = 60.0  // Default FOV
+        let nearPlane = 1.0
+        let farPlane = 100_000.0
+        var frustum = Pixar.GfFrustum()
+        let aspectRatio = Double(viewSize.width) / Double(viewSize.height)
+        frustum.SetPerspective(fov, true, aspectRatio, nearPlane, farPlane)
+        projMatrix = frustum.ComputeProjectionMatrix()
+      }
+      else if let camera = cameraController {
+        // Fallback to old camera
+        let cameraTransform = camera.getTransform()
+        let cameraParams = camera.camera.getShaderParams()
+        let frustum = computeFrustum(cameraTransform: cameraTransform, viewSize: viewSize, cameraParams: cameraParams)
+        viewMatrix = frustum.computeViewMatrix()
+        projMatrix = frustum.computeProjectionMatrix()
+      }
+      else {
         Msg.logger.log(level: .error, "RenderEngine: No camera controller set")
         return Pixar.HgiTextureHandle()
       }
 
-      let cameraTransform = camera.getTransform()
-      let cameraParams = camera.camera.getShaderParams()
-      let frustum = computeFrustum(cameraTransform: cameraTransform, viewSize: viewSize, cameraParams: cameraParams)
-      let viewMatrix = frustum.computeViewMatrix()
-      let projMatrix = frustum.computeProjectionMatrix()
       engine.setCameraState(modelViewMatrix: viewMatrix, projectionMatrix: projMatrix)
 
       // viewport setup.

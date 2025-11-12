@@ -28,6 +28,7 @@ import PixarUSD
       class InteractiveMTKView: MTKView
       {
         weak var cameraController: CameraController?
+        weak var cameraControllerV2: CameraControllerV2?
         // weak var selectionManager: SelectionManager?  // Disabled due to Swift compiler crash
 
         private var lastMouseLocation: NSPoint?
@@ -49,16 +50,14 @@ import PixarUSD
           super.mouseDown(with: event)
           lastMouseLocation = event.locationInWindow
           currentInteractionMode = determineInteractionMode(from: event)
-          print("Mouse down - mode: \(currentInteractionMode)")
+          NSLog("Mouse down - interaction mode: \(currentInteractionMode), modifiers: \(event.modifierFlags)")
         }
 
         override public func mouseDragged(with event: NSEvent)
         {
           super.mouseDragged(with: event)
 
-          guard let lastLocation = lastMouseLocation,
-                let camera = cameraController
-          else { return }
+          guard let lastLocation = lastMouseLocation else { return }
 
           let currentLocation = event.locationInWindow
           let delta = CGPoint(
@@ -68,19 +67,31 @@ import PixarUSD
           lastMouseLocation = currentLocation
 
           // Apply camera manipulation based on interaction mode
-          switch currentInteractionMode
-          {
-            case .orbit:
-              print("Orbiting with delta: \(delta)")
-              camera.orbit(delta: delta)
-            case .pan:
-              print("Panning with delta: \(delta)")
-              camera.pan(delta: delta)
-            case .zoom:
-              print("Zooming with delta: \(delta.x)")
-              camera.zoom(delta: delta.x)
-            default:
-              break
+          if let cameraV2 = cameraControllerV2 {
+            switch currentInteractionMode
+            {
+              case .orbit:
+                cameraV2.orbit(delta: delta)
+              case .pan:
+                cameraV2.pan(delta: delta)
+              case .zoom:
+                cameraV2.zoom(delta: delta.x)
+              default:
+                break
+            }
+          }
+          else if let camera = cameraController {
+            switch currentInteractionMode
+            {
+              case .orbit:
+                camera.orbit(delta: delta)
+              case .pan:
+                camera.pan(delta: delta)
+              case .zoom:
+                camera.zoom(delta: delta.x)
+              default:
+                break
+            }
           }
 
           // Trigger redraw
@@ -98,11 +109,9 @@ import PixarUSD
         {
           super.scrollWheel(with: event)
 
-          guard let camera = cameraController else { return }
-
-          // Use scroll delta for zooming
+          // Always use scroll for zooming (both trackpad and mouse wheel)
           let scrollDelta = event.scrollingDeltaY
-          camera.zoomScroll(delta: scrollDelta)
+          cameraControllerV2?.zoomScroll(delta: scrollDelta) ?? cameraController?.zoomScroll(delta: scrollDelta)
 
           // Trigger redraw
           setNeedsDisplay(bounds)
@@ -113,18 +122,24 @@ import PixarUSD
           super.keyDown(with: event)
 
           guard let characters = event.charactersIgnoringModifiers?.lowercased()
-          else { return }
+          else {
+            NSLog("KeyDown - no characters")
+            return
+          }
+
+          NSLog("KeyDown - key: \(characters)")
 
           switch characters
           {
             case "f":
-              // Focus on selection (disabled - SelectionManager causes compiler crash)
-              // selectionManager?.focusOnSelection(cameraController: cameraController)
-              // setNeedsDisplay(bounds)
-              break
+              // Focus on nearest object
+              NSLog("F key pressed - focusing on nearest object")
+              focusOnNearestObject()
+              setNeedsDisplay(bounds)
 
             case "r":
               // Reset camera
+              NSLog("R key pressed - resetting camera")
               cameraController?.reset()
               setNeedsDisplay(bounds)
 
@@ -133,12 +148,54 @@ import PixarUSD
           }
         }
 
+        private func focusOnNearestObject()
+        {
+          // Define known object positions from the scene
+          let spherePosition = Pixar.GfVec3d(-1.5, 0.0, 0.0)
+          let cubePosition = Pixar.GfVec3d(1.5, 0.0, 0.0)
+
+          if let cameraV2 = cameraControllerV2 {
+            let cameraPosition = cameraV2.eye
+
+            // Calculate distances
+            let sphereDistance = (spherePosition - cameraPosition).GetLength()
+            let cubeDistance = (cubePosition - cameraPosition).GetLength()
+
+            // Focus on the nearest object
+            if sphereDistance < cubeDistance {
+              cameraV2.focus(on: spherePosition, distance: 5.0)
+              NSLog("Focused on sphere")
+            } else {
+              cameraV2.focus(on: cubePosition, distance: 5.0)
+              NSLog("Focused on cube")
+            }
+          }
+          else if let camera = cameraController {
+            let cameraTransform = camera.getTransform()
+            let cameraPosition = Pixar.GfVec3d(
+              cameraTransform[3][0],
+              cameraTransform[3][1],
+              cameraTransform[3][2]
+            )
+
+            let sphereDistance = (spherePosition - cameraPosition).GetLength()
+            let cubeDistance = (cubePosition - cameraPosition).GetLength()
+
+            if sphereDistance < cubeDistance {
+              camera.focus = spherePosition
+            } else {
+              camera.focus = cubePosition
+            }
+            camera.distance = 5.0
+          }
+        }
+
         private func determineInteractionMode(from event: NSEvent) -> InteractionMode
         {
           let modifiers = event.modifierFlags
 
-          // Alt (Option) + Left Mouse = Orbit
-          if modifiers.contains(.option), event.type == .leftMouseDown
+          // Left Mouse (no modifiers) = Orbit
+          if event.type == .leftMouseDown && !modifiers.contains(.shift) && !modifiers.contains(.option)
           {
             return .orbit
           }
@@ -149,10 +206,16 @@ import PixarUSD
             return .pan
           }
 
-          // Alt (Option) + Right Mouse = Zoom (alternative to scroll wheel)
-          if modifiers.contains(.option), event.type == .rightMouseDown
+          // Alt (Option) + Left Mouse = Zoom (alternative to scroll wheel)
+          if modifiers.contains(.option), event.type == .leftMouseDown
           {
             return .zoom
+          }
+
+          // Right Mouse = Pan (alternative)
+          if event.type == .rightMouseDown
+          {
+            return .pan
           }
 
           return .none
@@ -174,12 +237,14 @@ import PixarUSD
         private let device: MTLDevice!
         private let renderer: MTLRenderer!
         private let cameraController: CameraController?
+        private let cameraControllerV2: CameraControllerV2?
         // private let selectionManager: SelectionManager?  // Disabled due to Swift compiler crash
 
         public init(
           hydra: Hydra.RenderEngine,
           renderer: MTLRenderer,
-          cameraController: CameraController? = nil
+          cameraController: CameraController? = nil,
+          cameraControllerV2: CameraControllerV2? = nil
           // selectionManager: SelectionManager? = nil  // Disabled due to Swift compiler crash
         )
         {
@@ -187,6 +252,7 @@ import PixarUSD
           device = hydra.hydraDevice
           self.renderer = renderer
           self.cameraController = cameraController
+          self.cameraControllerV2 = cameraControllerV2
           // self.selectionManager = selectionManager
         }
 
@@ -209,6 +275,7 @@ import PixarUSD
 
           // Set camera controller reference
           mtkView.cameraController = cameraController
+          mtkView.cameraControllerV2 = cameraControllerV2
           // mtkView.selectionManager = selectionManager  // Disabled due to Swift compiler crash
 
           return Coordinator(mtkView: mtkView)
@@ -233,6 +300,7 @@ import PixarUSD
         {
           // Update camera controller reference
           view.cameraController = cameraController
+          view.cameraControllerV2 = cameraControllerV2
           // view.selectionManager = selectionManager  // Disabled due to Swift compiler crash
 
           renderer.draw(in: view)

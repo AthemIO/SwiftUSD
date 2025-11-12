@@ -38,11 +38,15 @@ extension UsdView
     xform.addXformOp(type: .translate).set(GfVec3d(0.0, 0.0, 0.0))
     xform.addXformOp(type: .scale, precision: .float).set(GfVec3f(1, 1, 1))
 
+    // Create a red sphere on the left
     let sphere = UsdGeom.Sphere.define(stage, path: "/Geometry/Sphere")
-
-    /* Create a colored material for the sphere prim. */
-
+    sphere.addXformOp(type: .translate).set(GfVec3d(-1.5, 0.0, 0.0))
     UsdShade.MaterialBindingAPI.apply(sphere).bind(matDef(stage, color: .red))
+
+    // Create a blue cube on the right
+    let cube = UsdGeom.Cube.define(stage, path: "/Geometry/Cube")
+    cube.addXformOp(type: .translate).set(GfVec3d(1.5, 0.0, 0.0))
+    UsdShade.MaterialBindingAPI.apply(cube).bind(matDef(stage, color: .blue))
 
     /* Iterate the stage and print out the path to each prim. */
 

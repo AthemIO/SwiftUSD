@@ -54,10 +54,20 @@ public extension Hydra
       var gfMatrix2 = GfMatrix4d()
       var gfMatrix3 = GfMatrix4d()
 
+      // Orbit camera transform: translate to focus, rotate, then offset by distance
+      // The distance offset is along the negative Z axis (camera looks down +Z in its local space)
       cameraTransform =
-        gfMatrix1.SetTranslate(Pixar.GfVec3d(0.0, 0.0, params.distance)).pointee *
+        gfMatrix1.SetTranslate(params.focus).pointee *
         gfMatrix2.SetRotate(gfRotation).pointee *
-        gfMatrix3.SetTranslate(params.focus).pointee
+        gfMatrix3.SetTranslate(Pixar.GfVec3d(0.0, 0.0, params.distance)).pointee
+
+      // Extract final camera position for debugging
+      let finalPos = Pixar.GfVec3d(
+        cameraTransform[3][0],
+        cameraTransform[3][1],
+        cameraTransform[3][2]
+      )
+      NSLog("Camera transform - focus: \(params.focus), distance: \(params.distance), rotation: \(params.rotation), final position: \(finalPos)")
 
       return cameraTransform
     }

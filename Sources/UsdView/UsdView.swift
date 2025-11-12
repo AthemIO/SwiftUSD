@@ -32,7 +32,7 @@ struct UsdView: App
   /// the hydra rendering engine.
   let engine: Hydra.RenderEngine
   /// camera controller for interactive manipulation
-  @State var cameraController: CameraController
+  @State var cameraController: CameraControllerV2
   /// selection manager for focus-on-selection functionality
   // @State var selectionManager: SelectionManager
 
@@ -49,15 +49,15 @@ struct UsdView: App
 
     // create camera controller with Z-up based on stage
     let isZUp = Hydra.RenderEngine.isZUp(for: stage)
-    cameraController = CameraController(isZUp: isZUp)
+    cameraController = CameraControllerV2(isZUp: isZUp)
 
-    print("Camera initialized - isZUp: \(isZUp), distance: \(cameraController.distance), focus: \(cameraController.focus), rotation: \(cameraController.rotation)")
+    print("Camera initialized - isZUp: \(isZUp), eye: \(cameraController.eye), at: \(cameraController.at)")
 
     // create selection manager
     // selectionManager = SelectionManager(stage: stage)
 
     // connect camera controller to render engine
-    engine.setCameraController(cameraController)
+    engine.setCameraControllerV2(cameraController)
 
     Msg.logger.log(level: .info, "UsdView launched | USD v\(Pixar.version).")
   }
@@ -68,7 +68,7 @@ struct UsdView: App
     {
       Hydra.Viewport(
         engine: engine,
-        cameraController: cameraController
+        cameraControllerV2: cameraController
         // selectionManager: nil  // Disabled due to Swift compiler crash
       )
     }
