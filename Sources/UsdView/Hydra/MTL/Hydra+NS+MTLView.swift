@@ -28,7 +28,6 @@ import PixarUSD
       class InteractiveMTKView: MTKView
       {
         weak var cameraController: CameraController?
-        weak var cameraControllerV2: CameraControllerV2?
         // weak var selectionManager: SelectionManager?  // Disabled due to Swift compiler crash
 
         private var lastMouseLocation: NSPoint?
@@ -67,31 +66,18 @@ import PixarUSD
           lastMouseLocation = currentLocation
 
           // Apply camera manipulation based on interaction mode
-          if let cameraV2 = cameraControllerV2 {
-            switch currentInteractionMode
-            {
-              case .orbit:
-                cameraV2.orbit(delta: delta)
-              case .pan:
-                cameraV2.pan(delta: delta)
-              case .zoom:
-                cameraV2.zoom(delta: delta.x)
-              default:
-                break
-            }
-          }
-          else if let camera = cameraController {
-            switch currentInteractionMode
-            {
-              case .orbit:
-                camera.orbit(delta: delta)
-              case .pan:
-                camera.pan(delta: delta)
-              case .zoom:
-                camera.zoom(delta: delta.x)
-              default:
-                break
-            }
+          guard let camera = cameraController else { return }
+
+          switch currentInteractionMode
+          {
+            case .orbit:
+              camera.orbit(delta: delta)
+            case .pan:
+              camera.pan(delta: delta)
+            case .zoom:
+              camera.zoom(delta: delta.x)
+            default:
+              break
           }
 
           // Trigger redraw
@@ -111,7 +97,7 @@ import PixarUSD
 
           // Always use scroll for zooming (both trackpad and mouse wheel)
           let scrollDelta = event.scrollingDeltaY
-          cameraControllerV2?.zoomScroll(delta: scrollDelta) ?? cameraController?.zoomScroll(delta: scrollDelta)
+          cameraController?.zoomScroll(delta: scrollDelta)
 
           // Trigger redraw
           setNeedsDisplay(bounds)
@@ -150,43 +136,25 @@ import PixarUSD
 
         private func focusOnNearestObject()
         {
+          guard let camera = cameraController else { return }
+
           // Define known object positions from the scene
           let spherePosition = Pixar.GfVec3d(-1.5, 0.0, 0.0)
           let cubePosition = Pixar.GfVec3d(1.5, 0.0, 0.0)
 
-          if let cameraV2 = cameraControllerV2 {
-            let cameraPosition = cameraV2.eye
+          let cameraPosition = camera.eye
 
-            // Calculate distances
-            let sphereDistance = (spherePosition - cameraPosition).GetLength()
-            let cubeDistance = (cubePosition - cameraPosition).GetLength()
+          // Calculate distances
+          let sphereDistance = (spherePosition - cameraPosition).GetLength()
+          let cubeDistance = (cubePosition - cameraPosition).GetLength()
 
-            // Focus on the nearest object
-            if sphereDistance < cubeDistance {
-              cameraV2.focus(on: spherePosition, distance: 5.0)
-              NSLog("Focused on sphere")
-            } else {
-              cameraV2.focus(on: cubePosition, distance: 5.0)
-              NSLog("Focused on cube")
-            }
-          }
-          else if let camera = cameraController {
-            let cameraTransform = camera.getTransform()
-            let cameraPosition = Pixar.GfVec3d(
-              cameraTransform[3][0],
-              cameraTransform[3][1],
-              cameraTransform[3][2]
-            )
-
-            let sphereDistance = (spherePosition - cameraPosition).GetLength()
-            let cubeDistance = (cubePosition - cameraPosition).GetLength()
-
-            if sphereDistance < cubeDistance {
-              camera.focus = spherePosition
-            } else {
-              camera.focus = cubePosition
-            }
-            camera.distance = 5.0
+          // Focus on the nearest object
+          if sphereDistance < cubeDistance {
+            camera.focus(on: spherePosition, distance: 5.0)
+            NSLog("Focused on sphere")
+          } else {
+            camera.focus(on: cubePosition, distance: 5.0)
+            NSLog("Focused on cube")
           }
         }
 
@@ -237,14 +205,12 @@ import PixarUSD
         private let device: MTLDevice!
         private let renderer: MTLRenderer!
         private let cameraController: CameraController?
-        private let cameraControllerV2: CameraControllerV2?
         // private let selectionManager: SelectionManager?  // Disabled due to Swift compiler crash
 
         public init(
           hydra: Hydra.RenderEngine,
           renderer: MTLRenderer,
-          cameraController: CameraController? = nil,
-          cameraControllerV2: CameraControllerV2? = nil
+          cameraController: CameraController? = nil
           // selectionManager: SelectionManager? = nil  // Disabled due to Swift compiler crash
         )
         {
@@ -252,7 +218,6 @@ import PixarUSD
           device = hydra.hydraDevice
           self.renderer = renderer
           self.cameraController = cameraController
-          self.cameraControllerV2 = cameraControllerV2
           // self.selectionManager = selectionManager
         }
 
@@ -275,7 +240,6 @@ import PixarUSD
 
           // Set camera controller reference
           mtkView.cameraController = cameraController
-          mtkView.cameraControllerV2 = cameraControllerV2
           // mtkView.selectionManager = selectionManager  // Disabled due to Swift compiler crash
 
           return Coordinator(mtkView: mtkView)
@@ -300,7 +264,6 @@ import PixarUSD
         {
           // Update camera controller reference
           view.cameraController = cameraController
-          view.cameraControllerV2 = cameraControllerV2
           // view.selectionManager = selectionManager  // Disabled due to Swift compiler crash
 
           renderer.draw(in: view)

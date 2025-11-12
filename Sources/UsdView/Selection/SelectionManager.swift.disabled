@@ -1,0 +1,192 @@
+/* ----------------------------------------------------------------
+ * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ * ----------------------------------------------------------------
+ * This software is Licensed under the terms of the Apache License,
+ * version 2.0 (the "Apache License") with the following additional
+ * modification; you may not use this file except within compliance
+ * of the Apache License and the following modification made to it.
+ * Section 6. Trademarks. is deleted and replaced with:
+ *
+ * Trademarks. This License does not grant permission to use any of
+ * its trade names, trademarks, service marks, or the product names
+ * of this Licensor or its affiliates, except as required to comply
+ * with Section 4(c.) of this License, and to reproduce the content
+ * of the NOTICE file.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND without even an
+ * implied warranty of MERCHANTABILITY, or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the Apache License for more details.
+ * ----------------------------------------------------------------
+ *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ * ---------------------------------------------------------------- */
+
+import Foundation
+import PixarUSD
+
+/// Manages prim selection and focus-on-selection functionality for UsdView.
+/// Provides methods to compute bounding boxes and frame selected prims in the viewport.
+@Observable
+public final class SelectionManager
+{
+  // MARK: - Properties
+
+  /// Currently selected prim path (nil if no selection)
+  public var selectedPrimPath: Pixar.SdfPath?
+
+  /// The USD stage being viewed
+  public var stage: Pixar.UsdStageRefPtr?
+
+  /// Time code for bounding box queries
+  public var timeCode: Pixar.UsdTimeCode = Pixar.UsdTimeCode.Default()
+
+  // MARK: - Initialization
+
+  /// Initialize selection manager with a USD stage
+  public init(stage: Pixar.UsdStageRefPtr? = nil)
+  {
+    self.stage = stage
+    selectedPrimPath = nil
+  }
+
+  // MARK: - Selection Management
+
+  /// Set the selected prim by path
+  public func setSelection(_ path: Pixar.SdfPath?)
+  {
+    selectedPrimPath = path
+  }
+
+  /// Clear the current selection
+  public func clearSelection()
+  {
+    selectedPrimPath = nil
+  }
+
+  /// Check if a prim is currently selected
+  public var hasSelection: Bool
+  {
+    selectedPrimPath != nil
+  }
+
+  // MARK: - Bounding Box Computation
+
+  /// Compute the world-space bounding box for a given prim path.
+  /// Uses UsdGeomBBoxCache for accurate bounds calculation.
+  ///
+  /// - Parameter primPath: The path to the prim
+  /// - Returns: Bounding box, or empty bbox if prim not found or invalid
+  public func computeBoundingBox(for primPath: Pixar.SdfPath) -> Pixar.GfBBox3d
+  {
+    guard let currentStage = stage else
+    {
+      Msg.logger.log(level: .warning, "SelectionManager: No stage available for bounding box computation")
+      return Pixar.GfBBox3d()
+    }
+
+    // Get the prim at the path
+    let prim = currentStage.pointee.GetPrimAtPath(primPath)
+    guard prim.IsValid() else
+    {
+      Msg.logger.log(level: .warning, "SelectionManager: Invalid prim at specified path")
+      return Pixar.GfBBox3d()
+    }
+
+    // Create bounding box cache for the stage
+    var purposes = Pixar.TfTokenVector()
+    purposes.push_back(Pixar.UsdGeomTokens.default_.token)
+    var bboxCache = Pixar.UsdGeomBBoxCache(timeCode, purposes, true, false)
+
+    // Compute bounding box for this prim (includes all descendants)
+    let bbox = bboxCache.ComputeWorldBound(prim)
+
+    // Check if bounding box is valid
+    if bbox.GetRange().pointee.IsEmpty()
+    {
+      Msg.logger.log(level: .info, "SelectionManager: Empty bounding box for prim")
+    }
+
+    return bbox
+  }
+
+  /// Compute bounding box for the currently selected prim
+  ///
+  /// - Returns: Bounding box, or empty bbox if no selection
+  public func computeSelectionBoundingBox() -> Pixar.GfBBox3d
+  {
+    guard let path = selectedPrimPath else
+    {
+      return Pixar.GfBBox3d()
+    }
+
+    return computeBoundingBox(for: path)
+  }
+
+  // MARK: - Focus on Selection
+
+  /// Focus the camera on the currently selected prim.
+  /// Computes the bounding box and frames it in the viewport.
+  ///
+  /// - Parameter cameraController: Camera controller to manipulate
+  public func focusOnSelection(cameraController: CameraController?)
+  {
+    guard let camera = cameraController else
+    {
+      Msg.logger.log(level: .warning, "SelectionManager: No camera controller provided")
+      return
+    }
+
+    guard hasSelection else
+    {
+      Msg.logger.log(level: .info, "SelectionManager: No selection to focus on")
+      return
+    }
+
+    // Compute bounding box for selected prim
+    let bbox = computeSelectionBoundingBox()
+
+    // Check if bounding box is valid
+    guard bbox.GetRange().pointee.IsEmpty() == false else
+    {
+      Msg.logger.log(level: .warning, "SelectionManager: Cannot focus on empty bounding box")
+      return
+    }
+
+    // Frame the bounding box
+    camera.frameBoundingBox(bbox)
+
+    Msg.logger.log(level: .info, "SelectionManager: Focused camera on selection")
+  }
+
+  /// Focus camera on a specific prim path (without changing selection).
+  ///
+  /// - Parameters:
+  ///   - primPath: Path to the prim to focus on
+  ///   - cameraController: Camera controller to manipulate
+  public func focusOnPrim(
+    _ primPath: Pixar.SdfPath,
+    cameraController: CameraController?
+  )
+  {
+    guard let camera = cameraController else
+    {
+      Msg.logger.log(level: .warning, "SelectionManager: No camera controller provided")
+      return
+    }
+
+    // Compute bounding box for the prim
+    let bbox = computeBoundingBox(for: primPath)
+
+    // Check if bounding box is valid
+    guard bbox.GetRange().pointee.IsEmpty() == false else
+    {
+      Msg.logger.log(level: .warning, "SelectionManager: Cannot focus on empty bounding box")
+      return
+    }
+
+    // Frame the bounding box
+    camera.frameBoundingBox(bbox)
+
+    Msg.logger.log(level: .info, "SelectionManager: Focused camera on prim")
+  }
+}

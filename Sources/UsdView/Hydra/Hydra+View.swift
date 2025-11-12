@@ -47,14 +47,13 @@ public extension Hydra.Viewport
 
   init(
     engine: Hydra.RenderEngine,
-    cameraController: CameraController? = nil,
-    cameraControllerV2: CameraControllerV2? = nil
+    cameraController: CameraController? = nil
     // selectionManager: SelectionManager?  // Disabled due to Swift compiler crash
   )
   {
     #if canImport(Metal)
       let renderer = Hydra.MTLRenderer(hydra: engine)
-      self.init(hydra: engine, renderer: renderer, cameraController: cameraController, cameraControllerV2: cameraControllerV2)
+      self.init(hydra: engine, renderer: renderer, cameraController: cameraController)
     #endif // canImport(Metal)
   }
 }

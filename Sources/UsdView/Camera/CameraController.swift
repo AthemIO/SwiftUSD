@@ -30,214 +30,129 @@ import PixarUSD
     import UIKit
 #endif
 
-/// Camera controller that manages interactive camera manipulation for UsdView.
-/// Wraps Hydra.Camera and provides orbit, pan, and zoom functionality
-/// inspired by ImGuiHydraEditor's camera system.
+/// Camera controller using eye/at/up vectors (ImGuiHydraEditor approach)
+/// This provides direct position control instead of orbit parameters
 @Observable
 public final class CameraController {
     // MARK: - Properties
 
-    /// The underlying Hydra camera that this controller manages
-    public var camera: Hydra.Camera
+    /// Camera eye position (where the camera is)
+    public var eye: Pixar.GfVec3d
 
-    /// Sensitivity factor for orbit operations (mouse delta scaling)
-    public var orbitSensitivity: Double = 0.5
+    /// Camera look-at point (what the camera is looking at)
+    public var at: Pixar.GfVec3d
 
-    /// Sensitivity factor for pan operations (mouse delta scaling)
+    /// Camera up vector (which way is up for the camera)
+    public var up: Pixar.GfVec3d
+
+    /// Sensitivity factors
     public var panSensitivity: Double = 0.01
-
-    /// Sensitivity factor for zoom operations (scroll/drag scaling)
-    public var zoomSensitivity: Double = 0.01
-
-    /// Minimum camera distance from focus point (prevents passing through)
-    public var minimumDistance: Double = 0.1
-
-    /// Maximum camera distance from focus point
-    public var maximumDistance: Double = 100_000.0
+    public var orbitSensitivity: Double = 0.5
+    public var zoomSensitivity: Double = 0.05  // Reduced for smoother zooming
 
     // MARK: - Initialization
 
-    /// Initialize camera controller with an existing camera
-    public init(camera: Hydra.Camera) {
-        self.camera = camera
+    public init(eye: Pixar.GfVec3d, at: Pixar.GfVec3d, up: Pixar.GfVec3d) {
+        self.eye = eye
+        self.at = at
+        self.up = up
     }
 
-    /// Initialize camera controller with default orbit camera parameters
+    /// Initialize with default view
     public convenience init(isZUp: Bool = false) {
-        self.init(camera: Hydra.Camera(isZUp: isZUp))
-        // Set good default camera position
-        reset()
-    }
-
-    // MARK: - Camera Property Access
-
-    /// Camera rotation (Euler angles in degrees)
-    public var rotation: Pixar.GfVec3d
-    {
-        get { camera.params.rotation }
-        set { camera.params.rotation = newValue }
-    }
-
-    /// Camera focus point (look-at target, orbit center)
-    public var focus: Pixar.GfVec3d
-    {
-        get { camera.params.focus }
-        set { camera.params.focus = newValue }
-    }
-
-    /// Camera distance from focus point
-    public var distance: Double
-    {
-        get { camera.params.distance }
-        set {
-            camera.params.distance = Swift.max(
-                minimumDistance, Swift.min(maximumDistance, newValue))
-        }
-    }
-
-    /// Camera focal length (lens parameter)
-    public var focalLength: Double
-    {
-        get { camera.params.focalLength }
-        set { camera.params.focalLength = newValue }
-    }
-
-    /// Camera projection mode (perspective or orthographic)
-    public var projection: Pixar.GfCamera.Projection
-    {
-        get { camera.params.projection }
-        set { camera.params.projection = newValue }
+        let defaultEye = Pixar.GfVec3d(5, 3, 5)
+        let defaultAt = Pixar.GfVec3d(0, 0, 0)
+        let defaultUp = isZUp ? Pixar.GfVec3d(0, 0, 1) : Pixar.GfVec3d(0, 1, 0)
+        self.init(eye: defaultEye, at: defaultAt, up: defaultUp)
     }
 
     // MARK: - Camera Manipulation
 
-    /// Orbit camera around focus point using two-axis rotation.
-    /// This implements the ImGuiHydraEditor pattern:
-    /// 1. Horizontal rotation around world up-axis
-    /// 2. Vertical rotation around camera-local right axis
-    /// This avoids gimbal lock and provides intuitive control.
-    ///
-    /// - Parameter delta: Mouse movement delta (x: horizontal, y: vertical)
-    public func orbit(delta: CGPoint) {
-        let scaledDelta = CGPoint(
-            x: delta.x * orbitSensitivity,
-            y: delta.y * orbitSensitivity
-        )
-
-        // Get current camera vectors
-        let upVector = camera.isZUp ? Pixar.GfVec3d(0, 0, 1) : Pixar.GfVec3d(0, 1, 0)
-        let cameraTransform = camera.getTransform()
-        let cameraPosition = Pixar.GfVec3d(
-            cameraTransform[3][0],
-            cameraTransform[3][1],
-            cameraTransform[3][2]
-        )
-
-        // Compute camera direction and right vectors
-        let cameraToFocus = focus - cameraPosition
-        let cameraFront = cameraToFocus.GetNormalized()
-        let cameraRight = Pixar.GfCross(cameraFront, upVector).GetNormalized()
-
-        // Apply rotations to the rotation parameters
-        // Horizontal rotation (around up axis)
-        rotation[1] += scaledDelta.x
-
-        // Vertical rotation (around right axis) - constrain to avoid flipping
-        let newVerticalRotation = rotation[0] - scaledDelta.y
-        rotation[0] = Swift.max(-89.0, Swift.min(89.0, newVerticalRotation))
-    }
-
-    /// Pan camera by moving the focus point in camera-local space.
-    /// The focus point moves perpendicular to the view direction,
-    /// maintaining the camera distance and orientation.
-    ///
-    /// - Parameter delta: Mouse movement delta (x: right, y: up in screen space)
+    /// Pan camera by moving both eye and look-at point
+    /// Based on ImGuiHydraEditor::_PanActiveCam
     public func pan(delta: CGPoint) {
-        let scaledDelta = CGPoint(
-            x: delta.x * panSensitivity * distance,
-            y: delta.y * panSensitivity * distance
-        )
+        let camFront = at - eye
+        let camRight = Pixar.GfCross(camFront, up).GetNormalized()
+        let camUp = Pixar.GfCross(camRight, camFront).GetNormalized()
 
-        // Get current camera transform
-        let cameraTransform = camera.getTransform()
-        let cameraPosition = Pixar.GfVec3d(
-            cameraTransform[3][0],
-            cameraTransform[3][1],
-            cameraTransform[3][2]
-        )
+        // Invert both X and Y to match expected pan direction
+        let panDelta = camRight * (-delta.x * panSensitivity) + camUp * (-delta.y * panSensitivity)
 
-        // Compute camera-local coordinate system
-        let upVector = camera.isZUp ? Pixar.GfVec3d(0, 0, 1) : Pixar.GfVec3d(0, 1, 0)
-        let cameraFront = (focus - cameraPosition).GetNormalized()
-        let cameraRight = Pixar.GfCross(cameraFront, upVector).GetNormalized()
-        let cameraUp = Pixar.GfCross(cameraRight, cameraFront).GetNormalized()
+        eye = eye + panDelta
+        at = at + panDelta
 
-        // Calculate pan delta in world space
-        let panDelta = cameraRight * (-scaledDelta.x) + cameraUp * scaledDelta.y
-
-        // Move focus point (this shifts both camera and target together)
-        focus = focus + panDelta
+        NSLog("Pan - eye: \(eye), at: \(at)")
     }
 
-    /// Zoom camera by adjusting distance from focus point.
-    /// Uses multiplicative scaling for smooth, scale-independent zooming.
-    ///
-    /// - Parameter delta: Zoom amount (positive = zoom in, negative = zoom out)
+    /// Orbit camera around the look-at point
+    /// Based on ImGuiHydraEditor::_OrbitActiveCam
+    public func orbit(delta: CGPoint) {
+        // Horizontal rotation around up axis
+        let horizRot = Pixar.GfRotation(up, delta.x * orbitSensitivity)
+        var rotMatrix = Pixar.GfMatrix4d(1.0)
+        rotMatrix.SetRotate(horizRot)
+        var eyeRelative = eye - at
+        let rotatedVec = rotMatrix.Transform(eyeRelative)
+        eye = at + rotatedVec
+
+        // Vertical rotation around right axis
+        let camFront = at - eye
+        let camRight = Pixar.GfCross(camFront, up).GetNormalized()
+        let vertRot = Pixar.GfRotation(camRight, delta.y * orbitSensitivity)
+        rotMatrix = Pixar.GfMatrix4d(1.0)
+        rotMatrix.SetRotate(vertRot)
+        eyeRelative = eye - at
+        let rotatedVec2 = rotMatrix.Transform(eyeRelative)
+        eye = at + rotatedVec2
+
+        NSLog("Orbit - eye: \(eye), at: \(at)")
+    }
+
+    /// Zoom camera by moving eye position along view direction
+    /// Based on ImGuiHydraEditor::_ZoomActiveCam
     public func zoom(delta: Double) {
-        let scaleFactor = 1.0 - (delta * zoomSensitivity)
-        distance = distance * scaleFactor
+        let camFront = (at - eye).GetNormalized()
+        eye = eye + (camFront * delta * zoomSensitivity)
+
+        NSLog("Zoom - eye: \(eye), at: \(at)")
     }
 
-    /// Zoom camera using scroll wheel input.
-    /// Applies exponential scaling for natural scroll-based zooming.
-    ///
-    /// - Parameter scrollDelta: Scroll wheel delta
+    /// Zoom using scroll wheel
     public func zoomScroll(delta: Double) {
-        let scaleFactor = exp(-delta * zoomSensitivity * 0.1)
-        distance = distance * scaleFactor
+        let camFront = (at - eye).GetNormalized()
+        eye = eye + (camFront * delta * zoomSensitivity * 1.0)  // Reduced multiplier for smoother zoom
+
+        NSLog("ZoomScroll - eye: \(eye), at: \(at)")
     }
 
-    /// Frame a bounding box in the viewport by positioning the camera
-    /// to view the entire box. The camera maintains its current orientation
-    /// but adjusts focus and distance.
-    ///
-    /// - Parameter bbox: Bounding box to frame
-    public func frameBoundingBox(_ bbox: Pixar.GfBBox3d) {
-        // Handle empty/invalid bounding boxes
-        let range = bbox.GetRange().pointee
-        guard range.IsEmpty() == false else {
-            // Fallback to world origin
-            focus = Pixar.GfVec3d(0, 0, 0)
-            distance = 10.0
-            return
-        }
+    /// Focus on a point by setting look-at and adjusting eye position
+    /// Based on ImGuiHydraEditor::_FocusOnPrim
+    public func focus(on point: Pixar.GfVec3d, distance: Double) {
+        let viewDirection = (eye - at).GetNormalized()
+        at = point
+        eye = at + (viewDirection * distance)
 
-        // Set focus to bounding box center
-        let center = (range.GetMin().pointee + range.GetMax().pointee) * 0.5
-        focus = center
-
-        // Calculate appropriate distance based on bounding box size
-        // Use 2x the diagonal length to ensure the entire box is visible
-        let bboxSize = range.GetMax().pointee - range.GetMin().pointee
-        let diagonal = sqrt(
-            bboxSize[0] * bboxSize[0] + bboxSize[1] * bboxSize[1] + bboxSize[2] * bboxSize[2])
-
-        distance = Swift.max(diagonal * 2.0, minimumDistance)
+        NSLog("Focus - eye: \(eye), at: \(at)")
     }
 
-    /// Reset camera to default view.
-    /// Positions camera looking at world origin from a standard angle.
+    /// Reset camera to default view
     public func reset() {
-        focus = Pixar.GfVec3d(0, 0, 0)  // Look at center between sphere and cube
-        distance = 10.0  // Distance from focus point to camera
-        rotation = Pixar.GfVec3d(-30.0, 0.0, 0.0)  // Look down at scene from slight angle
+        eye = Pixar.GfVec3d(5, 3, 5)
+        at = Pixar.GfVec3d(0, 0, 0)
+
+        NSLog("Reset - eye: \(eye), at: \(at)")
     }
 
-    /// Get the current camera transform matrix.
-    /// This is the camera-to-world transformation.
-    ///
-    /// - Returns: Camera transformation matrix
+    /// Get the view matrix (camera transform)
+    /// Uses SetLookAt like ImGuiHydraEditor
+    public func getViewMatrix() -> Pixar.GfMatrix4d {
+        var viewMatrix = Pixar.GfMatrix4d()
+        viewMatrix.SetLookAt(eye, at, up)
+        return viewMatrix
+    }
+
+    /// Get camera transform (inverse of view matrix)
     public func getTransform() -> Pixar.GfMatrix4d {
-        return camera.getTransform()
+        return getViewMatrix().GetInverse()
     }
 }

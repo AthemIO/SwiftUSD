@@ -36,7 +36,6 @@ public enum Hydra
 
     /// External camera controller (set after initialization)
     public weak var cameraController: CameraController?
-    public weak var cameraControllerV2: CameraControllerV2?
 
     private var worldCenter: Pixar.GfVec3d = .init(0.0, 0.0, 0.0)
     private var worldSize: Double = 1.0
@@ -70,50 +69,31 @@ public enum Hydra
       setupMaterial()
     }
 
-    /// Set the camera controller and perform initial camera setup
+    /// Set the camera controller
     public func setCameraController(_ controller: CameraController)
     {
       cameraController = controller
-      setupCamera()
-    }
-
-    /// Set the V2 camera controller
-    public func setCameraControllerV2(_ controller: CameraControllerV2)
-    {
-      cameraControllerV2 = controller
     }
 
     public func render(at timeCode: Double, viewSize: CGSize) -> Pixar.HgiTextureHandle
     {
       // draws the scene using hydra.
-      let viewMatrix: Pixar.GfMatrix4d
-      let projMatrix: Pixar.GfMatrix4d
-
-      if let cameraV2 = cameraControllerV2 {
-        // Use V2 camera (eye/at/up approach)
-        viewMatrix = cameraV2.getViewMatrix()
-
-        // Compute projection matrix
-        let fov = 60.0  // Default FOV
-        let nearPlane = 1.0
-        let farPlane = 100_000.0
-        var frustum = Pixar.GfFrustum()
-        let aspectRatio = Double(viewSize.width) / Double(viewSize.height)
-        frustum.SetPerspective(fov, true, aspectRatio, nearPlane, farPlane)
-        projMatrix = frustum.ComputeProjectionMatrix()
-      }
-      else if let camera = cameraController {
-        // Fallback to old camera
-        let cameraTransform = camera.getTransform()
-        let cameraParams = camera.camera.getShaderParams()
-        let frustum = computeFrustum(cameraTransform: cameraTransform, viewSize: viewSize, cameraParams: cameraParams)
-        viewMatrix = frustum.computeViewMatrix()
-        projMatrix = frustum.computeProjectionMatrix()
-      }
-      else {
+      guard let camera = cameraController else {
         Msg.logger.log(level: .error, "RenderEngine: No camera controller set")
         return Pixar.HgiTextureHandle()
       }
+
+      // Get view matrix from camera (eye/at/up approach)
+      let viewMatrix = camera.getViewMatrix()
+
+      // Compute projection matrix
+      let fov = 60.0  // Default FOV
+      let nearPlane = 1.0
+      let farPlane = 100_000.0
+      var frustum = Pixar.GfFrustum()
+      let aspectRatio = Double(viewSize.width) / Double(viewSize.height)
+      frustum.SetPerspective(fov, true, aspectRatio, nearPlane, farPlane)
+      let projMatrix = frustum.ComputeProjectionMatrix()
 
       engine.setCameraState(modelViewMatrix: viewMatrix, projectionMatrix: projMatrix)
 
@@ -142,31 +122,6 @@ public enum Hydra
       return engine.getAovTexture(.color)
     }
 
-    public func setupCamera()
-    {
-      guard let camera = cameraController else
-      {
-        Msg.logger.log(level: .warning, "RenderEngine: No camera controller set during setupCamera")
-        return
-      }
-
-      calculateOriginAndSize()
-
-      // Don't override camera position - let CameraController handle that
-      // Only set technical camera parameters here
-
-      if worldSize <= 16.0
-      {
-        camera.camera.scaleBias = 1.0
-      }
-      else
-      {
-        camera.camera.scaleBias = log2(worldSize / 16.0 * 1.8) / log2(1.8)
-      }
-
-      camera.focalLength = 18.0
-      camera.camera.standardFocalLength = 18.0
-    }
 
     /// creates a light source located at the camera position.
     // func computeCameraLight(cameraTransform: Gf.Matrix4d) -> Pixar.GlfSimpleLight
@@ -238,46 +193,6 @@ public enum Hydra
       return bboxCache
     }
 
-    public func computeFrustum(cameraTransform: Gf.Matrix4d, viewSize: CGSize, cameraParams: Hydra.Camera.Params) -> Gf.Frustum
-    {
-      var camera = Pixar.GfCamera(
-        .init(1.0),
-        .init(0),
-        0.825 * 2.54 / 0.1,
-        0.602 * 2.54 / 0.1,
-        0.0,
-        0.0,
-        50.0,
-        .init(1, 1_000_000),
-        .init(),
-        0.0,
-        0.0
-      )
-      camera.SetTransform(cameraTransform)
-      var frustum = camera.GetFrustum()
-      camera.SetFocalLength(Float(cameraParams.focalLength))
-
-      if cameraParams.projection.rawValue == 0
-      {
-        let targetAspect = Double(viewSize.width) / Double(viewSize.height)
-        let filmbackWidthMM = 24.0
-        let hFOVInRadians = 2.0 * atan(0.5 * filmbackWidthMM / cameraParams.focalLength)
-        let fov = (180.0 * hFOVInRadians) / Double.pi
-        frustum.SetPerspective(fov, targetAspect, 1.0, 100_000.0)
-      }
-      else
-      {
-        let left = cameraParams.leftBottomNear[0] * cameraParams.scaleViewport
-        let right = cameraParams.rightTopFar[0] * cameraParams.scaleViewport
-        let bottom = cameraParams.leftBottomNear[1] * cameraParams.scaleViewport
-        let top = cameraParams.rightTopFar[1] * cameraParams.scaleViewport
-        let nearPlane = cameraParams.leftBottomNear[2]
-        let farPlane = cameraParams.rightTopFar[2]
-        frustum.SetOrthographic(left, right, bottom, top, nearPlane, farPlane)
-      }
-
-      return frustum
-    }
 
 #if canImport(Metal)
     public var hydraDevice: MTLDevice
