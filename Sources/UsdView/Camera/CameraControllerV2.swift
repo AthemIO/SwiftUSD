@@ -121,7 +121,7 @@ public final class CameraControllerV2 {
     /// Zoom using scroll wheel
     public func zoomScroll(delta: Double) {
         let camFront = (at - eye).GetNormalized()
-        eye = eye + (camFront * delta * zoomSensitivity * 5.0)  // Reduced multiplier for smoother zoom
+        eye = eye + (camFront * delta * zoomSensitivity * 2.5)  // Reduced multiplier for smoother zoom
 
         NSLog("ZoomScroll - eye: \(eye), at: \(at)")
     }
