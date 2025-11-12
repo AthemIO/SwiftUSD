@@ -41,7 +41,19 @@ public extension Hydra.Viewport
   {
     #if canImport(Metal)
       let renderer = Hydra.MTLRenderer(hydra: engine)
-      self.init(hydra: engine, renderer: renderer)
+      self.init(hydra: engine, renderer: renderer, cameraController: nil)
+    #endif // canImport(Metal)
+  }
+
+  init(
+    engine: Hydra.RenderEngine,
+    cameraController: CameraController?
+    // selectionManager: SelectionManager?  // Disabled due to Swift compiler crash
+  )
+  {
+    #if canImport(Metal)
+      let renderer = Hydra.MTLRenderer(hydra: engine)
+      self.init(hydra: engine, renderer: renderer, cameraController: cameraController)
     #endif // canImport(Metal)
   }
 }

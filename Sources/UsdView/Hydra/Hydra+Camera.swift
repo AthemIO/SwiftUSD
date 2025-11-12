@@ -17,7 +17,7 @@ public extension Hydra
 {
   class Camera
   {
-    private let isZUp: Bool
+    public let isZUp: Bool
     public var params = Params()
 
     public struct Params

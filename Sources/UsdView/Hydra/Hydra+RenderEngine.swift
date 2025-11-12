@@ -33,7 +33,9 @@ public enum Hydra
 #endif // canImport(Metal)
 
     private let engine: UsdImagingGL.EngineSharedPtr
-    private var viewCamera: Hydra.Camera
+
+    /// External camera controller (set after initialization)
+    public weak var cameraController: CameraController?
 
     private var worldCenter: Pixar.GfVec3d = .init(0.0, 0.0, 0.0)
     private var worldSize: Double = 1.0
@@ -64,16 +66,27 @@ public enum Hydra
       engine.setEnablePresentation(false)
       engine.setRendererAov(.color)
 
-      viewCamera = Hydra.Camera(isZUp: Hydra.RenderEngine.isZUp(for: stage))
-      setupCamera()
       setupMaterial()
+    }
+
+    /// Set the camera controller and perform initial camera setup
+    public func setCameraController(_ controller: CameraController)
+    {
+      cameraController = controller
+      setupCamera()
     }
 
     public func render(at timeCode: Double, viewSize: CGSize) -> Pixar.HgiTextureHandle
     {
       // draws the scene using hydra.
-      let cameraTransform = viewCamera.getTransform()
-      let cameraParams = viewCamera.getShaderParams()
+      guard let camera = cameraController else
+      {
+        Msg.logger.log(level: .error, "RenderEngine: No camera controller set")
+        return Pixar.HgiTextureHandle()
+      }
+
+      let cameraTransform = camera.getTransform()
+      let cameraParams = camera.camera.getShaderParams()
       let frustum = computeFrustum(cameraTransform: cameraTransform, viewSize: viewSize, cameraParams: cameraParams)
       let viewMatrix = frustum.computeViewMatrix()
       let projMatrix = frustum.computeProjectionMatrix()
@@ -106,23 +119,28 @@ public enum Hydra
 
     public func setupCamera()
     {
+      guard let camera = cameraController else
+      {
+        Msg.logger.log(level: .warning, "RenderEngine: No camera controller set during setupCamera")
+        return
+      }
+
       calculateOriginAndSize()
 
-      viewCamera.params.rotation = .init(0.0, 0.0, 0.0)
-      viewCamera.params.focus = worldCenter
-      viewCamera.params.distance = worldSize
+      // Don't override camera position - let CameraController handle that
+      // Only set technical camera parameters here
 
       if worldSize <= 16.0
       {
-        viewCamera.scaleBias = 1.0
+        camera.camera.scaleBias = 1.0
       }
       else
       {
-        viewCamera.scaleBias = log2(worldSize / 16.0 * 1.8) / log2(1.8)
+        camera.camera.scaleBias = log2(worldSize / 16.0 * 1.8) / log2(1.8)
       }
 
-      viewCamera.params.focalLength = 18.0
-      viewCamera.standardFocalLength = 18.0
+      camera.focalLength = 18.0
+      camera.camera.standardFocalLength = 18.0
     }
 
     /// creates a light source located at the camera position.
