@@ -15,9 +15,9 @@
 #include "Tf/pyUtils.h"
 #include "Tf/staticData.h"
 #include "Tf/type.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
-#if defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -84,4 +84,4 @@ PyObject *_CreateHolder(const std::type_info &ti, const SdfSpec &spec)
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#endif  // PXR_PYTHON_SUPPORT_ENABLED

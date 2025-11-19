@@ -29,7 +29,7 @@
 #include "Sdf/layer.h"
 #include "Sdf/primSpec.h"
 #include "Sdf/reference.h"
-#include "Usd/usdaFileFormat.h"
+#include "Sdf/usdaFileFormat.h"
 
 #include <fstream>
 #include <string>
@@ -381,7 +381,7 @@ bool UsdRecursivePayloadsExampleFileFormat::Read(SdfLayer *layer,
     // If we didn't generate a dynamic layer, we're done recursing and
     // can just read in the contents the actual file as a usda file into
     // the layer.
-    const SdfFileFormatConstPtr fileFormat = SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id);
+    const SdfFileFormatConstPtr fileFormat = SdfFileFormat::FindById(SdfUsdaFileFormatTokens->Id);
     return fileFormat->Read(layer, resolvedPath, metadataOnly);
   }
 
@@ -393,7 +393,7 @@ bool UsdRecursivePayloadsExampleFileFormat::WriteToString(const SdfLayer &layer,
                                                           const std::string &comment) const
 {
   // Write the generated contents in usda text format.
-  return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
+  return SdfFileFormat::FindById(SdfUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
 }
 
 bool UsdRecursivePayloadsExampleFileFormat::WriteToStream(const SdfSpecHandle &spec,
@@ -401,7 +401,7 @@ bool UsdRecursivePayloadsExampleFileFormat::WriteToStream(const SdfSpecHandle &s
                                                           size_t indent) const
 {
   // Write the generated contents in usda text format.
-  return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
+  return SdfFileFormat::FindById(SdfUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
 }
 
 // Extracts a string valued payload ID from the file format arguments of the

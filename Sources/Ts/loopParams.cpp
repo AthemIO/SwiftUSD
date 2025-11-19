@@ -6,7 +6,7 @@
 //
 
 #include "Ts/loopParams.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include <iostream>
 

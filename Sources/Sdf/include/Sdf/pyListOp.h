@@ -7,16 +7,15 @@
 #ifndef PXR_USD_SDF_PY_LIST_OP_H
 #define PXR_USD_SDF_PY_LIST_OP_H
 
-#include "Arch/demangle.h"
-#include "Sdf/listOp.h"
-#include "Tf/hash.h"
-#include "Tf/pyUtils.h"
-#include "Tf/stringUtils.h"
 #include "pxr/pxrns.h"
 
-#if defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
-
-#include <boost/python.hpp>
+#if PXR_PYTHON_SUPPORT_ENABLED
+#  include "Arch/demangle.h"
+#  include "Sdf/listOp.h"
+#  include "Tf/hash.h"
+#  include "Tf/pyUtils.h"
+#  include "Tf/stringUtils.h"
+#  include "pxr/external/boost/python.hpp"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -45,13 +44,13 @@ template<class T> class SdfPyWrapListOp {
     listOp.ApplyOperations(&result);
     return result;
   }
-  static boost::python::object _ApplyOperations2(const T &outer, const T &inner)
+  static pxr_boost::python::object _ApplyOperations2(const T &outer, const T &inner)
   {
     if (std::optional<T> r = outer.ApplyOperations(inner)) {
-      return boost::python::object(*r);
+      return pxr_boost::python::object(*r);
     }
     else {
-      return boost::python::object();
+      return pxr_boost::python::object();
     }
   }
 
@@ -62,7 +61,7 @@ template<class T> class SdfPyWrapListOp {
 
   static void _Wrap(const std::string &name)
   {
-    using namespace boost::python;
+    using namespace pxr_boost::python;
 
     using ItemVector = typename T::ItemVector;
 
@@ -90,21 +89,25 @@ template<class T> class SdfPyWrapListOp {
         .def("ApplyOperations", &This::_ApplyOperations1)
         .def("ApplyOperations", &This::_ApplyOperations2)
 
-        .add_property("explicitItems",
-                      make_function(&T::GetExplicitItems, return_value_policy<return_by_value>()),
-                      &T::SetExplicitItems)
+        .add_property(
+            "explicitItems",
+            make_function(&T::GetExplicitItems, return_value_policy<return_by_value>()),
+            +[](T &t, const ItemVector &items) { t.SetExplicitItems(items); })
         .add_property("addedItems",
                       make_function(&T::GetAddedItems, return_value_policy<return_by_value>()),
                       &T::SetAddedItems)
-        .add_property("prependedItems",
-                      make_function(&T::GetPrependedItems, return_value_policy<return_by_value>()),
-                      &T::SetPrependedItems)
-        .add_property("appendedItems",
-                      make_function(&T::GetAppendedItems, return_value_policy<return_by_value>()),
-                      &T::SetAppendedItems)
-        .add_property("deletedItems",
-                      make_function(&T::GetDeletedItems, return_value_policy<return_by_value>()),
-                      &T::SetDeletedItems)
+        .add_property(
+            "prependedItems",
+            make_function(&T::GetPrependedItems, return_value_policy<return_by_value>()),
+            +[](T &t, const ItemVector &items) { t.SetPrependedItems(items); })
+        .add_property(
+            "appendedItems",
+            make_function(&T::GetAppendedItems, return_value_policy<return_by_value>()),
+            +[](T &t, const ItemVector &items) { t.SetAppendedItems(items); })
+        .add_property(
+            "deletedItems",
+            make_function(&T::GetDeletedItems, return_value_policy<return_by_value>()),
+            +[](T &t, const ItemVector &items) { t.SetDeletedItems(items); })
         .add_property("orderedItems",
                       make_function(&T::GetOrderedItems, return_value_policy<return_by_value>()),
                       &T::SetOrderedItems)
@@ -125,6 +128,6 @@ template<class T> class SdfPyWrapListOp {
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#endif  // PXR_PYTHON_SUPPORT_ENABLED
 
 #endif  // PXR_USD_SDF_PY_LIST_OP_H

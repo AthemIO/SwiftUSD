@@ -1,0 +1,95 @@
+[1/1] Compiling plugin OpenUSDPlugin
+[2/2] Compiling plugin UsdGenSchemaPlugin
+[3/3] Compiling plugin GenerateManual
+[4/4] Compiling plugin Swift-DocC Preview
+[5/5] Compiling plugin Swift-DocC
+Building for debugging...
+[5/2163] Compiling easy_preset.c
+[5/2193] Compiling block_encoder.c
+[5/2193] Compiling block_header_decoder.c
+[5/2193] Compiling easy_encoder.c
+[5/2194] Compiling filter_buffer_decoder.c
+[5/2193] Compiling block_header_encoder.c
+[5/2194] Compiling easy_encoder_memusage.c
+[5/2193] Compiling block_util.c
+[5/2194] Compiling common.c
+[5/2193] Compiling easy_buffer_encoder.c
+[5/2194] Compiling easy_decoder_memusage.c
+[5/2194] Compiling file_info.c
+[17/2194] Compiling Lut1DOpCPU_AVX.cpp
+[18/2194] Compiling Lut1DOpCPU_AVX2.cpp
+[19/2194] Compiling LogUtils.cpp
+[20/2194] Compiling Lut1DOpCPU_SSE2.cpp
+[21/2194] Compiling Lut1DOpGPU.cpp
+[22/2194] Write swift-version--44D72886A502174.txt
+[23/2006] Compiling LogOpData.cpp
+[24/2006] Compiling Lut3DOp.cpp
+[25/2006] Compiling LogOpGPU.cpp
+[26/2006] Compiling Lut1DOpData.cpp
+[27/2006] Compiling Lut1DOp.cpp
+[28/2006] Compiling Lut3DOpCPU.cpp
+[29/2006] Compiling Lut1DOpCPU.cpp
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:24:1: error: use of undeclared identifier 'bp'
+   24 | bp::object
+      | ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:25:12: error: use of undeclared identifier 'bp'
+   25 | _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */)
+      |            ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:25:42: error: use of undeclared identifier 'bp'
+   25 | _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */)
+      |                                          ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:27:12: error: use of undeclared identifier 'bp'
+   27 |     return bp::object();
+      |            ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:32:17: error: use of undeclared identifier 'bp'
+   32 | _SpecRepr(const bp::object& self, const SdfSpec* spec)
+      |                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:41:16: error: use of undeclared identifier 'TfPyRepr'
+   41 |                TfPyRepr(path) +
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:43:16: error: use of undeclared identifier 'TfPyRepr'
+   43 |                TfPyRepr(spec->GetPath().GetString()) +
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:40:16: error: use of undeclared identifier 'TF_PY_REPR_PREFIX'
+   40 |         return TF_PY_REPR_PREFIX + "Find(" +
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:48:26: error: use of undeclared identifier '_HolderCreator'
+   48 | typedef std::map<TfType, _HolderCreator> _HolderCreatorMap;
+      |                          ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:52:50: error: unknown type name '_HolderCreator'
+   52 | _RegisterHolderCreator(const std::type_info& ti, _HolderCreator creator)
+      |                                                  ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:59:30: error: member reference base type 'int' is not a structure or union
+   59 |     else if (!_holderCreators->insert(std::make_pair(type, creator)).second){
+      |               ~~~~~~~~~~~~~~~^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:65:1: error: unknown type name 'PyObject'
+   65 | PyObject*
+      | ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:69:16: error: use of undeclared identifier 'bp'
+   69 |         return bp::detail::none();
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:77:9: error: 'Pixar::Sdf_PySpecDetail::_HolderCreatorMap' (aka 'int') is not a class, namespace, or enumeration
+   77 |         _HolderCreatorMap::const_iterator i = _holderCreators->find(type);
+      |         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:77:62: error: member reference base type 'int' is not a structure or union
+   77 |         _HolderCreatorMap::const_iterator i = _holderCreators->find(type);
+      |                                               ~~~~~~~~~~~~~~~^~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:78:33: error: member reference base type 'int' is not a structure or union
+   78 |         if (i == _holderCreators->end()) {
+      |                  ~~~~~~~~~~~~~~~^~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:83:20: error: use of undeclared identifier 'bp'
+   83 |             return bp::detail::none();
+      |                    ^
+17 errors generated.
+[30/2006] Compiling Sdf pySpec.cpp
+[30/2006] Compiling Sdf proxyTypes.cpp
+[30/2006] Compiling Sdf textFileFormat.tab.cpp
+[30/2006] Compiling Sdf textFileFormat.cpp
+[30/2006] Compiling Sdf pseudoRootSpec.cpp
+[30/2006] Compiling Sdf textParserHelpers.cpp
+[30/2006] Compiling Sdf schema.cpp
+[30/2006] Compiling Sdf textFileFormatParser.cpp
+[30/2006] Compiling Sdf textParserUtils.cpp
+[30/2006] Compiling Sdf relationshipSpec.cpp
+[30/2006] Compiling Sdf types.cpp
+[30/2006] Compiling Usd crateFile.cpp

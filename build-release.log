@@ -1,0 +1,435 @@
+[1/1] Compiling plugin OpenUSDPlugin
+[2/2] Compiling plugin UsdGenSchemaPlugin
+[3/3] Compiling plugin GenerateManual
+[4/4] Compiling plugin Swift-DocC Preview
+[5/5] Compiling plugin Swift-DocC
+Building for production...
+[5/3274] Write sources
+[5/3274] Copying plugInfo.json
+[5/3274] Copying generatedSchema.usda
+[5/3274] Write sources
+[5/3274] Copying generatedSchema.usda
+[5/3274] Copying schema.usda
+[5/3274] Write sources
+[5/3377] Compiling TurboJPEG jcmainct.c
+[5/3377] Compiling TurboJPEG jcomapi.c
+[5/3380] Compiling TurboJPEG jcstest.c
+[5/3379] Compiling TurboJPEG jctrans.c
+[17/3367] Compiling TurboJPEG jcprepct.c
+[18/3367] Compiling TurboJPEG jclhuff.c
+[19/3367] Compiling TurboJPEG jcmaster.c
+[20/3367] Compiling TurboJPEG jcinit.c
+[21/3367] Compiling TurboJPEG jcicc.c
+[22/3367] Compiling TurboJPEG jclossls.c
+[22/3367] Compiling TurboJPEG jcphuff.c
+[24/3367] Compiling TurboJPEG jcmarker.c
+[25/3367] Compiling TurboJPEG jcparam.c
+[26/3367] Compiling TurboJPEG jcsample.c
+[27/3367] Compiling TurboJPEG jcdiffct.c
+[28/3367] Write swift-version--44D72886A502174.txt
+[29/3339] Compiling TurboJPEG jchuff.c
+[30/3340] Compiling UsdUtils stageCache.cpp
+[31/3341] Compiling UsdUtils usdzPackage.cpp
+[32/3341] Compiling UsdVol field3DAsset.cpp
+[33/3341] Compiling UsdVol openVDBAsset.cpp
+[34/3341] Compiling UsdVol fieldBase.cpp
+[35/3341] Compiling UsdVol fieldAsset.cpp
+[36/3341] Compiling UsdVol volume.cpp
+[37/3341] Compiling UsdUtils stitchClips.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/assetPath.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/declareHandles.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/delegatedCountPtr.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/tf.h:178:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/refPtrTracker.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakBase.h:17:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/refPtr.h:1257:8: error: no template named 'TfTypeFunctions'; did you mean '::Pixar::Pixar::TfTypeFunctions'?
+ 1257 | struct TfTypeFunctions<TfRefPtr<T> > {
+      |        ^~~~~~~~~~~~~~~
+      |        ::Pixar::Pixar::TfTypeFunctions
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/typeFunctions.h:37:8: note: '::Pixar::Pixar::TfTypeFunctions' declared here
+   37 | struct TfTypeFunctions {
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/assetPath.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/declareHandles.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/delegatedCountPtr.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/tf.h:178:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/refPtrTracker.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakBase.h:17:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/refPtr.h:1275:8: error: no template named 'TfTypeFunctions'; did you mean '::Pixar::Pixar::TfTypeFunctions'?
+ 1275 | struct TfTypeFunctions<TfRefPtr<const T> > {
+      |        ^~~~~~~~~~~~~~~
+      |        ::Pixar::Pixar::TfTypeFunctions
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/typeFunctions.h:37:8: note: '::Pixar::Pixar::TfTypeFunctions' declared here
+   37 | struct TfTypeFunctions {
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/assetPath.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/declareHandles.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/delegatedCountPtr.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/tf.h:185:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtr.h:20:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtrFacade.h:346:8: error: no template named 'TfTypeFunctions'; did you mean '::Pixar::Pixar::TfTypeFunctions'?
+  346 | struct TfTypeFunctions<Ptr<T>,
+      |        ^~~~~~~~~~~~~~~
+      |        ::Pixar::Pixar::TfTypeFunctions
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/typeFunctions.h:37:8: note: '::Pixar::Pixar::TfTypeFunctions' declared here
+   37 | struct TfTypeFunctions {
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/assetPath.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/declareHandles.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/delegatedCountPtr.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/tf.h:185:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtr.h:20:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtrFacade.h:368:8: error: no template named 'TfTypeFunctions'; did you mean '::Pixar::Pixar::TfTypeFunctions'?
+  368 | struct TfTypeFunctions<Ptr<const T>,
+      |        ^~~~~~~~~~~~~~~
+      |        ::Pixar::Pixar::TfTypeFunctions
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/typeFunctions.h:37:8: note: '::Pixar::Pixar::TfTypeFunctions' declared here
+   37 | struct TfTypeFunctions {
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/data.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/abstractData.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/types.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:341:16: error: incomplete result type 'TfType' in function definition
+  341 |         TfType GetProxiedType(_Storage const &storage) const {
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/data.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/abstractData.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/types.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:342:20: error: calling function with incomplete return type 'TfType'
+  342 |             return _getProxiedType(storage);
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/data.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/abstractData.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/types.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:508:23: error: incomplete result type 'TfType' in function definition
+  508 |         static TfType GetTfType(T const &tp) {
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/data.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/abstractData.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/types.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:20: error: incomplete type 'Pixar::TfType' named in nested name specifier
+  509 |             return TfType::Find<ProxiedType>();
+      |                    ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/data.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/abstractData.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/types.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:33: error: unexpected type name 'ProxiedType': expected expression
+  509 |             return TfType::Find<ProxiedType>();
+      |                                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:46: error: expected expression
+  509 |             return TfType::Find<ProxiedType>();
+      |                                              ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:568:23: error: incomplete result type 'TfType' in function definition
+  568 |         static TfType GetTfType(ErasedProxy const &ep) {
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/data.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/abstractData.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/types.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:723:9: error: incomplete result type 'TfType' in function definition
+  723 |         _GetProxiedType(_Storage const &storage) {
+      |         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:15:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/anyWeakPtr.h:283:12: error: incomplete type 'Pixar::TfType' named in nested name specifier
+  283 |     return TfType::Find(_ptr);
+      |            ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:763:16: error: field has incomplete type 'TfType'
+  763 |         TfType _noticeType;
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:705:47: error: invalid use of incomplete type 'TfType'
+  705 |                    TfType const &noticeType = TfType())
+      |                                               ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:785:57: error: invalid use of incomplete type 'TfType'
+  785 |                              TfType const &noticeType = TfType())
+      |                                                         ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:614:24: error: incomplete result type 'TfType' in function definition
+  614 |         virtual TfType GetNoticeType() const {
+      |                        ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:616:26: error: incomplete type 'Pixar::TfType' named in nested name specifier
+  616 |             TfType ret = TfType::Find<NoticeType>();
+      |                          ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/assetLocalization.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:616:39: error: unexpected type name 'NoticeType': expected expression
+  616 |             TfType ret = TfType::Find<NoticeType>();
+      |                                       ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+[38/3341] Compiling UsdUtils localizeAsset.cpp
+[38/3341] Compiling UsdUtils debugCodes.cpp
+[38/3341] Compiling UsdUtils pipeline.cpp
+[38/3341] Compiling UsdUtils flattenLayerStack.cpp
+[38/3341] Compiling UsdUtils sparseValueWriter.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/common.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/declarePtrs.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtr.h:17:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/refPtr.h:1257:8: error: no template named 'TfTypeFunctions'; did you mean '::Pixar::Pixar::TfTypeFunctions'?
+ 1257 | struct TfTypeFunctions<TfRefPtr<T> > {
+      |        ^~~~~~~~~~~~~~~
+      |        ::Pixar::Pixar::TfTypeFunctions
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/typeFunctions.h:37:8: note: '::Pixar::Pixar::TfTypeFunctions' declared here
+   37 | struct TfTypeFunctions {
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/common.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/declarePtrs.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtr.h:17:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/refPtr.h:1275:8: error: no template named 'TfTypeFunctions'; did you mean '::Pixar::Pixar::TfTypeFunctions'?
+ 1275 | struct TfTypeFunctions<TfRefPtr<const T> > {
+      |        ^~~~~~~~~~~~~~~
+      |        ::Pixar::Pixar::TfTypeFunctions
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/typeFunctions.h:37:8: note: '::Pixar::Pixar::TfTypeFunctions' declared here
+   37 | struct TfTypeFunctions {
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/common.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/declarePtrs.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtr.h:20:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtrFacade.h:346:8: error: no template named 'TfTypeFunctions'; did you mean '::Pixar::Pixar::TfTypeFunctions'?
+  346 | struct TfTypeFunctions<Ptr<T>,
+      |        ^~~~~~~~~~~~~~~
+      |        ::Pixar::Pixar::TfTypeFunctions
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/typeFunctions.h:37:8: note: '::Pixar::Pixar::TfTypeFunctions' declared here
+   37 | struct TfTypeFunctions {
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/common.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/declarePtrs.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtr.h:20:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/weakPtrFacade.h:368:8: error: no template named 'TfTypeFunctions'; did you mean '::Pixar::Pixar::TfTypeFunctions'?
+  368 | struct TfTypeFunctions<Ptr<const T>,
+      |        ^~~~~~~~~~~~~~~
+      |        ::Pixar::Pixar::TfTypeFunctions
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/typeFunctions.h:37:8: note: '::Pixar::Pixar::TfTypeFunctions' declared here
+   37 | struct TfTypeFunctions {
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/mapFunction.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:341:16: error: incomplete result type 'TfType' in function definition
+  341 |         TfType GetProxiedType(_Storage const &storage) const {
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/mapFunction.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:342:20: error: calling function with incomplete return type 'TfType'
+  342 |             return _getProxiedType(storage);
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/mapFunction.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:508:23: error: incomplete result type 'TfType' in function definition
+  508 |         static TfType GetTfType(T const &tp) {
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/mapFunction.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:20: error: incomplete type 'Pixar::TfType' named in nested name specifier
+  509 |             return TfType::Find<ProxiedType>();
+      |                    ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/mapFunction.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:33: error: unexpected type name 'ProxiedType': expected expression
+  509 |             return TfType::Find<ProxiedType>();
+      |                                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:46: error: expected expression
+  509 |             return TfType::Find<ProxiedType>();
+      |                                              ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:568:23: error: incomplete result type 'TfType' in function definition
+  568 |         static TfType GetTfType(ErasedProxy const &ep) {
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/mapFunction.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathExpression.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/pathPattern.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/predicateExpression.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:723:9: error: incomplete result type 'TfType' in function definition
+  723 |         _GetProxiedType(_Storage const &storage) {
+      |         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+[38/3341] Compiling UsdUtils dependencies.cpp
+[38/3341] Compiling UsdUtils introspection.cpp
+[38/3341] Compiling Vt array.cpp
+[38/3341] Compiling Vt arrayEdit.cpp
+[38/3341] Compiling UsdUtils stitch.cpp

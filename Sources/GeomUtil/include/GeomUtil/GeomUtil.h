@@ -14,4 +14,7 @@
 #define __PXR_IMAGING_GEOMUTIL_H__
 
 // GeomUtil
+#include <GeomUtil/tokens.h>
+#include <GeomUtil/planeMeshGenerator.h>
+#include <GeomUtil/diskMeshGenerator.h>
 #endif  // __PXR_IMAGING_GEOMUTIL_H__

@@ -12,4 +12,5 @@
 #include <UsdRender/tokens.h>
 #include <UsdRender/var.h>
 
+#include <UsdRender/generatedSchema.module.h>
 #endif  // __PXR_USD_USDRENDER_H__

@@ -12,27 +12,29 @@
 
 #include "Tf/token.h"
 
-#include <boost/python/def.hpp>
-#include <boost/python/return_by_value.hpp>
-#include <boost/python/return_value_policy.hpp>
-
-using namespace boost::python;
+#include "pxr/external/boost/python/def.hpp"
+#include "pxr/external/boost/python/return_value_policy.hpp"
+#include "pxr/external/boost/python/return_by_value.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+using namespace pxr_boost::python;
+
 void wrapUsdRiRmanUtilities()
 {
-  def("ConvertToRManInterpolateBoundary",
-      (int (*)(const TfToken &))UsdRiConvertToRManInterpolateBoundary,
-      return_value_policy<return_by_value>());
-  def("ConvertFromRManInterpolateBoundary",
-      (const TfToken &(*)(int))UsdRiConvertFromRManInterpolateBoundary,
-      return_value_policy<return_by_value>());
+    def("ConvertToRManInterpolateBoundary", (int (*)(const TfToken &))
+        UsdRiConvertToRManInterpolateBoundary,
+        return_value_policy<return_by_value>());
+    def("ConvertFromRManInterpolateBoundary", (const TfToken & (*)(int))
+        UsdRiConvertFromRManInterpolateBoundary,
+        return_value_policy<return_by_value>());
 
-  def("ConvertToRManFaceVaryingLinearInterpolation",
-      (int (*)(const TfToken &))UsdRiConvertToRManFaceVaryingLinearInterpolation,
-      return_value_policy<return_by_value>());
-  def("ConvertFromRManFaceVaryingLinearInterpolation",
-      (const TfToken &(*)(int))UsdRiConvertFromRManFaceVaryingLinearInterpolation,
-      return_value_policy<return_by_value>());
+    def("ConvertToRManFaceVaryingLinearInterpolation",
+        (int (*)(const TfToken &))
+        UsdRiConvertToRManFaceVaryingLinearInterpolation,
+        return_value_policy<return_by_value>());
+    def("ConvertFromRManFaceVaryingLinearInterpolation",
+        (const TfToken & (*)(int))
+        UsdRiConvertFromRManFaceVaryingLinearInterpolation,
+        return_value_policy<return_by_value>());
 }

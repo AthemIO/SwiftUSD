@@ -10,4 +10,5 @@
 #include <UsdVol/tokens.h>
 #include <UsdVol/volume.h>
 
+#include <UsdVol/generatedSchema.module.h>
 #endif  // __PXR_USD_USDVOL_H__

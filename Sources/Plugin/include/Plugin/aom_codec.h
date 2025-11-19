@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -14,7 +14,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
 // There are two levels of interfaces used to access the AOM codec: the
-// the aom_codec_iface and the aom_codec_ctx.
+// aom_codec_iface and the aom_codec_ctx.
 //
 // 1. aom_codec_iface_t
 //    (Related files: aom/aom_codec.h, aom/src/aom_codec.c,
@@ -97,48 +97,48 @@
 extern "C" {
 #endif
 
-#include "Plugin/hioAvif/aom/aom_image.h"
-#include "Plugin/hioAvif/aom/aom_integer.h"
+#include "aom/aom_image.h"
+#include "aom/aom_integer.h"
 
 /*!\brief Decorator indicating a function is deprecated */
 #ifndef AOM_DEPRECATED
-#  if defined(__GNUC__) && __GNUC__
-#    define AOM_DEPRECATED __attribute__((deprecated))
-#  elif defined(_MSC_VER)
-#    define AOM_DEPRECATED
-#  else
-#    define AOM_DEPRECATED
-#  endif
+#if defined(__GNUC__)
+#define AOM_DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define AOM_DEPRECATED
+#else
+#define AOM_DEPRECATED
+#endif
 #endif /* AOM_DEPRECATED */
 
 #ifndef AOM_DECLSPEC_DEPRECATED
-#  if defined(__GNUC__) && __GNUC__
-#    define AOM_DECLSPEC_DEPRECATED /**< \copydoc #AOM_DEPRECATED */
-#  elif defined(_MSC_VER)
+#if defined(__GNUC__)
+#define AOM_DECLSPEC_DEPRECATED /**< \copydoc #AOM_DEPRECATED */
+#elif defined(_MSC_VER)
 /*!\brief \copydoc #AOM_DEPRECATED */
-#    define AOM_DECLSPEC_DEPRECATED __declspec(deprecated)
-#  else
-#    define AOM_DECLSPEC_DEPRECATED /**< \copydoc #AOM_DEPRECATED */
-#  endif
+#define AOM_DECLSPEC_DEPRECATED __declspec(deprecated)
+#else
+#define AOM_DECLSPEC_DEPRECATED /**< \copydoc #AOM_DEPRECATED */
+#endif
 #endif /* AOM_DECLSPEC_DEPRECATED */
 
 /*!\brief Decorator indicating a function is potentially unused */
 #ifdef AOM_UNUSED
 #elif defined(__GNUC__) || defined(__clang__)
-#  define AOM_UNUSED __attribute__((unused))
+#define AOM_UNUSED __attribute__((unused))
 #else
-#  define AOM_UNUSED
+#define AOM_UNUSED
 #endif
 
 /*!\brief Decorator indicating that given struct/union/enum is packed */
 #ifndef ATTRIBUTE_PACKED
-#  if defined(__GNUC__) && __GNUC__
-#    define ATTRIBUTE_PACKED __attribute__((packed))
-#  elif defined(_MSC_VER)
-#    define ATTRIBUTE_PACKED
-#  else
-#    define ATTRIBUTE_PACKED
-#  endif
+#if defined(__GNUC__)
+#define ATTRIBUTE_PACKED __attribute__((packed))
+#elif defined(_MSC_VER)
+#define ATTRIBUTE_PACKED
+#else
+#define ATTRIBUTE_PACKED
+#endif
 #endif /* ATTRIBUTE_PACKED */
 
 /*!\brief Current ABI version number
@@ -223,9 +223,26 @@ typedef long aom_codec_caps_t;
  *  Certain codec features must be known at initialization time, to allow for
  *  proper memory allocation.
  *
- *  The available flags are specified by AOM_CODEC_USE_* defines.
+ *  The available flags are specified by AOM_CODEC_USE_* defines. The bits are
+ *  allocated as follows:
+ *      0x1 -     0x80: codec (common to decoder and encoder)
+ *    0x100 -   0x8000: decoder
+ *  0x10000 - 0x800000: encoder
  */
 typedef long aom_codec_flags_t;
+
+// Experimental feature policy
+//
+// New features may be marked as experimental. Experimental features are not
+// part of the stable API and may be modified or removed in a future release.
+// Experimental features are made available only if you pass the
+// AOM_CODEC_USE_EXPERIMENTAL flag to the codec init function.
+//
+// If you use experimental features, you must rebuild your code whenever you
+// update to a new libaom release, and you must be prepared to modify your code
+// when an experimental feature you use is modified or removed. If you are not
+// sure, DO NOT use experimental features.
+#define AOM_CODEC_USE_EXPERIMENTAL 0x1 /**< Enables experimental features */
 
 /*!\brief Time Stamp Type
  *
@@ -244,7 +261,7 @@ typedef int64_t aom_codec_pts_t;
  *   - aom_codec_get_caps(aom_codec_iface_t *iface): returns
  *     the capabilities of the codec
  *   - aom_codec_enc_config_default: generate the default config for
- *     initializing the encoder (see documention in aom_encoder.h)
+ *     initializing the encoder (see documentation in aom_encoder.h)
  *   - aom_codec_dec_init, aom_codec_enc_init: initialize the codec context
  *     structure (see documentation on aom_codec_ctx).
  *
@@ -268,18 +285,18 @@ typedef struct aom_codec_priv aom_codec_priv_t;
  * support frame types that are codec specific (MPEG-1 D-frames for example)
  */
 typedef uint32_t aom_codec_frame_flags_t;
-#define AOM_FRAME_IS_KEY 0x1 /**< frame is the start of a GOP */
+#define AOM_FRAME_IS_KEY 0x1u /**< frame is the start of a GOP */
 /*!\brief frame can be dropped without affecting the stream (no future frame
  * depends on this one) */
-#define AOM_FRAME_IS_DROPPABLE 0x2
+#define AOM_FRAME_IS_DROPPABLE 0x2u
 /*!\brief this is an INTRA_ONLY frame */
-#define AOM_FRAME_IS_INTRAONLY 0x10
+#define AOM_FRAME_IS_INTRAONLY 0x10u
 /*!\brief this is an S-frame */
-#define AOM_FRAME_IS_SWITCH 0x20
+#define AOM_FRAME_IS_SWITCH 0x20u
 /*!\brief this is an error-resilient frame */
-#define AOM_FRAME_IS_ERROR_RESILIENT 0x40
+#define AOM_FRAME_IS_ERROR_RESILIENT 0x40u
 /*!\brief this is a key-frame dependent recovery-point frame */
-#define AOM_FRAME_IS_DELAYED_RANDOM_ACCESS_POINT 0x80
+#define AOM_FRAME_IS_DELAYED_RANDOM_ACCESS_POINT 0x80u
 
 /*!\brief Iterator
  *
@@ -365,7 +382,7 @@ int aom_codec_version(void);
  *
  * Returns a printable string containing the full library version number. This
  * may contain additional text following the three digit version number, as to
- * indicate release candidates, prerelease versions, etc.
+ * indicate release candidates, pre-release versions, etc.
  *
  */
 const char *aom_codec_version_str(void);
@@ -417,19 +434,21 @@ const char *aom_codec_err_to_string(aom_codec_err_t err);
  * \param[in]    ctx     Pointer to this instance's context.
  *
  */
-const char *aom_codec_error(aom_codec_ctx_t *ctx);
+const char *aom_codec_error(const aom_codec_ctx_t *ctx);
 
 /*!\brief Retrieve detailed error information for codec context
  *
  * Returns a human readable string providing detailed information about
- * the last error.
+ * the last error. The returned string is only valid until the next
+ * aom_codec_* function call (except aom_codec_error and
+ * aom_codec_error_detail) on the codec context.
  *
  * \param[in]    ctx     Pointer to this instance's context.
  *
  * \retval NULL
  *     No detailed information is available.
  */
-const char *aom_codec_error_detail(aom_codec_ctx_t *ctx);
+const char *aom_codec_error_detail(const aom_codec_ctx_t *ctx);
 
 /* REQUIRED FUNCTIONS
  *
@@ -444,9 +463,11 @@ const char *aom_codec_error_detail(aom_codec_ctx_t *ctx);
  * \param[in] ctx   Pointer to this instance's context
  *
  * \retval #AOM_CODEC_OK
- *     The codec algorithm initialized.
- * \retval #AOM_CODEC_MEM_ERROR
- *     Memory allocation failed.
+ *     The codec instance has been destroyed.
+ * \retval #AOM_CODEC_INVALID_PARAM
+ *     ctx is a null pointer.
+ * \retval #AOM_CODEC_ERROR
+ *     Codec context not initialized.
  */
 aom_codec_err_t aom_codec_destroy(aom_codec_ctx_t *ctx);
 
@@ -479,14 +500,15 @@ aom_codec_caps_t aom_codec_get_caps(aom_codec_iface_t *iface);
  * ctx->err will be set to the same value as the return value.
  *
  * \param[in]     ctx              Pointer to this instance's context
- * \param[in]     ctrl_id          Algorithm specific control identifier
+ * \param[in]     ctrl_id          Algorithm specific control identifier.
+ *                                 Must be nonzero.
  *
  * \retval #AOM_CODEC_OK
  *     The control request was processed.
  * \retval #AOM_CODEC_ERROR
  *     The control request was not processed.
  * \retval #AOM_CODEC_INVALID_PARAM
- *     The data was not valid.
+ *     The control ID was zero, or the data was not valid.
  */
 aom_codec_err_t aom_codec_control(aom_codec_ctx_t *ctx, int ctrl_id, ...);
 
@@ -507,7 +529,8 @@ aom_codec_err_t aom_codec_control(aom_codec_ctx_t *ctx, int ctrl_id, ...);
  * \retval #AOM_CODEC_ERROR
  *     The option was not successfully set.
  */
-aom_codec_err_t aom_codec_set_option(aom_codec_ctx_t *ctx, const char *name, const char *value);
+aom_codec_err_t aom_codec_set_option(aom_codec_ctx_t *ctx, const char *name,
+                                     const char *value);
 
 /*!\brief aom_codec_control wrapper macro (adds type-checking, less flexible)
  *
@@ -519,20 +542,19 @@ aom_codec_err_t aom_codec_set_option(aom_codec_ctx_t *ctx, const char *name, con
 #define AOM_CODEC_CONTROL_TYPECHECKED(ctx, id, data) \
   aom_codec_control_typechecked_##id(ctx, id, data) /**<\hideinitializer*/
 
-/*!\brief Creates typechecking mechanisms for aom_codec_control
+/*!\brief Creates type checking mechanisms for aom_codec_control
  *
  * It defines a static function with the correctly typed arguments as a wrapper
  * to the type-unsafe aom_codec_control function. It also creates a typedef
  * for each type.
  */
-#define AOM_CTRL_USE_TYPE(id, typ) \
-  static aom_codec_err_t aom_codec_control_typechecked_##id(aom_codec_ctx_t *, int, typ) \
-      AOM_UNUSED; \
+#define AOM_CTRL_USE_TYPE(id, typ)                           \
   static aom_codec_err_t aom_codec_control_typechecked_##id( \
-      aom_codec_ctx_t *ctx, int ctrl, typ data) \
-  { \
-    return aom_codec_control(ctx, ctrl, data); \
-  } /**<\hideinitializer*/ \
+      aom_codec_ctx_t *, int, typ) AOM_UNUSED;               \
+  static aom_codec_err_t aom_codec_control_typechecked_##id( \
+      aom_codec_ctx_t *ctx, int ctrl, typ data) {            \
+    return aom_codec_control(ctx, ctrl, data);               \
+  } /**<\hideinitializer*/                                   \
   typedef typ aom_codec_control_type_##id;
 /*!@} end Codec Control group */
 

@@ -9,24 +9,24 @@
 
 #include "pxr/pxrns.h"
 
-#include <boost/python/def.hpp>
-
-using namespace boost::python;
+#include "pxr/external/boost/python/def.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+using namespace pxr_boost::python;
+
 void wrapUsdDraco()
 {
-  def("_WriteDraco",
-      UsdDraco_WriteDraco,
-      (arg("mesh"),
-       arg("fileName"),
-       arg("qp"),
-       arg("qt"),
-       arg("qn"),
-       arg("cl"),
-       arg("preservePolygons"),
-       arg("preservePositionOrder"),
-       arg("preserveHoles")));
-  def("_PrimvarSupported", UsdDraco_PrimvarSupported, (arg("primvar")));
+    def("_WriteDraco", UsdDraco_WriteDraco,
+        (arg("mesh"),
+         arg("fileName"),
+         arg("qp"),
+         arg("qt"),
+         arg("qn"),
+         arg("cl"),
+         arg("preservePolygons"),
+         arg("preservePositionOrder"),
+         arg("preserveHoles")));
+    def("_PrimvarSupported", UsdDraco_PrimvarSupported,
+        (arg("primvar")));
 }

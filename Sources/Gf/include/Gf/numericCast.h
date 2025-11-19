@@ -10,6 +10,7 @@
 #include "pxr/pxrns.h"
 
 #include "Gf/traits.h"
+#include "Arch/pragmas.h"
 
 #include <cmath>
 #include <limits>
@@ -25,25 +26,41 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// This mimics the C++20 std::cmp_less function for comparing integers of
 /// different types where negative signed integers always compare less than (and
 /// not equal to) unsigned integers.
-template<class T, class U> constexpr bool GfIntegerCompareLess(T t, U u) noexcept
+template <class T, class U>
+constexpr bool
+GfIntegerCompareLess(T t, U u) noexcept
 {
-  static_assert(std::is_integral_v<T> && std::is_integral_v<U>);
+    // XXX: 
+    // On Visual Studio warnings C4018 (signed/unsigned mismatch) and
+    // C4804 (unsafe use of bool in operation) are emitted when this
+    // function is used with boolean values. Just disable this for now.
+#if defined(ARCH_COMPILER_MSVC)
+    ARCH_PRAGMA_PUSH
+    ARCH_PRAGMA(warning(disable:4018))
+    ARCH_PRAGMA(warning(disable:4804))
+#endif    
 
-  if constexpr (std::is_signed_v<T> == std::is_signed_v<U>) {
-    return t < u;
-  }
-  else if constexpr (std::is_signed_v<T>) {
-    return t < 0 || std::make_unsigned_t<T>(t) < u;
-  }
-  else {
-    return u >= 0 && t < std::make_unsigned_t<U>(u);
-  }
+    static_assert(std::is_integral_v<T> && std::is_integral_v<U>);
+
+    if constexpr (std::is_signed_v<T> == std::is_signed_v<U>) {
+        return t < u;
+    }
+    else if constexpr (std::is_signed_v<T>) {
+        return t < 0 || std::make_unsigned_t<T>(t) < u;
+    }
+    else {
+        return u >= 0 && t < std::make_unsigned_t<U>(u);
+    }
+
+#if defined(ARCH_COMPILER_MSVC)
+    ARCH_PRAGMA_POP
+#endif
 }
 
 enum GfNumericCastFailureType {
-  GfNumericCastPosOverflow,  ///< Value too high to convert.
-  GfNumericCastNegOverflow,  ///< Value too low to convert.
-  GfNumericCastNaN           ///< Value is a floating-point NaN.
+    GfNumericCastPosOverflow,  ///< Value too high to convert.
+    GfNumericCastNegOverflow,  ///< Value too low to convert.
+    GfNumericCastNaN           ///< Value is a floating-point NaN.
 };
 
 /// Attempt to convert \p from to a value of type \p To "safely".  From and To
@@ -68,77 +85,82 @@ enum GfNumericCastFailureType {
 /// floating-point types.  Note that converting an integral value that is out of
 /// GfHalf's _finite_ range will produce a +/- inf GfHalf.
 ///
-template<class To, class From>
-std::optional<To> GfNumericCast(From from, GfNumericCastFailureType *failType = nullptr)
+template <class To, class From>
+std::optional<To>
+GfNumericCast(From from, GfNumericCastFailureType *failType = nullptr)
 {
-  static_assert(GfIsArithmetic<From>::value && GfIsArithmetic<To>::value);
+    static_assert(GfIsArithmetic<From>::value &&
+                  GfIsArithmetic<To>::value);
 
-  using FromLimits = std::numeric_limits<From>;
-  using ToLimits = std::numeric_limits<To>;
+    using FromLimits = std::numeric_limits<From>;
+    using ToLimits = std::numeric_limits<To>;
 
-  auto setFail = [&failType](GfNumericCastFailureType ft) {
-    if (failType) {
-      *failType = ft;
+    auto setFail = [&failType](GfNumericCastFailureType ft) {
+        if (failType) {
+            *failType = ft;
+        };
     };
-  };
 
-  // int -> int.
-  if constexpr (std::is_integral_v<From> && std::is_integral_v<To>) {
-    // Range check integer to integer.
-    if (GfIntegerCompareLess(from, (ToLimits::min)())) {
-      setFail(GfNumericCastNegOverflow);
-      return {};
+    // int -> int.
+    if constexpr (std::is_integral_v<From> &&
+                  std::is_integral_v<To>) {
+        // Range check integer to integer.
+        if (GfIntegerCompareLess(from, ToLimits::min())) {
+            setFail(GfNumericCastNegOverflow);
+            return {};
+        }
+        if (GfIntegerCompareLess(ToLimits::max(), from)) {
+            setFail(GfNumericCastPosOverflow);
+            return {};
+        }
+        // In-range.
+        return static_cast<To>(from);
     }
-    if (GfIntegerCompareLess((ToLimits::max)(), from)) {
-      setFail(GfNumericCastPosOverflow);
-      return {};
+    // float -> int.
+    else if constexpr (GfIsFloatingPoint<From>::value &&
+                       std::is_integral_v<To>) {
+        // If the floating point value is NaN we cannot convert.
+        if (std::isnan(from)) {
+            setFail(GfNumericCastNaN);
+            return {};
+        }
+        // If the floating point value is an infinity we cannot convert.
+        if (std::isinf(from)) {
+            setFail(std::signbit(static_cast<double>(from))
+                    ? GfNumericCastNegOverflow
+                    : GfNumericCastPosOverflow);
+            return {};
+        }
+        // Otherwise the floating point value must be (when truncated) in the
+        // range for the To type.  We do this by mapping the low/high values for
+        // To into From, then displacing these away from zero by 1 to account
+        // for the truncation, then checking against this range.  Note this
+        // works okay for GfHalf whose max is ~65,000 when converting to
+        // int32_t, say.  In that case we get a range like (-inf, inf), meaning
+        // that all finite halfs are in-range.
+        From low = static_cast<From>(ToLimits::lowest()) - static_cast<From>(1);
+        From high = static_cast<From>(ToLimits::max()) + static_cast<From>(1);
+        
+        if (from <= low) {
+            setFail(GfNumericCastNegOverflow);
+            return {};
+        }
+        if (from >= high) {
+            setFail(GfNumericCastPosOverflow);
+            return {};
+        }
+        // The value is in-range.
+        return static_cast<To>(from);
     }
-    // In-range.
-    return static_cast<To>(from);
-  }
-  // float -> int.
-  else if constexpr (GfIsFloatingPoint<From>::value && std::is_integral_v<To>) {
-    // If the floating point value is NaN we cannot convert.
-    if (std::isnan(from)) {
-      setFail(GfNumericCastNaN);
-      return {};
+    // float -> float, or float -> int.
+    else {
+        (void)setFail; // hush compiler.
+        
+        // No range checking, following boost::numeric_cast.
+        return static_cast<To>(from);
     }
-    // If the floating point value is an infinity we cannot convert.
-    if (std::isinf(from)) {
-      setFail(std::signbit(static_cast<double>(from)) ? GfNumericCastNegOverflow :
-                                                        GfNumericCastPosOverflow);
-      return {};
-    }
-    // Otherwise the floating point value must be (when truncated) in the
-    // range for the To type.  We do this by mapping the low/high values for
-    // To into From, then displacing these away from zero by 1 to account
-    // for the truncation, then checking against this range.  Note this
-    // works okay for GfHalf whose max is ~65,000 when converting to
-    // int32_t, say.  In that case we get a range like (-inf, inf), meaning
-    // that all finite halfs are in-range.
-    From low = static_cast<From>(ToLimits::lowest()) - static_cast<From>(1);
-    From high = static_cast<From>((ToLimits::max)()) + static_cast<From>(1);
-
-    if (from <= low) {
-      setFail(GfNumericCastNegOverflow);
-      return {};
-    }
-    if (from >= high) {
-      setFail(GfNumericCastPosOverflow);
-      return {};
-    }
-    // The value is in-range.
-    return static_cast<To>(from);
-  }
-  // float -> float, or float -> int.
-  else {
-    (void)setFail;  // hush compiler.
-
-    // No range checking, following boost::numeric_cast.
-    return static_cast<To>(from);
-  }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_BASE_GF_NUMERIC_CAST_H
+#endif // PXR_BASE_GF_NUMERIC_CAST_H

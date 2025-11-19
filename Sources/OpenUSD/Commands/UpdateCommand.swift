@@ -19,7 +19,7 @@ import Foundation
  */
 struct UpdateCommand: AsyncCommand
 {
-  static var configuration = CommandConfiguration(
+  static let configuration = CommandConfiguration(
     commandName: "update",
     abstract: "Update the OpenUSD version in the current package."
   )
@@ -67,6 +67,13 @@ struct UpdateCommand: AsyncCommand
     {
       // 1. clone pixar official openusd repository.
       try Command.git.run(with: ["clone", "https://github.com/PixarAnimationStudios/OpenUSD.git", "\(pkgDir)/.build/OpenUSD"])
+
+      // 1b. checkout specific version if requested.
+      if let version = arguments.usdVersion
+      {
+        try Command.git.run(with: ["-C", "\(pkgDir)/.build/OpenUSD", "checkout", version])
+        log.info("checked out OpenUSD version: \(version)")
+      }
 
       // 2. update all usd source in this package, in parallel.
       async let bse = try Pxr.base.enumerate(packagePath: pkgDir)

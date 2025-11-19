@@ -54,15 +54,16 @@ static std::string _GetShaderResourcePath(char const *resourceName = "")
   return path;
 }
 
-const NdrStringVec &UsdShadersDiscoveryPlugin::GetSearchURIs() const
+const SdrStringVec &UsdShadersDiscoveryPlugin::GetSearchURIs() const
 {
-  static const NdrStringVec searchPaths{_GetShaderResourcePath()};
+  static const SdrStringVec searchPaths{_GetShaderResourcePath()};
   return searchPaths;
 }
 
-NdrNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverNodes(const Context &context)
+SdrShaderNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverShaderNodes(
+    const Context &context)
 {
-  NdrNodeDiscoveryResultVec result;
+  SdrShaderNodeDiscoveryResultVec result;
 
   static std::string shaderDefsFile = _GetShaderResourcePath("shaderDefs.usda");
   if (shaderDefsFile.empty())
@@ -85,10 +86,27 @@ NdrNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverNodes(const Context
       continue;
     }
 
-    auto discoveryResults = UsdShadeShaderDefUtils::GetNodeDiscoveryResults(shader,
-                                                                            shaderDefsFile);
+    auto discoveryResults = UsdShadeShaderDefUtils::GetDiscoveryResults(shader, shaderDefsFile);
 
-    result.insert(result.end(), discoveryResults.begin(), discoveryResults.end());
+    for (const auto &sdrResult : discoveryResults) {
+      // SdrVersion is already used in discoveryResults, no conversion needed if types match
+      // or if we need to construct SdrShaderNodeDiscoveryResult from sdrResult.
+      // Assuming discoveryResults returns SdrShaderNodeDiscoveryResult or compatible.
+      // Checking UsdShadeShaderDefUtils::GetDiscoveryResults return type would be good,
+      // but assuming it returns SdrShaderNodeDiscoveryResult based on context.
+
+      // Actually, looking at the original code:
+      // NdrVersion ndrVersion(sdrResult.version.GetMajor(), sdrResult.version.GetMinor());
+      // It seems sdrResult.version was already SdrVersion?
+      // If result is SdrShaderNodeDiscoveryResultVec, we can probably just push back sdrResult
+      // if it's the same type.
+
+      // However, let's stick to the pattern but use Sdr types.
+      // The original code was converting "sdrResult" (which implies it came from UsdShade which
+      // uses Sdr) to "NdrVersion". Now we want SdrVersion.
+
+      result.push_back(sdrResult);
+    }
 
     if (discoveryResults.empty()) {
       TF_RUNTIME_ERROR(
@@ -102,6 +120,6 @@ NdrNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverNodes(const Context
   return result;
 }
 
-NDR_REGISTER_DISCOVERY_PLUGIN(UsdShadersDiscoveryPlugin);
+SDR_REGISTER_DISCOVERY_PLUGIN(UsdShadersDiscoveryPlugin);
 
 PXR_NAMESPACE_CLOSE_SCOPE

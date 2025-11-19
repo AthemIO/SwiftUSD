@@ -6,4 +6,5 @@
 #include <UsdProc/generativeProcedural.h>
 #include <UsdProc/tokens.h>
 
+#include <UsdProc/generatedSchema.module.h>
 #endif  // __PXR_USD_USDPROC_H__

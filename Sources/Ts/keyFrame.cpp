@@ -13,7 +13,7 @@
 #include "Ts/data.h"
 #include "Ts/typeRegistry.h"
 #include "Ts/types.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -145,7 +145,7 @@ bool TsKeyFrame::IsEquivalentAtSide(const TsKeyFrame &keyFrame, TsSide side) con
     return false;
   }
 
-  if (side == TsLeft) {
+  if (side == TsSideLeft) {
     if (HasTangents()) {
       if (GetLeftTangentLength() != keyFrame.GetLeftTangentLength() ||
           GetLeftTangentSlope() != keyFrame.GetLeftTangentSlope())
@@ -199,12 +199,12 @@ void TsKeyFrame::SetValue(VtValue val)
 
 VtValue TsKeyFrame::GetValue(TsSide side) const
 {
-  return (side == TsLeft) ? GetLeftValue() : GetValue();
+  return (side == TsSideLeft) ? GetLeftValue() : GetValue();
 }
 
 void TsKeyFrame::SetValue(VtValue val, TsSide side)
 {
-  if (side == TsLeft) {
+  if (side == TsSideLeft) {
     SetLeftValue(val);
   }
   else {

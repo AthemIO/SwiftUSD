@@ -7,7 +7,6 @@
 #ifndef PXR_USD_SDF_TEXT_PARSER_CONTEXT_H
 #define PXR_USD_SDF_TEXT_PARSER_CONTEXT_H
 
-#include "Sdf/data.h"
 #include "Sdf/layerHints.h"
 #include "Sdf/layerOffset.h"
 #include "Sdf/listOp.h"
@@ -16,33 +15,96 @@
 #include "Sdf/payload.h"
 #include "Sdf/reference.h"
 #include "Sdf/types.h"
+#include "Sdf/usdaData.h"
 #include "pxr/pxrns.h"
+
+#include "Ts/knot.h"
+#include "Ts/knotMap.h"
+#include "Ts/spline.h"
+#include "Ts/types.h"
 
 #include "Vt/dictionary.h"
 
 #include "Tf/token.h"
 
+#include <array>
 #include <optional>
 #include <string>
 #include <vector>
 
-// Lexical scanner type.
-typedef void *yyscan_t;
-
 PXR_NAMESPACE_OPEN_SCOPE
+
+// Contains symbolic names for states the parser can
+// be in when traversing the scene hierarchy during
+// a parse run such that simple values can be
+// disambiguated
+enum class Sdf_TextParserCurrentParsingContext {
+  LayerSpec,
+  PrimSpec,
+  AttributeSpec,
+  RelationshipSpec,
+  Metadata,
+  KeyValueMetadata,
+  ListOpMetadata,
+  DocMetadata,
+  PermissionMetadata,
+  SymmetryFunctionMetadata,
+  DisplayUnitMetadata,
+  Dictionary,
+  DictionaryTypeName,
+  DictionaryKey,
+  ConnectAttribute,
+  ReorderRootPrims,
+  ReorderNameChildren,
+  ReorderProperties,
+  ReferencesListOpMetadata,
+  PayloadListOpMetadata,
+  InheritsListOpMetadata,
+  SpecializesListOpMetadata,
+  VariantsMetadata,
+  VariantSetsMetadata,
+  RelocatesMetadata,
+  KindMetadata,
+  RelationshipAssignment,
+  RelationshipTarget,
+  RelationshipDefault,
+  TimeSamples,
+  SplineValues,
+  SplineKnotItem,
+  SplinePostExtrapItem,
+  SplinePreExtrapItem,
+  SplineExtrapSloped,
+  SplineKeywordLoop,
+  SplineKnotParam,
+  SplineTangent,
+  SplineTangentWithWidth,
+  SplineInterpMode,
+  ReferenceParameters,
+  LayerOffset,
+  LayerScale,
+  VariantSetStatement,
+  VariantStatementList,
+  PrefixSubstitutionsMetadata,
+  SuffixSubstitutionsMetadata,
+  SubLayerMetadata
+};
 
 // This class contains the global state while parsing an sdf file.
 // It contains the data structures that we use to create the scene description
 // from the file.
-
 class Sdf_TextParserContext {
  public:
   // Constructor.
+  SDF_API
   Sdf_TextParserContext();
 
   std::string magicIdentifierToken;
   std::string versionString;
   std::string fileContext;
+  int sdfLineNo = 1;
+  void *scanner = nullptr;
+  bool seenError = false;
+  bool metadataOnly = false;
 
   // State for layer refs, in general
   std::string layerRefPath;
@@ -53,6 +115,16 @@ class Sdf_TextParserContext {
 
   // State for sublayer offsets
   std::vector<SdfLayerOffset> subLayerOffsets;
+
+  // state for building up different type names
+  std::string primTypeName;
+  std::string attributeTypeName;
+  TfToken typeName;
+  std::string dictionaryTypeName;
+  std::string symmetryFunctionName;
+
+  // state for various parsing contexts
+  std::vector<Sdf_TextParserCurrentParsingContext> parsingContext;
 
   // String list currently being built
   std::vector<TfToken> nameVector;
@@ -90,6 +162,12 @@ class Sdf_TextParserContext {
 
   // helper for relocates parsing
   SdfRelocates relocatesParsing;
+  SdfPath relocatesKey;
+  bool seenFirstRelocatesPath;
+
+  // helper for string dictionaries
+  std::string stringDictionaryKey;
+  bool seenStringDictionaryKey;
 
   // helpers for generic metadata
   TfToken genericMetadataKey;
@@ -104,19 +182,15 @@ class Sdf_TextParserContext {
   // Vector of dictionaries used to parse nested dictionaries.
   // The first element in the vector contains the last parsed dictionary.
   std::vector<VtDictionary> currentDictionaries;
-
-  bool seenError;
+  std::vector<std::string> currentDictionaryKey;
+  std::vector<bool> expectDictionaryValue;
 
   bool custom;
   SdfSpecifier specifier;
-  SdfDataRefPtr data;
+  SdfUsdaDataRefPtr data;
   SdfPath path;
-  TfToken typeName;
   VtValue variability;
   VtValue assoc;
-
-  // Should we only read metadata from the file?
-  bool metadataOnly;
 
   // Hints to fill in about the layer's contents.
   SdfLayerHints layerHints;
@@ -138,10 +212,28 @@ class Sdf_TextParserContext {
   // Stack of names of variants for the variant sets being built
   std::vector<std::vector<std::string>> currentVariantNames;
 
-  unsigned int sdfLineNo;
+  // Working state for splines.
+  bool splineValid;
+  TsSpline spline;
+  TsExtrapolation splineExtrap;
+  TsKnotMap splineKnotMap;
+  TsKnot splineKnot;
+  Sdf_ParserHelpers::Value splineKnotValue;
+  Sdf_ParserHelpers::Value splineKnotPreValue;
+  Sdf_ParserHelpers::Value splineTangentSlopeValue;
+  Sdf_ParserHelpers::Value splineTangentWidthValue;
+  TsTangentAlgorithm splineTangentAlgorithm;
+  std::string splineTangentIdentifier;
+  bool splineTanIsPre;
+  TsInterpMode splineInterp;
+  std::array<double, 5> splineLoopItem;
 
-  // Used by flex for reentrant parsing
-  yyscan_t scanner;
+  // Working state for array edits.
+  std::unique_ptr<Sdf_ParserHelpers::ArrayEditFactoryBase> arrayEditFactory;
+  int64_t arrayEditSizeArg = -1;
+  bool arrayEditHasFill = false;
+  int64_t arrayEditReferenceIndexes[2] = {0, 0};
+  uint8_t arrayEditReferencePresence = 0;  // low bits indicate index presence.
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

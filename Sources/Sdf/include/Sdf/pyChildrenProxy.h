@@ -9,17 +9,16 @@
 
 /// \file sdf/pyChildrenProxy.h
 
-#include "Arch/demangle.h"
-#include "Sdf/childrenProxy.h"
-#include "Tf/pyError.h"
-#include "Tf/pyUtils.h"
-#include "Tf/stringUtils.h"
 #include "pxr/pxrns.h"
 
-#if defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
-
-#include <boost/python.hpp>
-#include <boost/python/slice.hpp>
+#if PXR_PYTHON_SUPPORT_ENABLED
+#  include "Arch/demangle.h"
+#  include "Sdf/childrenProxy.h"
+#  include "Tf/pyError.h"
+#  include "Tf/pyUtils.h"
+#  include "Tf/stringUtils.h"
+#  include "pxr/external/boost/python.hpp"
+#  include "pxr/external/boost/python/slice.hpp"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -61,30 +60,30 @@ template<class _View> class SdfPyChildrenProxy {
   typedef typename View::const_iterator _view_const_iterator;
 
   struct _ExtractItem {
-    static boost::python::object Get(const _const_iterator &i)
+    static pxr_boost::python::object Get(const _const_iterator &i)
     {
-      return boost::python::make_tuple(i->first, i->second);
+      return pxr_boost::python::make_tuple(i->first, i->second);
     }
   };
 
   struct _ExtractKey {
-    static boost::python::object Get(const _const_iterator &i)
+    static pxr_boost::python::object Get(const _const_iterator &i)
     {
-      return boost::python::object(i->first);
+      return pxr_boost::python::object(i->first);
     }
   };
 
   struct _ExtractValue {
-    static boost::python::object Get(const _const_iterator &i)
+    static pxr_boost::python::object Get(const _const_iterator &i)
     {
-      return boost::python::object(i->second);
+      return pxr_boost::python::object(i->second);
     }
   };
 
   template<class E> class _Iterator {
    public:
-    _Iterator(const boost::python::object &object)
-        : _object(object), _owner(boost::python::extract<const This &>(object)()._proxy)
+    _Iterator(const pxr_boost::python::object &object)
+        : _object(object), _owner(pxr_boost::python::extract<const This &>(object)()._proxy)
     {
       _cur = _owner.begin();
     }
@@ -94,18 +93,18 @@ template<class _View> class SdfPyChildrenProxy {
       return *this;
     }
 
-    boost::python::object GetNext()
+    pxr_boost::python::object GetNext()
     {
       if (_cur == _owner.end()) {
         TfPyThrowStopIteration("End of ChildrenProxy iteration");
       }
-      boost::python::object result = E::Get(_cur);
+      pxr_boost::python::object result = E::Get(_cur);
       ++_cur;
       return result;
     }
 
    private:
-    boost::python::object _object;
+    pxr_boost::python::object _object;
     const Proxy &_owner;
     _const_iterator _cur;
   };
@@ -117,7 +116,7 @@ template<class _View> class SdfPyChildrenProxy {
 
   static void _Wrap()
   {
-    using namespace boost::python;
+    using namespace pxr_boost::python;
 
     std::string name = _GetName();
 
@@ -222,7 +221,7 @@ template<class _View> class SdfPyChildrenProxy {
     TF_CODING_ERROR("can't directly reparent a %s", _proxy._GetType().c_str());
   }
 
-  void _SetItemBySlice(const boost::python::slice &slice, const mapped_vector_type &values)
+  void _SetItemBySlice(const pxr_boost::python::slice &slice, const mapped_vector_type &values)
   {
     if (!TfPyIsNone(slice.start()) || !TfPyIsNone(slice.stop()) || !TfPyIsNone(slice.step())) {
       TfPyThrowIndexError("can only assign to full slice [:]");
@@ -265,16 +264,16 @@ template<class _View> class SdfPyChildrenProxy {
     _proxy._Insert(value, index);
   }
 
-  boost::python::object _PyGet(const key_type &key) const
+  pxr_boost::python::object _PyGet(const key_type &key) const
   {
     _view_const_iterator i = _GetView().find(key);
-    return i == _GetView().end() ? boost::python::object() : boost::python::object(*i);
+    return i == _GetView().end() ? pxr_boost::python::object() : pxr_boost::python::object(*i);
   }
 
-  boost::python::object _PyGetDefault(const key_type &key, const mapped_type &def) const
+  pxr_boost::python::object _PyGetDefault(const key_type &key, const mapped_type &def) const
   {
     _view_const_iterator i = _GetView().find(key);
-    return i == _GetView().end() ? boost::python::object(def) : boost::python::object(*i);
+    return i == _GetView().end() ? pxr_boost::python::object(def) : pxr_boost::python::object(*i);
   }
 
   bool _HasKey(const key_type &key) const
@@ -287,24 +286,24 @@ template<class _View> class SdfPyChildrenProxy {
     return _GetView().find(value) != _GetView().end();
   }
 
-  static _Iterator<_ExtractItem> _GetItemIterator(const boost::python::object &x)
+  static _Iterator<_ExtractItem> _GetItemIterator(const pxr_boost::python::object &x)
   {
     return _Iterator<_ExtractItem>(x);
   }
 
-  static _Iterator<_ExtractKey> _GetKeyIterator(const boost::python::object &x)
+  static _Iterator<_ExtractKey> _GetKeyIterator(const pxr_boost::python::object &x)
   {
     return _Iterator<_ExtractKey>(x);
   }
 
-  static _Iterator<_ExtractValue> _GetValueIterator(const boost::python::object &x)
+  static _Iterator<_ExtractValue> _GetValueIterator(const pxr_boost::python::object &x)
   {
     return _Iterator<_ExtractValue>(x);
   }
 
-  template<class E> boost::python::list _Get() const
+  template<class E> pxr_boost::python::list _Get() const
   {
-    boost::python::list result;
+    pxr_boost::python::list result;
     for (_const_iterator i = _proxy.begin(), n = _proxy.end(); i != n; ++i) {
       result.append(E::Get(i));
     }
@@ -331,6 +330,6 @@ template<class _View> class SdfPyChildrenProxy {
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#endif  // PXR_PYTHON_SUPPORT_ENABLED
 
-#endif  // PXR_USD_SDF_PY_CHILDREN_PROXY_H
+#endif  // PXR_USD_SDF_

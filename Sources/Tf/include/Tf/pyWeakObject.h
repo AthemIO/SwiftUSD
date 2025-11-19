@@ -9,7 +9,7 @@
 
 #include "pxr/pxrns.h"
 
-#if defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 
 #include "Tf/api.h"
 #include "Tf/pyIdentity.h"
@@ -19,10 +19,8 @@
 #include "Tf/weakBase.h"
 #include "Tf/weakPtr.h"
 
-#if __has_include(<boost/python/handle.hpp>)
-#include <boost/python/handle.hpp>
-#include <boost/python/object.hpp>
-#endif // __has_include(<boost/python/handle.hpp>)
+#include "pxr/external/boost/python/handle.hpp"
+#include "pxr/external/boost/python/object.hpp"
 
 #include "Tf/hashmap.h"
 
@@ -31,22 +29,23 @@ PXR_NAMESPACE_OPEN_SCOPE
 typedef TfWeakPtr<struct Tf_PyWeakObject> Tf_PyWeakObjectPtr;
 
 // A weak pointable weak reference to a python object.
-struct Tf_PyWeakObject : public TfWeakBase {
- public:
-  typedef Tf_PyWeakObject This;
+struct Tf_PyWeakObject : public TfWeakBase
+{
+public:
+    typedef Tf_PyWeakObject This;
 
-  static Tf_PyWeakObjectPtr GetOrCreate(boost::python::object const &obj);
-  boost::python::object GetObject() const;
-  void Delete();
+    static Tf_PyWeakObjectPtr GetOrCreate(pxr_boost::python::object const &obj);
+    pxr_boost::python::object GetObject() const;
+    void Delete();
+    
+private:
+    explicit Tf_PyWeakObject(pxr_boost::python::object const &obj);
 
- private:
-  explicit Tf_PyWeakObject(boost::python::object const &obj);
-
-  boost::python::handle<> _weakRef;
+    pxr_boost::python::handle<> _weakRef;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#endif // PXR_PYTHON_SUPPORT_ENABLED
 
-#endif  // PXR_BASE_TF_PY_WEAK_OBJECT_H
+#endif // PXR_BASE_TF_PY_WEAK_OBJECT_H

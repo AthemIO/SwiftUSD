@@ -7,7 +7,7 @@
 #include "Hd/primDataSourceOverlayCache.h"
 
 #include "Tf/denseHashSet.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 #include "Work/utils.h"
 
 PXR_NAMESPACE_OPEN_SCOPE

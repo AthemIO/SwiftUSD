@@ -11,40 +11,44 @@
 #include "Tf/pyUtils.h"
 #include "Tf/stringUtils.h"
 
-#include <boost/python/class.hpp>
-#include <boost/python/operators.hpp>
-
-using namespace boost::python;
+#include "pxr/external/boost/python/class.hpp"
+#include "pxr/external/boost/python/operators.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-static size_t __hash__(const ArTimestamp &self)
-{
-  return TfHash()(self);
+using namespace pxr_boost::python;
+
+static size_t
+__hash__(const ArTimestamp &self)
+{ 
+    return TfHash()(self);
 }
 
-static std::string __repr__(const ArTimestamp &self)
+static std::string
+__repr__(const ArTimestamp &self)
 {
-  return TF_PY_REPR_PREFIX + "Timestamp" +
-         (self.IsValid() ? TfStringPrintf("(%s)", TfPyRepr(self.GetTime()).c_str()) : "()");
+    return TF_PY_REPR_PREFIX + "Timestamp" + 
+        (self.IsValid() ? 
+            TfStringPrintf("(%s)", TfPyRepr(self.GetTime()).c_str()) : "()");
 }
 
 void wrapTimestamp()
 {
-  class_<ArTimestamp>("Timestamp")
-      .def(init<double>())
-      .def(init<ArTimestamp>())
+    class_<ArTimestamp>("Timestamp")
+        .def(init<double>())
+        .def(init<ArTimestamp>())
 
-      .def("IsValid", &ArTimestamp::IsValid)
-      .def("GetTime", &ArTimestamp::GetTime)
+        .def("IsValid", &ArTimestamp::IsValid)
+        .def("GetTime", &ArTimestamp::GetTime)
 
-      .def(self == self)
-      .def(self != self)
-      .def(self < self)
-      .def(self <= self)
-      .def(self > self)
-      .def(self >= self)
+        .def(self == self)
+        .def(self != self)
+        .def(self < self)
+        .def(self <= self)
+        .def(self > self)
+        .def(self >= self)  
 
-      .def("__hash__", __hash__)
-      .def("__repr__", __repr__);
+        .def("__hash__", __hash__)
+        .def("__repr__", __repr__)
+        ;
 }

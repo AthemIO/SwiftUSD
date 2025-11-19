@@ -13,7 +13,7 @@
 import ArgumentParser
 import Foundation
 
-extension Array: ExpressibleByArgument where Element: ExpressibleByArgument
+extension Array: @retroactive ExpressibleByArgument where Element: ExpressibleByArgument
 {
   public var defaultValueDescription: String
   {

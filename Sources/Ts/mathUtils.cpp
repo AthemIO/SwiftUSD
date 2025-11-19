@@ -6,7 +6,7 @@
 //
 
 #include "Ts/mathUtils.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Gf/matrix3d.h"
 #include "Gf/matrix4d.h"

@@ -23,7 +23,7 @@
 #include "HgiMetal/shaderProgram.h"
 #include "HgiMetal/texture.h"
 
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 #include "Tf/getenv.h"
 #include "Tf/registryManager.h"

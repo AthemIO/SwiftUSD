@@ -1,5 +1,5 @@
 {
-  "originHash" : "d60442a9a0464fe5da27d81135d403d173b1419d01b725aebf3b50bcf6906786",
+  "originHash" : "d2f40e6ee8471ef8bef3b3bdbc5bce078bfae169e831da95f64c3b028a6ba524",
   "pins" : [
     {
       "identity" : "icu",
@@ -76,10 +76,10 @@
     {
       "identity" : "swift-cross-ui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wabiverse/swift-cross-ui",
+      "location" : "https://github.com/stackotter/swift-cross-ui",
       "state" : {
-        "branch" : "1a887c2",
-        "revision" : "1a887c25d505e9ea4c2cc90bae71196d31645b57"
+        "branch" : "main",
+        "revision" : "734b5dfd2377e7c02faf55c96c2227d693c07ecc"
       }
     },
     {
@@ -87,8 +87,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/thebrowsercompany/swift-cwinrt",
       "state" : {
-        "branch" : "main",
-        "revision" : "3e3d5a0270ebe8fb0bc738d24d4786a6cd0621eb"
+        "revision" : "eb46cdb66f770a1e006f9fcfebbf9e99a0fba811"
       }
     },
     {
@@ -114,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stackotter/swift-image-formats",
       "state" : {
-        "revision" : "697bd8aa62bef7d74a1383454e3534a527769e41",
-        "version" : "0.3.2"
+        "revision" : "2e5dc1ead747afab9fd517d81316d961969e3610",
+        "version" : "0.3.3"
       }
     },
     {
@@ -148,37 +147,41 @@
     {
       "identity" : "swift-uwp",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thebrowsercompany/swift-uwp",
+      "location" : "https://github.com/stackotter/swift-uwp",
       "state" : {
-        "branch" : "main",
-        "revision" : "4fe2fa05652f688ba5af57d0ce9e93961f6dea98"
+        "revision" : "e3ff9c195775e16b404b82cf6886c5e81d73b6c1"
+      }
+    },
+    {
+      "identity" : "swift-webview2core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stackotter/swift-webview2core",
+      "state" : {
+        "revision" : "c9911ca23455b9fcdb2429e98baa6f4d003b381c"
       }
     },
     {
       "identity" : "swift-windowsappsdk",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wabiverse/swift-windowsappsdk",
+      "location" : "https://github.com/stackotter/swift-windowsappsdk",
       "state" : {
-        "branch" : "main",
-        "revision" : "36e2f6c261fcbffc303c107b24f705605f3908be"
+        "revision" : "ba6f0ec377b70d8be835d253102ff665a0e47d99"
       }
     },
     {
       "identity" : "swift-windowsfoundation",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thebrowsercompany/swift-windowsfoundation",
+      "location" : "https://github.com/stackotter/swift-windowsfoundation",
       "state" : {
-        "branch" : "main",
-        "revision" : "dbe14563b6bb0eb9c761d8aff7f465afddf185f9"
+        "revision" : "4ad57d20553514bcb23724bdae9121569b19f172"
       }
     },
     {
       "identity" : "swift-winui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wabiverse/swift-winui",
+      "location" : "https://github.com/stackotter/swift-winui",
       "state" : {
-        "branch" : "main",
-        "revision" : "0529457d9f360904b2009fd67cba90046ff252c4"
+        "revision" : "1695ee3ea2b7a249f6504c7f1759e7ec7a38eb86"
       }
     },
     {
@@ -193,10 +196,10 @@
     {
       "identity" : "zlib",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/the-swift-collective/zlib.git",
+      "location" : "https://github.com/the-swift-collective/zlib",
       "state" : {
-        "revision" : "f35d438c14187cb369dfd82603c3427dc66fbed5",
-        "version" : "1.3.1"
+        "revision" : "f1d153b90420f9fcc6ef916cd67ea96f0e68d137",
+        "version" : "1.3.2"
       }
     }
   ],

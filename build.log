@@ -1,0 +1,922 @@
+warning: you may be able to install gtk+-3.0 using your system-packager:
+    brew install gtk+3
+warning: you may be able to install gtk+-3.0 using your system-packager:
+    brew install gtk+3
+[0/1] Planning build
+[1/1] Compiling plugin OpenUSDPlugin
+[2/2] Compiling plugin UsdGenSchemaPlugin
+[3/3] Compiling plugin GenerateManual
+[4/4] Compiling plugin Swift-DocC Preview
+[5/5] Compiling plugin Swift-DocC
+Building for production...
+[5/3294] Write sources
+[5/3294] Copying CMakeLists.txt
+[5/3294] Copying plugInfo.json
+[6/3294] Copying schema.usda
+[6/3294] Copying README.md
+[6/3294] Write sources
+[13/3524] Compiling TurboJPEG jdapimin.c
+[14/3524] Compiling TurboJPEG jdatasrc.c
+[15/3524] Compiling tbb tbb_shim.cpp
+[16/3524] Compiling TurboJPEG jdatasrc-tj.c
+[17/3524] Compiling TurboJPEG jdatadst-tj.c
+[18/3524] Compiling TurboJPEG jdcoefct.c
+[19/3524] Compiling TurboJPEG jddctmgr.c
+[20/3524] Compiling TurboJPEG jdatadst.c
+[21/3524] Compiling sse2neon sse2neon.cpp
+[22/3524] Compiling TurboJPEG jdarith.c
+[23/3524] Compiling TurboJPEG jdapistd.c
+[24/3524] Compiling TurboJPEG jdcolor.c
+[25/3524] Compiling sharpyuv_csp.c
+[26/3524] Write swift-version--44D72886A502174.txt
+[27/3524] Compiling pxr pxrns.cpp
+[28/3524] Compiling TurboJPEG jdhuff.c
+[29/3524] Compiling pnglibconf pnglibconf.c
+[30/3524] Compiling TurboJPEG jddiffct.c
+[31/3524] Compiling sharpyuv_sse2.c
+[32/3524] Compiling wicdec.c
+[33/3524] Compiling sharpyuv_dsp.c
+[34/3524] Compiling sharpyuv_cpu.c
+[35/3524] Compiling sharpyuv_gamma.c
+[36/3525] Compiling webpdec.c
+[37/3527] Compiling tiffdec.c
+[38/3528] Compiling pngdec.c
+[39/3528] Compiling metadata.c
+[40/3528] Compiling sharpyuv.c
+[41/3529] Compiling jpegdec.c
+[42/3529] Compiling imageio_util.c
+[43/3529] Compiling image_dec.c
+[44/3529] Compiling pnmdec.c
+[45/3529] Compiling sharpyuv_neon.c
+[46/3529] Compiling _SwiftSyntaxCShims dummy.c
+[48/3529] Compiling SwiftSyntax600 Empty.swift
+[49/3529] Compiling SwiftSyntax509 Empty.swift
+[50/3529] Compiling SwiftSyntax510 Empty.swift
+[50/3529] Compiling image_enc.c
+[51/3529] Compiling any any.cpp
+[52/3530] Compiling zdict.c
+[53/3530] Compiling zstd_v01.c
+[54/3530] Compiling zstd_v07.c
+[55/3530] Compiling zstd_v03.c
+[56/3530] Compiling zstd_v06.c
+[57/3530] Compiling zstd_v04.c
+[58/3530] Compiling fastcover.c
+[59/3530] Compiling zbuff_decompress.c
+[60/3530] Compiling zstd_v05.c
+[61/3530] Compiling zbuff_common.c
+[62/3530] Compiling zbuff_compress.c
+[63/3530] Compiling pystring pystring.cpp
+[64/3530] Compiling zstd_v02.c
+[65/3530] Compiling huf_decompress_amd64.S
+[66/3530] Compiling zstd_ddict.c
+[67/3530] Compiling cover.c
+[68/3530] Compiling zstd_ldm.c
+[69/3530] Compiling zstd_decompress.c
+[70/3530] Compiling zstdmt_compress.c
+[71/3530] Compiling zstd_compress_superblock.c
+[72/3530] Compiling zstd_compress_sequences.c
+[73/3530] Compiling zstd_compress_literals.c
+[74/3530] Compiling divsufsort.c
+[75/3530] Compiling huf_decompress.c
+[76/3530] Compiling hist.c
+[77/3530] Compiling zstd_decompress_block.c
+[78/3530] Compiling zstd_common.c
+[79/3530] Compiling threading.c
+[80/3530] Compiling fse_compress.c
+[81/3530] Compiling pool.c
+[82/3530] Compiling xxhash.c
+[83/3530] Compiling error_private.c
+[84/3530] Compiling fse_decompress.c
+[85/3530] Compiling entropy_common.c
+[86/3530] Compiling debug.c
+[87/3530] Compiling zstd_opt.c
+[88/3530] Compiling huf_compress.c
+[89/3530] Compiling zstd_fast.c
+[90/3530] Compiling ZLibC uncompr.c
+[91/3530] Compiling zstd_compress.c
+[92/3530] Compiling ZLibC inffast.c
+[93/3530] Compiling zstd_double_fast.c
+[94/3530] Compiling ZLibC inftrees.c
+[95/3530] Compiling ZLibC infback.c
+[96/3530] Compiling ZLibC trees.c
+[97/3530] Compiling ZLibC crc32.c
+[98/3530] Compiling ZLibC inflate.c
+[99/3530] Compiling ZLibC compress.c
+[100/3530] Compiling ZLibC adler32.c
+[101/3530] Compiling ZLibC deflate.c
+[102/3530] Compiling ZLibC zutil.c
+[103/3530] Compiling ZLibC gzlib.c
+[104/3530] Compiling ZLibC gzread.c
+[105/3530] Compiling ZLibC gzclose.c
+[106/3530] Compiling ZLibC gzwrite.c
+[107/3530] Compiling Yaml tag.cpp
+[108/3530] Compiling Yaml stream.cpp
+[110/3531] Compiling ZLib ZLib.swift
+[110/3531] Compiling Yaml scantag.cpp
+[111/3531] Compiling powerpc_init.c
+[112/3531] Compiling Yaml simplekey.cpp
+[113/3531] Compiling Yaml scanscalar.cpp
+[114/3531] Compiling filter_vsx_intrinsics.c
+[115/3531] Compiling Yaml singledocparser.cpp
+[116/3531] Compiling png pngwio.c
+[117/3531] Compiling png pngwtran.c
+[118/3531] Compiling png pngwrite.c
+[119/3531] Compiling png pngtrans.c
+[120/3531] Compiling Yaml regex_yaml.cpp
+[121/3531] Compiling png pngwutil.c
+[122/3531] Compiling png pngset.c
+[123/3531] Compiling png pngrio.c
+[124/3531] Compiling Yaml scantoken.cpp
+[125/3531] Compiling png pngmem.c
+[126/3531] Compiling png pngpread.c
+[127/3531] Compiling Yaml parser.cpp
+[128/3531] Compiling png pngget.c
+[129/3531] Compiling png pngerror.c
+[130/3531] Compiling mips_init.c
+[131/3531] Compiling filter_msa_intrinsics.c
+[132/3531] Compiling png pngrutil.c
+[133/3531] Compiling png pngread.c
+[134/3531] Compiling filter_mmi_inline_assembly.c
+[135/3531] Compiling filter_lsx_intrinsics.c
+[136/3531] Compiling loongarch_lsx_init.c
+[137/3531] Compiling filter_sse2_intrinsics.c
+[137/3531] Compiling intel_init.c
+[139/3531] Compiling Yaml scanner.cpp
+[140/3531] Compiling filter_neon.S
+[142/3531] Compiling Version Version+Codable.swift
+[142/3531] Compiling palette_neon_intrinsics.c
+[143/3531] Compiling filter_neon_intrinsics.c
+[144/3531] Compiling arm_init.c
+[146/3531] Compiling Version Version+Codable.swift
+[146/3531] Compiling png pngrtran.c
+[147/3531] Compiling png png.c
+[148/3531] Compiling Yaml null.cpp
+[149/3531] Compiling Yaml node.cpp
+[150/3531] Compiling Yaml ostream_wrapper.cpp
+[151/3531] Compiling Yaml exceptions.cpp
+[152/3531] Compiling zstd_lazy.c
+[153/3531] Compiling Yaml nodeevents.cpp
+[154/3531] Compiling Yaml memory.cpp
+[155/3531] Compiling Yaml exp.cpp
+[156/3531] Compiling Yaml parse.cpp
+[157/3531] Compiling Yaml nodebuilder.cpp
+[158/3531] Compiling Yaml node_data.cpp
+[159/3531] Compiling Yaml emitterutils.cpp
+[160/3531] Compiling Yaml directives.cpp
+[161/3531] Compiling Yaml emitter.cpp
+[162/3531] Compiling Yaml emitterstate.cpp
+[163/3531] Compiling Yaml binary.cpp
+[164/3531] Compiling Yaml emit.cpp
+[165/3531] Compiling Work taskGraph_impl.cpp
+[166/3531] Compiling Yaml depthguard.cpp
+[167/3531] Compiling graphbuilder.cpp
+[168/3531] Compiling Yaml emitfromevents.cpp
+[169/3531] Compiling graphbuilderadapter.cpp
+[170/3531] Compiling Yaml convert.cpp
+[171/3531] Compiling Work threadLimits_impl.cpp
+[172/3531] Compiling Work threadLimits.cpp
+[173/3531] Compiling Work singularTask.cpp
+[174/3531] Compiling Vt valueFromPython.cpp
+[175/3531] Compiling Work reduce.cpp
+[176/3531] Compiling Work loops.cpp
+[177/3531] Compiling Work isolatingDispatcher_impl.cpp
+[178/3531] Compiling Work dispatcher_impl.cpp
+[179/3531] Compiling Work detachedTask_impl.cpp
+[180/3531] Compiling Vt hash.cpp
+[181/3531] Compiling Vt arrayPyBuffer.cpp
+[182/3531] Compiling Vt streamOut.cpp
+[183/3531] Compiling Work utils.cpp
+[184/3531] Compiling Work taskGraph_defaultImpl.cpp
+[185/3531] Compiling Work taskGraph.cpp
+[186/3531] Compiling Work dispatcher.cpp
+[186/3531] Compiling Work detachedTask.cpp
+[188/3531] Compiling Vt debugCodes.cpp
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/arrayEditOps.cpp:36:9: warning: format specifies type 'ssize_t' (aka 'long') but the argument has type 'int64_t' (aka 'long long') [-Wformat]
+   35 |         "Index %zd out of bounds for literal value (max = %zu)\n",
+      |                ~~~
+      |                %lld
+   36 |         idx, size);
+      |         ^~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/arrayEditOps.cpp:44:9: warning: format specifies type 'ssize_t' (aka 'long') but the argument has type 'int64_t' (aka 'long long') [-Wformat]
+   43 |         "Array reference index %zd out of bounds (size = %zu)\n",
+      |                                ~~~
+      |                                %lld
+   44 |         idx, size);
+      |         ^~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/arrayEditOps.cpp:52:9: warning: format specifies type 'ssize_t' (aka 'long') but the argument has type 'int64_t' (aka 'long long') [-Wformat]
+   51 |         "Array insert index %zd out of bounds (size = %zu)\n",
+      |                             ~~~
+      |                             %lld
+   52 |         idx, size);
+      |         ^~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/arrayEditOps.cpp:60:38: warning: format specifies type 'ssize_t' (aka 'long') but the argument has type 'int64_t' (aka 'long long') [-Wformat]
+   59 |         "Sizing operation '%s' with negative size argument %zd\n",
+      |                                                            ~~~
+      |                                                            %lld
+   60 |         TfEnum::GetName(op).c_str(), size);
+      |                                      ^~~~
+4 warnings generated.
+[189/3531] Compiling Vt arrayEditOps.cpp
+[190/3531] Compiling UsdVol tokens.cpp
+[191/3531] Compiling Vt dictionary.cpp
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/arrayEditBuilder.cpp:79:50: warning: format specifies type 'ssize_t' (aka 'long') but the argument has type 'int64_t' (aka 'long long') [-Wformat]
+   78 |     TF_CODING_ERROR("Op '%s' invalid negative size argument: %zd",
+      |                                                              ~~~
+      |                                                              %lld
+   79 |                     TfEnum::GetName(op).c_str(), size);
+      |                                                  ^~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/diagnostic.h:307:42: note: expanded from macro 'TF_CODING_ERROR'
+  307 |         TF_DIAGNOSTIC_CODING_ERROR_TYPE, __VA_ARGS__)
+      |                                          ^~~~~~~~~~~
+1 warning generated.
+[192/3531] Compiling Vt arrayEditBuilder.cpp
+[193/3531] Compiling UsdUtils timeCodeRange.cpp
+[194/3531] Compiling Vt value.cpp
+[195/3531] Compiling Vt types.cpp
+[196/3531] Compiling UsdVol volume.cpp
+[197/3531] Compiling UsdVol openVDBAsset.cpp
+[198/3531] Compiling UsdVol fieldBase.cpp
+[199/3531] Compiling UsdVol fieldAsset.cpp
+[200/3531] Compiling UsdVol field3DAsset.cpp
+[201/3531] Compiling UsdUtils registeredVariantSet.cpp
+[202/3531] Compiling UsdUtils usdzPackage.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:18:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/filesystemWritableAsset.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:828:25: error: member access into incomplete type 'const ArResolverContext'
+  828 |         return ctx ? ctx->Get<ContextObj>() : nullptr;
+      |                         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:26:7: note: forward declaration of 'Pixar::ArResolverContext'
+   26 | class ArResolverContext;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:341:16: error: incomplete result type 'TfType' in function definition
+  341 |         TfType GetProxiedType(_Storage const &storage) const {
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:342:20: error: calling function with incomplete return type 'TfType'
+  342 |             return _getProxiedType(storage);
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:508:23: error: incomplete result type 'TfType' in function definition
+  508 |         static TfType GetTfType(T const &tp) {
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:20: error: incomplete type 'Pixar::TfType' named in nested name specifier
+  509 |             return TfType::Find<ProxiedType>();
+      |                    ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:33: error: unexpected type name 'ProxiedType': expected expression
+  509 |             return TfType::Find<ProxiedType>();
+      |                                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:46: error: expected expression
+  509 |             return TfType::Find<ProxiedType>();
+      |                                              ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:568:23: error: incomplete result type 'TfType' in function definition
+  568 |         static TfType GetTfType(ErasedProxy const &ep) {
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:723:9: error: incomplete result type 'TfType' in function definition
+  723 |         _GetProxiedType(_Storage const &storage) {
+      |         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:23:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolverContext.h:83:1: error: explicit specialization of undeclared template struct 'ArIsContextObject'
+   83 | AR_DECLARE_RESOLVER_CONTEXT(ArDefaultResolverContext);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defineResolverContext.h:31:8: note: expanded from macro 'AR_DECLARE_RESOLVER_CONTEXT'
+   31 | struct ArIsContextObject<context>                      \
+      |        ^                ~~~~~~~~~
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:23:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:138:23: error: field has incomplete type 'ArResolverContext'
+  138 |     ArResolverContext _defaultContext;
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:26:7: note: forward declaration of 'Pixar::ArResolverContext'
+   26 | class ArResolverContext;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:43:8: error: redefinition of 'ArIsContextObject' as different kind of symbol
+   43 | struct ArIsContextObject
+      |        ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolverContext.h:83:1: note: previous definition is here
+   83 | AR_DECLARE_RESOLVER_CONTEXT(ArDefaultResolverContext);
+      | ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defineResolverContext.h:31:8: note: expanded from macro 'AR_DECLARE_RESOLVER_CONTEXT'
+   31 | struct ArIsContextObject<context>                      \
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:27: error: expected '(' for function-style cast or type construction
+   63 |          ArIsContextObject<Object>::value) &&
+      |          ~~~~~~~~~~~~~~~~~^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:28: error: 'Object' does not refer to a value
+   63 |          ArIsContextObject<Object>::value) &&
+      |                            ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:58:17: note: declared here
+   58 | template <class Object, class ...Other>
+      |                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:35: error: no member named 'value' in the global namespace; did you mean simply 'value'?
+   63 |          ArIsContextObject<Object>::value) &&
+      |                                   ^~~~~~~
+      |                                   value
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:61:23: note: 'value' declared here
+   61 |     static const bool value = 
+      |                       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/node.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/types.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:15:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/anyWeakPtr.h:283:12: error: incomplete type 'Pixar::TfType' named in nested name specifier
+  283 |     return TfType::Find(_ptr);
+      |            ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/node.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/types.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:763:16: error: field has incomplete type 'TfType'
+  763 |         TfType _noticeType;
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/node.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/types.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:705:47: error: invalid use of incomplete type 'TfType'
+  705 |                    TfType const &noticeType = TfType())
+      |                                               ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/flattenLayerStack.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/flattenLayerStack.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/node.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/types.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:785:57: error: invalid use of incomplete type 'TfType'
+  785 |                              TfType const &noticeType = TfType())
+      |                                                         ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+[203/3531] Compiling UsdUtils flattenLayerStack.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:18:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/filesystemWritableAsset.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:828:25: error: member access into incomplete type 'const ArResolverContext'
+  828 |         return ctx ? ctx->Get<ContextObj>() : nullptr;
+      |                         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:26:7: note: forward declaration of 'Pixar::ArResolverContext'
+   26 | class ArResolverContext;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:341:16: error: incomplete result type 'TfType' in function definition
+  341 |         TfType GetProxiedType(_Storage const &storage) const {
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:342:20: error: calling function with incomplete return type 'TfType'
+  342 |             return _getProxiedType(storage);
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:508:23: error: incomplete result type 'TfType' in function definition
+  508 |         static TfType GetTfType(T const &tp) {
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:20: error: incomplete type 'Pixar::TfType' named in nested name specifier
+  509 |             return TfType::Find<ProxiedType>();
+      |                    ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:33: error: unexpected type name 'ProxiedType': expected expression
+  509 |             return TfType::Find<ProxiedType>();
+      |                                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:509:46: error: expected expression
+  509 |             return TfType::Find<ProxiedType>();
+      |                                              ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:568:23: error: incomplete result type 'TfType' in function definition
+  568 |         static TfType GetTfType(ErasedProxy const &ep) {
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverScopedCache.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Vt/include/Vt/value.h:723:9: error: incomplete result type 'TfType' in function definition
+  723 |         _GetProxiedType(_Storage const &storage) {
+      |         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:23:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolverContext.h:83:1: error: explicit specialization of undeclared template struct 'ArIsContextObject'
+   83 | AR_DECLARE_RESOLVER_CONTEXT(ArDefaultResolverContext);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defineResolverContext.h:31:8: note: expanded from macro 'AR_DECLARE_RESOLVER_CONTEXT'
+   31 | struct ArIsContextObject<context>                      \
+      |        ^                ~~~~~~~~~
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:23:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:138:23: error: field has incomplete type 'ArResolverContext'
+  138 |     ArResolverContext _defaultContext;
+      |                       ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:26:7: note: forward declaration of 'Pixar::ArResolverContext'
+   26 | class ArResolverContext;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:43:8: error: redefinition of 'ArIsContextObject' as different kind of symbol
+   43 | struct ArIsContextObject
+      |        ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolverContext.h:83:1: note: previous definition is here
+   83 | AR_DECLARE_RESOLVER_CONTEXT(ArDefaultResolverContext);
+      | ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defineResolverContext.h:31:8: note: expanded from macro 'AR_DECLARE_RESOLVER_CONTEXT'
+   31 | struct ArIsContextObject<context>                      \
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/layerStackIdentifier.h:17:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:27: error: expected '(' for function-style cast or type construction
+   63 |          ArIsContextObject<Object>::value) &&
+      |          ~~~~~~~~~~~~~~~~~^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:28: error: 'Object' does not refer to a value
+   63 |          ArIsContextObject<Object>::value) &&
+      |                            ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:58:17: note: declared here
+   58 | template <class Object, class ...Other>
+      |                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:35: error: no member named 'value' in the global namespace; did you mean simply 'value'?
+   63 |          ArIsContextObject<Object>::value) &&
+      |                                   ^~~~~~~
+      |                                   value
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:61:23: note: 'value' declared here
+   61 |     static const bool value = 
+      |                       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/node.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/types.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:15:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/anyWeakPtr.h:283:12: error: incomplete type 'Pixar::TfType' named in nested name specifier
+  283 |     return TfType::Find(_ptr);
+      |            ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/node.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/types.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:763:16: error: field has incomplete type 'TfType'
+  763 |         TfType _noticeType;
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/node.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/types.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:705:47: error: invalid use of incomplete type 'TfType'
+  705 |                    TfType const &noticeType = TfType())
+      |                                               ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/introspection.cpp:8:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/include/UsdUtils/introspection.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/stage.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Usd/include/Usd/editTarget.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/node.h:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pcp/include/Pcp/types.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/layer.h:21:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyTypes.h:13:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/childrenPolicies.h:19:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/proxyPolicies.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/spec.h:17:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/schema.h:16:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Plug/include/Plug/notice.h:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/notice.h:785:57: error: invalid use of incomplete type 'TfType'
+  785 |                              TfType const &noticeType = TfType())
+      |                                                         ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:28:7: note: forward declaration of 'Pixar::TfType'
+   28 | class TfType;
+      |       ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+[203/3531] Compiling UsdUtils introspection.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:11:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:18:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/filesystemWritableAsset.h:39:9: error: use of undeclared identifier 'ArResolver'
+   39 |         ArResolver::WriteMode writeMode);
+      |         ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:11:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:23:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolverContext.h:83:1: error: explicit specialization of undeclared template struct 'ArIsContextObject'
+   83 | AR_DECLARE_RESOLVER_CONTEXT(ArDefaultResolverContext);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defineResolverContext.h:31:8: note: expanded from macro 'AR_DECLARE_RESOLVER_CONTEXT'
+   31 | struct ArIsContextObject<context>                      \
+      |        ^                ~~~~~~~~~
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:11:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:23:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:51:14: error: expected class name
+   51 |     : public ArResolver
+      |              ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:79:54: error: only virtual member functions can be marked 'override'
+   79 |         const ArResolvedPath& anchorAssetPath) const override;
+      |                                                      ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:84:54: error: only virtual member functions can be marked 'override'
+   84 |         const ArResolvedPath& anchorAssetPath) const override;
+      |                                                      ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:88:45: error: only virtual member functions can be marked 'override'
+   88 |         const std::string& assetPath) const override;
+      |                                             ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:92:45: error: only virtual member functions can be marked 'override'
+   92 |         const std::string& assetPath) const override;
+      |                                             ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:95:5: error: unknown type name 'ArResolverContext'
+   95 |     ArResolverContext _CreateDefaultContext() const override;
+      |     ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:105:5: error: unknown type name 'ArResolverContext'
+  105 |     ArResolverContext _CreateDefaultContextForAsset(
+      |     ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:112:5: error: unknown type name 'ArResolverContext'
+  112 |     ArResolverContext _CreateContextFromString(
+      |     ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:117:45: error: only virtual member functions can be marked 'override'
+  117 |         const std::string& assetPath) const override;
+      |                                             ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:120:5: error: unknown type name 'ArTimestamp'
+  120 |     ArTimestamp _GetModificationTimestamp(
+      |     ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:126:51: error: only virtual member functions can be marked 'override'
+  126 |         const ArResolvedPath& resolvedPath) const override;
+      |                                                   ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:133:9: error: use of undeclared identifier 'ArResolver'
+  133 |         ArResolver::WriteMode writeMode) const override;
+      |         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:138:5: error: unknown type name 'ArResolverContext'
+  138 |     ArResolverContext _defaultContext;
+      |     ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:11:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:43:8: error: redefinition of 'ArIsContextObject' as different kind of symbol
+   43 | struct ArIsContextObject
+      |        ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolverContext.h:83:1: note: previous definition is here
+   83 | AR_DECLARE_RESOLVER_CONTEXT(ArDefaultResolverContext);
+      | ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defineResolverContext.h:31:8: note: expanded from macro 'AR_DECLARE_RESOLVER_CONTEXT'
+   31 | struct ArIsContextObject<context>                      \
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/dependencies.cpp:11:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:27: error: expected '(' for function-style cast or type construction
+   63 |          ArIsContextObject<Object>::value) &&
+      |          ~~~~~~~~~~~~~~~~~^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:28: error: 'Object' does not refer to a value
+   63 |          ArIsContextObject<Object>::value) &&
+      |                            ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:58:17: note: declared here
+   58 | template <class Object, class ...Other>
+      |                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:35: error: no member named 'value' in the global namespace; did you mean simply 'value'?
+   63 |          ArIsContextObject<Object>::value) &&
+      |                                   ^~~~~~~
+      |                                   value
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:61:23: note: 'value' declared here
+   61 |     static const bool value = 
+      |                       ^
+[203/3531] Compiling UsdUtils dependencies.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:18:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/filesystemWritableAsset.h:39:9: error: use of undeclared identifier 'ArResolver'
+   39 |         ArResolver::WriteMode writeMode);
+      |         ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:23:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:14:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolverContext.h:83:1: error: explicit specialization of undeclared template struct 'ArIsContextObject'
+   83 | AR_DECLARE_RESOLVER_CONTEXT(ArDefaultResolverContext);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defineResolverContext.h:31:8: note: expanded from macro 'AR_DECLARE_RESOLVER_CONTEXT'
+   31 | struct ArIsContextObject<context>                      \
+      |        ^                ~~~~~~~~~
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:14:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/ar.h:23:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:51:14: error: expected class name
+   51 |     : public ArResolver
+      |              ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:79:54: error: only virtual member functions can be marked 'override'
+   79 |         const ArResolvedPath& anchorAssetPath) const override;
+      |                                                      ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:84:54: error: only virtual member functions can be marked 'override'
+   84 |         const ArResolvedPath& anchorAssetPath) const override;
+      |                                                      ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:88:45: error: only virtual member functions can be marked 'override'
+   88 |         const std::string& assetPath) const override;
+      |                                             ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:92:45: error: only virtual member functions can be marked 'override'
+   92 |         const std::string& assetPath) const override;
+      |                                             ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:95:5: error: unknown type name 'ArResolverContext'
+   95 |     ArResolverContext _CreateDefaultContext() const override;
+      |     ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:105:5: error: unknown type name 'ArResolverContext'
+  105 |     ArResolverContext _CreateDefaultContextForAsset(
+      |     ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:112:5: error: unknown type name 'ArResolverContext'
+  112 |     ArResolverContext _CreateContextFromString(
+      |     ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:117:45: error: only virtual member functions can be marked 'override'
+  117 |         const std::string& assetPath) const override;
+      |                                             ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:120:5: error: unknown type name 'ArTimestamp'
+  120 |     ArTimestamp _GetModificationTimestamp(
+      |     ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:126:51: error: only virtual member functions can be marked 'override'
+  126 |         const ArResolvedPath& resolvedPath) const override;
+      |                                                   ^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:133:9: error: use of undeclared identifier 'ArResolver'
+  133 |         ArResolver::WriteMode writeMode) const override;
+      |         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolver.h:138:5: error: unknown type name 'ArResolverContext'
+  138 |     ArResolverContext _defaultContext;
+      |     ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:43:8: error: redefinition of 'ArIsContextObject' as different kind of symbol
+   43 | struct ArIsContextObject
+      |        ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defaultResolverContext.h:83:1: note: previous definition is here
+   83 | AR_DECLARE_RESOLVER_CONTEXT(ArDefaultResolverContext);
+      | ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/defineResolverContext.h:31:8: note: expanded from macro 'AR_DECLARE_RESOLVER_CONTEXT'
+   31 | struct ArIsContextObject<context>                      \
+      |        ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/UsdUtils/localizeAsset.cpp:12:
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolver.h:15:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:27: error: expected '(' for function-style cast or type construction
+   63 |          ArIsContextObject<Object>::value) &&
+      |          ~~~~~~~~~~~~~~~~~^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:28: error: 'Object' does not refer to a value
+   63 |          ArIsContextObject<Object>::value) &&
+      |                            ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:58:17: note: declared here
+   58 | template <class Object, class ...Other>
+      |                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:63:35: error: no member named 'value' in the global namespace; did you mean simply 'value'?
+   63 |          ArIsContextObject<Object>::value) &&
+      |                                   ^~~~~~~
+      |                                   value
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Ar/include/Ar/resolverContext.h:61:23: note: 'value' declared here
+   61 |     static const bool value = 
+      |                       ^
+[203/3531] Compiling UsdUtils localizeAsset.cpp
+[203/3531] Compiling UsdUtils sparseValueWriter.cpp
+[203/3531] Compiling UsdUtils pipeline.cpp
+[203/3531] Compiling UsdUtils stageCache.cpp
+[203/3531] Compiling UsdUtils stitch.cpp
+[203/3531] Compiling UsdUtils stitchClips.cpp
+[203/3531] Compiling Vt arrayEdit.cpp
+[203/3531] Compiling Vt array.cpp

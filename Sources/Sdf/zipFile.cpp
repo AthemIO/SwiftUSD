@@ -4,7 +4,7 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 #include "Sdf/zipFile.h"
 #include "Ar/asset.h"
 #include "Ar/resolvedPath.h"

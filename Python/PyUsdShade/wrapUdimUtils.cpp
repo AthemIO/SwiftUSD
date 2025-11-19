@@ -6,34 +6,41 @@
 //
 #include "pxr/pxrns.h"
 
-#include <boost/python/class.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/scope.hpp>
-#include <boost/python/tuple.hpp>
+#include "pxr/external/boost/python/class.hpp"
+#include "pxr/external/boost/python/def.hpp"
+#include "pxr/external/boost/python/object.hpp"
+#include "pxr/external/boost/python/scope.hpp"
+#include "pxr/external/boost/python/tuple.hpp"
 
 #include "UsdShade/udimUtils.h"
 
-using namespace boost::python;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+using namespace pxr_boost::python;
+
 void wrapUsdShadeUdimUtils()
 {
-  class_<UsdShadeUdimUtils>("UdimUtils", no_init)
-      .def("IsUdimIdentifier", UsdShadeUdimUtils::IsUdimIdentifier, (arg("identifier")))
-      .staticmethod("IsUdimIdentifier")
+    class_<UsdShadeUdimUtils>("UdimUtils", no_init)
+        .def("IsUdimIdentifier", 
+            UsdShadeUdimUtils::IsUdimIdentifier,
+            (arg("identifier")))
+        .staticmethod("IsUdimIdentifier")
 
-      .def("ResolveUdimTilePaths",
-           UsdShadeUdimUtils::ResolveUdimTilePaths,
-           (arg("udimPath"), arg("layer")))
-      .staticmethod("ResolveUdimTilePaths")
+        .def("ResolveUdimTilePaths", 
+            UsdShadeUdimUtils::ResolveUdimTilePaths,
+            (arg("udimPath"), arg("layer")))
+        .staticmethod("ResolveUdimTilePaths")
 
-      .def("ReplaceUdimPattern",
-           UsdShadeUdimUtils::ReplaceUdimPattern,
-           (arg("identifierWithPattern"), arg("replacement")))
-      .staticmethod("ReplaceUdimPattern")
+        .def("ReplaceUdimPattern",
+            UsdShadeUdimUtils::ReplaceUdimPattern,
+            (arg("identifierWithPattern"), arg("replacement")))
+        .staticmethod("ReplaceUdimPattern")
 
-      .def("ResolveUdimPath", UsdShadeUdimUtils::ResolveUdimPath, (arg("udimPath"), arg("layer")))
-      .staticmethod("ResolveUdimPath");
+        .def("ResolveUdimPath",
+            UsdShadeUdimUtils::ResolveUdimPath,
+            (arg("udimPath"), arg("layer")))
+        .staticmethod("ResolveUdimPath")
+        ;
+
 }

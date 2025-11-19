@@ -99,9 +99,9 @@
 #include "Sdf/types.h"
 #include "Vt/array.h"
 #include "Vt/dictionary.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 #include "Arch/errno.h"
 #include "Gf/matrix4d.h"

@@ -9,10 +9,10 @@
 #include "Tf/iterator.h"
 #include "Tf/mallocTag.h"
 #include "Tf/stl.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 #include "Ts/evalUtils.h"
 #include "Ts/keyFrameUtils.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 #include <limits>
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -20,7 +20,8 @@ PXR_NAMESPACE_OPEN_SCOPE
 using std::string;
 using std::vector;
 
-TsSpline_KeyFrames::TsSpline_KeyFrames() : _extrapolation(TsExtrapolationHeld, TsExtrapolationHeld)
+TsSpline_KeyFrames::TsSpline_KeyFrames()
+    : _extrapolation(TsExtrapolation(TsExtrapHeld), TsExtrapolation(TsExtrapHeld))
 {
 }
 
@@ -527,12 +528,12 @@ GfInterval TsSpline_KeyFrames::_FindRemoveKeyFrameChangedInterval(TsTime time)
   if (r.GetMin() == -std::numeric_limits<TsTime>::infinity()) {
     const TsKeyFrame &nextKeyFrame = *(keyFrameRange.second);
     // Get the effective extrapolations of each spline on the left side
-    TsExtrapolationType aExtrapLeft = _GetEffectiveExtrapolationType(nextKeyFrame, TsLeft);
-    TsExtrapolationType bExtrapLeft = _GetEffectiveExtrapolationType(keyFrame, TsLeft);
+    TsExtrapolationType aExtrapLeft = _GetEffectiveExtrapolationType(nextKeyFrame, TsSideLeft);
+    TsExtrapolationType bExtrapLeft = _GetEffectiveExtrapolationType(keyFrame, TsSideLeft);
 
     // We can tighten if the extrapolations of both knots are held and
     // their left values are the same
-    if (aExtrapLeft == TsExtrapolationHeld && bExtrapLeft == TsExtrapolationHeld &&
+    if (aExtrapLeft == TsExtrapHeld && bExtrapLeft == TsExtrapHeld &&
         nextKeyFrame.GetLeftValue() == keyFrame.GetLeftValue())
     {
 
@@ -552,11 +553,11 @@ GfInterval TsSpline_KeyFrames::_FindRemoveKeyFrameChangedInterval(TsTime time)
   if (r.GetMax() == std::numeric_limits<TsTime>::infinity()) {
     const TsKeyFrame &prevKeyFrame = *(keyFrameRange.first);
     // Get the effective extrapolations of each spline on the right side
-    TsExtrapolationType aExtrapRight = _GetEffectiveExtrapolationType(prevKeyFrame, TsRight);
-    TsExtrapolationType bExtrapRight = _GetEffectiveExtrapolationType(keyFrame, TsRight);
+    TsExtrapolationType aExtrapRight = _GetEffectiveExtrapolationType(prevKeyFrame, TsSideRight);
+    TsExtrapolationType bExtrapRight = _GetEffectiveExtrapolationType(keyFrame, TsSideRight);
 
     // We can tighten if the extrapolations are the same
-    if (aExtrapRight == TsExtrapolationHeld && bExtrapRight == TsExtrapolationHeld &&
+    if (aExtrapRight == TsExtrapHeld && bExtrapRight == TsExtrapHeld &&
         prevKeyFrame.GetValue() == keyFrame.GetValue())
     {
 
@@ -599,8 +600,8 @@ GfInterval TsSpline_KeyFrames::_FindSetKeyFrameChangedInterval(const TsKeyFrame 
   if (r.GetMin() == -std::numeric_limits<TsTime>::infinity()) {
     const TsKeyFrame &firstKeyFrame = *(keyFrames.begin());
     // Get the effective extrapolations of each spline on the left side
-    TsExtrapolationType aExtrapLeft = _GetEffectiveExtrapolationType(firstKeyFrame, TsLeft);
-    TsExtrapolationType bExtrapLeft = _GetEffectiveExtrapolationType(keyFrame, TsLeft);
+    TsExtrapolationType aExtrapLeft = _GetEffectiveExtrapolationType(firstKeyFrame, TsSideLeft);
+    TsExtrapolationType bExtrapLeft = _GetEffectiveExtrapolationType(keyFrame, TsSideLeft);
 
     // We can tighten if the extrapolations are the same
     if (aExtrapLeft == bExtrapLeft) {
@@ -609,7 +610,7 @@ GfInterval TsSpline_KeyFrames::_FindSetKeyFrameChangedInterval(const TsKeyFrame 
       if (firstKeyFrame.GetLeftValue() == keyFrame.GetLeftValue()) {
         // If the extrapolation is held to the left, then there are no
         // changes before the minimum of the first keyframe times
-        if (aExtrapLeft == TsExtrapolationHeld) {
+        if (aExtrapLeft == TsExtrapHeld) {
           r.SetMin(time, /* closed */ false);
         }
         // Otherwise the extrapolation is linear so only if the time and
@@ -636,8 +637,8 @@ GfInterval TsSpline_KeyFrames::_FindSetKeyFrameChangedInterval(const TsKeyFrame 
   if (r.GetMax() == std::numeric_limits<TsTime>::infinity()) {
     const TsKeyFrame &lastKeyFrame = *(keyFrames.rbegin());
     // Get the effective extrapolations of each spline on the right side
-    TsExtrapolationType aExtrapRight = _GetEffectiveExtrapolationType(lastKeyFrame, TsRight);
-    TsExtrapolationType bExtrapRight = _GetEffectiveExtrapolationType(keyFrame, TsRight);
+    TsExtrapolationType aExtrapRight = _GetEffectiveExtrapolationType(lastKeyFrame, TsSideRight);
+    TsExtrapolationType bExtrapRight = _GetEffectiveExtrapolationType(keyFrame, TsSideRight);
 
     // We can tighten if the extrapolations are the same
     if (aExtrapRight == bExtrapRight) {
@@ -646,7 +647,7 @@ GfInterval TsSpline_KeyFrames::_FindSetKeyFrameChangedInterval(const TsKeyFrame 
       if (lastKeyFrame.GetValue() == keyFrame.GetValue()) {
         // If the extrapolation is held to the right, then there are no
         // changes after the maximum of the last keyframe times
-        if (aExtrapRight == TsExtrapolationHeld) {
+        if (aExtrapRight == TsExtrapHeld) {
           r.SetMax(time, /* closed */ false);
         }
         // Otherwise the extrapolation is linear so only if the time and
@@ -664,7 +665,7 @@ GfInterval TsSpline_KeyFrames::_FindSetKeyFrameChangedInterval(const TsKeyFrame 
   if (it != keyFrames.end()) {
     const TsKeyFrame &k = *(it);
     _KeyFrameRange keyFrameRange = _GetKeyFrameRange(time);
-    if (k.IsEquivalentAtSide(keyFrame, TsLeft)) {
+    if (k.IsEquivalentAtSide(keyFrame, TsSideLeft)) {
       r.SetMin(time, k.GetValue() != keyFrame.GetValue());
     }
     else if (keyFrameRange.first->GetTime() != time &&
@@ -675,7 +676,7 @@ GfInterval TsSpline_KeyFrames::_FindSetKeyFrameChangedInterval(const TsKeyFrame 
       r.SetMin(time, k.GetValue() != keyFrame.GetValue());
     }
 
-    if (k.IsEquivalentAtSide(keyFrame, TsRight)) {
+    if (k.IsEquivalentAtSide(keyFrame, TsSideRight)) {
       // Note that the value *at* this time will not change since the
       // right values are the same, but since we produce intervals
       // that contain changed knots, we want an interval that is

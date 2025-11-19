@@ -63,14 +63,14 @@
 #include <Usd/tokens.h>
 #include <Usd/typed.h>
 #include <Usd/usdFileFormat.h>
-#include <Usd/usdaFileFormat.h>
+#include <Sdf/usdaFileFormat.h>
 #include <Usd/usdcFileFormat.h>
 #include <Usd/usdzFileFormat.h>
 #include <Usd/usdzResolver.h>
 #include <Usd/valueUtils.h>
 #include <Usd/variantSets.h>
 #include <Usd/wrapUtils.h>
-#include <Usd/zipFile.h>
+#include <Sdf/zipFile.h>
 
 #include <Usd/stage.h>
 
@@ -81,4 +81,8 @@
 #include <Usd/validationRegistry.h>
 #include <Usd/validator.h>
 #include <Usd/validatorTokens.h>
+#include <Usd/attributeLimits.h>
+#include <Usd/colorSpaceAPI.h>
+#include <Usd/generatedSchema.module.h>
+#include <Usd/colorSpaceDefinitionAPI.h>
 #endif  // __PXR_USD_USD_H__

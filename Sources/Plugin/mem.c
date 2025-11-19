@@ -6,14 +6,13 @@
 #include <assert.h>
 #include <stdlib.h>
 
-void *avifAlloc(size_t size)
+void * avifAlloc(size_t size)
 {
-  assert(size !=
-         0);  // Implementation-defined. See https://en.cppreference.com/w/cpp/memory/c/malloc
-  return malloc(size);
+    assert(size != 0); // Implementation-defined. See https://en.cppreference.com/w/cpp/memory/c/malloc
+    return malloc(size);
 }
 
-void avifFree(void *p)
+void avifFree(void * p)
 {
-  free(p);
+    free(p);
 }

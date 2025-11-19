@@ -7,7 +7,7 @@
 ///
 /// \file Tf/TemplateString.cpp
 
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Tf/iterator.h"
 #include "Tf/stringUtils.h"

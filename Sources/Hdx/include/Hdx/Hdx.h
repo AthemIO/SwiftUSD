@@ -37,4 +37,7 @@
 #include <Hdx/types.h>
 #include <Hdx/version.h>
 #include <Hdx/visualizeAovTask.h>
+#include <Hdx/stormCheck.h>
+#include <Hdx/freeCameraPrimDataSource.h>
+#include <Hdx/taskControllerSceneIndex.h>
 #endif  // __PXR_IMAGING_HDX_H__

@@ -12,8 +12,8 @@
 #include "Hd/aov.h"
 #include "Hd/renderPass.h"
 #include "Hd/renderThread.h"
-#include "Plugin/hdEmbree/renderBuffer.h"
 #include "Plugin/hdEmbree/renderer.h"
+#include "Plugin/hdEmbree/renderBuffer.h"
 
 #include "Gf/matrix4d.h"
 #include "Gf/rect2i.h"
@@ -30,81 +30,83 @@ PXR_NAMESPACE_OPEN_SCOPE
 ///
 /// This class does so by raycasting into the embree scene via HdEmbreeRenderer.
 ///
-class HdEmbreeRenderPass final : public HdRenderPass {
- public:
-  /// Renderpass constructor.
-  ///   \param index The render index containing scene data to render.
-  ///   \param collection The initial rprim collection for this renderpass.
-  ///   \param renderThread A handle to the global render thread.
-  ///   \param renderer A handle to the global renderer.
-  HdEmbreeRenderPass(HdRenderIndex *index,
-                     HdRprimCollection const &collection,
-                     HdRenderThread *renderThread,
-                     HdEmbreeRenderer *renderer,
-                     std::atomic<int> *sceneVersion);
+class HdEmbreeRenderPass final : public HdRenderPass
+{
+public:
+    /// Renderpass constructor.
+    ///   \param index The render index containing scene data to render.
+    ///   \param collection The initial rprim collection for this renderpass.
+    ///   \param renderThread A handle to the global render thread.
+    ///   \param renderer A handle to the global renderer.
+    HdEmbreeRenderPass(HdRenderIndex *index,
+                       HdRprimCollection const &collection,
+                       HdRenderThread *renderThread,
+                       HdEmbreeRenderer *renderer,
+                       std::atomic<int> *sceneVersion);
 
-  /// Renderpass destructor.
-  ~HdEmbreeRenderPass() override;
+    /// Renderpass destructor.
+    ~HdEmbreeRenderPass() override;
 
-  // -----------------------------------------------------------------------
-  // HdRenderPass API
+    // -----------------------------------------------------------------------
+    // HdRenderPass API
 
-  /// Determine whether the sample buffer has enough samples.
-  ///   \return True if the image has enough samples to be considered final.
-  bool IsConverged() const override;
+    /// Determine whether the sample buffer has enough samples.
+    ///   \return True if the image has enough samples to be considered final.
+    bool IsConverged() const override;
 
- protected:
-  // -----------------------------------------------------------------------
-  // HdRenderPass API
+protected:
 
-  /// Draw the scene with the bound renderpass state.
-  ///   \param renderPassState Input parameters (including viewer parameters)
-  ///                          for this renderpass.
-  ///   \param renderTags Which rendertags should be drawn this pass.
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
-                TfTokenVector const &renderTags) override;
+    // -----------------------------------------------------------------------
+    // HdRenderPass API
 
-  /// Update internal tracking to reflect a dirty collection.
-  void _MarkCollectionDirty() override {}
+    /// Draw the scene with the bound renderpass state.
+    ///   \param renderPassState Input parameters (including viewer parameters)
+    ///                          for this renderpass.
+    ///   \param renderTags Which rendertags should be drawn this pass.
+    void _Execute(HdRenderPassStateSharedPtr const& renderPassState,
+                  TfTokenVector const &renderTags) override;
 
- private:
-  // A handle to the render thread.
-  HdRenderThread *_renderThread;
+    /// Update internal tracking to reflect a dirty collection.
+    void _MarkCollectionDirty() override {}
 
-  // A handle to the global renderer.
-  HdEmbreeRenderer *_renderer;
+private:
+    // A handle to the render thread.
+    HdRenderThread *_renderThread;
 
-  // A reference to the global scene version.
-  std::atomic<int> *_sceneVersion;
+    // A handle to the global renderer.
+    HdEmbreeRenderer *_renderer;
 
-  // The last scene version we rendered with.
-  int _lastSceneVersion;
+    // A reference to the global scene version.
+    std::atomic<int> *_sceneVersion;
 
-  // The last settings version we rendered with.
-  int _lastSettingsVersion;
+    // The last scene version we rendered with.
+    int _lastSceneVersion;
 
-  // The pixels written to. Like viewport in OpenGL,
-  // but coordinates are y-Down.
-  GfRect2i _dataWindow;
+    // The last settings version we rendered with.
+    int _lastSettingsVersion;
 
-  // The view matrix: world space to camera space
-  GfMatrix4d _viewMatrix;
-  // The projection matrix: camera space to NDC space (with
-  // respect to the data window).
-  GfMatrix4d _projMatrix;
+    // The pixels written to. Like viewport in OpenGL,
+    // but coordinates are y-Down.
+    GfRect2i _dataWindow;
 
-  // The list of aov buffers this renderpass should write to.
-  HdRenderPassAovBindingVector _aovBindings;
+    // The view matrix: world space to camera space
+    GfMatrix4d _viewMatrix;
+    // The projection matrix: camera space to NDC space (with
+    // respect to the data window).
+    GfMatrix4d _projMatrix;
 
-  // If no attachments are provided, provide an anonymous renderbuffer for
-  // color and depth output.
-  HdEmbreeRenderBuffer _colorBuffer;
-  HdEmbreeRenderBuffer _depthBuffer;
+    // The list of aov buffers this renderpass should write to.
+    HdRenderPassAovBindingVector _aovBindings;
 
-  // Were the color/depth buffer converged the last time we blitted them?
-  bool _converged;
+    // If no attachments are provided, provide an anonymous renderbuffer for
+    // color and depth output.
+    HdEmbreeRenderBuffer _colorBuffer;
+    HdEmbreeRenderBuffer _depthBuffer;
+
+    // Were the color/depth buffer converged the last time we blitted them?
+    bool _converged;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_IMAGING_PLUGIN_HD_EMBREE_RENDER_PASS_H
+#endif // PXR_IMAGING_PLUGIN_HD_EMBREE_RENDER_PASS_H

@@ -25,7 +25,7 @@
 //
 
 #include "Work/threadLimits.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Tf/envSetting.h"
 

@@ -5,7 +5,7 @@
 // https://openusd.org/license.
 //
 
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Tf/typeNotice.h"
 
@@ -14,8 +14,13 @@ PXR_NAMESPACE_OPEN_SCOPE
 // Note:  We do not register a TfType for TfTypeWasDeclaredNotice here.
 // Instead, we register it in Type.cpp.  See Tf_TypeRegistry's constructor.
 
-TfTypeWasDeclaredNotice::TfTypeWasDeclaredNotice(TfType t) : _type(t) {}
+TfTypeWasDeclaredNotice::TfTypeWasDeclaredNotice( TfType t ) :
+    _type(t)
+{
+}
 
-TfTypeWasDeclaredNotice::~TfTypeWasDeclaredNotice() {}
+TfTypeWasDeclaredNotice::~TfTypeWasDeclaredNotice()
+{
+}
 
 PXR_NAMESPACE_CLOSE_SCOPE

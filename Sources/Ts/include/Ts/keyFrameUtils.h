@@ -11,6 +11,7 @@
 #include "Ts/api.h"
 #include "Ts/loopParams.h"
 #include "Ts/types.h"
+#include "Vt/value.h"
 #include "pxr/pxrns.h"
 
 PXR_NAMESPACE_OPEN_SCOPE

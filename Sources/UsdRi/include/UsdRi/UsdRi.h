@@ -11,4 +11,5 @@
 #include <UsdRi/tokens.h>
 #include <UsdRi/typeUtils.h>
 
+#include <UsdRi/generatedSchema.module.h>
 #endif  // __PXR_USD_USDRI_H__

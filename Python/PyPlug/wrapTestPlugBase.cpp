@@ -5,43 +5,48 @@
 // https://openusd.org/license.
 //
 
-#include "Plug/testPlugBase.h"
-#include "Tf/makePyConstructor.h"
-#include "Tf/pyContainerConversions.h"
-#include "Tf/pyPtrHelpers.h"
 #include "pxr/pxrns.h"
+#include "Plug/testPlugBase.h"
+#include "pxr/external/boost/python/def.hpp"
+#include "pxr/external/boost/python/args.hpp"
+#include "Tf/makePyConstructor.h"
+#include "Tf/pyPtrHelpers.h"
+#include "Tf/pyContainerConversions.h"
 
-#include <boost/noncopyable.hpp>
-#include <boost/python.hpp>
-
-using namespace boost::python;
+#include "pxr/external/boost/python.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+using namespace pxr_boost::python;
+
 namespace {
 
-template<class T> void wrap_TestPlugBase(const std::string &name)
+template <class T>
+void wrap_TestPlugBase(const std::string & name)
 {
-  typedef T This;
-  typedef TfWeakPtr<T> ThisPtr;
-  class_<This, ThisPtr, boost::noncopyable>(name.c_str(), no_init)
-      .def(TfPyRefAndWeakPtr())
-      .def(TfMakePyConstructor(&This::New))
+    typedef T This;
+    typedef TfWeakPtr<T> ThisPtr;
+    class_<This, ThisPtr, noncopyable> ( name.c_str(), no_init )
+        .def(TfPyRefAndWeakPtr())
+        .def(TfMakePyConstructor(&This::New))
 
-      // Expose Manufacture as another initializer.
-      .def(TfMakePyConstructor(&This::Manufacture))
+        // Expose Manufacture as another initializer.
+        .def(TfMakePyConstructor(&This::Manufacture))
 
-      .def("GetTypeName", &This::GetTypeName)
+        .def("GetTypeName", &This::GetTypeName)
 
-      ;
+        .def("TestAcceptPluginSequence", &This::TestAcceptPluginSequence,
+             (arg("plugins")));
+
+        ;
 }
 
-}  // anonymous namespace
+} // anonymous namespace 
 
 void wrap_TestPlugBase()
 {
-  wrap_TestPlugBase<_TestPlugBase1>("_TestPlugBase1");
-  wrap_TestPlugBase<_TestPlugBase2>("_TestPlugBase2");
-  wrap_TestPlugBase<_TestPlugBase3>("_TestPlugBase3");
-  wrap_TestPlugBase<_TestPlugBase4>("_TestPlugBase4");
+    wrap_TestPlugBase<_TestPlugBase1>("_TestPlugBase1");
+    wrap_TestPlugBase<_TestPlugBase2>("_TestPlugBase2");
+    wrap_TestPlugBase<_TestPlugBase3>("_TestPlugBase3");
+    wrap_TestPlugBase<_TestPlugBase4>("_TestPlugBase4");
 }

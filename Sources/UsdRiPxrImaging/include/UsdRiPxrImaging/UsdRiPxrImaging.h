@@ -11,4 +11,8 @@
 #include <UsdRiPxrImaging/pxrSampleFilterAdapter.h>
 #include <UsdRiPxrImaging/tokens.h>
 #include <UsdRiPxrImaging/version.h>
+#include <UsdRiPxrImaging/projectionSchema.h>
+#include <UsdRiPxrImaging/pxrAovLightAdapter.h>
+#include <UsdRiPxrImaging/pxrCameraProjectionAPIAdapter.h>
+#include <UsdRiPxrImaging/pxrCameraProjectionAdapter.h>
 #endif  // __PXR_USDIMAGING_USDRIPXRIMAGING_H__

@@ -5,39 +5,39 @@
 // https://openusd.org/license.
 //
 
-#include "UsdUtils/conditionalAbortDiagnosticDelegate.h"
 #include "pxr/pxrns.h"
+#include "UsdUtils/conditionalAbortDiagnosticDelegate.h"
 
 #include "Tf/pyResultConversions.h"
 
 #include <iostream>
 #include <string>
 
-#include <boost/python/class.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/tuple.hpp>
+#include "pxr/external/boost/python/class.hpp"
+#include "pxr/external/boost/python/def.hpp"
+#include "pxr/external/boost/python/list.hpp"
+#include "pxr/external/boost/python/tuple.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-using namespace boost::python;
+using namespace pxr_boost::python;
 
 void wrapConditionalAbortDiagnosticDelegate()
 {
-  using ErrorFilters = UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters;
-  class_<ErrorFilters>("ConditionalAbortDiagnosticDelegateErrorFilters",
-                       init<std::vector<std::string>, std::vector<std::string>>())
-      .def(init<>())
-      .def("GetCodePathFilters",
-           &ErrorFilters::GetCodePathFilters,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetStringFilters",
-           &ErrorFilters::GetStringFilters,
-           return_value_policy<TfPySequenceToList>())
-      .def("SetStringFilters", &ErrorFilters::SetStringFilters, args("stringFilters"))
-      .def("SetCodePathFilters", &ErrorFilters::SetCodePathFilters, args("codePathFilters"));
+    using ErrorFilters = UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters;
+    class_<ErrorFilters>("ConditionalAbortDiagnosticDelegateErrorFilters",
+            init<std::vector<std::string>, std::vector<std::string>>())
+        .def(init<>())
+        .def("GetCodePathFilters", &ErrorFilters::GetCodePathFilters, 
+                return_value_policy<TfPySequenceToList>())
+        .def("GetStringFilters", &ErrorFilters::GetStringFilters,
+                return_value_policy<TfPySequenceToList>())
+        .def("SetStringFilters", &ErrorFilters::SetStringFilters,
+                args("stringFilters"))
+        .def("SetCodePathFilters", &ErrorFilters::SetCodePathFilters,
+                args("codePathFilters"));
 
-  using This = UsdUtilsConditionalAbortDiagnosticDelegate;
-  class_<This, boost::noncopyable>("ConditionalAbortDiagnosticDelegate",
-                                   init<ErrorFilters, ErrorFilters>());
+    using This = UsdUtilsConditionalAbortDiagnosticDelegate;
+    class_<This, noncopyable>("ConditionalAbortDiagnosticDelegate",
+            init<ErrorFilters, ErrorFilters>());
 }

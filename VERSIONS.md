@@ -44,7 +44,7 @@ or in parallel.
 | Embree        | ??? (TODO)           | ??? (TODO)                      | ??? (TODO)                     |
 | RenderMan     | 24.4, 25.0 (TODO)    | 24.4, 25.0 (TODO)               | 24.4, 25.0 (TODO)              |
 | Alembic       | 1.8.5                | 1.8.5                           | 1.8.5                          |
-| OpenEXR       | 3.2.1                | 3.2.1                           | 3.2.1                          |
+| OpenEXR       | 3.4                  | 3.4                             | 3.4                            |
 | Imath         | 3.1.9                | 3.1.9                           | 3.1.9                          |
 | MaterialX     | 1.38.8               | 1.38.8                          | 1.38.8                         |
 | OpenVDB       | 10.1.0               | 10.1.0                          | 10.1.0                         |

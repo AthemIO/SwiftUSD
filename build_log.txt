@@ -1,0 +1,184 @@
+warning: you may be able to install gtk+-3.0 using your system-packager:
+    brew install gtk+3
+warning: you may be able to install gtk+-3.0 using your system-packager:
+    brew install gtk+3
+[0/1] Planning build
+[1/1] Compiling plugin OpenUSDPlugin
+[2/2] Compiling plugin UsdGenSchemaPlugin
+[3/3] Compiling plugin GenerateManual
+[4/4] Compiling plugin Swift-DocC Preview
+[5/5] Compiling plugin Swift-DocC
+Building for debugging...
+[5/2554] Compiling leica.cpp
+[6/2554] Compiling hasselblad_model.cpp
+[7/2554] Compiling epson.cpp
+[8/2554] Compiling kodak.cpp
+[9/2554] Compiling identify_tools.cpp
+[10/2554] Compiling cr3_parser.cpp
+[11/2554] Compiling ciff.cpp
+[12/2554] Compiling makernotes.cpp
+[13/2554] Compiling exif_gps.cpp
+[14/2554] Compiling canon.cpp
+[15/2554] Compiling fuji.cpp
+[16/2554] Compiling identify.cpp
+[17/2554] Write swift-version--44D72886A502174.txt
+Sdf/textFileFormat.yy:89:55: error: unknown type name 'yyscan_t'
+   89 | extern int textFileFormatYylex(YYSTYPE *yylval_param, yyscan_t yyscanner);
+      |                                                       ^
+Sdf/textFileFormat.yy:90:39: error: unknown type name 'yyscan_t'
+   90 | extern char *textFileFormatYyget_text(yyscan_t yyscanner);
+      |                                       ^
+Sdf/textFileFormat.yy:91:40: error: unknown type name 'yyscan_t'
+   91 | extern size_t textFileFormatYyget_leng(yyscan_t yyscanner);
+      |                                        ^
+Sdf/textFileFormat.yy:92:37: error: unknown type name 'yyscan_t'
+   92 | extern int textFileFormatYylex_init(yyscan_t *yyscanner);
+      |                                     ^
+Sdf/textFileFormat.yy:93:40: error: unknown type name 'yyscan_t'
+   93 | extern int textFileFormatYylex_destroy(yyscan_t yyscanner);
+      |                                        ^
+Sdf/textFileFormat.yy:94:71: error: unknown type name 'yyscan_t'
+   94 | extern void textFileFormatYyset_extra(Sdf_TextParserContext *context, yyscan_t yyscanner);
+      |                                                                       ^
+Sdf/textFileFormat.yy:97:54: error: unknown type name 'yyscan_t'
+   97 |                                                      yyscan_t yyscanner);
+      |                                                      ^
+Sdf/textFileFormat.yy:98:74: error: unknown type name 'yyscan_t'
+   98 | extern yy_buffer_state *textFileFormatYy_scan_string(const char *yy_str, yyscan_t yyscanner);
+      |                                                                          ^
+Sdf/textFileFormat.yy:101:53: error: unknown type name 'yyscan_t'
+  101 |                                                     yyscan_t yyscanner);
+      |                                                     ^
+Sdf/textFileFormat.yy:102:64: error: unknown type name 'yyscan_t'
+  102 | extern void textFileFormatYy_delete_buffer(yy_buffer_state *b, yyscan_t yyscanner);
+      |                                                                ^
+Sdf/textFileFormat.yy:616:18: error: no member named 'sdfLineNo' in 'Pixar::Sdf_TextParserContext'
+  616 |         context->sdfLineNo,
+      |         ~~~~~~~  ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/diagnostic.h:372:43: note: expanded from macro 'TF_WARN'
+  372 |     Tf_PostWarningHelper(TF_CALL_CONTEXT, __VA_ARGS__)
+      |                                           ^~~~~~~~~~~
+Sdf/textFileFormat.tab.cpp:3109:14: error: no member named 'scanner' in 'Pixar::Sdf_TextParserContext'
+ 3109 |     yychar = YYLEX;
+      |              ^~~~~
+Sdf/textFileFormat.tab.cpp:2519:32: note: expanded from macro 'YYLEX'
+ 2519 | #  define YYLEX yylex(&yylval, yyscanner)
+      |                                ^~~~~~~~~
+Sdf/textFileFormat.yy:104:28: note: expanded from macro 'yyscanner'
+  104 | #define yyscanner context->scanner
+      |                   ~~~~~~~  ^
+Sdf/textFileFormat.yy:1381:31: error: no member named 'seenError' in 'Pixar::Sdf_TextParserContext'
+ 1381 |       ABORT_IF_ERROR(context->seenError);
+      |                      ~~~~~~~  ^
+Sdf/textFileFormat.yy:56:7: note: expanded from macro 'ABORT_IF_ERROR'
+   56 |   if (seenError) \
+      |       ^~~~~~~~~
+Sdf/textFileFormat.yy:1390:20: error: no member named 'metadataOnly' in 'Pixar::Sdf_TextParserContext'
+ 1390 |       if (context->metadataOnly)
+      |           ~~~~~~~  ^
+Sdf/textFileFormat.yy:1395:31: error: no member named 'seenError' in 'Pixar::Sdf_TextParserContext'
+ 1395 |       ABORT_IF_ERROR(context->seenError);
+      |                      ~~~~~~~  ^
+Sdf/textFileFormat.yy:56:7: note: expanded from macro 'ABORT_IF_ERROR'
+   56 |   if (seenError) \
+      |       ^~~~~~~~~
+Sdf/textFileFormat.yy:1399:20: error: no member named 'metadataOnly' in 'Pixar::Sdf_TextParserContext'
+ 1399 |       if (context->metadataOnly)
+      |           ~~~~~~~  ^
+Sdf/textFileFormat.yy:1507:31: error: no member named 'seenError' in 'Pixar::Sdf_TextParserContext'
+ 1507 |       ABORT_IF_ERROR(context->seenError);
+      |                      ~~~~~~~  ^
+Sdf/textFileFormat.yy:56:7: note: expanded from macro 'ABORT_IF_ERROR'
+   56 |   if (seenError) \
+      |       ^~~~~~~~~
+Sdf/textFileFormat.yy:1515:31: error: no member named 'seenError' in 'Pixar::Sdf_TextParserContext'
+ 1515 |       ABORT_IF_ERROR(context->seenError);
+      |                      ~~~~~~~  ^
+Sdf/textFileFormat.yy:56:7: note: expanded from macro 'ABORT_IF_ERROR'
+   56 |   if (seenError) \
+      |       ^~~~~~~~~
+Sdf/textFileFormat.yy:1532:31: error: no member named 'seenError' in 'Pixar::Sdf_TextParserContext'
+ 1532 |       ABORT_IF_ERROR(context->seenError);
+      |                      ~~~~~~~  ^
+Sdf/textFileFormat.yy:56:7: note: expanded from macro 'ABORT_IF_ERROR'
+   56 |   if (seenError) \
+      |       ^~~~~~~~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+[18/2554] Compiling Sdf textFileFormat.tab.cpp
+Sdf/textFileFormat.ll:88:26: error: no member named 'sdfLineNo' in 'Pixar::Sdf_TextParserContext'
+   88 |             if (yyextra->sdfLineNo == 1) {
+      |                 ~~~~~~~  ^
+Sdf/textFileFormat.ll:103:22: error: no member named 'sdfLineNo' in 'Pixar::Sdf_TextParserContext'
+  103 |             yyextra->sdfLineNo++;
+      |             ~~~~~~~  ^
+Sdf/textFileFormat.ll:254:22: error: no member named 'sdfLineNo' in 'Pixar::Sdf_TextParserContext'
+  254 |             yyextra->sdfLineNo += numlines;
+      |             ~~~~~~~  ^
+Sdf/textFileFormat.ll:276:28: error: no member named 'sdfLineNo' in 'Pixar::Sdf_TextParserContext'
+  276 |                   yyextra->sdfLineNo,
+      |                   ~~~~~~~  ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/diagnostic.h:372:43: note: expanded from macro 'TF_WARN'
+  372 |     Tf_PostWarningHelper(TF_CALL_CONTEXT, __VA_ARGS__)
+      |                                           ^~~~~~~~~~~
+Sdf/textFileFormat.ll:292:28: error: no member named 'sdfLineNo' in 'Pixar::Sdf_TextParserContext'
+  292 |                   yyextra->sdfLineNo,
+      |                   ~~~~~~~  ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Tf/include/Tf/diagnostic.h:372:43: note: expanded from macro 'TF_WARN'
+  372 |     Tf_PostWarningHelper(TF_CALL_CONTEXT, __VA_ARGS__)
+      |                                           ^~~~~~~~~~~
+[18/2554] Compiling Sdf textFileFormat.lex.cpp
+[18/2554] Compiling Sdf textParserContext.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:76:15: error: no member named 'utf8' in namespace 'PXR_INTERNAL_NS_pegtl::internal'; did you mean 'Utf8'?
+   76 | struct Utf8 : PEGTL_NS::internal::utf8::any {};
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+      |               Utf8
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:76:8: note: 'Utf8' declared here
+   76 | struct Utf8 : PEGTL_NS::internal::utf8::any {};
+      |        ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:76:41: error: expected class name
+   76 | struct Utf8 : PEGTL_NS::internal::utf8::any {};
+      |                                         ^
+[18/2554] Compiling Sdf textParserUtils.cpp
+[18/2554] Compiling Usd crateFile.cpp
+[18/2554] Compiling Sdf spec.cpp
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/specType.cpp:197:52: warning: expression with side effects will be evaluated despite being used as an operand to 'typeid' [-Wpotentially-evaluated-expression]
+  197 |     const TfType& schemaType = TfType::Find(typeid(from.GetSchema()));
+      |                                                    ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/specType.cpp:247:56: warning: expression with side effects will be evaluated despite being used as an operand to 'typeid' [-Wpotentially-evaluated-expression]
+  247 |     const TfType& fromSchemaType = TfType::Find(typeid(from.GetSchema()));
+      |                                                        ^
+[18/2554] Compiling Sdf specType.cpp
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textFileFormat.cpp:312:18: error: no matching constructor for initialization of 'Sdf_TextOutput'
+  312 |   Sdf_TextOutput out(std::move(asset));
+      |                  ^   ~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/fileIO.h:106:5: note: candidate constructor not viable: no known conversion from '__libcpp_remove_reference_t<shared_ptr<ArWritableAsset> &>' (aka 'std::shared_ptr<Pixar::ArWritableAsset>') to 'const Sdf_TextOutput' for 1st argument
+  106 |     Sdf_TextOutput(const Sdf_TextOutput&) = delete;
+      |     ^              ~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/fileIO.h:85:14: note: candidate constructor not viable: requires 2 arguments, but 1 was provided
+   85 |     explicit Sdf_TextOutput(std::ostream& out,
+      |              ^              ~~~~~~~~~~~~~~~~~~
+   86 |                           const std::string& name)
+      |                           ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/fileIO.h:90:14: note: candidate constructor not viable: requires 2 arguments, but 1 was provided
+   90 |     explicit Sdf_TextOutput(std::shared_ptr<ArWritableAsset>&& asset,
+      |              ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   91 |                           const std::string& name)
+      |                           ~~~~~~~~~~~~~~~~~~~~~~~
+[18/2554] Compiling Sdf textFileFormat.cpp
+[18/2554] Compiling Sdf types.cpp
+[18/2554] Compiling Sdf textParserHelpers.cpp
+[18/2554] Compiling Sdf subLayerListEditor.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textFileFormatParser.cpp:13:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:76:15: error: no member named 'utf8' in namespace 'PXR_INTERNAL_NS_pegtl::internal'; did you mean 'Utf8'?
+   76 | struct Utf8 : PEGTL_NS::internal::utf8::any {};
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+      |               Utf8
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:76:8: note: 'Utf8' declared here
+   76 | struct Utf8 : PEGTL_NS::internal::utf8::any {};
+      |        ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:76:41: error: expected class name
+   76 | struct Utf8 : PEGTL_NS::internal::utf8::any {};
+      |                                         ^
+[18/2554] Compiling Sdf textFileFormatParser.cpp

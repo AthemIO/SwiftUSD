@@ -5,14 +5,15 @@
 // https://openusd.org/license.
 //
 
+#include "pxr/pxr.h"
 #include "Tf/errorTransport.h"
-#include "pxr/pxrns.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-void TfErrorTransport::_PostImpl()
+void
+TfErrorTransport::_PostImpl()
 {
-  TfDiagnosticMgr::GetInstance()._SpliceErrors(_errorList);
+    TfDiagnosticMgr::GetInstance()._SpliceErrors(_errorList);
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

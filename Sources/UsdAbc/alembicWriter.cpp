@@ -30,7 +30,7 @@
 #include "Tf/fileUtils.h"
 #include "Tf/ostreamMethods.h"
 #include "Tf/pathUtils.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 #include "Usd/schemaRegistry.h"
 #include "UsdAbc/alembicUtil.h"
 #include "UsdGeom/hermiteCurves.h"

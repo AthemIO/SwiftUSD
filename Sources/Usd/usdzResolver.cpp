@@ -4,10 +4,10 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Usd/usdzResolver.h"
-#include "Usd/zipFile.h"
+#include "Sdf/zipFile.h"
 
 #include "Ar/asset.h"
 #include "Ar/definePackageResolver.h"
@@ -53,7 +53,7 @@ Usd_UsdzResolverCache::AssetAndZipFile Usd_UsdzResolverCache::_OpenZipFile(const
   AssetAndZipFile result;
   result.first = ArGetResolver().OpenAsset(ArResolvedPath(path));
   if (result.first) {
-    result.second = UsdZipFile::Open(result.first);
+    result.second = SdfZipFile::Open(result.first);
   }
   return result;
 }
@@ -95,7 +95,7 @@ std::string Usd_UsdzResolver::Resolve(const std::string &packagePath,
                                       const std::string &packagedPath)
 {
   std::shared_ptr<ArAsset> asset;
-  UsdZipFile zipFile;
+  SdfZipFile zipFile;
   std::tie(asset, zipFile) = Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(packagePath);
 
   if (!zipFile) {
@@ -109,14 +109,14 @@ namespace {
 class _Asset : public ArAsset {
  private:
   std::shared_ptr<ArAsset> _sourceAsset;
-  UsdZipFile _zipFile;
+  SdfZipFile _zipFile;
   const char *_dataInZipFile;
   size_t _offsetInZipFile;
   size_t _sizeInZipFile;
 
  public:
   explicit _Asset(std::shared_ptr<ArAsset> &&sourceAsset,
-                  UsdZipFile &&zipFile,
+                  SdfZipFile &&zipFile,
                   const char *dataInZipFile,
                   size_t offsetInZipFile,
                   size_t sizeInZipFile)
@@ -138,9 +138,9 @@ class _Asset : public ArAsset {
     struct _Deleter {
       void operator()(const char *b)
       {
-        zipFile = UsdZipFile();
+        zipFile = SdfZipFile();
       }
-      UsdZipFile zipFile;
+      SdfZipFile zipFile;
     };
 
     _Deleter d;
@@ -174,7 +174,7 @@ std::shared_ptr<ArAsset> Usd_UsdzResolver::OpenAsset(const std::string &packageP
                                                      const std::string &packagedPath)
 {
   std::shared_ptr<ArAsset> asset;
-  UsdZipFile zipFile;
+  SdfZipFile zipFile;
   std::tie(asset, zipFile) = Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(packagePath);
 
   if (!zipFile) {
@@ -186,7 +186,7 @@ std::shared_ptr<ArAsset> Usd_UsdzResolver::OpenAsset(const std::string &packageP
     return nullptr;
   }
 
-  const UsdZipFile::FileInfo info = iter.GetFileInfo();
+  const SdfZipFile::FileInfo info = iter.GetFileInfo();
 
   if (info.compressionMethod != 0) {
     TF_RUNTIME_ERROR("Cannot open %s in %s: compressed files are not supported",

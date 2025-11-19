@@ -5,7 +5,7 @@
 // https://openusd.org/license.
 //
 #include "Usd/crateData.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Usd/crateFile.h"
 
@@ -17,7 +17,7 @@
 #include "Tf/scopeDescription.h"
 #include "Tf/stringUtils.h"
 #include "Tf/typeInfoMap.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 #include "Work/dispatcher.h"
 #include "Work/loops.h"

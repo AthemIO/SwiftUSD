@@ -1,0 +1,223 @@
+[1/1] Compiling plugin OpenUSDPlugin
+[2/2] Compiling plugin UsdGenSchemaPlugin
+[3/3] Compiling plugin GenerateManual
+[4/4] Compiling plugin Swift-DocC Preview
+[5/5] Compiling plugin Swift-DocC
+Building for debugging...
+[5/2313] Compiling IexMathFpu.cpp
+[5/2313] Compiling IlmThreadSemaphorePosix.cpp
+[5/2313] Compiling IlmThreadSemaphoreWin32.cpp
+[5/2313] Compiling IlmThreadSemaphorePosixCompat.cpp
+[5/2327] Compiling IlmThreadSemaphore.cpp
+[10/2314] Compiling IexMathFloatExc.cpp
+[11/2314] Compiling IexThrowErrnoExc.cpp
+[12/2314] Compiling IlmThreadSemaphoreOSX.cpp
+[13/2314] Compiling IlmThread.cpp
+[14/2314] Compiling ImfAttribute.cpp
+[15/2314] Compiling ImfAcesFile.cpp
+[16/2314] Compiling IlmThreadPool.cpp
+[17/2314] Write swift-version--44D72886A502174.txt
+[18/2126] Compiling OpHelpers.cpp
+[19/2126] Compiling RedCameras.cpp
+[20/2126] Compiling PanasonicCameras.cpp
+[21/2126] Compiling SonyCameras.cpp
+[22/2126] Compiling IexBaseExc.cpp
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:24:1: error: use of undeclared identifier 'bp'
+   24 | bp::object
+      | ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:25:12: error: use of undeclared identifier 'bp'
+   25 | _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */)
+      |            ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:25:42: error: use of undeclared identifier 'bp'
+   25 | _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */)
+      |                                          ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:27:12: error: use of undeclared identifier 'bp'
+   27 |     return bp::object();
+      |            ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:32:17: error: use of undeclared identifier 'bp'
+   32 | _SpecRepr(const bp::object& self, const SdfSpec* spec)
+      |                 ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:41:16: error: use of undeclared identifier 'TfPyRepr'
+   41 |                TfPyRepr(path) +
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:43:16: error: use of undeclared identifier 'TfPyRepr'
+   43 |                TfPyRepr(spec->GetPath().GetString()) +
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:40:16: error: use of undeclared identifier 'TF_PY_REPR_PREFIX'
+   40 |         return TF_PY_REPR_PREFIX + "Find(" +
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:48:26: error: use of undeclared identifier '_HolderCreator'
+   48 | typedef std::map<TfType, _HolderCreator> _HolderCreatorMap;
+      |                          ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:52:50: error: unknown type name '_HolderCreator'
+   52 | _RegisterHolderCreator(const std::type_info& ti, _HolderCreator creator)
+      |                                                  ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:59:30: error: member reference base type 'int' is not a structure or union
+   59 |     else if (!_holderCreators->insert(std::make_pair(type, creator)).second){
+      |               ~~~~~~~~~~~~~~~^~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:65:1: error: unknown type name 'PyObject'
+   65 | PyObject*
+      | ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:69:16: error: use of undeclared identifier 'bp'
+   69 |         return bp::detail::none();
+      |                ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:77:9: error: 'Pixar::Sdf_PySpecDetail::_HolderCreatorMap' (aka 'int') is not a class, namespace, or enumeration
+   77 |         _HolderCreatorMap::const_iterator i = _holderCreators->find(type);
+      |         ^
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:77:62: error: member reference base type 'int' is not a structure or union
+   77 |         _HolderCreatorMap::const_iterator i = _holderCreators->find(type);
+      |                                               ~~~~~~~~~~~~~~~^~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:78:33: error: member reference base type 'int' is not a structure or union
+   78 |         if (i == _holderCreators->end()) {
+      |                  ~~~~~~~~~~~~~~~^~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/pySpec.cpp:83:20: error: use of undeclared identifier 'bp'
+   83 |             return bp::detail::none();
+      |                    ^
+17 errors generated.
+[23/2126] Compiling Sdf pySpec.cpp
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:354:23: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  354 |                       PEGTL_NS::if_must<
+      |                       ^~~~~~~~~~~~~~~~~
+      |                       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:355:27: error: template argument for non-type template parameter must be an expression
+  355 |                           AtAtAt,
+      |                           ^~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:368:7: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  368 |     : PEGTL_NS::if_must<LeftAngleBracket,
+      |       ^~~~~~~~~~~~~~~~~
+      |       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:368:25: error: template argument for non-type template parameter must be an expression
+  368 |     : PEGTL_NS::if_must<LeftAngleBracket,
+      |                         ^~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:428:7: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  428 |     : PEGTL_NS::if_must<TupleValueOpen,
+      |       ^~~~~~~~~~~~~~~~~
+      |       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:428:25: error: template argument for non-type template parameter must be an expression
+  428 |     : PEGTL_NS::if_must<TupleValueOpen,
+      |                         ^~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:448:7: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  448 |     : PEGTL_NS::if_must<ListValueOpen,
+      |       ^~~~~~~~~~~~~~~~~
+      |       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:448:25: error: template argument for non-type template parameter must be an expression
+  448 |     : PEGTL_NS::if_must<ListValueOpen,
+      |                         ^~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:488:11: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  488 |           PEGTL_NS::if_must<KeywordDictionary,
+      |           ^~~~~~~~~~~~~~~~~
+      |           PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:488:29: error: template argument for non-type template parameter must be an expression
+  488 |           PEGTL_NS::if_must<KeywordDictionary,
+      |                             ^~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:496:7: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  496 |     : PEGTL_NS::if_must<
+      |       ^~~~~~~~~~~~~~~~~
+      |       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:497:11: error: template argument for non-type template parameter must be an expression
+  497 |           DictionaryValueOpen,
+      |           ^~~~~~~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:505:7: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  505 |     : PEGTL_NS::if_must<LeftBracket,
+      |       ^~~~~~~~~~~~~~~~~
+      |       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:505:25: error: template argument for non-type template parameter must be an expression
+  505 |     : PEGTL_NS::if_must<LeftBracket,
+      |                         ^~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:515:7: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  515 |     : PEGTL_NS::if_must<KeywordPrepend,
+      |       ^~~~~~~~~~~~~~~~~
+      |       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:515:25: error: template argument for non-type template parameter must be an expression
+  515 |     : PEGTL_NS::if_must<KeywordPrepend,
+      |                         ^~~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:519:7: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  519 |     : PEGTL_NS::if_must<KeywordAppend,
+      |       ^~~~~~~~~~~~~~~~~
+      |       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:519:25: error: template argument for non-type template parameter must be an expression
+  519 |     : PEGTL_NS::if_must<KeywordAppend,
+      |                         ^~~~~~~~~~~~~
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:22:19: note: template parameter is declared here
+   22 |    template< bool Default, typename Cond, typename... Rules >
+      |                   ^
+In file included from /Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/textParserUtils.cpp:11:
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Sdf/include/Sdf/textFileFormatParser.h:523:7: error: no template named 'if_must' in namespace 'PXR_INTERNAL_NS_pegtl'; did you mean 'PXR_INTERNAL_NS_pegtl::internal::if_must'?
+  523 |     : PEGTL_NS::if_must<KeywordWrite,
+      |       ^~~~~~~~~~~~~~~~~
+      |       PXR_INTERNAL_NS_pegtl::internal::if_must
+/Users/martistaerfeldt/dev/SwiftUSDLive/SwiftUSD/Sources/Pegtl/include/Pegtl/internal/if_must.hpp:23:11: note: 'PXR_INTERNAL_NS_pegtl::internal::if_must' declared here
+   23 |    struct if_must
+      |           ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+[23/2126] Compiling Sdf textParserUtils.cpp
+[23/2126] Compiling Sdf textFileFormat.tab.cpp

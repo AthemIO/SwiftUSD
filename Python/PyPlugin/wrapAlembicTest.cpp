@@ -6,16 +6,17 @@
 //
 #include "pxr/pxrns.h"
 
-#include <boost/python/def.hpp>
+#include "pxr/external/boost/python/def.hpp"
 
 #include "Plugin/usdAbc/alembicTest.h"
 
-using namespace boost::python;
-
 PXR_NAMESPACE_USING_DIRECTIVE
+
+using namespace pxr_boost::python;
 
 void wrapUsdAbcAlembicTest()
 {
-  def("_TestAlembic", UsdAbc_TestAlembic, arg("pathname"));
-  def("_WriteAlembic", UsdAbc_WriteAlembic, (arg("srcPathname"), arg("dstPathname")));
+    def("_TestAlembic", UsdAbc_TestAlembic, arg("pathname"));
+    def("_WriteAlembic", UsdAbc_WriteAlembic,
+        (arg("srcPathname"), arg("dstPathname")));
 }

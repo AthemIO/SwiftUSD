@@ -15,6 +15,7 @@ import Foundation
 /// All processes that have been created using `Process.create(_:arguments:directory:pipe:)`.
 ///
 /// If the program is killed, all processes in this array are terminated before the program exits.
+@MainActor
 var processes: [Process] = []
 
 extension Process
@@ -137,6 +138,7 @@ extension Process
   ///   - runSilentlyWhenNotVerbose: If `true`, output is captured even when no pipe is provided id Swift Bundler wasn't run with `-v`.
   ///                                Defaults to `true`.
   /// - Returns: The new process.
+  @MainActor
   static func create(
     _ tool: String,
     arguments: [String] = [],
@@ -190,6 +192,7 @@ extension Process
   /// run the tool through `/usr/bin/env` which will find the tool on the user's `PATH`).
   /// - Parameter tool: The tool to expand into a full path.
   /// - Returns: The absolute path to the tool, or a failure if the tool can't be located.
+  @MainActor
   static func locate(_ tool: String) -> Result<String, ProcessError>
   {
     Process.create(

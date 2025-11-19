@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,14 +12,14 @@
 #ifndef AOM_AV1_COMMON_ENTROPY_H_
 #define AOM_AV1_COMMON_ENTROPY_H_
 
-#include "Plugin/hioAvif/aom/config/aom_config.h"
+#include "config/aom_config.h"
 
-#include "Plugin/hioAvif/aom/aom_dsp/prob.h"
-#include "Plugin/hioAvif/aom/aom_integer.h"
+#include "aom/aom_integer.h"
+#include "aom_dsp/prob.h"
 
-#include "Plugin/hioAvif/aom/av1/common/common.h"
-#include "Plugin/hioAvif/aom/av1/common/common_data.h"
-#include "Plugin/hioAvif/aom/av1/common/enums.h"
+#include "av1/common/common.h"
+#include "av1/common/common_data.h"
+#include "av1/common/enums.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,15 +79,13 @@ struct frame_contexts;
 
 typedef char ENTROPY_CONTEXT;
 
-static INLINE int combine_entropy_contexts(ENTROPY_CONTEXT a, ENTROPY_CONTEXT b)
-{
+static inline int combine_entropy_contexts(ENTROPY_CONTEXT a,
+                                           ENTROPY_CONTEXT b) {
   return (a != 0) + (b != 0);
 }
 
-static INLINE int get_entropy_context(TX_SIZE tx_size,
-                                      const ENTROPY_CONTEXT *a,
-                                      const ENTROPY_CONTEXT *l)
-{
+static inline int get_entropy_context(TX_SIZE tx_size, const ENTROPY_CONTEXT *a,
+                                      const ENTROPY_CONTEXT *l) {
   ENTROPY_CONTEXT above_ec = 0, left_ec = 0;
 
   switch (tx_size) {
@@ -167,16 +165,14 @@ static INLINE int get_entropy_context(TX_SIZE tx_size,
       above_ec = !!(*(const uint64_t *)a | *(const uint64_t *)(a + 8));
       left_ec = !!*(const uint32_t *)l;
       break;
-    default:
-      assert(0 && "Invalid transform size.");
-      break;
+    default: assert(0 && "Invalid transform size."); break;
   }
   return combine_entropy_contexts(above_ec, left_ec);
 }
 
-static INLINE TX_SIZE get_txsize_entropy_ctx(TX_SIZE txsize)
-{
-  return (TX_SIZE)((txsize_sqr_map[txsize] + txsize_sqr_up_map[txsize] + 1) >> 1);
+static inline TX_SIZE get_txsize_entropy_ctx(TX_SIZE txsize) {
+  return (TX_SIZE)((txsize_sqr_map[txsize] + txsize_sqr_up_map[txsize] + 1) >>
+                   1);
 }
 
 #ifdef __cplusplus

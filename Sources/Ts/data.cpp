@@ -6,7 +6,7 @@
 //
 
 #include "Ts/data.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include <cmath>
 

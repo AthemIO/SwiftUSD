@@ -9,22 +9,21 @@
 
 /// \file sdf/pyListEditorProxy.h
 
-#include "Sdf/listEditorProxy.h"
-#include "Sdf/listOp.h"
-#include "Sdf/pyListProxy.h"
 #include "pxr/pxrns.h"
 
-#include "Arch/demangle.h"
-#include "Tf/diagnostic.h"
-#include "Tf/pyCall.h"
-#include "Tf/pyLock.h"
-#include "Tf/pyResultConversions.h"
-#include "Tf/pyUtils.h"
-#include "Tf/stringUtils.h"
+#if PXR_PYTHON_SUPPORT_ENABLED
+#  include "Sdf/listEditorProxy.h"
+#  include "Sdf/listOp.h"
+#  include "Sdf/pyListProxy.h"
 
-#if defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
-
-#include <boost/python.hpp>
+#  include "Arch/demangle.h"
+#  include "Tf/diagnostic.h"
+#  include "Tf/pyCall.h"
+#  include "Tf/pyLock.h"
+#  include "Tf/pyResultConversions.h"
+#  include "Tf/pyUtils.h"
+#  include "Tf/stringUtils.h"
+#  include "pxr/external/boost/python.hpp"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -32,7 +31,7 @@ class Sdf_PyListEditorUtils {
  public:
   template<class T, class V> class ApplyHelper {
    public:
-    ApplyHelper(const T &owner, const boost::python::object &callback)
+    ApplyHelper(const T &owner, const pxr_boost::python::object &callback)
         : _owner(owner), _callback(callback)
     {
       // Do nothing
@@ -40,7 +39,7 @@ class Sdf_PyListEditorUtils {
 
     std::optional<V> operator()(SdfListOpType op, const V &value)
     {
-      using namespace boost::python;
+      using namespace pxr_boost::python;
 
       TfPyLock pyLock;
       object result = _callback(_owner, value, op);
@@ -60,19 +59,19 @@ class Sdf_PyListEditorUtils {
 
    private:
     const T &_owner;
-    TfPyCall<boost::python::object> _callback;
+    TfPyCall<pxr_boost::python::object> _callback;
   };
 
   template<class V> class ModifyHelper {
    public:
-    ModifyHelper(const boost::python::object &callback) : _callback(callback)
+    ModifyHelper(const pxr_boost::python::object &callback) : _callback(callback)
     {
       // Do nothing
     }
 
     std::optional<V> operator()(const V &value)
     {
-      using namespace boost::python;
+      using namespace pxr_boost::python;
 
       TfPyLock pyLock;
       object result = _callback(value);
@@ -91,7 +90,7 @@ class Sdf_PyListEditorUtils {
     }
 
    private:
-    TfPyCall<boost::python::object> _callback;
+    TfPyCall<pxr_boost::python::object> _callback;
   };
 };
 
@@ -115,7 +114,7 @@ template<class T> class SdfPyWrapListEditorProxy {
  private:
   static void _Wrap()
   {
-    using namespace boost::python;
+    using namespace pxr_boost::python;
 
     class_<Type>(_GetName().c_str(), no_init)
         .def("__str__", &This::_GetStr)
@@ -212,14 +211,14 @@ template<class T> class SdfPyWrapListEditorProxy {
 
   static value_vector_type _ApplyEditsToList2(const Type &x,
                                               const value_vector_type &v,
-                                              const boost::python::object &cb)
+                                              const pxr_boost::python::object &cb)
   {
     value_vector_type tmp = v;
     x.ApplyEditsToList(&tmp, Sdf_PyListEditorUtils::ApplyHelper<Type, value_type>(x, cb));
     return tmp;
   }
 
-  static void _ModifyEdits(Type &x, const boost::python::object &cb)
+  static void _ModifyEdits(Type &x, const pxr_boost::python::object &cb)
   {
     x.ModifyItemEdits(Sdf_PyListEditorUtils::ModifyHelper<value_type>(cb));
   }
@@ -227,6 +226,6 @@ template<class T> class SdfPyWrapListEditorProxy {
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#endif  // PXR_PYTHON_SUPPORT_ENABLED
 
-#endif  // PXR_USD_SDF_PY_LIST_EDITOR_PROXY_H
+#endif  // PXR_USD_SDF_

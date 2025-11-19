@@ -5,8 +5,8 @@
 // https://openusd.org/license.
 //
 
+#include "pxr/pxr.h"
 #include "HdSt/textureCpuData.h"
-#include "pxr/pxrns.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 

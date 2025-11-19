@@ -18,7 +18,7 @@
 #include "Sdf/types.h"
 #include "Sdf/valueTypeRegistry.h"
 #include "Sdf/variableExpression.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Plug/plugin.h"
 #include "Plug/registry.h"
@@ -26,7 +26,8 @@
 #include "Tf/envSetting.h"
 #include "Tf/instantiateSingleton.h"
 #include "Tf/unicodeUtils.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
+#include "Ts/spline.h"
 #include "Vt/dictionary.h"
 
 #include <deque>
@@ -615,10 +616,13 @@ void SdfSchemaBase::_RegisterStandardFields()
   // Regular Fields
   _DoRegisterField(SdfFieldKeys->Active, true);
   _DoRegisterField(SdfFieldKeys->AllowedTokens, VtTokenArray());
+  _DoRegisterField(SdfFieldKeys->ArraySizeConstraint, static_cast<int64_t>(0));
   _DoRegisterField(SdfFieldKeys->AssetInfo, VtDictionary())
       .MapKeyValidator(&_ValidateIdentifier)
       .MapValueValidator(&_ValidateIsSceneDescriptionValue);
   _DoRegisterField(SdfFieldKeys->TimeSamples, SdfTimeSampleMap());
+  _DoRegisterField(SdfFieldKeys->Clips, VtDictionary());
+  _DoRegisterField(SdfFieldKeys->ClipSets, SdfStringListOp());
   _DoRegisterField(SdfFieldKeys->ColorConfiguration, SdfAssetPath());
   _DoRegisterField(SdfFieldKeys->ColorManagementSystem, TfToken());
   _DoRegisterField(SdfFieldKeys->ColorSpace, TfToken());
@@ -657,6 +661,7 @@ void SdfSchemaBase::_RegisterStandardFields()
   _DoRegisterField(SdfFieldKeys->InheritPaths, SdfPathListOp())
       .ListValueValidator(&_ValidateInheritPath);
   _DoRegisterField(SdfFieldKeys->Kind, TfToken());
+  _DoRegisterField(SdfFieldKeys->Limits, VtDictionary());
   _DoRegisterField(SdfFieldKeys->Owner, "");
   _DoRegisterField(SdfFieldKeys->PrimOrder, std::vector<TfToken>())
       .ListValueValidator(&_ValidateIdentifierToken);
@@ -675,6 +680,7 @@ void SdfSchemaBase::_RegisterStandardFields()
   _DoRegisterField(SdfFieldKeys->SessionOwner, "");
   _DoRegisterField(SdfFieldKeys->Specializes, SdfPathListOp())
       .ListValueValidator(&_ValidateSpecializesPath);
+  _DoRegisterField(SdfFieldKeys->Spline, TsSpline());
   _DoRegisterField(SdfFieldKeys->Suffix, "");
   _DoRegisterField(SdfFieldKeys->SuffixSubstitutions, VtDictionary())
       .MapKeyValidator(&_ValidateIsNonEmptyString)
@@ -786,6 +792,8 @@ void SdfSchemaBase::_RegisterStandardFields()
 
       .MetadataField(SdfFieldKeys->Active, SdfMetadataDisplayGroupTokens->core)
       .MetadataField(SdfFieldKeys->AssetInfo, SdfMetadataDisplayGroupTokens->core)
+      .MetadataField(SdfFieldKeys->Clips, SdfMetadataDisplayGroupTokens->core)
+      .MetadataField(SdfFieldKeys->ClipSets, SdfMetadataDisplayGroupTokens->core)
       .MetadataField(SdfFieldKeys->CustomData, SdfMetadataDisplayGroupTokens->core)
       .MetadataField(SdfFieldKeys->DisplayGroupOrder, SdfMetadataDisplayGroupTokens->core)
       .MetadataField(SdfFieldKeys->DisplayName, SdfMetadataDisplayGroupTokens->core)
@@ -813,7 +821,6 @@ void SdfSchemaBase::_RegisterStandardFields()
 
       .Field(SdfFieldKeys->Comment)
       .Field(SdfFieldKeys->Default)
-      .Field(SdfFieldKeys->TimeSamples)
 
       .MetadataField(SdfFieldKeys->AssetInfo, SdfMetadataDisplayGroupTokens->core)
       .MetadataField(SdfFieldKeys->CustomData, SdfMetadataDisplayGroupTokens->core)
@@ -832,11 +839,16 @@ void SdfSchemaBase::_RegisterStandardFields()
       .CopyFrom(property)
       .Field(SdfFieldKeys->TypeName, /* required = */ true)
 
+      .Field(SdfFieldKeys->Spline)
       .Field(SdfChildrenKeys->ConnectionChildren)
       .Field(SdfFieldKeys->ConnectionPaths)
       .Field(SdfFieldKeys->DisplayUnit)
+      .Field(SdfFieldKeys->TimeSamples)
+
       .MetadataField(SdfFieldKeys->AllowedTokens, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->ColorSpace, SdfMetadataDisplayGroupTokens->core);
+      .MetadataField(SdfFieldKeys->ArraySizeConstraint, SdfMetadataDisplayGroupTokens->core)
+      .MetadataField(SdfFieldKeys->ColorSpace, SdfMetadataDisplayGroupTokens->core)
+      .MetadataField(SdfFieldKeys->Limits, SdfMetadataDisplayGroupTokens->core);
 
   _Define(SdfSpecTypeConnection);
 
@@ -981,6 +993,13 @@ const SdfSchemaBase::SpecDefinition *SdfSchemaBase::_CheckAndGetSpecDefinition(
   }
 
   return def;
+}
+
+const SdfSchemaBase::SpecDefinition *SdfSchemaBase::_IssueErrorForInvalidSpecType(
+    SdfSpecType specType) const
+{
+  TF_RUNTIME_ERROR("Invalid spec type %d", static_cast<int>(specType));
+  return nullptr;
 }
 
 bool SdfSchemaBase::IsValidFieldForSpec(const TfToken &fieldKey, SdfSpecType specType) const
@@ -1131,8 +1150,8 @@ SdfAllowed SdfSchemaBase::IsValidVariantIdentifier(const std::string &identifier
   bool result = false;
   try {
     result = Sdf_PathParser::PEGTL_NS::parse<
-        Sdf_PathParser::PEGTL_NS::must<Sdf_PathParser::VariantName,
-                                       Sdf_PathParser::PEGTL_NS::eof>>(
+        Sdf_PathParser::PEGTL_NS::internal::must<Sdf_PathParser::VariantName,
+                                                 Sdf_PathParser::PEGTL_NS::internal::eof>>(
         Sdf_PathParser::PEGTL_NS::string_input<>{identifier, ""}, context);
 
     if (!result) {

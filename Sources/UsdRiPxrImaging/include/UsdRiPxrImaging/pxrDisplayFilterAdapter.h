@@ -9,113 +9,125 @@
 
 /// \file usdRiPxrImaging/pxrDisplayFilterAdapter.h
 
-#include "UsdImaging/primAdapter.h"
-#include "UsdRiPxrImaging/api.h"
 #include "pxr/pxrns.h"
+#include "UsdRiPxrImaging/api.h"
+#include "UsdImaging/primAdapter.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
+
 
 /// \class UsdRiPxrImagingDisplayFilterAdapter
 ///
 /// Delegate support for Display Filter Prims.
 ///
-class UsdRiPxrImagingDisplayFilterAdapter : public UsdImagingPrimAdapter {
- public:
-  using BaseAdapter = UsdImagingPrimAdapter;
+class UsdRiPxrImagingDisplayFilterAdapter : public UsdImagingPrimAdapter
+{
+public:
+    using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdRiPxrImagingDisplayFilterAdapter() : UsdImagingPrimAdapter() {}
+    UsdRiPxrImagingDisplayFilterAdapter()
+        : UsdImagingPrimAdapter()
+    {}
 
-  USDRIPXRIMAGING_API
-  ~UsdRiPxrImagingDisplayFilterAdapter() override;
+    USDRIPXRIMAGING_API
+    ~UsdRiPxrImagingDisplayFilterAdapter() override;
 
-  // ---------------------------------------------------------------------- //
-  /// \name Scene Index Support
-  // ---------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------- //
+    /// \name Scene Index Support
+    // ---------------------------------------------------------------------- //
 
-  USDRIPXRIMAGING_API
-  TfTokenVector GetImagingSubprims(UsdPrim const &prim) override;
+    USDRIPXRIMAGING_API
+    TfTokenVector GetImagingSubprims(UsdPrim const& prim) override;
 
-  USDRIPXRIMAGING_API
-  TfToken GetImagingSubprimType(UsdPrim const &prim, TfToken const &subprim) override;
+    USDRIPXRIMAGING_API
+    TfToken GetImagingSubprimType(
+            UsdPrim const& prim,
+            TfToken const& subprim) override;
 
-  USDRIPXRIMAGING_API
-  HdContainerDataSourceHandle GetImagingSubprimData(
-      UsdPrim const &prim,
-      TfToken const &subprim,
-      const UsdImagingDataSourceStageGlobals &stageGlobals) override;
+    USDRIPXRIMAGING_API
+    HdContainerDataSourceHandle GetImagingSubprimData(
+            UsdPrim const& prim,
+            TfToken const& subprim,
+            const UsdImagingDataSourceStageGlobals &stageGlobals) override;
 
-  USDRIPXRIMAGING_API
-  HdDataSourceLocatorSet InvalidateImagingSubprim(
-      UsdPrim const &prim,
-      TfToken const &subprim,
-      TfTokenVector const &properties,
-      UsdImagingPropertyInvalidationType invalidationType) override;
+    USDRIPXRIMAGING_API
+    HdDataSourceLocatorSet InvalidateImagingSubprim(
+            UsdPrim const& prim,
+            TfToken const& subprim,
+            TfTokenVector const& properties,
+            UsdImagingPropertyInvalidationType invalidationType) override;
 
-  // ---------------------------------------------------------------------- //
-  /// \name Initialization
-  // ---------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------- //
+    /// \name Initialization
+    // ---------------------------------------------------------------------- //
 
-  USDRIPXRIMAGING_API
-  SdfPath Populate(UsdPrim const &prim,
-                   UsdImagingIndexProxy *index,
-                   UsdImagingInstancerContext const *instancerContext = nullptr) override;
+    USDRIPXRIMAGING_API
+    SdfPath Populate(UsdPrim const& prim,
+                     UsdImagingIndexProxy* index,
+                     UsdImagingInstancerContext const*
+                     instancerContext = nullptr) override;
 
-  USDRIPXRIMAGING_API
-  bool IsSupported(UsdImagingIndexProxy const *index) const override;
+    USDRIPXRIMAGING_API
+    bool IsSupported(UsdImagingIndexProxy const* index) const override;
 
-  // ---------------------------------------------------------------------- //
-  /// \name Parallel Setup and Resolve
-  // ---------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------- //
+    /// \name Parallel Setup and Resolve
+    // ---------------------------------------------------------------------- //
 
-  /// Thread Safe.
-  USDRIPXRIMAGING_API
-  void TrackVariability(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      HdDirtyBits *timeVaryingBits,
-      UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+    /// Thread Safe.
+    USDRIPXRIMAGING_API
+    void TrackVariability(UsdPrim const& prim,
+                          SdfPath const& cachePath,
+                          HdDirtyBits* timeVaryingBits,
+                          UsdImagingInstancerContext const* 
+                          instancerContext = nullptr) const override;
 
-  /// Thread Safe.
-  USDRIPXRIMAGING_API
-  void UpdateForTime(UsdPrim const &prim,
-                     SdfPath const &cachePath,
-                     UsdTimeCode time,
-                     HdDirtyBits requestedBits,
-                     UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
-  // ---------------------------------------------------------------------- //
-  /// \name Change Processing
-  // ---------------------------------------------------------------------- //
+    /// Thread Safe.
+    USDRIPXRIMAGING_API
+    void UpdateForTime(UsdPrim const& prim,
+                       SdfPath const& cachePath,
+                       UsdTimeCode time,
+                       HdDirtyBits requestedBits,
+                       UsdImagingInstancerContext const* 
+                       instancerContext = nullptr) const override;
 
-  /// Returns a bit mask of attributes to be udpated, or
-  /// HdChangeTracker::AllDirty if the entire prim must be resynchronized.
-  USDRIPXRIMAGING_API
-  HdDirtyBits ProcessPropertyChange(UsdPrim const &prim,
-                                    SdfPath const &cachePath,
-                                    TfToken const &propertyName) override;
+    // ---------------------------------------------------------------------- //
+    /// \name Change Processing 
+    // ---------------------------------------------------------------------- //
 
-  USDRIPXRIMAGING_API
-  void MarkDirty(UsdPrim const &prim,
-                 SdfPath const &cachePath,
-                 HdDirtyBits dirty,
-                 UsdImagingIndexProxy *index) override;
+    /// Returns a bit mask of attributes to be udpated, or
+    /// HdChangeTracker::AllDirty if the entire prim must be resynchronized.
+    USDRIPXRIMAGING_API
+    HdDirtyBits ProcessPropertyChange(UsdPrim const& prim,
+                                      SdfPath const& cachePath,
+                                      TfToken const& propertyName) override;
 
-  // ---------------------------------------------------------------------- //
-  /// \name Data access
-  // ---------------------------------------------------------------------- //
+    USDRIPXRIMAGING_API
+    void MarkDirty(UsdPrim const& prim,
+                   SdfPath const& cachePath,
+                   HdDirtyBits dirty,
+                   UsdImagingIndexProxy* index) override;
 
-  USDRIPXRIMAGING_API
-  VtValue Get(UsdPrim const &prim,
-              SdfPath const &cachePath,
-              TfToken const &key,
-              UsdTimeCode time,
-              VtIntArray *outIndices) const override;
+    // ---------------------------------------------------------------------- //
+    /// \name Data access
+    // ---------------------------------------------------------------------- //
 
- protected:
-  USDRIPXRIMAGING_API
-  void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
+    USDRIPXRIMAGING_API
+    VtValue Get(UsdPrim const& prim,
+                SdfPath const& cachePath,
+                TfToken const& key,
+                UsdTimeCode time,
+                VtIntArray *outIndices) const override;
+
+protected:
+    USDRIPXRIMAGING_API
+    void _RemovePrim(SdfPath const& cachePath,
+                     UsdImagingIndexProxy* index) override;
+
 };
+
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_USD_IMAGING_USD_RI_PXR_IMAGING_PXR_DISPLAY_FILTER_ADAPTER_H
+#endif // PXR_USD_IMAGING_USD_RI_PXR_IMAGING_PXR_DISPLAY_FILTER_ADAPTER_H

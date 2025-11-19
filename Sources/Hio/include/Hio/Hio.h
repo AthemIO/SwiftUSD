@@ -16,4 +16,7 @@
 #include <Hio/stb/stb_image_write.h>
 #include <Hio/types.h>
 
+#include <Hio/stb_image_write.h>
+#include <Hio/stb_image_resize2.h>
+#include <Hio/stb_image.h>
 #endif  // __PXR_IMAGING_HIO_H__

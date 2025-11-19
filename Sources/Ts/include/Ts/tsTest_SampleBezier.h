@@ -1,5 +1,5 @@
 //
-// Copyright 2023 Pixar
+// Copyright 2024 Pixar
 //
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
@@ -8,10 +8,10 @@
 #ifndef PXR_BASE_TS_TS_TEST_SAMPLE_BEZIER_H
 #define PXR_BASE_TS_TS_TEST_SAMPLE_BEZIER_H
 
+#include "pxr/pxrns.h"
 #include "Ts/api.h"
 #include "Ts/tsTest_SplineData.h"
 #include "Ts/tsTest_Types.h"
-#include "pxr/pxrns.h"
 
 #include <vector>
 
@@ -26,7 +26,10 @@ PXR_NAMESPACE_OPEN_SCOPE
 // Only Bezier segments are supported.  No extrapolation is performed.
 //
 TS_API
-TsTest_SampleVec TsTest_SampleBezier(const TsTest_SplineData &splineData, int numSamples);
+TsTest_SampleVec
+TsTest_SampleBezier(
+    const TsTest_SplineData &splineData,
+    int numSamples);
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

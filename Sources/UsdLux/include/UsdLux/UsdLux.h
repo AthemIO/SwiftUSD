@@ -29,4 +29,5 @@
 #include <UsdLux/volumeLightAPI.h>
 
 #include <UsdLux/domeLight_1.h>
+#include <UsdLux/generatedSchema.module.h>
 #endif  // __PXR_USD_USDLUX_H__

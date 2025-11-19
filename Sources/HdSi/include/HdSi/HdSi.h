@@ -21,4 +21,17 @@
 #include <HdSi/utils.h>
 #include <HdSi/velocityMotionResolvingSceneIndex.h>
 #include <HdSi/version.h>
+#include <HdSi/materialOverrideResolvingSceneIndex.h>
+#include <HdSi/computeSceneIndexDiff.h>
+#include <HdSi/extComputationDependencySceneIndex.h>
+#include <HdSi/primTypeAndPathPruningSceneIndex.h>
+#include <HdSi/debuggingSceneIndex.h>
+#include <HdSi/prefixPathPruningSceneIndex.h>
+#include <HdSi/switchingSceneIndex.h>
+#include <HdSi/domeLightCameraVisibilitySceneIndex.h>
+#include <HdSi/unboundMaterialPruningSceneIndex.h>
+#include <HdSi/sceneMaterialPruningSceneIndex.h>
+#include <HdSi/debuggingSceneIndexPlugin.h>
+#include <HdSi/renderPassPruneSceneIndex.h>
+#include <HdSi/nodeIdentifierResolvingSceneIndex.h>
 #endif  // __PXR_IMAGING_HDSI_H__

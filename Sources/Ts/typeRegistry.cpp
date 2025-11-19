@@ -7,12 +7,24 @@
 
 #include "Ts/typeRegistry.h"
 #include "Ts/data.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Plug/plugin.h"
 #include "Plug/registry.h"
 #include "Tf/instantiateSingleton.h"
 #include "Tf/token.h"
+#include "Vt/array.h"
+#include "Gf/vec2d.h"
+#include "Gf/vec2f.h"
+#include "Gf/vec3d.h"
+#include "Gf/vec3f.h"
+#include "Gf/vec4d.h"
+#include "Gf/vec4f.h"
+#include "Gf/quatd.h"
+#include "Gf/quatf.h"
+#include "Gf/matrix2d.h"
+#include "Gf/matrix3d.h"
+#include "Gf/matrix4d.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,7 +11,7 @@
 #ifndef AOM_AV1_COMMON_OBU_UTIL_H_
 #define AOM_AV1_COMMON_OBU_UTIL_H_
 
-#include "Plugin/hioAvif/aom/aom_codec.h"
+#include "aom/aom_codec.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,8 +29,9 @@ typedef struct {
   int spatial_layer_id;
 } ObuHeader;
 
-aom_codec_err_t aom_read_obu_header(
-    uint8_t *buffer, size_t buffer_length, size_t *consumed, ObuHeader *header, int is_annexb);
+aom_codec_err_t aom_read_obu_header(uint8_t *buffer, size_t buffer_length,
+                                    size_t *consumed, ObuHeader *header,
+                                    int is_annexb);
 
 aom_codec_err_t aom_read_obu_header_and_size(const uint8_t *data,
                                              size_t bytes_available,

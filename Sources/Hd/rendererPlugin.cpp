@@ -6,8 +6,10 @@
 //
 #include "Hd/rendererPlugin.h"
 
-#include "Hd/pluginRenderDelegateUniqueHandle.h"
+#include "Hd/renderer.h"
 #include "Hd/rendererPluginRegistry.h"
+#include "Hd/pluginRenderDelegateUniqueHandle.h"
+#include "Hd/pluginRendererUniqueHandle.h"
 
 #include "Tf/registryManager.h"
 #include "Tf/type.h"
@@ -16,14 +18,15 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 TF_REGISTRY_FUNCTION(TfType)
 {
-  TfType::Define<HdRendererPlugin>();
+    TfType::Define<HdRendererPlugin>();
 }
 
-HdRenderDelegate *HdRendererPlugin::CreateRenderDelegate(HdRenderSettingsMap const &settingsMap)
+HdRenderDelegate*
+HdRendererPlugin::CreateRenderDelegate(HdRenderSettingsMap const& settingsMap)
 {
-  // The settings map is currently an opt-in API, so if there's no
-  // derived implementation, fall back to the settings-less factory.
-  return CreateRenderDelegate();
+    // The settings map is currently an opt-in API, so if there's no
+    // derived implementation, fall back to the settings-less factory.
+    return CreateRenderDelegate();
 }
 
 //
@@ -39,56 +42,100 @@ HdRenderDelegate *HdRendererPlugin::CreateRenderDelegate(HdRenderSettingsMap con
 // in this compilation unit.
 HdRendererPlugin::~HdRendererPlugin() = default;
 
-HdPluginRenderDelegateUniqueHandle HdRendererPlugin::CreateDelegate(
-    HdRenderSettingsMap const &settingsMap)
+HdPluginRenderDelegateUniqueHandle
+HdRendererPlugin::CreateDelegate(HdRenderSettingsMap const& settingsMap)
 {
-  if (!IsSupported()) {
-    return nullptr;
-  }
-
-  HdRendererPluginRegistry::GetInstance().AddPluginReference(this);
-
-  HdPluginRenderDelegateUniqueHandle result = HdPluginRenderDelegateUniqueHandle(
-      HdRendererPluginHandle(this), CreateRenderDelegate(settingsMap));
-
-  if (TfDebug::IsEnabled(HD_RENDERER_PLUGIN)) {
-    std::stringstream ss;
-    for (const auto &pair : settingsMap) {
-      ss << "\t" << pair.first << ": " << pair.second << "\n";
+    if (!IsSupported()) {
+        return nullptr;
     }
-    TF_DEBUG(HD_RENDERER_PLUGIN)
-        .Msg("%s instance of renderer plugin '%s' with settings map:\n%s",
-             result ? "Created" : "Failed to create",
-             GetPluginId().GetText(),
-             ss.str().c_str());
-  }
 
-  // provide render delegate instance with display name to facilitate
-  // association of this renderer to other code and resources
-  if (result) {
-    result->_SetRendererDisplayName(GetDisplayName());
-  }
+    HdRendererPluginRegistry::GetInstance().AddPluginReference(this);
 
-  return result;
+    HdPluginRenderDelegateUniqueHandle result =
+        HdPluginRenderDelegateUniqueHandle(
+            HdRendererPluginHandle(this),
+            CreateRenderDelegate(settingsMap));
+
+    if (TfDebug::IsEnabled(HD_RENDERER_PLUGIN)) {
+        std::stringstream ss;
+        for (const auto& pair : settingsMap) {
+            ss << "\t" << pair.first << ": " << pair.second << "\n";
+        }
+        TF_DEBUG(HD_RENDERER_PLUGIN).Msg(
+            "%s instance of renderer plugin '%s' with settings map:\n%s",
+            result ? "Created" : "Failed to create",
+            GetPluginId().GetText(), ss.str().c_str());
+    }
+
+    // provide render delegate instance with display name to facilitate
+    // association of this renderer to other code and resources
+    if (result) {
+        result->_SetRendererDisplayName(GetDisplayName());
+    }
+
+    return result;
 }
 
-TfToken HdRendererPlugin::GetPluginId() const
+HdPluginRendererUniqueHandle
+HdRendererPlugin::CreateRenderer(
+    HdSceneIndexBaseRefPtr const &sceneIndex,
+    const HdRendererCreateArgs &rendererCreateArgs)
 {
-  return HdRendererPluginRegistry::GetInstance().GetPluginId(this);
+    if (!IsSupported(rendererCreateArgs)) {
+        return nullptr;
+    }
+
+    HdRendererPluginRegistry::GetInstance().AddPluginReference(this);
+
+    return
+        HdPluginRendererUniqueHandle(
+            HdRendererPluginHandle(this),
+            _CreateRenderer(
+                sceneIndex, rendererCreateArgs));
 }
 
-std::string HdRendererPlugin::GetDisplayName() const
+TfToken
+HdRendererPlugin::GetPluginId() const
 {
-  TfToken pluginId = HdRendererPluginRegistry::GetInstance().GetPluginId(this);
-  HfPluginDesc desc;
-  if (!HdRendererPluginRegistry::GetInstance().GetPluginDesc(pluginId, &desc)) {
-    // Note, this is unlikely since if pluginId were illegal, this class
-    // would not have been instantiated...
-    TF_CODING_ERROR("Unable to get display name for '%s'", pluginId.GetText());
-    return std::string();
-  }
+    return HdRendererPluginRegistry::GetInstance().GetPluginId(this);
+}
 
-  return desc.displayName;
+std::string
+HdRendererPlugin::GetDisplayName() const
+{
+    TfToken pluginId =
+        HdRendererPluginRegistry::GetInstance().GetPluginId(this);
+    HfPluginDesc desc;
+    if (!HdRendererPluginRegistry::GetInstance()
+            .GetPluginDesc(pluginId, &desc)) {
+        // Note, this is unlikely since if pluginId were illegal, this class
+        // would not have been instantiated...
+        TF_CODING_ERROR("Unable to get display name for '%s'",
+                pluginId.GetText());
+        return std::string();
+    }
+
+    return desc.displayName;
+}
+
+bool
+HdRendererPlugin::IsSupported(bool gpuEnabled) const
+{
+    HdRendererCreateArgs rendererCreateArgs;
+    rendererCreateArgs.gpuEnabled = gpuEnabled;
+    return IsSupported(rendererCreateArgs);
+}
+
+std::unique_ptr<HdRenderer>
+HdRendererPlugin::_CreateRenderer(
+    HdSceneIndexBaseRefPtr const &sceneIndex,
+    const HdRendererCreateArgs &rendererCreateArgs)
+{
+    TF_CODING_ERROR(
+        "Hydra 2.0 HdRendererPlugin::_CreateRenderer not implemented.");
+
+    return nullptr;
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+

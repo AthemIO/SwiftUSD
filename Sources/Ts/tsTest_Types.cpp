@@ -6,16 +6,10 @@
 //
 
 #include "Ts/tsTest_Types.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-TsTest_Sample::TsTest_Sample() = default;
-
-TsTest_Sample::TsTest_Sample(double timeIn, double valueIn) : time(timeIn), value(valueIn) {}
-
-TsTest_Sample::TsTest_Sample(const TsTest_Sample &other) = default;
-
-TsTest_Sample &TsTest_Sample::operator=(const TsTest_Sample &other) = default;
+// All methods are defined inline in the header
 
 PXR_NAMESPACE_CLOSE_SCOPE

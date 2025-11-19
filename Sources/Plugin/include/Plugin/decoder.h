@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,21 +12,21 @@
 #ifndef AOM_AV1_DECODER_DECODER_H_
 #define AOM_AV1_DECODER_DECODER_H_
 
-#include "Plugin/hioAvif/aom/config/aom_config.h"
+#include "config/aom_config.h"
 
-#include "Plugin/hioAvif/aom/aom_codec.h"
-#include "Plugin/hioAvif/aom/aom_dsp/bitreader.h"
-#include "Plugin/hioAvif/aom/aom_scale/yv12config.h"
-#include "Plugin/hioAvif/aom/aom_util/aom_thread.h"
+#include "aom/aom_codec.h"
+#include "aom_dsp/bitreader.h"
+#include "aom_scale/yv12config.h"
+#include "aom_util/aom_thread.h"
 
-#include "Plugin/hioAvif/aom/av1/common/av1_common_int.h"
-#include "Plugin/hioAvif/aom/av1/common/thread_common.h"
-#include "Plugin/hioAvif/aom/av1/decoder/dthread.h"
+#include "av1/common/av1_common_int.h"
+#include "av1/common/thread_common.h"
+#include "av1/decoder/dthread.h"
 #if CONFIG_ACCOUNTING
-#  include "Plugin/hioAvif/aom/av1/decoder/accounting.h"
+#include "av1/decoder/accounting.h"
 #endif
 #if CONFIG_INSPECTION
-#  include "Plugin/hioAvif/aom/av1/decoder/inspection.h"
+#include "av1/decoder/inspection.h"
 #endif
 
 #ifdef __cplusplus
@@ -87,17 +87,16 @@ typedef struct DecoderCodingBlock {
 
 typedef void (*decode_block_visitor_fn_t)(const AV1_COMMON *const cm,
                                           DecoderCodingBlock *dcb,
-                                          aom_reader *const r,
-                                          const int plane,
-                                          const int row,
-                                          const int col,
+                                          aom_reader *const r, const int plane,
+                                          const int row, const int col,
                                           const TX_SIZE tx_size);
 
 typedef void (*predict_inter_block_visitor_fn_t)(AV1_COMMON *const cm,
                                                  DecoderCodingBlock *dcb,
                                                  BLOCK_SIZE bsize);
 
-typedef void (*cfl_store_inter_block_visitor_fn_t)(AV1_COMMON *const cm, MACROBLOCKD *const xd);
+typedef void (*cfl_store_inter_block_visitor_fn_t)(AV1_COMMON *const cm,
+                                                   MACROBLOCKD *const xd);
 
 typedef struct ThreadData {
   DecoderCodingBlock dcb;
@@ -113,6 +112,8 @@ typedef struct ThreadData {
   // Motion compensation buffer used to get a prediction buffer with extended
   // borders. One buffer for each of the two possible references.
   uint8_t *mc_buf[2];
+  // Mask for this block used for compound prediction.
+  uint8_t *seg_mask;
   // Allocated size of 'mc_buf'.
   int32_t mc_buf_size;
   // If true, the pointers in 'mc_buf' were converted from highbd pointers.
@@ -143,7 +144,16 @@ typedef struct AV1DecRowMTSyncData {
 #endif
   int allocated_sb_rows;
   int *cur_sb_col;
+  // Denotes the superblock interval at which conditional signalling should
+  // happen. Also denotes the minimum number of extra superblocks of the top row
+  // to be complete to start decoding the current superblock. A value of 1
+  // indicates top-right dependency.
   int sync_range;
+  // Denotes the additional number of superblocks in the previous row to be
+  // complete to start decoding the current superblock when intraBC tool is
+  // enabled. This additional top-right delay is required to satisfy the
+  // hardware constraints for intraBC tool when row multithreading is enabled.
+  int intrabc_extra_top_right_sb_delay;
   int mi_rows;
   int mi_cols;
   int mi_rows_parse_done;
@@ -228,6 +238,8 @@ typedef struct AV1Decoder {
   AV1LfSync lf_row_sync;
   AV1LrSync lr_row_sync;
   AV1LrStruct lr_ctxt;
+  AV1CdefSync cdef_sync;
+  AV1CdefWorkerData *cdef_worker;
   AVxWorker *tile_workers;
   int num_workers;
   DecWorkerData *thread_data;
@@ -331,24 +343,49 @@ typedef struct AV1Decoder {
   int is_arf_frame_present;
   int num_tile_groups;
   aom_s_frame_info sframe_info;
+
+  /*!
+   * Elements part of the sequence header, that are applicable for all the
+   * frames in the video.
+   */
+  SequenceHeader seq_params;
+
+  /*!
+   * If true, buffer removal times are present.
+   */
+  bool buffer_removal_time_present;
+
+  /*!
+   * Code and details about current error status.
+   */
+  struct aom_internal_error_info error;
+
+  /*!
+   * Number of temporal layers: may be > 1 for SVC (scalable vector coding).
+   */
+  unsigned int number_temporal_layers;
+
+  /*!
+   * Number of spatial layers: may be > 1 for SVC (scalable vector coding).
+   */
+  unsigned int number_spatial_layers;
 } AV1Decoder;
 
 // Returns 0 on success. Sets pbi->common.error.error_code to a nonzero error
 // code and returns a nonzero value on failure.
-int av1_receive_compressed_data(struct AV1Decoder *pbi, size_t size, const uint8_t **psource);
+int av1_receive_compressed_data(struct AV1Decoder *pbi, size_t size,
+                                const uint8_t **psource);
 
 // Get the frame at a particular index in the output queue
-int av1_get_raw_frame(AV1Decoder *pbi,
-                      size_t index,
-                      YV12_BUFFER_CONFIG **sd,
+int av1_get_raw_frame(AV1Decoder *pbi, size_t index, YV12_BUFFER_CONFIG **sd,
                       aom_film_grain_t **grain_params);
 
 int av1_get_frame_to_show(struct AV1Decoder *pbi, YV12_BUFFER_CONFIG *frame);
 
-aom_codec_err_t av1_copy_reference_dec(struct AV1Decoder *pbi, int idx, YV12_BUFFER_CONFIG *sd);
+aom_codec_err_t av1_copy_reference_dec(struct AV1Decoder *pbi, int idx,
+                                       YV12_BUFFER_CONFIG *sd);
 
-aom_codec_err_t av1_set_reference_dec(AV1_COMMON *cm,
-                                      int idx,
+aom_codec_err_t av1_set_reference_dec(AV1_COMMON *cm, int idx,
                                       int use_external_ref,
                                       YV12_BUFFER_CONFIG *sd);
 aom_codec_err_t av1_copy_new_frame_dec(AV1_COMMON *cm,
@@ -364,8 +401,8 @@ void av1_dec_row_mt_dealloc(AV1DecRowMTSync *dec_row_mt_sync);
 
 void av1_dec_free_cb_buf(AV1Decoder *pbi);
 
-static INLINE void decrease_ref_count(RefCntBuffer *const buf, BufferPool *const pool)
-{
+static inline void decrease_ref_count(RefCntBuffer *const buf,
+                                      BufferPool *const pool) {
   if (buf != NULL) {
     --buf->ref_count;
     // Reference counts should never become negative. If this assertion fails,
@@ -385,8 +422,7 @@ static INLINE void decrease_ref_count(RefCntBuffer *const buf, BufferPool *const
 }
 
 #define ACCT_STR __func__
-static INLINE int av1_read_uniform(aom_reader *r, int n)
-{
+static inline int av1_read_uniform(aom_reader *r, int n) {
   const int l = get_unsigned_bits(n);
   const int m = (1 << l) - n;
   const int v = aom_read_literal(r, l - 1, ACCT_STR);
@@ -397,20 +433,15 @@ static INLINE int av1_read_uniform(aom_reader *r, int n)
     return (v << 1) - m + aom_read_literal(r, 1, ACCT_STR);
 }
 
-typedef void (*palette_visitor_fn_t)(MACROBLOCKD *const xd, int plane, aom_reader *r);
+typedef void (*palette_visitor_fn_t)(MACROBLOCKD *const xd, int plane,
+                                     aom_reader *r);
 
-void av1_visit_palette(AV1Decoder *const pbi,
-                       MACROBLOCKD *const xd,
-                       aom_reader *r,
-                       palette_visitor_fn_t visit);
+void av1_visit_palette(AV1Decoder *const pbi, MACROBLOCKD *const xd,
+                       aom_reader *r, palette_visitor_fn_t visit);
 
-typedef void (*block_visitor_fn_t)(AV1Decoder *const pbi,
-                                   ThreadData *const td,
-                                   int mi_row,
-                                   int mi_col,
-                                   aom_reader *r,
-                                   PARTITION_TYPE partition,
-                                   BLOCK_SIZE bsize);
+typedef void (*block_visitor_fn_t)(AV1Decoder *const pbi, ThreadData *const td,
+                                   int mi_row, int mi_col, aom_reader *r,
+                                   PARTITION_TYPE partition, BLOCK_SIZE bsize);
 
 /*!\endcond */
 

@@ -2923,7 +2923,7 @@ static yyconst flex_int32_t yy_ec[256] = {
 #include "Sdf/textParserContext.h"
 #include "Tf/errorMark.h"
 #include "Tf/stringUtils.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 // Token table from yacc file
 #include "Sdf/textFileFormat.tab.h"

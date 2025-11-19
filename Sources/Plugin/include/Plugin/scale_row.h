@@ -20,8 +20,8 @@ void ScalePlaneVertical(int src_height,
                         int dst_height,
                         int src_stride,
                         int dst_stride,
-                        const uint8_t *src_argb,
-                        uint8_t *dst_argb,
+                        const uint8_t* src_argb,
+                        uint8_t* dst_argb,
                         int x,
                         int y,
                         int dy,
@@ -33,8 +33,8 @@ void ScalePlaneVertical_16(int src_height,
                            int dst_height,
                            int src_stride,
                            int dst_stride,
-                           const uint16_t *src_argb,
-                           uint16_t *dst_argb,
+                           const uint16_t* src_argb,
+                           uint16_t* dst_argb,
                            int x,
                            int y,
                            int dy,
@@ -42,8 +42,11 @@ void ScalePlaneVertical_16(int src_height,
                            enum FilterMode filtering);
 
 // Simplify the filtering based on scale factors.
-enum FilterMode ScaleFilterReduce(
-    int src_width, int src_height, int dst_width, int dst_height, enum FilterMode filtering);
+enum FilterMode ScaleFilterReduce(int src_width,
+                                  int src_height,
+                                  int dst_width,
+                                  int dst_height,
+                                  enum FilterMode filtering);
 
 // Divide num by div and return as 16.16 fixed point result.
 int FixedDiv_C(int num, int div);
@@ -58,47 +61,87 @@ void ScaleSlope(int src_width,
                 int dst_width,
                 int dst_height,
                 enum FilterMode filtering,
-                int *x,
-                int *y,
-                int *dx,
-                int *dy);
+                int* x,
+                int* y,
+                int* dx,
+                int* dy);
 
-void ScaleRowUp2_Linear_C(const uint8_t *src_ptr, uint8_t *dst_ptr, int dst_width);
-void ScaleRowUp2_Bilinear_C(const uint8_t *src_ptr,
+void ScaleRowUp2_Linear_C(const uint8_t* src_ptr,
+                          uint8_t* dst_ptr,
+                          int dst_width);
+void ScaleRowUp2_Bilinear_C(const uint8_t* src_ptr,
                             ptrdiff_t src_stride,
-                            uint8_t *dst_ptr,
+                            uint8_t* dst_ptr,
                             ptrdiff_t dst_stride,
                             int dst_width);
-void ScaleRowUp2_Linear_16_C(const uint16_t *src_ptr, uint16_t *dst_ptr, int dst_width);
-void ScaleRowUp2_Bilinear_16_C(const uint16_t *src_ptr,
+void ScaleRowUp2_Linear_16_C(const uint16_t* src_ptr,
+                             uint16_t* dst_ptr,
+                             int dst_width);
+void ScaleRowUp2_Bilinear_16_C(const uint16_t* src_ptr,
                                ptrdiff_t src_stride,
-                               uint16_t *dst_ptr,
+                               uint16_t* dst_ptr,
                                ptrdiff_t dst_stride,
                                int dst_width);
-void ScaleRowUp2_Linear_Any_C(const uint8_t *src_ptr, uint8_t *dst_ptr, int dst_width);
-void ScaleRowUp2_Bilinear_Any_C(const uint8_t *src_ptr,
+void ScaleRowUp2_Linear_Any_C(const uint8_t* src_ptr,
+                              uint8_t* dst_ptr,
+                              int dst_width);
+void ScaleRowUp2_Bilinear_Any_C(const uint8_t* src_ptr,
                                 ptrdiff_t src_stride,
-                                uint8_t *dst_ptr,
+                                uint8_t* dst_ptr,
                                 ptrdiff_t dst_stride,
                                 int dst_width);
-void ScaleRowUp2_Linear_16_Any_C(const uint16_t *src_ptr, uint16_t *dst_ptr, int dst_width);
-void ScaleRowUp2_Bilinear_16_Any_C(const uint16_t *src_ptr,
+void ScaleRowUp2_Linear_16_Any_C(const uint16_t* src_ptr,
+                                 uint16_t* dst_ptr,
+                                 int dst_width);
+void ScaleRowUp2_Bilinear_16_Any_C(const uint16_t* src_ptr,
                                    ptrdiff_t src_stride,
-                                   uint16_t *dst_ptr,
+                                   uint16_t* dst_ptr,
                                    ptrdiff_t dst_stride,
                                    int dst_width);
 
-void ScaleCols_C(uint8_t *dst_ptr, const uint8_t *src_ptr, int dst_width, int x, int dx);
-void ScaleCols_16_C(uint16_t *dst_ptr, const uint16_t *src_ptr, int dst_width, int x, int dx);
-void ScaleColsUp2_C(uint8_t *dst_ptr, const uint8_t *src_ptr, int dst_width, int, int);
-void ScaleColsUp2_16_C(uint16_t *dst_ptr, const uint16_t *src_ptr, int dst_width, int, int);
-void ScaleFilterCols_C(uint8_t *dst_ptr, const uint8_t *src_ptr, int dst_width, int x, int dx);
-void ScaleFilterCols_16_C(
-    uint16_t *dst_ptr, const uint16_t *src_ptr, int dst_width, int x, int dx);
-void ScaleFilterCols64_C(uint8_t *dst_ptr, const uint8_t *src_ptr, int dst_width, int x32, int dx);
-void ScaleFilterCols64_16_C(
-    uint16_t *dst_ptr, const uint16_t *src_ptr, int dst_width, int x32, int dx);
-void ScaleAddRow_C(const uint8_t *src_ptr, uint16_t *dst_ptr, int src_width);
-void ScaleAddRow_16_C(const uint16_t *src_ptr, uint32_t *dst_ptr, int src_width);
+void ScaleCols_C(uint8_t* dst_ptr,
+                 const uint8_t* src_ptr,
+                 int dst_width,
+                 int x,
+                 int dx);
+void ScaleCols_16_C(uint16_t* dst_ptr,
+                    const uint16_t* src_ptr,
+                    int dst_width,
+                    int x,
+                    int dx);
+void ScaleColsUp2_C(uint8_t* dst_ptr,
+                    const uint8_t* src_ptr,
+                    int dst_width,
+                    int,
+                    int);
+void ScaleColsUp2_16_C(uint16_t* dst_ptr,
+                       const uint16_t* src_ptr,
+                       int dst_width,
+                       int,
+                       int);
+void ScaleFilterCols_C(uint8_t* dst_ptr,
+                       const uint8_t* src_ptr,
+                       int dst_width,
+                       int x,
+                       int dx);
+void ScaleFilterCols_16_C(uint16_t* dst_ptr,
+                          const uint16_t* src_ptr,
+                          int dst_width,
+                          int x,
+                          int dx);
+void ScaleFilterCols64_C(uint8_t* dst_ptr,
+                         const uint8_t* src_ptr,
+                         int dst_width,
+                         int x32,
+                         int dx);
+void ScaleFilterCols64_16_C(uint16_t* dst_ptr,
+                            const uint16_t* src_ptr,
+                            int dst_width,
+                            int x32,
+                            int dx);
+void ScaleAddRow_C(const uint8_t* src_ptr, uint16_t* dst_ptr, int src_width);
+void ScaleAddRow_16_C(const uint16_t* src_ptr,
+                      uint32_t* dst_ptr,
+                      int src_width);
 
 #endif  // INCLUDE_LIBYUV_SCALE_ROW_H_

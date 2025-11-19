@@ -5,7 +5,7 @@
 // https://openusd.org/license.
 //
 #include "Usd/shared.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 

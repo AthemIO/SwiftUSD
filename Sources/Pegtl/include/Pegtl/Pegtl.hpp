@@ -4,45 +4,45 @@
 #ifndef PXR_PEGTL_HPP
 #define PXR_PEGTL_HPP
 
-#include "Pegtl/config.hpp"
-#include "Pegtl/demangle.hpp"
-#include "Pegtl/parse.hpp"
-#include "Pegtl/version.hpp"
+#include "config.hpp"
+#include "demangle.hpp"
+#include "parse.hpp"
+#include "version.hpp"
 
-#include "Pegtl/ascii.hpp"
-#include "Pegtl/rules.hpp"
-#include "Pegtl/utf8.hpp"
+#include "ascii.hpp"
+#include "rules.hpp"
+#include "utf8.hpp"
 
-#include "Pegtl/argv_input.hpp"
-#include "Pegtl/buffer_input.hpp"
-#include "Pegtl/cstream_input.hpp"
-#include "Pegtl/istream_input.hpp"
-#include "Pegtl/memory_input.hpp"
-#include "Pegtl/read_input.hpp"
-#include "Pegtl/string_input.hpp"
+#include "argv_input.hpp"
+#include "buffer_input.hpp"
+#include "cstream_input.hpp"
+#include "istream_input.hpp"
+#include "memory_input.hpp"
+#include "read_input.hpp"
+#include "string_input.hpp"
 
 // This has to be included *after* the above inputs,
 // otherwise the amalgamated header will not work!
-#include "Pegtl/file_input.hpp"
+#include "file_input.hpp"
 
-#include "Pegtl/change_action.hpp"
-#include "Pegtl/change_action_and_state.hpp"
-#include "Pegtl/change_action_and_states.hpp"
-#include "Pegtl/change_control.hpp"
-#include "Pegtl/change_state.hpp"
-#include "Pegtl/change_states.hpp"
+#include "change_action.hpp"
+#include "change_action_and_state.hpp"
+#include "change_action_and_states.hpp"
+#include "change_control.hpp"
+#include "change_state.hpp"
+#include "change_states.hpp"
 
-#include "Pegtl/disable_action.hpp"
-#include "Pegtl/enable_action.hpp"
+#include "disable_action.hpp"
+#include "enable_action.hpp"
 
-#include "Pegtl/discard_input.hpp"
-#include "Pegtl/discard_input_on_failure.hpp"
-#include "Pegtl/discard_input_on_success.hpp"
+#include "discard_input.hpp"
+#include "discard_input_on_failure.hpp"
+#include "discard_input_on_success.hpp"
 
-#include "Pegtl/visit.hpp"
+#include "visit.hpp"
 
 #if defined( __cpp_exceptions )
-#include "Pegtl/must_if.hpp"
+#include "must_if.hpp"
 #endif
 
 #endif

@@ -7,12 +7,17 @@
 #ifndef PXR_USD_SDF_PARSER_HELPERS_H
 #define PXR_USD_SDF_PARSER_HELPERS_H
 
+#include "Sdf/assetPath.h"
+#include "pxr/pxrns.h"
+
+#ifndef yyscan_t
+#  define yyscan_t void *
+#endif
+
 #include "Arch/inttypes.h"
 #include "Gf/numericCast.h"
-#include "Sdf/assetPath.h"
 #include "Sdf/valueTypeName.h"
 #include "Vt/value.h"
-#include "pxr/pxrns.h"
 
 #include <functional>
 #include <limits>
@@ -279,12 +284,7 @@ struct Value {
   // std::bad_variant_access.
   template<class T> typename _GetImpl<T>::ResultType Get() const
   {
-    try {
-      return _GetImpl<T>().Visit(_variant);
-    }
-    catch (std::bad_variant_access &e) {
-      throw std::bad_variant_access();
-    }
+    return _GetImpl<T>().Visit(_variant);
   }
 
   // Hopefully short-lived API that applies an external visitor to the held
@@ -335,6 +335,42 @@ struct ValueFactory {
 };
 
 ValueFactory const &GetValueFactoryForMenvaName(std::string const &name, bool *found);
+
+// Base class for building VtArrayEdit instances from type-erased values.
+struct ArrayEditFactoryBase {
+
+  virtual ~ArrayEditFactoryBase() = 0;
+
+  bool Append(VtValue const &elem);
+  void AppendRef(int64_t srcIndex);
+
+  bool Prepend(VtValue const &elem);
+  void PrependRef(int64_t srcIndex);
+
+  virtual bool Write(VtValue const &elem, int64_t index) = 0;
+  virtual void WriteRef(int64_t srcIndex, int64_t dstIndex) = 0;
+  virtual bool Insert(VtValue const &elem, int64_t index) = 0;
+  virtual void InsertRef(int64_t srcIndex, int64_t dstIndex) = 0;
+
+  virtual void EraseRef(int64_t index) = 0;
+
+  virtual void MinSize(int64_t size) = 0;
+  virtual bool MinSizeFill(int64_t size, VtValue const &fill) = 0;
+
+  virtual void MaxSize(int64_t size) = 0;
+
+  virtual void SetSize(int64_t size) = 0;
+  virtual bool SetSizeFill(int64_t size, VtValue const &fill) = 0;
+
+  virtual VtValue FinalizeAndReset() = 0;
+
+  virtual std::string GetErrorMessage() const = 0;
+};
+
+// Create a new ArrayEditFactory for menva type name \p name (same as in
+// GetValueFactoryForMenvaName()).  Return nullptr if not found.
+std::unique_ptr<ArrayEditFactoryBase> MakeArrayEditFactoryForMenvaName(std::string const &name);
+
 }  // namespace Sdf_ParserHelpers
 
 /// Converts a string to a bool.

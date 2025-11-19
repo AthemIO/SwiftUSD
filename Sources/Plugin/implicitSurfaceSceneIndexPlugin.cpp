@@ -9,47 +9,47 @@
 #include "Hd/retainedDataSource.h"
 #include "Hd/sceneIndexPluginRegistry.h"
 #include "Hd/tokens.h"
-#include "HdSi/implicitSurfaceSceneIndex.h"
+#include "Hdsi/implicitSurfaceSceneIndex.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((sceneIndexPluginName, "HdEmbree_ImplicitSurfaceSceneIndexPlugin")));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((sceneIndexPluginName, "HdEmbree_ImplicitSurfaceSceneIndexPlugin"))
+);
 
-static const char *const _pluginDisplayName = "Embree";
+static const char * const _pluginDisplayName = "Embree";
 
 TF_REGISTRY_FUNCTION(TfType)
 {
-  HdSceneIndexPluginRegistry::Define<HdEmbree_ImplicitSurfaceSceneIndexPlugin>();
+    HdSceneIndexPluginRegistry::Define<HdEmbree_ImplicitSurfaceSceneIndexPlugin>();
 }
 
 TF_REGISTRY_FUNCTION(HdSceneIndexPlugin)
 {
-  const HdSceneIndexPluginRegistry::InsertionPhase insertionPhase = 0;
+    const HdSceneIndexPluginRegistry::InsertionPhase insertionPhase = 0;
 
-  // Configure the scene index to generate the mesh for each of the implicit
-  // primitives since Storm doesn't natively support any.
-  HdDataSourceBaseHandle const toMeshSrc = HdRetainedTypedSampledDataSource<TfToken>::New(
-      HdsiImplicitSurfaceSceneIndexTokens->toMesh);
+    // Configure the scene index to generate the mesh for each of the implicit
+    // primitives since Storm doesn't natively support any.
+    HdDataSourceBaseHandle const toMeshSrc =
+        HdRetainedTypedSampledDataSource<TfToken>::New(
+            HdsiImplicitSurfaceSceneIndexTokens->toMesh);
 
-  HdContainerDataSourceHandle const inputArgs = HdRetainedContainerDataSource::New(
-      HdPrimTypeTokens->sphere,
-      toMeshSrc,
-      HdPrimTypeTokens->cube,
-      toMeshSrc,
-      HdPrimTypeTokens->cone,
-      toMeshSrc,
-      HdPrimTypeTokens->cylinder,
-      toMeshSrc,
-      HdPrimTypeTokens->capsule,
-      toMeshSrc);
+    HdContainerDataSourceHandle const inputArgs =
+        HdRetainedContainerDataSource::New(
+            HdPrimTypeTokens->sphere, toMeshSrc,
+            HdPrimTypeTokens->cube, toMeshSrc,
+            HdPrimTypeTokens->cone, toMeshSrc,
+            HdPrimTypeTokens->cylinder, toMeshSrc,
+            HdPrimTypeTokens->capsule, toMeshSrc,
+            HdPrimTypeTokens->plane, toMeshSrc);
 
-  HdSceneIndexPluginRegistry::GetInstance().RegisterSceneIndexForRenderer(
-      _pluginDisplayName,
-      _tokens->sceneIndexPluginName,
-      inputArgs,
-      insertionPhase,
-      HdSceneIndexPluginRegistry::InsertionOrderAtStart);
+    HdSceneIndexPluginRegistry::GetInstance().RegisterSceneIndexForRenderer(
+        _pluginDisplayName,
+        _tokens->sceneIndexPluginName,
+        inputArgs,
+        insertionPhase,
+        HdSceneIndexPluginRegistry::InsertionOrderAtStart);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,12 +57,15 @@ TF_REGISTRY_FUNCTION(HdSceneIndexPlugin)
 
 // Implementation of HdEmbree_ImplicitSurfaceSceneIndexPlugin
 
-HdEmbree_ImplicitSurfaceSceneIndexPlugin::HdEmbree_ImplicitSurfaceSceneIndexPlugin() = default;
+HdEmbree_ImplicitSurfaceSceneIndexPlugin::
+HdEmbree_ImplicitSurfaceSceneIndexPlugin() = default;
 
-HdSceneIndexBaseRefPtr HdEmbree_ImplicitSurfaceSceneIndexPlugin::_AppendSceneIndex(
-    const HdSceneIndexBaseRefPtr &inputScene, const HdContainerDataSourceHandle &inputArgs)
+HdSceneIndexBaseRefPtr
+HdEmbree_ImplicitSurfaceSceneIndexPlugin::_AppendSceneIndex(
+    const HdSceneIndexBaseRefPtr &inputScene,
+    const HdContainerDataSourceHandle &inputArgs)
 {
-  return HdsiImplicitSurfaceSceneIndex::New(inputScene, inputArgs);
+    return HdsiImplicitSurfaceSceneIndex::New(inputScene, inputArgs);
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

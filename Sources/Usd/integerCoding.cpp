@@ -8,7 +8,7 @@
 #include "Tf/diagnostic.h"
 #include "Tf/fastCompression.h"
 #include "Tf/pxrTslRobinMap/robin_map.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include <cstdint>
 #include <cstring>

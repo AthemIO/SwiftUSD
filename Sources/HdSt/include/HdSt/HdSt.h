@@ -120,4 +120,11 @@
 #include <HdSt/volume.h>
 #include <HdSt/volumeShader.h>
 #include <HdSt/volumeShaderKey.h>
+#include <HdSt/renderPassShaderKey.h>
+#include <HdSt/renderPassVisibilitySceneIndexPlugin.h>
+#include <HdSt/renderBufferPool.h>
+#include <HdSt/renderPassPruneSceneIndexPlugin.h>
+#include <HdSt/dynamicCubemapTextureObject.h>
+#include <HdSt/dynamicCubemapTextureImplementation.h>
+#include <HdSt/unboundMaterialPruningSceneIndexPlugin.h>
 #endif  // __PXR_IMAGING_HDST_H__

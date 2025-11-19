@@ -9,15 +9,14 @@
 
 /// \file sdf/pyChildrenView.h
 
-#include "Arch/demangle.h"
-#include "Sdf/childrenView.h"
-#include "Tf/pyUtils.h"
-#include "Tf/stringUtils.h"
 #include "pxr/pxrns.h"
 
-#if defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
-
-#include <boost/python.hpp>
+#if PXR_PYTHON_SUPPORT_ENABLED
+#  include "Arch/demangle.h"
+#  include "Sdf/childrenView.h"
+#  include "Tf/pyUtils.h"
+#  include "Tf/stringUtils.h"
+#  include "pxr/external/boost/python.hpp"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -38,31 +37,31 @@ template<class _View> class SdfPyWrapChildrenView {
 
  private:
   struct _ExtractItem {
-    static boost::python::object Get(const View &x, const const_iterator &i)
+    static pxr_boost::python::object Get(const View &x, const const_iterator &i)
     {
-      return boost::python::make_tuple(x.key(i), *i);
+      return pxr_boost::python::make_tuple(x.key(i), *i);
     }
   };
 
   struct _ExtractKey {
-    static boost::python::object Get(const View &x, const const_iterator &i)
+    static pxr_boost::python::object Get(const View &x, const const_iterator &i)
     {
-      return boost::python::object(x.key(i));
+      return pxr_boost::python::object(x.key(i));
     }
   };
 
   struct _ExtractValue {
-    static boost::python::object Get(const View &x, const const_iterator &i)
+    static pxr_boost::python::object Get(const View &x, const const_iterator &i)
     {
-      return boost::python::object(*i);
+      return pxr_boost::python::object(*i);
     }
   };
 
   template<class E> class _Iterator {
    public:
-    _Iterator(const boost::python::object &object)
+    _Iterator(const pxr_boost::python::object &object)
         : _object(object),
-          _owner(boost::python::extract<const View &>(object)),
+          _owner(pxr_boost::python::extract<const View &>(object)),
           _cur(_owner.begin()),
           _end(_owner.end())
     {
@@ -74,18 +73,18 @@ template<class _View> class SdfPyWrapChildrenView {
       return *this;
     }
 
-    boost::python::object GetNext()
+    pxr_boost::python::object GetNext()
     {
       if (_cur == _end) {
         TfPyThrowStopIteration("End of ChildrenProxy iteration");
       }
-      boost::python::object result = E::Get(_owner, _cur);
+      pxr_boost::python::object result = E::Get(_owner, _cur);
       ++_cur;
       return result;
     }
 
    private:
-    boost::python::object _object;
+    pxr_boost::python::object _object;
     const View &_owner;
     const_iterator _cur;
     const_iterator _end;
@@ -93,7 +92,7 @@ template<class _View> class SdfPyWrapChildrenView {
 
   static void _Wrap()
   {
-    using namespace boost::python;
+    using namespace pxr_boost::python;
 
     std::string name = _GetName();
 
@@ -177,10 +176,10 @@ template<class _View> class SdfPyWrapChildrenView {
     return x[index];
   }
 
-  static boost::python::object _PyGet(const View &x, const key_type &key)
+  static pxr_boost::python::object _PyGet(const View &x, const key_type &key)
   {
     const_iterator i = x.find(key);
-    return i == x.end() ? boost::python::object() : boost::python::object(*i);
+    return i == x.end() ? pxr_boost::python::object() : pxr_boost::python::object(*i);
   }
 
   static bool _HasKey(const View &x, const key_type &key)
@@ -193,24 +192,24 @@ template<class _View> class SdfPyWrapChildrenView {
     return x.find(value) != x.end();
   }
 
-  static _Iterator<_ExtractItem> _GetItemIterator(const boost::python::object &x)
+  static _Iterator<_ExtractItem> _GetItemIterator(const pxr_boost::python::object &x)
   {
     return _Iterator<_ExtractItem>(x);
   }
 
-  static _Iterator<_ExtractKey> _GetKeyIterator(const boost::python::object &x)
+  static _Iterator<_ExtractKey> _GetKeyIterator(const pxr_boost::python::object &x)
   {
     return _Iterator<_ExtractKey>(x);
   }
 
-  static _Iterator<_ExtractValue> _GetValueIterator(const boost::python::object &x)
+  static _Iterator<_ExtractValue> _GetValueIterator(const pxr_boost::python::object &x)
   {
     return _Iterator<_ExtractValue>(x);
   }
 
-  template<class E> static boost::python::list _Get(const View &x)
+  template<class E> static pxr_boost::python::list _Get(const View &x)
   {
-    boost::python::list result;
+    pxr_boost::python::list result;
     for (const_iterator i = x.begin(), n = x.end(); i != n; ++i) {
       result.append(E::Get(x, i));
     }
@@ -232,6 +231,6 @@ template<class _View> class SdfPyWrapChildrenView {
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#endif  // PXR_PYTHON_SUPPORT_ENABLED
 
-#endif  // PXR_USD_SDF_PY_CHILDREN_VIEW_H
+#endif  // PXR_USD_SDF_

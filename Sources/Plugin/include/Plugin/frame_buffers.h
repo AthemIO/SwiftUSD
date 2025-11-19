@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,8 +12,8 @@
 #ifndef AOM_AV1_COMMON_FRAME_BUFFERS_H_
 #define AOM_AV1_COMMON_FRAME_BUFFERS_H_
 
-#include "Plugin/hioAvif/aom/aom_frame_buffer.h"
-#include "Plugin/hioAvif/aom/aom_integer.h"
+#include "aom/aom_frame_buffer.h"
+#include "aom/aom_integer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,7 +46,8 @@ void av1_zero_unused_internal_frame_buffers(InternalFrameBufferList *list);
 // Callback private data, which points to an InternalFrameBufferList.
 // |min_size| is the minimum size in bytes needed to decode the next frame.
 // |fb| pointer to the frame buffer.
-int av1_get_frame_buffer(void *cb_priv, size_t min_size, aom_codec_frame_buffer_t *fb);
+int av1_get_frame_buffer(void *cb_priv, size_t min_size,
+                         aom_codec_frame_buffer_t *fb);
 
 // Callback used by libaom when there are no references to the frame buffer.
 // |cb_priv| is not used. |fb| pointer to the frame buffer.

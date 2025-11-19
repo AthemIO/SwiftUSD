@@ -105,4 +105,25 @@
 #include <Sdf/pathPattern.h>
 #include <Sdf/pathPatternParser.h>
 #include <Sdf/textParserHelpers.h>
+#include <Sdf/usdaData.h>
+#include <Sdf/crateDataTypes.h>
+#include <Sdf/shared.h>
+#include <Sdf/usdzFileFormat.h>
+#include <Sdf/booleanExpression.h>
+#include <Sdf/textFileFormatParser.h>
+#include <Sdf/booleanExpressionParsing.h>
+#include <Sdf/booleanExpressionEval.h>
+#include <Sdf/crateValueInliners.h>
+#include <Sdf/crateInfo.h>
+#include <Sdf/usdcFileFormat.h>
+#include <Sdf/usdFileFormat.h>
+#include <Sdf/fileVersion.h>
+#include <Sdf/textParserUtils.h>
+#include <Sdf/usdaFileFormat.h>
+#include <Sdf/usdzResolver.h>
+#include <Sdf/crateData.h>
+#include <Sdf/variableExpressionAST.h>
+#include <Sdf/crateFile.h>
+#include <Sdf/integerCoding.h>
+#include <Sdf/zipFile.h>
 #endif  // __PXR_USD_SDF_H__

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,7 +12,7 @@
 #ifndef AOM_AOM_DSP_AOM_FILTER_H_
 #define AOM_AOM_DSP_AOM_FILTER_H_
 
-#include "Plugin/hioAvif/aom/aom_integer.h"
+#include "aom/aom_integer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,14 +45,8 @@ typedef int16_t InterpKernel[SUBPEL_TAPS];
 
 // 2 tap bilinear filters
 static const uint8_t bilinear_filters_2t[BIL_SUBPEL_SHIFTS][2] = {
-    {128, 0},
-    {112, 16},
-    {96, 32},
-    {80, 48},
-    {64, 64},
-    {48, 80},
-    {32, 96},
-    {16, 112},
+  { 128, 0 }, { 112, 16 }, { 96, 32 }, { 80, 48 },
+  { 64, 64 }, { 48, 80 },  { 32, 96 }, { 16, 112 },
 };
 
 #ifdef __cplusplus

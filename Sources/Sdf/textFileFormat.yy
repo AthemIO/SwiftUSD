@@ -22,7 +22,7 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-% {
+%{
 
 #include "Ar/asset.h"
 #include "Arch/fileSystem.h"
@@ -30,6 +30,9 @@
 #include "Sdf/allowed.h"
 #include "Sdf/data.h"
 #include "Sdf/fileIO_Common.h"
+
+#define yyscan_t void*
+
 #include "Sdf/layerOffset.h"
 #include "Sdf/listOp.h"
 #include "Sdf/parserValueContext.h"
@@ -42,7 +45,7 @@
 #include "Vt/dictionary.h"
 #include <pxr/pxrns.h>
 
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 #include "Arch/errno.h"
 #include "Gf/matrix4d.h"
@@ -101,6 +104,8 @@
   // Extern declarations to scanner data and functions
   //--------------------------------------------------------------------
 
+
+
 #define YYSTYPE Sdf_ParserHelpers::Value
 
   // Opaque buffer type handle.
@@ -109,21 +114,21 @@
   // Generated bison symbols.
   void textFileFormatYyerror(Sdf_TextParserContext * context, const char *s);
 
-  extern int textFileFormatYylex(YYSTYPE * yylval_param, yyscan_t yyscanner);
-  extern char *textFileFormatYyget_text(yyscan_t yyscanner);
-  extern size_t textFileFormatYyget_leng(yyscan_t yyscanner);
-  extern int textFileFormatYylex_init(yyscan_t * yyscanner);
-  extern int textFileFormatYylex_destroy(yyscan_t yyscanner);
+  extern int textFileFormatYylex(YYSTYPE * yylval_param, void* yyscanner);
+  extern char *textFileFormatYyget_text(void* yyscanner);
+  extern size_t textFileFormatYyget_leng(void* yyscanner);
+  extern int textFileFormatYylex_init(void** yyscanner);
+  extern int textFileFormatYylex_destroy(void* yyscanner);
   extern void textFileFormatYyset_extra(Sdf_TextParserContext * context,
-                                        yyscan_t yyscanner);
+                                        void* yyscanner);
   extern yy_buffer_state *textFileFormatYy_scan_buffer(
-      char *yy_str, size_t size, yyscan_t yyscanner);
+      char *yy_str, size_t size, void* yyscanner);
   extern yy_buffer_state *textFileFormatYy_scan_string(const char *yy_str,
-                                                       yyscan_t yyscanner);
+                                                       void* yyscanner);
   extern yy_buffer_state *textFileFormatYy_scan_bytes(
-      const char *yy_str, size_t numBytes, yyscan_t yyscanner);
+      const char *yy_str, size_t numBytes, void* yyscanner);
   extern void textFileFormatYy_delete_buffer(yy_buffer_state * b,
-                                             yyscan_t yyscanner);
+                                             void* yyscanner);
 
 #define yyscanner context->scanner
 
@@ -1093,46 +1098,46 @@
 #define YYDEBUG 1
 #endif // SDF_PARSER_DEBUG_MODE
 
-  %
-}
+%}
 
 // Make this re-entrant
-% define api.pure % lex - param{yyscan_t yyscanner} % parse -
-        param{Sdf_TextParserContext * context}
+%pure-parser
+%lex-param {yyscan_t yyscanner}
+%parse-param {Sdf_TextParserContext *context}
 
             //--------------------------------------------------------------------
             // Define our tokens and types
             //--------------------------------------------------------------------
 
-            % token TOK_NL % token TOK_MAGIC %
+            %token TOK_NL %token TOK_MAGIC %
             token TOK_SYNTAX_ERROR
 
             // Basic lexed data types
-            % token TOK_ASSETREF % token TOK_PATHREF % token TOK_IDENTIFIER %
+            %token TOK_ASSETREF %token TOK_PATHREF %token TOK_IDENTIFIER %
             token TOK_CXX_NAMESPACED_IDENTIFIER %
-            token TOK_NAMESPACED_IDENTIFIER % token TOK_NUMBER %
+            token TOK_NAMESPACED_IDENTIFIER %token TOK_NUMBER %
             token TOK_STRING
 
             // Keywords
             //
             // NOTE! If you add any keywords or literal tokens here, be sure to
             // add them to the 'keyword' production rule below.
-            % token TOK_ABSTRACT % token TOK_ADD % token TOK_APPEND %
-            token TOK_CLASS % token TOK_CONFIG % token TOK_CONNECT %
-            token TOK_CUSTOM % token TOK_CUSTOMDATA % token TOK_DEF %
-            token TOK_DEFAULT % token TOK_DELETE % token TOK_DICTIONARY %
-            token TOK_DISPLAYUNIT % token TOK_DOC % token TOK_INHERITS %
-            token TOK_KIND % token TOK_NAMECHILDREN % token TOK_NONE %
-            token TOK_OFFSET % token TOK_OVER % token TOK_PERMISSION %
-            token TOK_PAYLOAD % token TOK_PREFIX_SUBSTITUTIONS %
-            token TOK_SUFFIX_SUBSTITUTIONS % token TOK_PREPEND %
-            token TOK_PROPERTIES % token TOK_REFERENCES % token TOK_RELOCATES %
-            token TOK_REL % token TOK_RENAMES % token TOK_REORDER %
-            token TOK_ROOTPRIMS % token TOK_SCALE % token TOK_SPECIALIZES %
-            token TOK_SUBLAYERS % token TOK_SYMMETRYARGUMENTS %
-            token TOK_SYMMETRYFUNCTION % token TOK_TIME_SAMPLES %
-            token TOK_UNIFORM % token TOK_VARIANTS % token TOK_VARIANTSET %
-            token TOK_VARIANTSETS % token TOK_VARYING
+            %token TOK_ABSTRACT %token TOK_ADD %token TOK_APPEND %
+            token TOK_CLASS %token TOK_CONFIG %token TOK_CONNECT %
+            token TOK_CUSTOM %token TOK_CUSTOMDATA %token TOK_DEF %
+            token TOK_DEFAULT %token TOK_DELETE %token TOK_DICTIONARY %
+            token TOK_DISPLAYUNIT %token TOK_DOC %token TOK_INHERITS %
+            token TOK_KIND %token TOK_NAMECHILDREN %token TOK_NONE %
+            token TOK_OFFSET %token TOK_OVER %token TOK_PERMISSION %
+            token TOK_PAYLOAD %token TOK_PREFIX_SUBSTITUTIONS %
+            token TOK_SUFFIX_SUBSTITUTIONS %token TOK_PREPEND %
+            token TOK_PROPERTIES %token TOK_REFERENCES %token TOK_RELOCATES %
+            token TOK_REL %token TOK_RENAMES %token TOK_REORDER %
+            token TOK_ROOTPRIMS %token TOK_SCALE %token TOK_SPECIALIZES %
+            token TOK_SUBLAYERS %token TOK_SYMMETRYARGUMENTS %
+            token TOK_SYMMETRYFUNCTION %token TOK_TIME_SAMPLES %
+            token TOK_UNIFORM %token TOK_VARIANTS %token TOK_VARIANTSET %
+            token TOK_VARIANTSETS %token TOK_VARYING
 
             % %
 
@@ -2595,7 +2600,7 @@ struct Sdf_MemoryFlexBuffer {
 
 public:
   Sdf_MemoryFlexBuffer(const std::shared_ptr<ArAsset> &asset,
-                       const std::string &name, yyscan_t scanner);
+                       const std::string &name, void* scanner);
   ~Sdf_MemoryFlexBuffer();
 
   yy_buffer_state *GetBuffer() { return _flexBuffer; }
@@ -2605,12 +2610,12 @@ private:
 
   std::unique_ptr<char[]> _fileBuffer;
 
-  yyscan_t _scanner;
+  void* _scanner;
 };
 
 Sdf_MemoryFlexBuffer::Sdf_MemoryFlexBuffer(
     const std::shared_ptr<ArAsset> &asset, const std::string &name,
-    yyscan_t scanner)
+    void* scanner)
     : _flexBuffer(nullptr), _scanner(scanner) {
   // flex requires 2 bytes of null padding at the end of any buffers it is
   // given.  We'll allocate a buffer with 2 padding bytes, then read the
@@ -2671,7 +2676,7 @@ bool Sdf_ParseLayer(const std::string &fileContext,
   // Configure for input file.
   Sdf_TextParserContext context;
 
-  context.data = data;
+  context.data = TfStatic_cast<SdfUsdaDataRefPtr>(data);
   context.fileContext = fileContext;
   context.magicIdentifierToken = magicId;
   context.versionString = versionString;
@@ -2723,7 +2728,7 @@ bool Sdf_ParseLayerFromString(const std::string &layerString,
   // Configure for input string.
   Sdf_TextParserContext context;
 
-  context.data = data;
+  context.data = TfStatic_cast<SdfUsdaDataRefPtr>(data);
   context.magicIdentifierToken = magicId;
   context.versionString = versionString;
   context.values.errorReporter =

@@ -14,7 +14,7 @@
 #include "Sdf/fileIO.h"
 #include "Sdf/fileIO_Common.h"
 #include "Sdf/layer.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Arch/fileSystem.h"
 #include "Tf/atomicOfstreamWrapper.h"
@@ -22,7 +22,7 @@
 #include "Tf/fileUtils.h"
 #include "Tf/registryManager.h"
 #include "Tf/staticData.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 #include <ostream>
 
@@ -309,7 +309,7 @@ bool SdfTextFileFormat::WriteToFile(const SdfLayer &layer,
     return false;
   }
 
-  Sdf_TextOutput out(std::move(asset));
+  Sdf_TextOutput out(std::move(asset), filePath);
 
   const bool ok = _WriteLayer(&layer, out, GetFileCookie(), GetVersionString(), comment);
 

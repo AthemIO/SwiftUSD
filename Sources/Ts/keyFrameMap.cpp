@@ -6,7 +6,7 @@
 //
 
 #include "Ts/keyFrameMap.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Ts/data.h"
 #include "Ts/keyFrame.h"

@@ -5,35 +5,41 @@
 // https://openusd.org/license.
 //
 #include "pxr/pxrns.h"
-#include <boost/python/def.hpp>
-#include <boost/python/return_value_policy.hpp>
+#include "pxr/external/boost/python/def.hpp"
+#include "pxr/external/boost/python/return_value_policy.hpp"
 
 #include "UsdUtils/pipeline.h"
 
 #include "Usd/prim.h"
 
 #include "Tf/pyResultConversions.h"
-#include <boost/python/return_by_value.hpp>
-
-using namespace boost::python;
+#include "pxr/external/boost/python/return_by_value.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+using namespace pxr_boost::python;
+
 void wrapPipeline()
 {
-  def("GetAlphaAttributeNameForColor",
-      UsdUtilsGetAlphaAttributeNameForColor,
-      arg("colorAttrName"));
-  def("GetModelNameFromRootLayer", UsdUtilsGetModelNameFromRootLayer);
-  def("GetRegisteredVariantSets",
-      UsdUtilsGetRegisteredVariantSets,
-      return_value_policy<TfPySequenceToList>());
-  def("GetPrimAtPathWithForwarding",
-      UsdUtilsGetPrimAtPathWithForwarding,
-      (arg("stage"), arg("path")));
-  def("UninstancePrimAtPath", UsdUtilsUninstancePrimAtPath, (arg("stage"), arg("path")));
-  def("GetPrimaryUVSetName", UsdUtilsGetPrimaryUVSetName, return_value_policy<return_by_value>());
-  def("GetPrefName", UsdUtilsGetPrefName, return_value_policy<return_by_value>());
-  def("GetMaterialsScopeName", UsdUtilsGetMaterialsScopeName, arg("forceDefault") = false);
-  def("GetPrimaryCameraName", UsdUtilsGetPrimaryCameraName, arg("forceDefault") = false);
+    def("GetAlphaAttributeNameForColor", UsdUtilsGetAlphaAttributeNameForColor, arg("colorAttrName"));
+    def("GetModelNameFromRootLayer", UsdUtilsGetModelNameFromRootLayer);
+    def("GetRegisteredVariantSets", 
+            UsdUtilsGetRegisteredVariantSets, 
+            return_value_policy<TfPySequenceToList>());
+    def("GetPrimAtPathWithForwarding", UsdUtilsGetPrimAtPathWithForwarding, 
+        (arg("stage"), arg("path")));
+    def("UninstancePrimAtPath", UsdUtilsUninstancePrimAtPath, 
+        (arg("stage"), arg("path")));
+    def("GetPrimaryUVSetName", UsdUtilsGetPrimaryUVSetName,
+        return_value_policy<return_by_value>());
+    def("GetPrefName", UsdUtilsGetPrefName,
+        return_value_policy<return_by_value>());
+    def(
+        "GetMaterialsScopeName",
+        UsdUtilsGetMaterialsScopeName,
+        arg("forceDefault")=false);
+    def(
+        "GetPrimaryCameraName",
+        UsdUtilsGetPrimaryCameraName,
+        arg("forceDefault")=false);
 }

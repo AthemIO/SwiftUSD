@@ -24,17 +24,17 @@
 
 #include "SdrOsl/oslParser.h"
 #include "Ar/asset.h"
-#include "Ar/resolver.h"
 #include "Ar/resolvedPath.h"
+#include "Ar/resolver.h"
 #include "Gf/matrix4d.h"
 #include "Gf/vec2f.h"
 #include "Gf/vec3f.h"
 #include "Gf/vec4f.h"
-#include "Ndr/debugCodes.h"
-#include "Ndr/nodeDiscoveryResult.h"
 #include "Sdf/assetPath.h"
+#include "Sdr/debugCodes.h"
 #include "Sdr/shaderMetadataHelpers.h"
 #include "Sdr/shaderNode.h"
+#include "Sdr/shaderNodeDiscoveryResult.h"
 #include "Sdr/shaderProperty.h"
 #include "Tf/fileUtils.h"
 #include "Tf/staticTokens.h"
@@ -54,7 +54,7 @@ using ShaderMetadataHelpers::IsPropertyATerminal;
 using ShaderMetadataHelpers::IsTruthy;
 using ShaderMetadataHelpers::OptionVecVal;
 
-NDR_REGISTER_PARSER_PLUGIN(SdrOslParserPlugin)
+SDR_REGISTER_PARSER_PLUGIN(SdrOslParserPlugin)
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
@@ -64,9 +64,9 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          // Discovery and source type
                          ((discoveryType, "oso"))((sourceType, "OSL")));
 
-const NdrTokenVec &SdrOslParserPlugin::GetDiscoveryTypes() const
+const SdrTokenVec &SdrOslParserPlugin::GetDiscoveryTypes() const
 {
-  static const NdrTokenVec _DiscoveryTypes = {_tokens->discoveryType};
+  static const SdrTokenVec _DiscoveryTypes = {_tokens->discoveryType};
   return _DiscoveryTypes;
 }
 
@@ -98,7 +98,8 @@ static bool _ParseFromSourceCode(OSL::OSLQuery *query, const String &sourceCode)
 #  endif
 }
 
-NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discoveryResult)
+SdrShaderNodeUniquePtr SdrOslParserPlugin::Parse(
+    const SdrShaderNodeDiscoveryResult &discoveryResult)
 {
   // Each call to `Parse` should have its own reference to an OSL query to
   // prevent multi-threading issues
@@ -129,7 +130,7 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
             "node definition will be created.",
             discoveryResult.uri.c_str(),
             discoveryResult.resolvedUri.c_str());
-        return NdrParserPlugin::GetInvalidNode(discoveryResult);
+        return SdrParserPlugin::GetInvalidNode(discoveryResult);
       }
 
       parseSuccessful = _ParseFromSourceCode(&oslQuery,
@@ -141,10 +142,10 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
   }
   else {
     TF_WARN(
-        "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
+        "Invalid SdrShaderNodeDiscoveryResult with identifier %s: both uri "
         "and sourceCode are empty.",
         discoveryResult.identifier.GetText());
-    return NdrParserPlugin::GetInvalidNode(discoveryResult);
+    return SdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   std::string errors = oslQuery.geterror();
@@ -156,10 +157,10 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
         (errors.empty() ? "" : "Errors from OSL parser: "),
         (errors.empty() ? "" : TfStringReplace(errors, "\n", "; ").c_str()));
 
-    return NdrParserPlugin::GetInvalidNode(discoveryResult);
+    return SdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
-  return NdrNodeUniquePtr(
+  return SdrShaderNodeUniquePtr(
       new SdrShaderNode(discoveryResult.identifier,
                         discoveryResult.version,
                         discoveryResult.name,
@@ -176,10 +177,10 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
                         discoveryResult.sourceCode));
 }
 
-NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
-    const OSL::OSLQuery &query, const NdrNodeDiscoveryResult &discoveryResult) const
+SdrShaderPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
+    const OSL::OSLQuery &query, const SdrShaderNodeDiscoveryResult &discoveryResult) const
 {
-  NdrPropertyUniquePtrVec properties;
+  SdrShaderPropertyUniquePtrVec properties;
   const size_t nParams = query.nparams();
 
   for (size_t i = 0; i < nParams; ++i) {
@@ -192,7 +193,7 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
     }
 
     // Extract metadata
-    NdrTokenMap metadata = _getPropertyMetadata(param, discoveryResult);
+    SdrTokenMap metadata = _getPropertyMetadata(param, discoveryResult);
 
     // Get type name, and determine the size of the array (if an array)
     TfToken typeName;
@@ -202,7 +203,7 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
     _injectParserMetadata(metadata, typeName);
 
     // Non-standard properties in the metadata are considered hints
-    NdrTokenMap hints;
+    SdrTokenMap hints;
     std::string definitionName;
     for (auto metaIt = metadata.cbegin(); metaIt != metadata.cend();) {
       if (std::find(SdrPropertyMetadata->allTokens.begin(),
@@ -222,7 +223,7 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
       // The metadata sometimes incorrectly specifies array size; this
       // value is not respected
       if (metaIt->first == _tokens->arraySize) {
-        TF_DEBUG(NDR_PARSING)
+        TF_DEBUG(SDR_PARSING)
             .Msg(
                 "Ignoring bad 'arraySize' attribute on property [%s] "
                 "on OSL shader [%s]",
@@ -244,7 +245,7 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
     }
 
     // Extract options
-    NdrOptionVec options;
+    SdrOptionVec options;
     if (metadata.count(SdrPropertyMetadata->Options)) {
       options = OptionVecVal(metadata.at(SdrPropertyMetadata->Options));
     }
@@ -263,10 +264,10 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
   return properties;
 }
 
-NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(
-    const OslParameter *param, const NdrNodeDiscoveryResult &discoveryResult) const
+SdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(
+    const OslParameter *param, const SdrShaderNodeDiscoveryResult &discoveryResult) const
 {
-  NdrTokenMap metadata;
+  SdrTokenMap metadata;
 
   for (const OslParameter &metaParam : param->metadata) {
     TfToken entryName = TfToken(metaParam.name.string());
@@ -286,7 +287,7 @@ NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(
           metadata[SdrPropertyMetadata->VstructMemberName] = vstruct.substr(dotPos + 1);
         }
         else {
-          TF_DEBUG(NDR_PARSING)
+          TF_DEBUG(SDR_PARSING)
               .Msg("Bad virtual structure member in %s.%s:%s",
                    discoveryResult.name.c_str(),
                    param->name.string().c_str(),
@@ -308,7 +309,7 @@ NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(
   return metadata;
 }
 
-void SdrOslParserPlugin::_injectParserMetadata(NdrTokenMap &metadata,
+void SdrOslParserPlugin::_injectParserMetadata(SdrTokenMap &metadata,
                                                const TfToken &typeName) const
 {
   if (typeName == SdrPropertyTypes->String) {
@@ -318,10 +319,10 @@ void SdrOslParserPlugin::_injectParserMetadata(NdrTokenMap &metadata,
   }
 }
 
-NdrTokenMap SdrOslParserPlugin::_getNodeMetadata(const OSL::OSLQuery &query,
-                                                 const NdrTokenMap &baseMetadata) const
+SdrTokenMap SdrOslParserPlugin::_getNodeMetadata(const OSL::OSLQuery &query,
+                                                 const SdrTokenMap &baseMetadata) const
 {
-  NdrTokenMap nodeMetadata = baseMetadata;
+  SdrTokenMap nodeMetadata = baseMetadata;
 
   // Convert the OSL metadata to a dict. Each entry in the metadata is stored
   // as an OslParameter.
@@ -350,7 +351,7 @@ std::string SdrOslParserPlugin::_getParamAsString(const OslParameter &param) con
 }
 
 std::tuple<TfToken, size_t> SdrOslParserPlugin::_getTypeName(const OslParameter *param,
-                                                             const NdrTokenMap &metadata) const
+                                                             const SdrTokenMap &metadata) const
 {
   // Exit early if this param is known to be a struct
   if (param->isstruct) {
@@ -389,7 +390,7 @@ std::tuple<TfToken, size_t> SdrOslParserPlugin::_getTypeName(const OslParameter 
 VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParameter &param,
                                              const std::string &oslType,
                                              size_t arraySize,
-                                             const NdrTokenMap &metadata) const
+                                             const SdrTokenMap &metadata) const
 {
   // Determine array-ness
   bool isDynamicArray = IsTruthy(SdrPropertyMetadata->IsDynamicArray, metadata);

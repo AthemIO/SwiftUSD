@@ -20,4 +20,10 @@
 #  include <Garch/GarchWindows/glPlatformDebugWindowWindows.h>
 #endif /* defined(_WIN32) */
 
+#include <Garch/glPlatformDebugWindowDarwin.h>
+#include <Garch/glPlatformContextDarwin.h>
+#include <Garch/glPlatformContextWindows.h>
+#include <Garch/glPlatformDebugWindowWindows.h>
+#include <Garch/glPlatformDebugWindowGLX.h>
+#include <Garch/glPlatformContextGLX.h>
 #endif  // __PXR_IMAGING_GARCH_H__

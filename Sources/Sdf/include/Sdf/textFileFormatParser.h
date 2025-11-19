@@ -1,0 +1,1529 @@
+//
+// Copyright 2024 Pixar
+//
+// Licensed under the terms set forth in the LICENSE.txt file available at
+// https://openusd.org/license.
+//
+///
+/// \file Sdf/textFileFormatParser.h
+
+#ifndef PXR_USD_SDF_TEXT_FILE_FORMAT_PARSER_H
+#define PXR_USD_SDF_TEXT_FILE_FORMAT_PARSER_H
+
+// #include "Pegtl/contrib/trace.hpp"  // Not needed
+#include "Pegtl/pegtl.hpp"
+#include "Sdf/debugCodes.h"
+#include "Sdf/listOp.h"
+#include "Sdf/parserHelpers.h"
+#include "Sdf/parserValueContext.h"
+#include "Sdf/path.h"
+#include "Sdf/pathParser.h"
+#include "Sdf/schema.h"
+#include "Sdf/textParserContext.h"
+#include "Tf/debug.h"
+#include "Tf/stringUtils.h"
+#include "Tf/token.h"
+#include "Vt/value.h"
+#include "pxr/pxrns.h"
+
+#include <string>
+#include <utility>
+
+PXR_NAMESPACE_OPEN_SCOPE
+
+////////////////////////////////////////////////////////////////////////
+// TextFileFormat grammar:
+// We adopt the convention in the following PEGTL rules where they take
+// care of "internal padding" (i.e. whitespace within the grammar rule
+// itself) but not "external padding" (i.e. they will not consume
+// whitespace prior to the first token, nor whitespace following the
+// last token in the rule).
+//
+// The exception to this rule is the class of "separators" which do
+// try to consume leading and trailing whitespace where appropriate
+namespace Sdf_TextFileFormatParser {
+
+namespace PEGTL_NS = PXR_PEGTL_NAMESPACE;
+
+// special characters
+// note - Dot comes from pathParser.h
+struct SingleQuote : PEGTL_NS::one<'\''> {};
+struct DoubleQuote : PEGTL_NS::one<'"'> {};
+struct LeftParen : PEGTL_NS::one<'('> {};
+struct RightParen : PEGTL_NS::one<')'> {};
+struct LeftBracket : PEGTL_NS::one<'['> {};
+struct RightBracket : PEGTL_NS::one<']'> {};
+struct LeftBrace : PEGTL_NS::one<'{'> {};
+struct RightBrace : PEGTL_NS::one<'}'> {};
+struct LeftAngleBracket : PEGTL_NS::one<'<'> {};
+struct RightAngleBracket : PEGTL_NS::one<'>'> {};
+struct At : PEGTL_NS::one<'@'> {};
+// // asset references
+struct AtAtAt : PEGTL_NS::three<'@'> {};
+struct Colon : PEGTL_NS::one<':'> {};
+struct Equals : PEGTL_NS::one<'='> {};
+struct Sign : PEGTL_NS::one<'+', '-'> {};
+struct Minus : PEGTL_NS::one<'-'> {};
+struct Exponent : PEGTL_NS::one<'e', 'E'> {};
+struct Space : PEGTL_NS::one<' ', '\t'> {};
+struct Ampersand : PEGTL_NS::one<'&'> {};
+
+// character classes
+struct Digit : PEGTL_NS::digit {};
+struct Eol : PEGTL_NS::one<'\r', '\n'> {};
+struct Eolf : PEGTL_NS::internal::eolf {};
+struct Utf8 : PEGTL_NS::internal::any<PEGTL_NS::internal::peek_utf8> {};
+struct Utf8NoEolf : PEGTL_NS::internal::minus<Utf8, Eol> {};
+
+// keyword
+struct KeywordAdd : PXR_PEGTL_KEYWORD("add") {};
+struct KeywordAnimationBlock : PXR_PEGTL_KEYWORD("AnimationBlock") {};
+struct KeywordAppend : PXR_PEGTL_KEYWORD("append") {};
+struct KeywordAt : PXR_PEGTL_KEYWORD("at") {};
+struct KeywordAutoEase : PXR_PEGTL_KEYWORD("autoEase") {};
+struct KeywordBezier : PXR_PEGTL_KEYWORD("bezier") {};
+struct KeywordClass : PXR_PEGTL_KEYWORD("class") {};
+struct KeywordConfig : PXR_PEGTL_KEYWORD("config") {};
+struct KeywordConnect : PXR_PEGTL_KEYWORD("connect") {};
+struct KeywordCurve : PXR_PEGTL_KEYWORD("curve") {};
+struct KeywordCustom : PXR_PEGTL_KEYWORD("custom") {};
+struct KeywordCustomData : PXR_PEGTL_KEYWORD("customData") {};
+struct KeywordDefault : PXR_PEGTL_KEYWORD("default") {};
+struct KeywordDef : PXR_PEGTL_KEYWORD("def") {};
+struct KeywordDelete : PXR_PEGTL_KEYWORD("delete") {};
+struct KeywordDictionary : PXR_PEGTL_KEYWORD("dictionary") {};
+struct KeywordDisplayUnit : PXR_PEGTL_KEYWORD("displayUnit") {};
+struct KeywordDoc : PXR_PEGTL_KEYWORD("doc") {};
+struct KeywordEdit : PXR_PEGTL_KEYWORD("edit") {};
+struct KeywordErase : PXR_PEGTL_KEYWORD("erase") {};
+struct KeywordFill : PXR_PEGTL_KEYWORD("fill") {};
+struct KeywordHeld : PXR_PEGTL_KEYWORD("held") {};
+struct KeywordHermite : PXR_PEGTL_KEYWORD("hermite") {};
+struct KeywordInherits : PXR_PEGTL_KEYWORD("inherits") {};
+struct KeywordInsert : PXR_PEGTL_KEYWORD("insert") {};
+struct KeywordKind : PXR_PEGTL_KEYWORD("kind") {};
+struct KeywordLinear : PXR_PEGTL_KEYWORD("linear") {};
+struct KeywordLoop : PXR_PEGTL_KEYWORD("loop") {};
+struct KeywordMaxsize : PXR_PEGTL_KEYWORD("maxsize") {};
+struct KeywordMinsize : PXR_PEGTL_KEYWORD("minsize") {};
+struct KeywordNameChildren : PXR_PEGTL_KEYWORD("nameChildren") {};
+struct KeywordNone : PXR_PEGTL_KEYWORD("None") {};
+struct KeywordNone_LC : PXR_PEGTL_KEYWORD("none") {};
+struct KeywordOffset : PXR_PEGTL_KEYWORD("offset") {};
+struct KeywordOscillate : PXR_PEGTL_KEYWORD("oscillate") {};
+struct KeywordOver : PXR_PEGTL_KEYWORD("over") {};
+struct KeywordPayload : PXR_PEGTL_KEYWORD("payload") {};
+struct KeywordPermission : PXR_PEGTL_KEYWORD("permission") {};
+struct KeywordPost : PXR_PEGTL_KEYWORD("post") {};
+struct KeywordPrefixSubstitutions : PXR_PEGTL_KEYWORD("prefixSubstitutions") {};
+struct KeywordPre : PXR_PEGTL_KEYWORD("pre") {};
+struct KeywordPrepend : PXR_PEGTL_KEYWORD("prepend") {};
+struct KeywordProperties : PXR_PEGTL_KEYWORD("properties") {};
+struct KeywordReferences : PXR_PEGTL_KEYWORD("references") {};
+struct KeywordRelocates : PXR_PEGTL_KEYWORD("relocates") {};
+struct KeywordRel : PXR_PEGTL_KEYWORD("rel") {};
+struct KeywordReorder : PXR_PEGTL_KEYWORD("reorder") {};
+struct KeywordResize : PXR_PEGTL_KEYWORD("resize") {};
+struct KeywordRootPrims : PXR_PEGTL_KEYWORD("rootPrims") {};
+struct KeywordRepeat : PXR_PEGTL_KEYWORD("repeat") {};
+struct KeywordReset : PXR_PEGTL_KEYWORD("reset") {};
+struct KeywordScale : PXR_PEGTL_KEYWORD("scale") {};
+struct KeywordSloped : PXR_PEGTL_KEYWORD("sloped") {};
+struct KeywordSubLayers : PXR_PEGTL_KEYWORD("subLayers") {};
+struct KeywordSuffixSubstitutions : PXR_PEGTL_KEYWORD("suffixSubstitutions") {};
+struct KeywordSpecializes : PXR_PEGTL_KEYWORD("specializes") {};
+struct KeywordSpline : PXR_PEGTL_KEYWORD("spline") {};
+struct KeywordSymmetryArguments : PXR_PEGTL_KEYWORD("symmetryArguments") {};
+struct KeywordSymmetryFunction : PXR_PEGTL_KEYWORD("symmetryFunction") {};
+struct KeywordTimeSamples : PXR_PEGTL_KEYWORD("timeSamples") {};
+struct KeywordTo : PXR_PEGTL_KEYWORD("to") {};
+struct KeywordUniform : PXR_PEGTL_KEYWORD("uniform") {};
+struct KeywordVariantSet : PXR_PEGTL_KEYWORD("variantSet") {};
+struct KeywordVariantSets : PXR_PEGTL_KEYWORD("variantSets") {};
+struct KeywordVariants : PXR_PEGTL_KEYWORD("variants") {};
+struct KeywordVarying : PXR_PEGTL_KEYWORD("varying") {};
+struct KeywordWrite : PXR_PEGTL_KEYWORD("write") {};
+
+struct Keywords : PEGTL_NS::internal::sor<KeywordAdd,
+                                          KeywordAnimationBlock,
+                                          KeywordAppend,
+                                          KeywordBezier,
+                                          KeywordClass,
+                                          KeywordConfig,
+                                          KeywordConnect,
+                                          KeywordCurve,
+                                          KeywordCustom,
+                                          KeywordCustomData,
+                                          KeywordDefault,
+                                          KeywordDef,
+                                          KeywordDelete,
+                                          KeywordDictionary,
+                                          KeywordDisplayUnit,
+                                          KeywordDoc,
+                                          KeywordHeld,
+                                          KeywordHermite,
+                                          KeywordInherits,
+                                          KeywordKind,
+                                          KeywordLinear,
+                                          KeywordLoop,
+                                          KeywordNameChildren,
+                                          KeywordNone,
+                                          KeywordNone_LC,
+                                          KeywordOffset,
+                                          KeywordOscillate,
+                                          KeywordOver,
+                                          KeywordPayload,
+                                          KeywordPermission,
+                                          KeywordPost,
+                                          KeywordPre,
+                                          KeywordPrefixSubstitutions,
+                                          KeywordPrepend,
+                                          KeywordProperties,
+                                          KeywordReferences,
+                                          KeywordRelocates,
+                                          KeywordRel,
+                                          KeywordReorder,
+                                          KeywordRootPrims,
+                                          KeywordRepeat,
+                                          KeywordReset,
+                                          KeywordScale,
+                                          KeywordSloped,
+                                          KeywordSubLayers,
+                                          KeywordSuffixSubstitutions,
+                                          KeywordSpecializes,
+                                          KeywordSpline,
+                                          KeywordSymmetryArguments,
+                                          KeywordSymmetryFunction,
+                                          KeywordTimeSamples,
+                                          KeywordUniform,
+                                          KeywordVariantSet,
+                                          KeywordVariantSets,
+                                          KeywordVariants,
+                                          KeywordVarying> {};
+
+struct MathKeywordInf : PXR_PEGTL_KEYWORD("inf") {};
+struct MathKeywordNan : PXR_PEGTL_KEYWORD("nan") {};
+
+// PythonStyleComment = # (NonCrlfUtf8Character)*
+// CppStyleSingleLineComment = // (NonCrlfUtf8Character)*
+// CppStyleMultiLineComment = /* (!(*/) (Utf8Character)*) */
+// Comment = PythonStyleComment /
+//           CppStyleSingleLineComment /
+//           CppStyleMultiLineComment
+struct CppStyleMultilineOpen : PEGTL_NS::string<'/', '*'> {};
+struct CppStyleMultilineClose : PEGTL_NS::string<'*', '/'> {};
+struct SingleLineContents : PEGTL_NS::internal::star<PEGTL_NS::internal::not_at<Eolf>, Utf8> {};
+struct PythonStyleComment : PEGTL_NS::internal::disable<PEGTL_NS::one<'#'>, SingleLineContents> {};
+struct CppStyleSingleLineComment
+    : PEGTL_NS::internal::disable<PEGTL_NS::two<'/'>, SingleLineContents> {};
+struct CppStyleMultiLineComment
+    : PEGTL_NS::internal::disable<CppStyleMultilineOpen,
+                                  PEGTL_NS::internal::until<CppStyleMultilineClose, Utf8>> {};
+struct Comment : PEGTL_NS::internal::sor<PythonStyleComment,
+                                         CppStyleSingleLineComment,
+                                         CppStyleMultiLineComment> {};
+
+// whitespace rules
+// TokenSeparator represents whitespace between tokens,
+// which can include space, tab, and c++ multiline style comments
+// but MUST include a single space / tab character, that is:
+// def/*comment*/foo is illegal but
+// def /*comment*/foo or
+// def/*comment*/ foo are both legal
+// TokenSeparator = (Space)+ (CppStyleMultiLineComment (Space)*)?)* /
+//                  (CppStyleMultiLineComment (Space)*)?)* (Space)+
+struct InlinePadding : PEGTL_NS::internal::sor<Space, CppStyleMultiLineComment> {};
+struct SinglelinePadding : PEGTL_NS::internal::sor<Space, Comment> {};
+struct MultilinePadding : PEGTL_NS::internal::sor<Space, Eol, Comment> {};
+struct TokenSeparator : PEGTL_NS::internal::pad<Space, CppStyleMultiLineComment, InlinePadding> {};
+
+// array type
+struct ArrayType
+    : PEGTL_NS::internal::seq<
+          LeftBracket,
+          PEGTL_NS::internal::must<PEGTL_NS::internal::star<InlinePadding>, RightBracket>> {};
+
+// separators
+// ListSeparator = , (NewLines)?
+// ListEnd = ListSeparator /
+//           (NewLines)?
+// StatementSeparator = ; (NewLines)? /
+//                      NewLines
+// StatementEnd = StatementSeparator /
+//			      (NewLines)?
+// Assignment = (TokenSeparator)? = (TokenSeparator)?
+struct ListSeparator : PEGTL_NS::one<','> {};
+struct StatementSeparator : PEGTL_NS::internal::sor<Eol, PEGTL_NS::one<';'>> {};
+struct NamespaceSeparator : Colon {};
+struct CXXNamespaceSeparator : PEGTL_NS::two<':'> {};
+struct Assignment : PEGTL_NS::internal::pad<Equals, InlinePadding> {};
+
+// generic lists
+template<typename R>
+struct ListOf
+    : PEGTL_NS::internal::
+          list_tail<R, PEGTL_NS::internal::pad<ListSeparator, InlinePadding, MultilinePadding>> {};
+
+// generic statements
+template<typename R>
+struct StatementSequenceOf
+    : PEGTL_NS::internal::list_tail<
+          R,
+          PEGTL_NS::internal::pad<StatementSeparator, SinglelinePadding, MultilinePadding>> {};
+
+// numbers
+// Number = ((-)? ((Digit)+ / (Digit)+ . (Digit)* / . (Digit)+)
+//          (ExponentPart)?) /
+//          inf /
+//		    -inf /
+// 		    nan
+struct ExponentPart
+    : PEGTL_NS::internal::opt<
+          PEGTL_NS::internal::seq<Exponent,
+                                  PEGTL_NS::internal::must<PEGTL_NS::internal::opt<Sign>,
+                                                           PEGTL_NS::internal::plus<Digit>>>> {};
+struct NumberStandard
+    : PEGTL_NS::internal::seq<
+          PEGTL_NS::internal::plus<Digit>,
+          PEGTL_NS::internal::opt<Sdf_PathParser::Dot, PEGTL_NS::internal::star<Digit>>,
+          ExponentPart> {};
+struct NumberLeadingDot
+    : PEGTL_NS::internal::seq<
+          PEGTL_NS::internal::seq<Sdf_PathParser::Dot,
+                                  PEGTL_NS::internal::must<PEGTL_NS::internal::plus<Digit>>>,
+          ExponentPart> {};
+struct Number : PEGTL_NS::internal::sor<
+                    PEGTL_NS::internal::seq<
+                        PEGTL_NS::internal::opt<Minus>,
+                        PEGTL_NS::internal::sor<NumberStandard, NumberLeadingDot, MathKeywordInf>>,
+                    MathKeywordNan> {};
+
+// Integer = (-)? (Digit)+
+struct Integer
+    : PEGTL_NS::internal::seq<PEGTL_NS::internal::opt<Minus>, PEGTL_NS::internal::plus<Digit>> {};
+
+// strings
+// EscapedDoubleQuote = \"
+// DoubleQuoteSingleLineStringChar = EscapedDoubleQuote / !"
+// NonCrlfUtf8Character
+// EscapedSingleQuote = \'
+// SingleQuoteSingleLineStringChar = EscapedSingleQuote / !'
+// NonCrlfUtf8Character
+// DoubleQuoteMultiLineStringChar = EscapedDoubleQuote / !" Utf8Character
+// SingleQuoteMultiLineStringChar = EscapedSingleQuote / !' Utf8Character
+// String = "  DoubleQuoteSingleLineStringChar* " /
+//	 """ DoubleQuoteMultiLineStringChar* """ /
+//   ' SingleQuoteSingleLineStringChar* ' /
+//	''' SingleQuoteMultiLineStringChar* '
+template<char QuoteCharacter>
+struct MultilineString
+    : PEGTL_NS::internal::seq<
+          PEGTL_NS::three<QuoteCharacter>,
+          PEGTL_NS::internal::must<PEGTL_NS::internal::until<
+              PEGTL_NS::three<QuoteCharacter>,
+              PEGTL_NS::internal::
+                  sor<PEGTL_NS::two<'\\'>, PEGTL_NS::string<'\\', QuoteCharacter>, Utf8>>>> {};
+template<char QuoteCharacter>
+struct SinglelineString
+    : PEGTL_NS::internal::seq<
+          PEGTL_NS::one<QuoteCharacter>,
+          PEGTL_NS::internal::must<PEGTL_NS::internal::until<
+              PEGTL_NS::one<QuoteCharacter>,
+              PEGTL_NS::internal::
+                  sor<PEGTL_NS::two<'\\'>, PEGTL_NS::string<'\\', QuoteCharacter>, Utf8NoEolf>>>> {
+};
+
+struct SinglelineSingleQuoteString : SinglelineString<'\''> {};
+struct SinglelineDoubleQuoteString : SinglelineString<'\"'> {};
+struct MultilineSingleQuoteString : MultilineString<'\''> {};
+struct MultilineDoubleQuoteString : MultilineString<'\"'> {};
+
+struct String : PEGTL_NS::internal::sor<MultilineSingleQuoteString,
+                                        SinglelineSingleQuoteString,
+                                        MultilineDoubleQuoteString,
+                                        SinglelineDoubleQuoteString> {};
+
+struct EscapeAtAtAt : PEGTL_NS::internal::seq<PEGTL_NS::one<'\\'>, AtAtAt> {};
+
+// AssetRefCharacter = !@ NonCrlfUtf8Character
+// EscapedTripleAt = \@@@
+// AssetRefTripleCharacter = EscapedTripleAt / !@ NonCrlfUtf8Character
+// AssetRef = @ (AssetRefCharacter)* @ /
+//            @@@ (AssetRefTripleCharacter)* (@ / @@)? @@@
+struct AssetRef : PEGTL_NS::internal::sor<
+                      PEGTL_NS::internal::if_must<false, 
+                          AtAtAt,
+                          // A triple quoted asset path is closed by 3-5 @, with the last three
+                          // always "closing" and the previous 0-2 being considered a part of the
+                          // asset path.
+                          PEGTL_NS::internal::until<
+                              PEGTL_NS::internal::seq<AtAtAt, PEGTL_NS::internal::rep_opt<2, At>>,
+                              PEGTL_NS::internal::sor<EscapeAtAtAt, Utf8NoEolf>>>,
+                      PEGTL_NS::internal::if_must<false, At, PEGTL_NS::internal::until<At, Utf8NoEolf>>> {};
+
+// path reference
+// PathRef = <> /
+//           < Path >
+struct PathRef
+    : PEGTL_NS::internal::if_must<false, LeftAngleBracket,
+                        PEGTL_NS::internal::sor<
+                            RightAngleBracket,
+                            PEGTL_NS::internal::seq<Sdf_PathParser::Path, RightAngleBracket>>> {};
+
+// LayerOffset = offset Assignment Number /
+//	             scale Assignment Number
+struct LayerOffset : PEGTL_NS::internal::seq<PEGTL_NS::internal::sor<KeywordOffset, KeywordScale>,
+                                             Assignment,
+                                             Number> {};
+
+// grammar rule that matches UTF-8 identifiers
+struct BaseIdentifier : Sdf_PathParser::Utf8Identifier {};
+struct KeywordlessIdentifier
+    : PEGTL_NS::internal::minus<Sdf_PathParser::Utf8Identifier, Keywords> {};
+struct NamespacedIdentifier : PEGTL_NS::internal::list<BaseIdentifier, NamespaceSeparator> {};
+
+// CXXNamespacedIdentifier = KeywordlessIdentifier (:: KeywordlessIdentifier)+
+// Identifier = CXXNamespacedIdentifier /
+//              KeywordlessIdentifier
+struct Identifier : PEGTL_NS::internal::list<KeywordlessIdentifier, CXXNamespaceSeparator> {};
+struct NamespacedName : PEGTL_NS::internal::sor<NamespacedIdentifier, Keywords> {};
+
+// atomic values
+struct NumberValue : Number {};
+struct IdentifierValue : Identifier {};
+struct StringValue : String {};
+struct AssetRefValue : AssetRef {};
+struct AtomicValue
+    : PEGTL_NS::internal::sor<NumberValue, IdentifierValue, StringValue, AssetRefValue> {};
+
+struct TypedTupleValue;
+struct TypedListValue;
+struct EmptyListValue;
+struct PathRefValue : PathRef {};
+
+// TypedValue = AtomicValue /
+//              TupleValue /
+//	            [ (TokenSpace)? ] /
+//              ListValue /
+//              PathRefValue
+struct TypedValue
+    : PEGTL_NS::internal::
+          sor<AtomicValue, TypedTupleValue, EmptyListValue, TypedListValue, PathRefValue> {};
+
+// tuple values
+// TupleItem = AtomicValue /
+//		       TupleValue
+// TupleInterior = TupleInterior ListSeparator (TokenSpace)? TupleItem
+//                 (TokenSpace)? /
+//                 (TokenSpace)? TupleItem (TokenSpace)?
+// TupleValue = ( (NewLines)? TupleInterior ListEnd (TokenSpace)? )
+struct TupleValue;
+struct TupleValueOpen : LeftParen {};
+struct TupleValueClose : RightParen {};
+struct TupleValueItem
+    : PEGTL_NS::internal::
+          sor<NumberValue, IdentifierValue, StringValue, AssetRefValue, TupleValue> {};
+
+struct TupleValue
+    : PEGTL_NS::internal::if_must<false, TupleValueOpen,
+                        PEGTL_NS::internal::pad<ListOf<TupleValueItem>, MultilinePadding>,
+                        TupleValueClose> {};
+struct TypedTupleValue : TupleValue {};
+
+// list values
+// ListItem = AtomicValue /
+//            ListValue /
+//            TupleValue
+// ListInterior = ListInterior ListSeparator (TokenSpace)? ListItem
+//                (TokenSpace)? /
+//                (TokenSpace)? ListItem (TokenSpace)?
+// ListValue = [ (NewLines)? ListInterior ListEnd (TokenSpace)? ]
+struct ListValue;
+struct ListValueOpen : LeftBracket {};
+struct ListValueClose : RightBracket {};
+struct ListValueItem
+    : PEGTL_NS::internal::
+          sor<NumberValue, IdentifierValue, StringValue, AssetRefValue, ListValue, TupleValue> {};
+struct ListValue
+    : PEGTL_NS::internal::if_must<false, ListValueOpen,
+                        PEGTL_NS::internal::pad<ListOf<ListValueItem>, MultilinePadding>,
+                        ListValueClose> {};
+struct TypedListValue : ListValue {};
+
+// empty list value uses LeftBracket / RightBracket
+// rather than ListValueOpen / ListValueClose
+// because it doesn't want to execute the
+// action semantics on reduction
+struct EmptyListValue
+    : PEGTL_NS::internal::seq<LeftBracket, PEGTL_NS::internal::star<InlinePadding>, RightBracket> {
+};
+
+// dictionary values
+// DictionaryKey = String /
+//			       Identifier /
+//                 Keyword
+// KeyValuePair = DictionaryKey Assignment TypedValue
+// KeyDictionaryValuePair = DictionaryKey Assignment DictionaryValue
+// DictionaryItemTypedValue = Identifier TokenSpace KeyValuePair /
+//				              Identifier (TokenSpace)? [ (TokenSpace)? ]
+//				              TokenSpace KeyValuePair
+// DictionaryItemDictionaryValue = dictionary TokenSpace KeyDictionaryValuePair
+// DictionaryItem = DictionaryItemDictionaryValue /
+//                  DictionaryItemTypedValue
+// DictionaryInterior = DictionaryInterior StaementSeparator (TokenSpace)?
+//                      DictionaryItem (TokenSpace)? /
+//                      (TokenSpace)? DictionaryItem (TokenSpace)?
+// DictionaryValue = { (NewLines)? DictionaryInterior StatementEnd
+//                     (TokenSpace)? }
+struct DictionaryValue;
+struct DictionaryValueOpen : LeftBrace {};
+struct DictionaryValueClose : RightBrace {};
+struct DictionaryKey : PEGTL_NS::internal::sor<String, BaseIdentifier> {};
+struct DictionaryType
+    : PEGTL_NS::internal::seq<
+          Identifier,
+          PEGTL_NS::internal::opt<PEGTL_NS::internal::star<InlinePadding>, ArrayType>> {};
+struct DictionaryValueItem
+    : PEGTL_NS::internal::sor<
+          PEGTL_NS::internal::if_must<false, KeywordDictionary,
+                            TokenSeparator,
+                            DictionaryKey,
+                            Assignment,
+                            DictionaryValue>,
+          PEGTL_NS::internal::
+              seq<DictionaryType, TokenSeparator, DictionaryKey, Assignment, TypedValue>> {};
+struct DictionaryValue
+    : PEGTL_NS::internal::if_must<false, 
+          DictionaryValueOpen,
+          PEGTL_NS::internal::pad_opt<StatementSequenceOf<DictionaryValueItem>, MultilinePadding>,
+          DictionaryValueClose> {};
+
+template<int N> struct ArrayEditReferenceIndex : Integer {};
+
+template<int N>
+struct ArrayEditReference
+    : PEGTL_NS::internal::if_must<false, LeftBracket,
+                        PEGTL_NS::internal::pad<ArrayEditReferenceIndex<N>, InlinePadding>,
+                        RightBracket> {};
+
+struct ArrayEditLiteral : PEGTL_NS::internal::sor<AtomicValue, TypedTupleValue> {};
+
+struct ArrayEditReference0OrLiteral
+    : PEGTL_NS::internal::sor<ArrayEditReference<0>, ArrayEditLiteral> {};
+
+struct ArrayEditPrepend
+    : PEGTL_NS::internal::if_must<false, KeywordPrepend,
+                        PEGTL_NS::internal::pad<ArrayEditReference0OrLiteral, InlinePadding>> {};
+
+struct ArrayEditAppend
+    : PEGTL_NS::internal::if_must<false, KeywordAppend,
+                        PEGTL_NS::internal::pad<ArrayEditReference0OrLiteral, InlinePadding>> {};
+
+struct ArrayEditWrite
+    : PEGTL_NS::internal::if_must<false, KeywordWrite,
+                        PEGTL_NS::internal::pad<ArrayEditReference0OrLiteral, InlinePadding>,
+                        KeywordTo,
+                        PEGTL_NS::internal::pad<ArrayEditReference<1>, InlinePadding>> {};
+
+struct ArrayEditInsert
+    : PEGTL_NS::internal::if_must<false, KeywordInsert,
+                        PEGTL_NS::internal::pad<ArrayEditReference0OrLiteral, InlinePadding>,
+                        KeywordAt,
+                        PEGTL_NS::internal::pad<ArrayEditReference<1>, InlinePadding>> {};
+
+struct ArrayEditErase
+    : PEGTL_NS::internal::if_must<false, KeywordErase,
+                        PEGTL_NS::internal::pad<ArrayEditReference<0>, InlinePadding>> {};
+
+struct ArrayEditSizeArg : Integer {};
+
+struct ArrayEditMinSize
+    : PEGTL_NS::internal::if_must<false, 
+          KeywordMinsize,
+          PEGTL_NS::internal::pad<ArrayEditSizeArg, InlinePadding>,
+          PEGTL_NS::internal::opt<PEGTL_NS::internal::if_must<false, KeywordFill,
+                             PEGTL_NS::internal::pad<ArrayEditLiteral, InlinePadding>>>> {};
+
+struct ArrayEditResize
+    : PEGTL_NS::internal::if_must<false, 
+          KeywordResize,
+          PEGTL_NS::internal::pad<ArrayEditSizeArg, InlinePadding>,
+          PEGTL_NS::internal::opt<PEGTL_NS::internal::if_must<false, KeywordFill,
+                             PEGTL_NS::internal::pad<ArrayEditLiteral, InlinePadding>>>> {};
+
+struct ArrayEditMaxSize
+    : PEGTL_NS::internal::if_must<false, KeywordMaxsize, PEGTL_NS::internal::pad<ArrayEditSizeArg, InlinePadding>> {
+};
+
+struct ArrayEditInstruction : PEGTL_NS::internal::sor<ArrayEditPrepend,
+                                                      ArrayEditAppend,
+                                                      ArrayEditWrite,
+                                                      ArrayEditInsert,
+                                                      ArrayEditErase,
+                                                      ArrayEditMinSize,
+                                                      ArrayEditResize,
+                                                      ArrayEditMaxSize> {};
+
+struct ArrayEditValue
+    : PEGTL_NS::internal::if_must<false, 
+          KeywordEdit,
+          PEGTL_NS::internal::pad<LeftBracket, InlinePadding>,
+          PEGTL_NS::internal::pad_opt<StatementSequenceOf<ArrayEditInstruction>, MultilinePadding>,
+          RightBracket> {};
+
+// shared metadata
+// MetadataOpen = LeftParen
+// MetadataClose = RightParen
+struct MetadataOpen : LeftParen {};
+struct MetadataClose : RightParen {};
+
+template<typename ItemType>
+struct MetadataBlock
+    : PEGTL_NS::internal::if_must<false, 
+          MetadataOpen,
+          PEGTL_NS::internal::pad_opt<StatementSequenceOf<ItemType>, MultilinePadding>,
+          MetadataClose> {};
+
+// MetadataKey = customData /
+//               symmetryArguments /
+//               Identifier
+// MetadataValue = None /
+//			       DictionaryValue /
+//			       TypedValue
+// KeyValueMetadata = Identifier Assignment MetadataValue
+struct MetadataKey
+    : PEGTL_NS::internal::sor<KeywordCustomData, KeywordSymmetryArguments, Identifier> {};
+struct KeyValueMetadata
+    : PEGTL_NS::internal::seq<MetadataKey,
+                              Assignment,
+                              PEGTL_NS::internal::sor<KeywordNone, DictionaryValue, TypedValue>> {
+};
+struct LayerKeyValueMetadata
+    : PEGTL_NS::internal::seq<Identifier,
+                              Assignment,
+                              PEGTL_NS::internal::sor<KeywordNone, DictionaryValue, TypedValue>> {
+};
+
+// DocMetadata = doc Assignment String
+struct DocMetadata : PEGTL_NS::internal::seq<KeywordDoc, Assignment, String> {};
+
+struct ListOpKeyword
+    : PEGTL_NS::internal::
+          sor<KeywordAdd, KeywordDelete, KeywordAppend, KeywordPrepend, KeywordReorder> {};
+
+struct NoneOrTypedListValue : PEGTL_NS::internal::sor<KeywordNone, TypedListValue> {};
+struct ListOpKeyValueMetadata
+    : PEGTL_NS::internal::
+          seq<Identifier, Assignment, PEGTL_NS::internal::must<NoneOrTypedListValue>> {};
+
+// ListOpMetadataValue = None /
+//                       ListValue
+// GeneralListOpMetadata = add TokenSeparator Identifier Assignment
+//                         ListOpMetadataValue /
+//                         delete TokenSeparator Identifier Assignment
+//                         ListOpMetadatValue /
+//                         append TokenSeparator Identifier Assignment
+//                         ListOpMetadatValue /
+//                         prepend TokenSeparator Identifier Assignment
+//                         ListOpMetadatValue /
+//                         reorder TokenSeparator Identifier Assignment
+//                         ListOpMetadatValue
+struct GeneralListOpMetadata
+    : PEGTL_NS::internal::seq<ListOpKeyword,
+                              TokenSeparator,
+                              Identifier,
+                              Assignment,
+                              PEGTL_NS::internal::sor<KeywordNone, TypedListValue>> {};
+
+// SharedMetadata = String /
+//                  KeyValueMetadata /
+//                  DocMetadata
+// note for layers it's slightly different because the key
+// in key / value pair metadata can only be Identifier
+struct SharedMetadata : PEGTL_NS::internal::sor<String, KeyValueMetadata, DocMetadata> {};
+struct SharedWithListOpMetadata : PEGTL_NS::internal::sor<SharedMetadata, GeneralListOpMetadata> {
+};
+struct LayerSharedWithListOpMetadata
+    : PEGTL_NS::internal::sor<String, LayerKeyValueMetadata, DocMetadata, GeneralListOpMetadata> {
+};
+
+// PermissionMetadata = permission Assignment Identifier
+struct PermissionMetadata : PEGTL_NS::internal::if_must<false, KeywordPermission, Assignment, Identifier> {};
+
+// SymmetryFunctionMetadata = symmetryFunction Assignment (Identifier)?
+struct SymmetryFunctionMetadata : PEGTL_NS::internal::seq<KeywordSymmetryFunction,
+                                                          Assignment,
+                                                          PEGTL_NS::internal::opt<Identifier>> {};
+
+// NameList = String /
+//            [ (TokenSeparator)? String (TokenSeparator)?
+//            (ListSeparator (TokenSeparator)? String (TokenSeparator)?)*
+//            ListEnd (TokenSeparator)? ]
+struct NameList : PEGTL_NS::internal::sor<
+                      String,
+                      PEGTL_NS::internal::if_must<false, LeftBracket,
+                                        // Should this be optional?
+                                        PEGTL_NS::internal::pad<ListOf<String>, MultilinePadding>,
+                                        RightBracket>> {};
+
+// StringDictionaryItem = String (TokenSeparator)? : (TokenSeparator)? String
+struct StringDictionaryItem
+    : PEGTL_NS::internal::
+          seq<String, PEGTL_NS::internal::pad<NamespaceSeparator, InlinePadding>, String> {};
+
+// StringDictionary = { (NewLines)? ( (TokenSeparator)? StringDictionaryItem
+// (TokenSeparator)? (ListSeparator (TokenSeparator)? StringDictionaryItem
+// (TokenSeparator)?)* ListEnd)? (TokenSeparator)? }
+struct StringDictionaryOpen : LeftBrace {};
+struct StringDictionaryClose : RightBrace {};
+struct StringDictionary
+    : PEGTL_NS::internal::must<
+          StringDictionaryOpen,
+          PEGTL_NS::internal::pad_opt<ListOf<StringDictionaryItem>, MultilinePadding>,
+          StringDictionaryClose> {};
+
+// time samples
+// TimeSample = Number (TokenSeparator)? : (TokenSeparator)? None /
+//              Number (TokenSeparator)? : (TokenSeparator)? TypedValue
+struct TimeSample
+    : PEGTL_NS::internal::seq<Number,
+                              PEGTL_NS::internal::pad<NamespaceSeparator, InlinePadding>,
+                              PEGTL_NS::internal::sor<KeywordNone, ArrayEditValue, TypedValue>> {};
+
+// TimeSampleMap = { (NewLines)? ((TokenSeparator)? TimeSample
+// (TokenSeparator)? (ListSeparator (TokenSeparator)? TimeSample
+// (TokenSeparator)?)* ListEnd)? (TokenSeparator)? }
+struct TimeSampleMap
+    : PEGTL_NS::internal::seq<LeftBrace,
+                              PEGTL_NS::internal::pad_opt<ListOf<TimeSample>, MultilinePadding>,
+                              RightBrace> {};
+
+// splines
+
+// SplineCurveTypeItem = BEZIER / HERMITE
+struct SplineCurveTypeItem : PEGTL_NS::internal::sor<KeywordHermite, KeywordBezier> {};
+
+struct SlopeValue : Number {};
+// SplineExtrapolationType = NONE / HELD / LINEAR /
+// SLOPED (InlinePadding)* '(' (InlinePadding)* SlopeValue (InlinePadding)* ')' /
+// LOOP TokenSeparator REPEAT / LOOP TokenSeparator RESET / LOOP
+// TokenSeparator OSCILLATE
+struct SplineExtrapolationType
+    : PEGTL_NS::internal::sor<
+          KeywordNone_LC,
+          KeywordHeld,
+          KeywordLinear,
+          PEGTL_NS::internal::seq<KeywordSloped,
+                                  PEGTL_NS::internal::pad<LeftParen, InlinePadding>,
+                                  PEGTL_NS::internal::pad<SlopeValue, InlinePadding>,
+                                  RightParen>,
+          PEGTL_NS::internal::seq<KeywordLoop, TokenSeparator, KeywordRepeat>,
+          PEGTL_NS::internal::seq<KeywordLoop, TokenSeparator, KeywordReset>,
+          PEGTL_NS::internal::seq<KeywordLoop, TokenSeparator, KeywordOscillate>> {};
+
+// SplinePreExtrapItem = pre (TokenSeparator)? Colon (TokenSeparator)?
+// SplineExtrapolationType
+struct SplinePreExtrapItem : PEGTL_NS::internal::seq<KeywordPre,
+                                                     PEGTL_NS::internal::pad<Colon, InlinePadding>,
+                                                     SplineExtrapolationType> {};
+
+// SplinePostExtrapItem = post (TokenSeparator)? Colon (TokenSeparator)?
+// SplineExtrapolationType
+struct SplinePostExtrapItem
+    : PEGTL_NS::internal::seq<KeywordPost,
+                              PEGTL_NS::internal::pad<Colon, InlinePadding>,
+                              SplineExtrapolationType> {};
+
+struct SplineLoopItemProtoStart : Number {};
+struct SplineLoopItemProtoEnd : Number {};
+struct SplineLoopItemNumPreLoops : Number {};
+struct SplineLoopItemNumPostLoops : Number {};
+struct SplineLoopItemValueOffset : Number {};
+// SplineLoopItem = loop (TokenSeparator)? Colon
+// (TokenSeparator)? (
+// (TokenSeparator)? SplineLoopItemProtoStart (TokenSeparator)?,
+// (TokenSeparator)? SplineLoopItemProtoEnd (TokenSeparator)?,
+// (TokenSeparator)? SplineLoopItemNumPreLoops (TokenSeparator)?,
+// (TokenSeparator)? SplineLoopItemNumPostLoops (TokenSeparator)?,
+// (TokenSeparator)? SplineLoopItemValueOffset (TokenSeparator)?
+// )
+struct SplineLoopItem
+    : PEGTL_NS::internal::seq<KeywordLoop,
+                              PEGTL_NS::internal::pad<Colon, InlinePadding>,
+                              PEGTL_NS::internal::pad<LeftParen, InlinePadding>,
+                              PEGTL_NS::internal::pad<SplineLoopItemProtoStart, InlinePadding>,
+                              PEGTL_NS::internal::pad<ListSeparator, InlinePadding>,
+                              PEGTL_NS::internal::pad<SplineLoopItemProtoEnd, InlinePadding>,
+                              PEGTL_NS::internal::pad<ListSeparator, InlinePadding>,
+                              PEGTL_NS::internal::pad<SplineLoopItemNumPreLoops, InlinePadding>,
+                              PEGTL_NS::internal::pad<ListSeparator, InlinePadding>,
+                              PEGTL_NS::internal::pad<SplineLoopItemNumPostLoops, InlinePadding>,
+                              PEGTL_NS::internal::pad<ListSeparator, InlinePadding>,
+                              PEGTL_NS::internal::pad<SplineLoopItemValueOffset, InlinePadding>,
+                              RightParen> {};
+
+struct SplineTangentWidth : Number {};
+struct SplineTangentSlope : Number {};
+struct SplineTangentAlgorithm : PEGTL_NS::internal::sor<KeywordCustom, KeywordAutoEase> {};
+// Helper rule to parse SplineTangent
+// SplineTangentWidthSlopeAlgorithmItem = SplineTangentWidth (InlinePadding)?
+//                                        ListSeparator (InlinePadding)?
+//                                        SplineTangentSlope (InlinePadding)?
+//                                        ListSeparator (InlinePadding)?
+//                                        AlgorithmName
+struct SplineTangentWidthSlopeAlgorithmItem
+    : PEGTL_NS::internal::seq<SplineTangentWidth,
+                              PEGTL_NS::internal::pad<ListSeparator, InlinePadding>,
+                              SplineTangentSlope,
+                              PEGTL_NS::internal::pad<ListSeparator, InlinePadding>,
+                              SplineTangentAlgorithm> {};
+// SplineTangentWidthSlopeItem = SplineTangentWidth (InlinePadding)?
+//                               ListSeparator (InlinePadding)?
+//                               SplineTangentSlope
+struct SplineTangentWidthSlopeItem
+    : PEGTL_NS::internal::seq<SplineTangentWidth,
+                              PEGTL_NS::internal::pad<ListSeparator, InlinePadding>,
+                              SplineTangentSlope> {};
+// SplineTangentSlopeAlgorithmItem = SplineTangentSlope (InlinePadding)?
+//                                   ListSeparator (InlinePadding)?
+//                                   AlgorithmName
+struct SplineTangentSlopeAlgorithmItem
+    : PEGTL_NS::internal::seq<SplineTangentSlope,
+                              PEGTL_NS::internal::pad<ListSeparator, InlinePadding>,
+                              SplineTangentAlgorithm> {};
+// SplineTangentSlopeItem = SplineTangentSlope
+struct SplineTangentSlopeItem : SplineTangentSlope {};
+
+// SplineTangent = ( (InlinePadding)?
+//                   (SplineTangentWidthSlopeAlgorithmItem /
+//                    SplineTangentWidthSlopeItem /
+//                    SplineTangentSlopeAlgorithmItem /
+//                    SplineTangentSlopeItem)
+//                   (InlinePadding)? )
+struct SplineTangent
+    : PEGTL_NS::internal::seq<PEGTL_NS::internal::seq<
+          PEGTL_NS::internal::pad<LeftParen, InlinePadding>,
+          PEGTL_NS::internal::pad<PEGTL_NS::internal::sor<SplineTangentWidthSlopeAlgorithmItem,
+                                                          SplineTangentWidthSlopeItem,
+                                                          SplineTangentSlopeAlgorithmItem,
+                                                          SplineTangentSlopeItem>,
+                                  InlinePadding>,
+          RightParen>> {};
+
+// SplineInterpMode = NONE / HELD / LINEAR / CURVE
+struct SplineInterpMode
+    : PEGTL_NS::internal::sor<KeywordNone_LC, KeywordHeld, KeywordLinear, KeywordCurve> {};
+
+// SplinePreTan = pre TokenSeparator SplineTangent
+struct SplinePreTan : PEGTL_NS::internal::seq<KeywordPre, TokenSeparator, SplineTangent> {};
+
+// SplinePostShaping = post (TokenSeparator)? SplineInterpMode (TokenSeparator)?
+// (SplineTangent)?
+struct SplinePostShaping
+    : PEGTL_NS::internal::seq<KeywordPost,
+                              TokenSeparator,
+                              SplineInterpMode,
+                              PEGTL_NS::internal::opt<InlinePadding, SplineTangent>> {};
+
+// SplineKnotParam = SplinePreTan / SplinePostShaping / DictionaryValue
+struct SplineKnotParam
+    : PEGTL_NS::internal::sor<SplinePreTan, SplinePostShaping, DictionaryValue> {};
+
+struct SplineKnotParamSeparator : StatementSeparator {};
+// SplineKnotParamList = StatementSeparator (TokenSeparator)?
+//  (SplineKnotParam (TokenSeparator)?)* StatementEnd )
+struct SplineKnotParamList
+    : PEGTL_NS::internal::opt<PEGTL_NS::internal::if_must<false, 
+          SplineKnotParamSeparator,
+          PEGTL_NS::internal::seq<
+              PEGTL_NS::internal::pad<StatementSequenceOf<SplineKnotParam>, InlinePadding>,
+              PEGTL_NS::internal::not_at<SplineKnotParamSeparator>>>> {};
+
+struct SplineKnotValue : Number {};
+struct SplineKnotPreValue : Number {};
+struct SplineKnotPreValueSeparator : Ampersand {};
+// SplineKnotValueWithoutPreValue = SplineKnotValue (TokenSeparator)?
+// (not at SplineKnotPreValueSeparator)
+struct SplineKnotValueWithoutPreValue
+    : PEGTL_NS::internal::seq<
+          SplineKnotValue,
+          PEGTL_NS::internal::pad<PEGTL_NS::internal::not_at<SplineKnotPreValueSeparator>,
+                                  InlinePadding>> {};
+// SplineKnotValueWithPreValue = SplineKnotPreValue InlinePadding
+// SplineKnotPreValueSeparator InlinePadding SplineKnotValue
+struct SplineKnotValueWithPreValue
+    : PEGTL_NS::internal::seq<SplineKnotPreValue,
+                              PEGTL_NS::internal::pad<SplineKnotPreValueSeparator, InlinePadding>,
+                              PEGTL_NS::internal::pad<SplineKnotValue, InlinePadding>> {};
+
+// SplineKnotValues = SplineKnotValueWithoutPreValue /
+// SplineKnotValueWithPreValue
+struct SplineKnotValues
+    : PEGTL_NS::internal::sor<SplineKnotValueWithoutPreValue, SplineKnotValueWithPreValue> {};
+
+struct SplineKnotTime : Number {};
+// SplineKnotItem = Number (TokenSeparator)? : (TokenSeparator)?
+// SplineKnotValues (SplineKnotParamList)?
+struct SplineKnotItem : PEGTL_NS::internal::seq<SplineKnotTime,
+                                                PEGTL_NS::internal::pad<Colon, InlinePadding>,
+                                                SplineKnotValues,
+                                                SplineKnotParamList> {};
+
+// SplineItem = SplineCurveTypeItem / SplinePreExtrapItem /
+// SplinePostExtrapItem / SplineLoopItem / SplineKnotItem
+struct SplineItem : PEGTL_NS::internal::sor<SplineCurveTypeItem,
+                                            SplinePreExtrapItem,
+                                            SplinePostExtrapItem,
+                                            SplineLoopItem,
+                                            SplineKnotItem> {};
+
+// SplineValue = { (MultilinePadding)? (SplineItem (MultilinePadding)?)* }
+struct SplineValue
+    : PEGTL_NS::internal::if_must<false, 
+          PEGTL_NS::internal::pad<LeftBrace, InlinePadding, MultilinePadding>,
+          PEGTL_NS::internal::opt<PEGTL_NS::internal::pad<ListOf<SplineItem>, MultilinePadding>>,
+          RightBrace> {};
+
+// prim attribute metadata
+// DisplayUnitMetadata = displayUnit Assignment Identifier
+struct DisplayUnitMetadata : PEGTL_NS::internal::if_must<false, KeywordDisplayUnit, Assignment, Identifier> {};
+
+// AttributeMetadataItem = SharedWithListOpMetadata /
+//                         DisplayUnitMetadata /
+//                         PermissionMetadata /
+//                         SymmetryFunctionMetadata
+struct AttributeMetadataItem : PEGTL_NS::internal::sor<SharedWithListOpMetadata,
+                                                       DisplayUnitMetadata,
+                                                       PermissionMetadata,
+                                                       SymmetryFunctionMetadata> {};
+
+// AttributeMetadata = ( (NewLines)? ((TokenSeparator)? AttributeMetadataItem
+// (TokenSeparator)? (StatementSeparator (TokenSeparator)? AttributeMetadataItem
+// (TokenSeparator)?)* StatementEnd)? (TokenSeparator)? )
+struct AttributeMetadata : MetadataBlock<AttributeMetadataItem> {};
+
+// prim attribute definition
+// AttributeVariability = config / uniform
+struct AttributeVariability : PEGTL_NS::internal::sor<KeywordConfig, KeywordUniform> {};
+
+// AttributeType = (AttributeVariability TokenSeparator)? Identifier
+// (TokenSeparator)? ([ (TokenSeparator)? ])?
+struct AttributeType
+    : PEGTL_NS::internal::seq<
+          PEGTL_NS::internal::opt<AttributeVariability, TokenSeparator>,
+          Identifier,
+          PEGTL_NS::internal::opt<PEGTL_NS::internal::star<InlinePadding>, ArrayType>> {};
+
+// AttributeDeclaration = AttributeType TokenSeparator NamespacedName
+struct AttributeDeclaration
+    : PEGTL_NS::internal::seq<PEGTL_NS::internal::opt<KeywordCustom, TokenSeparator>,
+                              AttributeType,
+                              TokenSeparator,
+                              NamespacedName> {};
+
+// AttributeValue = None / AnimationBlock / ArrayEditValue / TypedValue
+// AttributeAssignment = Assignment AttributeValue
+struct AttributeAssignment
+    : PEGTL_NS::internal::seq<
+          Assignment,
+          PEGTL_NS::internal::
+              sor<KeywordNone, KeywordAnimationBlock, ArrayEditValue, TypedValue>> {};
+struct AttributeAssignmentOptional : PEGTL_NS::internal::opt<AttributeAssignment> {};
+
+// ConnectValue = KeywordNone /
+//                PathRef /
+//                [ (NewLines)? ((TokenSeparator)? (PathRef) (TokenSeparator)?
+//                (ListSeparator (TokenSeparator)? (PathRef) (TokenSeparator)?)*
+//                ListEnd)? (TokenSeparator)?]
+struct ConnectValue
+    : PEGTL_NS::internal::sor<
+          KeywordNone,
+          PathRef,
+          PEGTL_NS::internal::if_must<false, LeftBracket,
+                            PEGTL_NS::internal::pad_opt<ListOf<PathRef>, MultilinePadding>,
+                            RightBracket>> {};
+
+// AttributeSpec = ConnectListOp (parsed as part of PropertySpec)
+//                 AttributeDeclaration (AttributeAssignment)? (TokenSeparator)?
+//                 (AttributeMetadata)? /
+//                 AttributeDeclaration (TokenSeparator)? Dot (TokenSeparator)?
+//                 TimeSamples Assignment TimeSampleMap /
+//                 AttributeDeclaration (TokenSeparator)? Dot (TokenSeparator)?
+//                 Connect Assignment ConnectValue
+struct AttributeSpec
+    : PEGTL_NS::internal::seq<
+          AttributeDeclaration,
+          PEGTL_NS::internal::if_must_else<
+              PEGTL_NS::internal::pad<Sdf_PathParser::Dot, InlinePadding>,
+              PEGTL_NS::internal::sor<
+                  PEGTL_NS::internal::if_must<false, KeywordTimeSamples,
+                                    PEGTL_NS::internal::seq<Assignment, TimeSampleMap>>,
+                  PEGTL_NS::internal::if_must<false, KeywordConnect,
+                                    PEGTL_NS::internal::seq<Assignment, ConnectValue>>,
+                  PEGTL_NS::internal::if_must<false, KeywordSpline,
+                                    PEGTL_NS::internal::seq<Assignment, SplineValue>>>,
+              PEGTL_NS::internal::seq<
+                  AttributeAssignmentOptional,
+                  PEGTL_NS::internal::pad_opt<AttributeMetadata, InlinePadding>>>> {};
+
+// prim relationship metadata
+// RelationshipMetadataItem = String /
+// 				             KeyValueMetadata /
+// 				             ListOpMetadata /
+// 				             DocMetadata /
+// 				             PermissionMetadata /
+// 				             SymmetryFunctionMetadata
+struct RelationshipMetadataItem : PEGTL_NS::internal::sor<SharedWithListOpMetadata,
+                                                          PermissionMetadata,
+                                                          SymmetryFunctionMetadata> {};
+
+// RelationshipMetadataList = RelationshipMetadataList StatementSeparator
+// (TokenSeparator)? RelationshipMetadataItem (TokenSeparator)? /
+//                         (TokenSeparator)? RelationshipMetadataItem
+//                         (TokenSeparator)?
+// RelationshipMetadata = ( (NewLines)? (RelationshipMetadataList StatementEnd)?
+// (TokenSeparator)?
+struct RelationshipMetadata : MetadataBlock<RelationshipMetadataItem> {};
+
+// prim relationship definition
+// RelationshipAssignment = Assignment None /
+//                          Assignment PathRef /
+//                          Assignment [ ((NewLines)? ((TokenSeparator)? PathRef
+//                          (TokenSeparator)? (ListSeparator (TokenSeparator)?
+//                          PathRef (TokenSeparator)?)* ListEnd)?
+//                          (TokenSeparator)?)? ]
+struct RelationshipAssignmentOpen : LeftBracket {};
+struct RelationshipAssignmentClose : RightBracket {};
+struct RelationshipAssignment
+    : PEGTL_NS::internal::seq<
+          Assignment,
+          PEGTL_NS::internal::sor<
+              KeywordNone,
+              PathRef,
+              PEGTL_NS::internal::if_must<false, RelationshipAssignmentOpen,
+                                PEGTL_NS::internal::pad_opt<ListOf<PathRef>, MultilinePadding>,
+                                RelationshipAssignmentClose>>> {};
+
+// RelationshipType = rel /
+//                    custom TokenSeparator rel /
+//                    custom TokenSeparator varying TokenSeparator rel /
+//                    varying TokenSeparator rel
+struct RelationshipType
+    : PEGTL_NS::internal::sor<
+          KeywordRel,
+          PEGTL_NS::internal::seq<KeywordVarying, TokenSeparator, KeywordRel>,
+          PEGTL_NS::internal::seq<
+              KeywordCustom,
+              TokenSeparator,
+              PEGTL_NS::internal::sor<
+                  KeywordRel,
+                  PEGTL_NS::internal::seq<KeywordVarying, TokenSeparator, KeywordRel>>>> {};
+
+// RelationshipSpec = RelationshipListOp (parsed as part of PropertySpec)
+//                    RelationshipType TokenSeparator NamespacedName
+//                    (RelationshipAssignment)? (TokenSeparator)?
+//                    (RelationshipMetadata)? /
+//                    RelationshipType TokenSeparator NamespacedName
+//                    (TokenSeparator)? [ (TokenSeparator)? PathRef
+//                    (TokenSeparator)? ] /
+//                    RelationshipType TokenSeparator NamespacedName
+//                    (TokenSeparator)? . (TokenSeparator)? timeSamples
+//                    Assignment TimeSampleMap / RelationshipType TokenSeparator
+//                    NamespacedName (TokenSeparator)? . (TokenSeparator)?
+//                    default Assignment PathRef
+struct RelationshipTargetOpen : LeftBracket {};
+struct RelationshipTargetClose : RightBracket {};
+struct RelationshipAssignmentOptional : PEGTL_NS::internal::opt<RelationshipAssignment> {};
+struct RelationshipSpec
+    : PEGTL_NS::internal::seq<
+          RelationshipType,
+          TokenSeparator,
+          NamespacedName,
+          PEGTL_NS::internal::if_must_else<
+              PEGTL_NS::internal::pad<Sdf_PathParser::Dot, InlinePadding>,
+              PEGTL_NS::internal::sor<
+                  PEGTL_NS::internal::if_must<false, KeywordDefault, PEGTL_NS::internal::seq<Assignment, PathRef>>>,
+              PEGTL_NS::internal::sor<
+                  PEGTL_NS::internal::seq<
+                      PEGTL_NS::internal::star<InlinePadding>,
+                      PEGTL_NS::internal::if_must<false, RelationshipTargetOpen,
+                                        PEGTL_NS::internal::pad<PathRef, InlinePadding>,
+                                        RelationshipTargetClose>>,
+                  PEGTL_NS::internal::seq<RelationshipAssignmentOptional,
+                                          PEGTL_NS::internal::star<InlinePadding>,
+                                          PEGTL_NS::internal::opt<RelationshipMetadata>>>>> {};
+
+// prim metadata
+// InheritsOrSpecializesList = None /
+//                             PathRef /
+//                             [ (NewLines)? ( (TokenSeparator)? PathRef
+//                             (TokenSeparator)? (ListSeparator
+//                             (TokenSeparator)? PathRef (TokenSeparator)?)*
+//                             ListEnd)? (TokenSeparator)? ]
+struct InheritsOrSpecializesList
+    : PEGTL_NS::internal::sor<
+          KeywordNone,
+          PathRef,
+          PEGTL_NS::internal::seq<LeftBracket,
+                                  PEGTL_NS::internal::pad_opt<ListOf<PathRef>, MultilinePadding>,
+                                  RightBracket>> {};
+
+// SpecializesMetadata = specializes Assignment InheritsOrSpecializesList /
+//                       add specializes Assignment InheritsOrSpecializesList /
+//                       delete specializes Assignment InheritsOrSpecializesList
+//                       / append specializes Assignment
+//                       InheritsOrSpecializesList / prepend specializes
+//                       Assignment InheritsOrSpecializesList / reorder
+//                       specializes Assignment InheritsOrSpecializesList
+struct SpecializesMetadata
+    : PEGTL_NS::internal::if_must<false, KeywordSpecializes, Assignment, InheritsOrSpecializesList> {};
+
+// InheritsMetadata = inherits Assignment InheritsOrSpecializesList /
+//                    add inherits Assignment InheritsOrSpecializesList /
+//                    delete inherits Assignment InheritsOrSpecializesList /
+//                    append inherits Assignment InheritsOrSpecializesList /
+//                    prepend inherits Assignment InheritsOrSpecializesList /
+//                    reorder inherits Assignment InheritsOrSpecializesList
+struct InheritsMetadata
+    : PEGTL_NS::internal::if_must<false, KeywordInherits, Assignment, InheritsOrSpecializesList> {};
+
+// ReferenceParameter = customData Assignment DictionaryValue /
+//                      LayerOffset
+struct ReferenceParameter
+    : PEGTL_NS::internal::sor<
+          PEGTL_NS::internal::seq<KeywordCustomData, Assignment, DictionaryValue>,
+          LayerOffset> {};
+
+// ReferenceParameterList = (TokenSeparator)? ReferenceParameter
+// (TokenSeparator)? (StatementSeparator (TokenSeparator)? ReferenceParameter
+// (TokenSeparator)?)* ReferenceParameters = ( (NewLines)?
+// (ReferenceParameterList StatementEnd)? (TokenSeparator)? ) ReferenceListItem
+// = AssetRef (TokenSeparator)? (PathRef)? (TokenSeparator)?
+// (ReferenceParameters)? /
+//			           PathRef (TokenSeparator)?
+//(ReferenceParameters)?
+struct ReferenceParametersOpen : LeftParen {};
+struct ReferenceParametersClose : RightParen {};
+struct ReferenceListItem
+    : PEGTL_NS::internal::seq<
+          PEGTL_NS::internal::sor<PathRef,
+                                  PEGTL_NS::internal::seq<AssetRef,
+                                                          PEGTL_NS::internal::star<InlinePadding>,
+                                                          PEGTL_NS::internal::opt<PathRef>>>,
+          PEGTL_NS::internal::star<InlinePadding>,
+          PEGTL_NS::internal::opt<
+              ReferenceParametersOpen,
+              PEGTL_NS::internal::pad_opt<StatementSequenceOf<ReferenceParameter>,
+                                          MultilinePadding>,
+              ReferenceParametersClose>> {};
+
+// 	ReferenceListItems = (TokenSeparator)? ReferenceListItem
+// (TokenSeparator)? (ListSeparator (TokenSeparator)? ReferenceListItem
+// (TokenSeparator)?)*
+//	ReferenceList = None /
+//			        ReferenceListItem /
+//			        [ (NewLines)? (ReferenceListItems ListEnd)?
+//(TokenSeparator)? ]
+struct ReferenceList
+    : PEGTL_NS::internal::sor<
+          KeywordNone,
+          ReferenceListItem,
+          PEGTL_NS::internal::seq<
+              LeftBracket,
+              PEGTL_NS::internal::pad_opt<ListOf<ReferenceListItem>, MultilinePadding>,
+              RightBracket>> {};
+
+// ReferencesMetadata = references Assignment ReferenceList /
+//                      add references Assignment ReferenceList /
+//                      delete references Assignment ReferenceList /
+//                      append references Assignment ReferenceList /
+//                      prepend references Assignment ReferenceList /
+//                      reorder references Assignment ReferenceList
+struct ReferencesMetadata : PEGTL_NS::internal::if_must<false, KeywordReferences, Assignment, ReferenceList> {};
+
+// PayloadParameters = ( (NewLines)? ((TokenSeparator)? LayerOffset
+// (TokenSeparator)? (StatementSeparator (TokenSeparator)? LayerOffset
+// (TokenSeparator)?)* StatementEnd)? (TokenSeparator)? ) PayloadListItem =
+// AssetRef (TokenSeparator)? (PathRef)? (TokenSeparator)? (PayloadParameters)?
+// /
+//                   PathRef (TokenSeparator)? (PayloadParamaters)?
+struct PayloadListItem
+    : PEGTL_NS::internal::seq<
+          PEGTL_NS::internal::sor<PathRef,
+                                  PEGTL_NS::internal::seq<AssetRef,
+                                                          PEGTL_NS::internal::star<InlinePadding>,
+                                                          PEGTL_NS::internal::opt<PathRef>>>,
+          PEGTL_NS::internal::star<InlinePadding>,
+          PEGTL_NS::internal::opt<
+              LeftParen,
+              PEGTL_NS::internal::pad_opt<StatementSequenceOf<LayerOffset>, MultilinePadding>,
+              RightParen>> {};
+
+// PayloadListItems = (TokenSeparator)? PayloadListItem (TokenSeparator)?
+// (ListSeparator (TokenSeparator)? PayloadListItem (TokenSeparator)?)*
+// PayloadList = None /
+//               PayloadListItem /
+//               [ (NewLines)? (PayloadListItems ListEnd)? (TokenSeparator)? ]
+struct PayloadList
+    : PEGTL_NS::internal::sor<
+          KeywordNone,
+          PayloadListItem,
+          PEGTL_NS::internal::seq<
+              LeftBracket,
+              PEGTL_NS::internal::pad_opt<ListOf<PayloadListItem>, MultilinePadding>,
+              RightBracket>> {};
+
+// PayloadMetadata = payload Assignment PayloadList /
+//                   add payload Assignment PayloadList /
+//                   delete payload Assignment PayloadList /
+//                   append payload Assignment PayloadList /
+//                   prepend payload Assignment PayloadList /
+//                   reorder payload Assignment PayloadList
+struct PayloadMetadata : PEGTL_NS::internal::if_must<false, KeywordPayload, Assignment, PayloadList> {};
+
+// RelocatesItem = PathRef (TokenSeparator)? : (TokenSeparator)? PathRef
+// RelocatesMetadata = relocates Assignment { (NewLines)? ((TokenSeparator)?
+// RelocatesItem (TokenSeparator)? (ListSeparator (TokenSeparator)?
+// RelocatesItem (TokenSeparator)?)* ListEnd)? (TokenSeparator)? }
+struct RelocatesMapOpen : LeftBrace {};
+struct RelocatesMapClose : RightBrace {};
+struct RelocatesMetadata
+    : PEGTL_NS::internal::if_must<false, KeywordRelocates,
+                        Assignment,
+                        PEGTL_NS::internal::must<
+                            RelocatesMapOpen,
+                            PEGTL_NS::internal::pad_opt<
+                                ListOf<PEGTL_NS::internal::seq<
+                                    PathRef,
+                                    PEGTL_NS::internal::pad<NamespaceSeparator, InlinePadding>,
+                                    PathRef>>,
+                                MultilinePadding>,
+                            RelocatesMapClose>> {};
+
+// VariantsMetadata = variants Assignment DictionaryValue
+struct VariantsMetadata : PEGTL_NS::internal::if_must<false, KeywordVariants, Assignment, DictionaryValue> {};
+
+// VariantSetsMetadata = variantSets Assignment NameList /
+//                       add variantSets Assignment NameList /
+//                       delete variantSets Assignment NameList /
+//                       append variantSets Assignment NameList /
+//                       prepend variantSets Assignment NameList /
+//                       reorder variantSets Assignment NameList
+struct VariantSetsMetadata : PEGTL_NS::internal::if_must<false, KeywordVariantSets, Assignment, NameList> {};
+
+// KindMetadata = kind Assignment String
+struct KindMetadata : PEGTL_NS::internal::if_must<false, KeywordKind, Assignment, String> {};
+
+// PrefixOrSuffixSubstitutionsMetadata = prefixSubstitutions Assignment
+// StringDictionary /
+//                                       suffixSubstitutions Assignment
+//                                       StringDictionary
+struct PrefixOrSuffixSubstitutionsMetadata
+    : PEGTL_NS::internal::if_must<false, 
+          PEGTL_NS::internal::sor<KeywordPrefixSubstitutions, KeywordSuffixSubstitutions>,
+          Assignment,
+          StringDictionary> {};
+
+// PrimMetadataItem = String /
+// 			          KeyValueMetadata /
+// 			          ListOpMetadata /
+// 			          DocMetadata /
+// 			          KindMetadata /
+// 			          PayloadMetadata /
+// 			          InheritsMetadata /
+// 			          SpecializesMetadata /
+// 			          ReferencesMetadata /
+// 			          RelocatesMetadata /
+// 			          VariantsMetadata /
+// 			          VariantSetsMetadata /
+//                    PrefixOrSuffixSubstitutionsMetadata /
+//                    PermissionMetadata /
+//                    SymmetryFunctionMetadata
+struct PrimMetadataItem
+    : PEGTL_NS::internal::sor<
+          SharedMetadata,
+          KindMetadata,
+          ReferencesMetadata,
+          PayloadMetadata,
+          VariantsMetadata,
+          VariantSetsMetadata,
+          InheritsMetadata,
+          SpecializesMetadata,
+          RelocatesMetadata,
+          PEGTL_NS::internal::if_must<false, 
+              ListOpKeyword,
+              TokenSeparator,
+              PEGTL_NS::internal::if_must_else<
+                  KeywordReferences,
+                  PEGTL_NS::internal::seq<Assignment, ReferenceList>,
+                  PEGTL_NS::internal::if_must_else<
+                      KeywordPayload,
+                      PEGTL_NS::internal::seq<Assignment, PayloadList>,
+                      PEGTL_NS::internal::if_must_else<
+                          PEGTL_NS::internal::sor<KeywordInherits, KeywordSpecializes>,
+                          PEGTL_NS::internal::seq<Assignment, InheritsOrSpecializesList>,
+                          PEGTL_NS::internal::if_must_else<
+                              KeywordVariantSets,
+                              PEGTL_NS::internal::seq<Assignment, NameList>,
+                              ListOpKeyValueMetadata>>>>>,
+          PrefixOrSuffixSubstitutionsMetadata,
+          PermissionMetadata,
+          SymmetryFunctionMetadata> {};
+
+// PrimMetadata = (NewLines)? (TokenSeparator)? (( (NewLines)?
+// ((TokenSeparator)? PrimMetadataItem (TokenSeparator)? (StatementSeparator
+// (TokenSeparator)? PrimMetadatItem (TokenSeparator)?)* StatementEnd)?
+// (TokenSeparator)? ))?
+struct PrimMetadata : MetadataBlock<PrimMetadataItem> {};
+
+// prim definition
+// PropertySpec = AttributeSpec /
+//                RelationshipSpec
+// ConnectListOp = add TokenSeparator AttributeDeclaration (TokenSeparator)? .
+// (TokenSeparator)? connect Assignment ConnectValue /
+//                 delete TokenSeparator AttributeDeclaration (TokenSeparator)?
+//                 . (TokenSeparator)? connect Assignment ConnectValue / append
+//                 TokenSeparator AttributeDeclaration (TokenSeparator)? .
+//                 (TokenSeparator)? connect Assignment ConnectValue / prepend
+//                 TokenSeparator AttributeDeclaration (TokenSeparator)? .
+//                 (TokenSeparator)? connect Assignment ConnectValue / reorder
+//                 TokenSeparator AttributeDeclaration (TokenSeparator)? .
+//                 (TokenSeparator)? connect Assignment ConnectValue
+// RelationshipListOp = add TokenSeparator RelationshipType TokenSeparator
+// NamespacedName (RelationshipAssignment)? /
+//                      delete TokenSeparator RelationshipType TokenSeparator
+//                      NamespaceName (RelationshipAssignment)? / append
+//                      TokenSeparator RelationshipType TokenSeparator
+//                      NamespaceName (RelationshipAssignment)? / prepend
+//                      TokenSeparator RelationshipType TokenSeparator
+//                      NamespaceName (RelationshipAssignment)? / reorder
+//                      TokenSeparator RelationshipType TokenSeparator
+//                      NamespaceName (RelationshipAssignment)?
+// Note this is not a direct translation - in order to greedily optimize
+// we take note that attribute specs can contain connect list ops
+// so we separate out list ops for the two specs
+// and parse them separately as an additional production
+// additionally, the keyword 'reorder' can start either list op
+// statements or the child / property order ones, so we have to greedily take
+// that into account here as well (which aren't truly PropertySpecs but captured
+// here for optimization)
+struct PropertySpec
+    : PEGTL_NS::internal::sor<
+          AttributeSpec,
+          RelationshipSpec,
+          PEGTL_NS::internal::seq<
+              ListOpKeyword,
+              TokenSeparator,
+              PEGTL_NS::internal::if_must_else<
+                  RelationshipType,
+                  PEGTL_NS::internal::
+                      seq<TokenSeparator, NamespacedName, RelationshipAssignmentOptional>,
+                  PEGTL_NS::internal::seq<
+                      AttributeDeclaration,
+                      PEGTL_NS::internal::pad<Sdf_PathParser::Dot, InlinePadding>,
+                      KeywordConnect,
+                      Assignment,
+                      ConnectValue>>>> {};
+
+// ChildOrderStatement = reorder TokenSeparator nameChildren Assignment NameList
+// PropertyOrderStatement = reorder TokenSeparator properties Assignment
+// NameList
+struct ChildOrPropertyOrderStatement
+    : PEGTL_NS::internal::seq<KeywordReorder,
+                              TokenSeparator,
+                              PEGTL_NS::internal::sor<KeywordNameChildren, KeywordProperties>,
+                              Assignment,
+                              NameList> {};
+
+// 	VariantStatement = String (TokenSeparator)? (PrimMetadata)? (NewLines)?
+// (TokenSeparator)? { (NewLines)? (TokenSeparator)? (PrimContentsList)?
+// (TokenSeparator)? } (NewLines)?
+struct PrimContents;
+struct VariantStatementOpen : LeftBrace {};
+struct VariantStatementClose : RightBrace {};
+struct VariantStatement
+    : PEGTL_NS::internal::seq<
+          String,
+          PEGTL_NS::internal::pad_opt<PrimMetadata, MultilinePadding>,
+          PEGTL_NS::internal::must<VariantStatementOpen, PrimContents, VariantStatementClose>> {};
+
+// 	VariantSetStatement = variantSet TokenSeparator String Assignment
+// (NewLines)? (TokenSeparator)? { (NewLines)? ((TokenSeparator)?
+// VariantStatement)+ (TokenSeparator)? }
+struct VariantStatementListOpen : LeftBrace {};
+struct VariantStatementListClose : RightBrace {};
+struct VariantSetStatement
+    : PEGTL_NS::internal::seq<KeywordVariantSet,
+                              TokenSeparator,
+                              String,
+                              PEGTL_NS::internal::pad<Equals, InlinePadding, MultilinePadding>,
+                              PEGTL_NS::internal::must<
+                                  VariantStatementListOpen,
+                                  PEGTL_NS::internal::star<
+                                      PEGTL_NS::internal::pad<VariantStatement, MultilinePadding>>,
+                                  VariantStatementListClose>> {};
+
+// PrimItem = ChildOrderStatement /
+//		      PropertyOrderStatement /
+//		      PropertySpec /
+//            PrimSpec /
+//		      VariantSetStatement
+struct PrimSpec;
+struct PrimItem
+    : PEGTL_NS::internal::sor<
+          PEGTL_NS::internal::seq<
+              PEGTL_NS::internal::sor<ChildOrPropertyOrderStatement, PropertySpec>,
+              PEGTL_NS::internal::star<SinglelinePadding>,
+              StatementSeparator>,
+          PEGTL_NS::internal::seq<PEGTL_NS::internal::sor<PrimSpec, VariantSetStatement>,
+                                  PEGTL_NS::internal::star<SinglelinePadding>,
+                                  Eol>> {};
+
+// PrimContents = (NewLines)? ((TokenSeparator)? PrimItem)*
+struct PrimContents
+    : PEGTL_NS::internal::seq<
+          PEGTL_NS::internal::star<MultilinePadding>,
+          PEGTL_NS::internal::star<PrimItem, PEGTL_NS::internal::star<MultilinePadding>>> {};
+
+// PrimTypeName = Identifier ((TokenSeparator)? . (TokenSeparator)? Identifier)*
+struct PrimTypeName
+    : PEGTL_NS::internal::list<Identifier,
+                               PEGTL_NS::internal::pad<Sdf_PathParser::Dot, InlinePadding>> {};
+
+// PrimSpec = def TokenSeparator (PrimTypeName TokenSeparator)? String
+// (TokenSeparator)? (PrimMetadata)? (NewLines)? (TokenSeparator)? {
+// PrimContents (TokenSeparator)? } /
+//            over TokenSeparator (PrimTypeName TokenSeparator)? String
+//            (TokenSeparator)? (PrimMetadata)? (NewLines)? (TokenSeparator)? {
+//            PrimContents (TokenSeparator)? } / class TokenSeparator
+//            (PrimTypeName TokenSeparator)? String (TokenSeparator)?
+//            (PrimMetadata)? (NewLines)? (TokenSeparator)? { PrimContents
+//            (TokenSeparator)? }
+struct PrimMetadataOptional : PEGTL_NS::internal::pad_opt<PrimMetadata, MultilinePadding> {};
+struct PrimSpec
+    : PEGTL_NS::internal::seq<PEGTL_NS::internal::sor<KeywordDef, KeywordOver, KeywordClass>,
+                              TokenSeparator,
+                              PEGTL_NS::internal::opt<PrimTypeName, TokenSeparator>,
+                              String,
+                              PrimMetadataOptional,
+                              LeftBrace,
+                              PEGTL_NS::internal::must<PrimContents, RightBrace>> {};
+
+// LayerOffsetList = ( (TokenSeparator)? LayerOffset (TokenSeparator)?
+// (StatementSeparator (TokenSeparator)? LayerOffset (TokenSeparator)?)*
+// StatementEnd ) SublayerItem = AssetRef (TokenSeparator)? (LayerOffsetList)?
+struct SublayerItem
+    : PEGTL_NS::internal::seq<
+          AssetRef,
+          PEGTL_NS::internal::star<InlinePadding>,
+          PEGTL_NS::internal::opt<
+              LeftParen,
+              PEGTL_NS::internal::pad_opt<StatementSequenceOf<LayerOffset>, MultilinePadding>,
+              PEGTL_NS::internal::must<RightParen>>> {};
+
+// SublayerMetadata = subLayers Assignment [ (NewLines)? ((TokenSeparator)?
+// SublayerItem (TokenSeparator)? (ListSeparator (TokenSeparator)? SublayerItem
+// (TokenSeparator)?)* ListEnd)? (TokenSeparator)? ]
+struct SublayerListOpen : LeftBracket {};
+struct SublayerListClose : RightBracket {};
+struct SublayerMetadata
+    : PEGTL_NS::internal::seq<KeywordSubLayers,
+                              Assignment,
+                              SublayerListOpen,
+                              PEGTL_NS::internal::pad_opt<ListOf<SublayerItem>, MultilinePadding>,
+                              PEGTL_NS::internal::must<SublayerListClose>> {};
+
+// LayerMetadataItem = SharedMetadata /
+//                     SublayerMetadata
+struct LayerMetadataItem
+    : PEGTL_NS::internal::sor<LayerSharedWithListOpMetadata, RelocatesMetadata, SublayerMetadata> {
+};
+
+// LayerMetadata = (NewLines)? (TokenSeparator)? ( ( (NewLines)?
+// (TokenSeparator)? LayerMetadataItem (TokenSeparator)? (StatementSeparator
+// (TokenSeparator)? LayerMetadataItem (TokenSeparator)?)* StatementEnd)? ) )?
+// (NewLines)?
+struct LayerMetadata : MetadataBlock<LayerMetadataItem> {};
+
+// LayerHeader = # (!(CrLf) AnyChar)*
+struct LayerHeader
+    : PEGTL_NS::internal::must<PEGTL_NS::one<'#'>, PEGTL_NS::internal::until<Eolf>> {};
+
+// PrimList = PrimList NewLines (TokenSeparator)? PrimStatement
+// (TokenSeparator)? /
+//		      (TokenSeparator)? PrimStatement (TokenSeparator)?
+// LayerSpec = LayerHeader (LayerMetadata)? (NewLines)? (TokenSeparator PrimList
+// NewLines)? (EolWhitspace)?
+struct LayerSpec
+    : PEGTL_NS::internal::seq<
+          LayerHeader,
+          PEGTL_NS::internal::pad_opt<LayerMetadata, MultilinePadding>,
+          PEGTL_NS::internal::star<PEGTL_NS::internal::sor<
+              PEGTL_NS::internal::seq<
+                  KeywordReorder,
+                  TokenSeparator,
+                  KeywordRootPrims,
+                  Assignment,
+                  NameList,
+                  PEGTL_NS::internal::star<SinglelinePadding>,
+                  PEGTL_NS::internal::sor<StatementSeparator, PEGTL_NS::internal::eolf>>,
+              PEGTL_NS::internal::seq<PrimSpec, PEGTL_NS::internal::star<SinglelinePadding>, Eolf>,
+              MultilinePadding>>> {};
+
+// LayerMetadataOnly = LayerHeader (LayerMetadata)?
+// production used to interrogate layer metadata without reading the entire
+// layer
+struct LayerMetadataOnly
+    : PEGTL_NS::internal::seq<LayerHeader,
+                              PEGTL_NS::internal::pad_opt<LayerMetadata, MultilinePadding>> {};
+
+template<class Rule> struct TextParserAction : PEGTL_NS::nothing<Rule> {};
+
+////////////////////////////////////////////////////////////////////////
+// TextFileFormat custom control
+
+template<typename Controller, template<typename...> class Base = PEGTL_NS::normal>
+struct TextParserDefaultErrorControl {
+  template<typename Rule> struct control : Base<Rule> {
+    template<typename Input, typename... States>
+    static void raise(const Input &in, [[maybe_unused]] States &&...st)
+    {
+      if constexpr (Controller::template message<Rule> != nullptr) {
+        // use custom error message for rule
+        constexpr const char *errorMessage = Controller::template message<Rule>;
+        throw PEGTL_NS::parse_error(errorMessage, in);
+      }
+      else {
+        // emit default parse error for the rule
+        Base<Rule>::raise(in, st...);
+      }
+    }
+  };
+};
+
+// default error message is nullptr, which redirects parse error
+// message to default control class raise method
+template<typename> inline constexpr const char *errorMessage = nullptr;
+
+// TextParserDefaultErrorControl doesn't take the error_message as a template
+// parameter directly, so it's wrapped here
+struct TextParserControlValues {
+  template<typename Rule> static constexpr auto message = errorMessage<Rule>;
+};
+
+template<typename Rule>
+using TextParserControl = TextParserDefaultErrorControl<TextParserControlValues>::control<Rule>;
+
+/// Attempt to parse a VtValue from a string representing a value
+/// given the expected sdf type. The parse follows the expectations of
+/// the .usda file format. On success, returns true and populates outputValue.
+/// On failure, returns false and issues TfError(s).
+bool Sdf_ParseValueFromString(const std::string &input,
+                              const SdfValueTypeName &sdfType,
+                              VtValue *outputValue);
+
+}  // end namespace Sdf_TextFileFormatParser
+
+PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif

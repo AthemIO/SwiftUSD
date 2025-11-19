@@ -31,7 +31,7 @@
 #include "Hd/modelSchema.h"
 #include "Hd/retainedDataSource.h"
 
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 

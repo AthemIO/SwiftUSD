@@ -6,20 +6,24 @@
 //
 /// \file wrapPseudoRootSpec.cpp
 
+#include "pxr/pxrns.h"
 #include "Sdf/pseudoRootSpec.h"
 #include "Sdf/pySpec.h"
-#include "pxr/pxrns.h"
 
-#include <boost/python.hpp>
-
-using namespace boost::python;
+#include "pxr/external/boost/python.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-void wrapPseudoRootSpec()
-{
-  typedef SdfPseudoRootSpec This;
+using namespace pxr_boost::python;
 
-  class_<This, SdfHandle<This>, bases<SdfPrimSpec>, boost::noncopyable>("PseudoRootSpec", no_init)
-      .def(SdfPySpec());
+void
+wrapPseudoRootSpec()
+{
+    typedef SdfPseudoRootSpec This;
+
+    class_<This, SdfHandle<This>, 
+           bases<SdfPrimSpec>, noncopyable>
+        ("PseudoRootSpec", no_init)
+        .def(SdfPySpec())
+        ;
 }

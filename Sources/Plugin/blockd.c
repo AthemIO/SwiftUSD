@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,36 +11,25 @@
 
 #include <math.h>
 
-#include "Plugin/hioAvif/aom/aom_ports/system_state.h"
+#include "av1/common/av1_common_int.h"
+#include "av1/common/blockd.h"
 
-#include "Plugin/hioAvif/aom/av1/common/av1_common_int.h"
-#include "Plugin/hioAvif/aom/av1/common/blockd.h"
-
-PREDICTION_MODE av1_left_block_mode(const MB_MODE_INFO *left_mi)
-{
-  if (!left_mi)
-    return DC_PRED;
+PREDICTION_MODE av1_left_block_mode(const MB_MODE_INFO *left_mi) {
+  if (!left_mi) return DC_PRED;
   assert(!is_inter_block(left_mi) || is_intrabc_block(left_mi));
   return left_mi->mode;
 }
 
-PREDICTION_MODE av1_above_block_mode(const MB_MODE_INFO *above_mi)
-{
-  if (!above_mi)
-    return DC_PRED;
+PREDICTION_MODE av1_above_block_mode(const MB_MODE_INFO *above_mi) {
+  if (!above_mi) return DC_PRED;
   assert(!is_inter_block(above_mi) || is_intrabc_block(above_mi));
   return above_mi->mode;
 }
 
 void av1_set_entropy_contexts(const MACROBLOCKD *xd,
-                              struct macroblockd_plane *pd,
-                              int plane,
-                              BLOCK_SIZE plane_bsize,
-                              TX_SIZE tx_size,
-                              int has_eob,
-                              int aoff,
-                              int loff)
-{
+                              struct macroblockd_plane *pd, int plane,
+                              BLOCK_SIZE plane_bsize, TX_SIZE tx_size,
+                              int has_eob, int aoff, int loff) {
   ENTROPY_CONTEXT *const a = pd->above_entropy_context + aoff;
   ENTROPY_CONTEXT *const l = pd->left_entropy_context + loff;
   const int txs_wide = tx_size_wide_unit[tx_size];
@@ -52,8 +41,7 @@ void av1_set_entropy_contexts(const MACROBLOCKD *xd,
     const int above_contexts = AOMMIN(txs_wide, blocks_wide - aoff);
     memset(a, has_eob, sizeof(*a) * above_contexts);
     memset(a + above_contexts, 0, sizeof(*a) * (txs_wide - above_contexts));
-  }
-  else {
+  } else {
     memset(a, has_eob, sizeof(*a) * txs_wide);
   }
 
@@ -63,19 +51,18 @@ void av1_set_entropy_contexts(const MACROBLOCKD *xd,
     const int left_contexts = AOMMIN(txs_high, blocks_high - loff);
     memset(l, has_eob, sizeof(*l) * left_contexts);
     memset(l + left_contexts, 0, sizeof(*l) * (txs_high - left_contexts));
-  }
-  else {
+  } else {
     memset(l, has_eob, sizeof(*l) * txs_high);
   }
 }
-void av1_reset_entropy_context(MACROBLOCKD *xd, BLOCK_SIZE bsize, const int num_planes)
-{
+void av1_reset_entropy_context(MACROBLOCKD *xd, BLOCK_SIZE bsize,
+                               const int num_planes) {
   assert(bsize < BLOCK_SIZES_ALL);
   const int nplanes = 1 + (num_planes - 1) * xd->is_chroma_ref;
   for (int i = 0; i < nplanes; i++) {
     struct macroblockd_plane *const pd = &xd->plane[i];
-    const BLOCK_SIZE plane_bsize = get_plane_block_size(
-        bsize, pd->subsampling_x, pd->subsampling_y);
+    const BLOCK_SIZE plane_bsize =
+        get_plane_block_size(bsize, pd->subsampling_x, pd->subsampling_y);
     const int txs_wide = mi_size_wide[plane_bsize];
     const int txs_high = mi_size_high[plane_bsize];
     memset(pd->above_entropy_context, 0, sizeof(ENTROPY_CONTEXT) * txs_wide);
@@ -83,24 +70,22 @@ void av1_reset_entropy_context(MACROBLOCKD *xd, BLOCK_SIZE bsize, const int num_
   }
 }
 
-void av1_reset_loop_filter_delta(MACROBLOCKD *xd, int num_planes)
-{
+void av1_reset_loop_filter_delta(MACROBLOCKD *xd, int num_planes) {
   xd->delta_lf_from_base = 0;
-  const int frame_lf_count = num_planes > 1 ? FRAME_LF_COUNT : FRAME_LF_COUNT - 2;
-  for (int lf_id = 0; lf_id < frame_lf_count; ++lf_id)
-    xd->delta_lf[lf_id] = 0;
+  const int frame_lf_count =
+      num_planes > 1 ? FRAME_LF_COUNT : FRAME_LF_COUNT - 2;
+  for (int lf_id = 0; lf_id < frame_lf_count; ++lf_id) xd->delta_lf[lf_id] = 0;
 }
 
-void av1_reset_loop_restoration(MACROBLOCKD *xd, const int num_planes)
-{
+void av1_reset_loop_restoration(MACROBLOCKD *xd, const int num_planes) {
   for (int p = 0; p < num_planes; ++p) {
     set_default_wiener(xd->wiener_info + p);
     set_default_sgrproj(xd->sgrproj_info + p);
   }
 }
 
-void av1_setup_block_planes(MACROBLOCKD *xd, int ss_x, int ss_y, const int num_planes)
-{
+void av1_setup_block_planes(MACROBLOCKD *xd, int ss_x, int ss_y,
+                            const int num_planes) {
   int i;
 
   for (i = 0; i < num_planes; i++) {

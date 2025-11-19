@@ -9,20 +9,19 @@
 
 /// \file sdf/pyListProxy.h
 
-#include "Arch/demangle.h"
-#include "Sdf/changeBlock.h"
-#include "Sdf/listProxy.h"
-#include "Tf/pyLock.h"
-#include "Tf/pyResultConversions.h"
-#include "Tf/pyUtils.h"
-#include "Tf/stringUtils.h"
 #include "pxr/pxrns.h"
 
-#if defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
-
-#include <boost/python.hpp>
-#include <boost/python/slice.hpp>
-#include <stdexcept>
+#if PXR_PYTHON_SUPPORT_ENABLED
+#  include "Arch/demangle.h"
+#  include "Sdf/changeBlock.h"
+#  include "Sdf/listProxy.h"
+#  include "Tf/pyLock.h"
+#  include "Tf/pyResultConversions.h"
+#  include "Tf/pyUtils.h"
+#  include "Tf/stringUtils.h"
+#  include "pxr/external/boost/python.hpp"
+#  include "pxr/external/boost/python/slice.hpp"
+#  include <stdexcept>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -42,7 +41,7 @@ template<class T> class SdfPyWrapListProxy {
  private:
   static void _Wrap()
   {
-    using namespace boost::python;
+    using namespace pxr_boost::python;
 
     class_<Type>(_GetName().c_str(), no_init)
         .def("__str__", &This::_GetStr)
@@ -101,9 +100,10 @@ template<class T> class SdfPyWrapListProxy {
     return x[TfPyNormalizeIndex(index, x._GetSize(), true)];
   }
 
-  static boost::python::list _GetItemSlice(const Type &x, const boost::python::slice &index)
+  static pxr_boost::python::list _GetItemSlice(const Type &x,
+                                               const pxr_boost::python::slice &index)
   {
-    using namespace boost::python;
+    using namespace pxr_boost::python;
 
     list result;
 
@@ -129,10 +129,10 @@ template<class T> class SdfPyWrapListProxy {
   }
 
   static void _SetItemSlice(Type &x,
-                            const boost::python::slice &index,
+                            const pxr_boost::python::slice &index,
                             const value_vector_type &values)
   {
-    using namespace boost::python;
+    using namespace pxr_boost::python;
 
     if (!x._Validate()) {
       return;
@@ -184,9 +184,9 @@ template<class T> class SdfPyWrapListProxy {
     x._Edit(TfPyNormalizeIndex(i, x._GetSize(), true), 1, value_vector_type());
   }
 
-  static void _DelItemSlice(Type &x, const boost::python::slice &index)
+  static void _DelItemSlice(Type &x, const pxr_boost::python::slice &index)
   {
-    using namespace boost::python;
+    using namespace pxr_boost::python;
 
     if (x._Validate()) {
       try {
@@ -259,6 +259,6 @@ template<class T> class SdfPyWrapListProxy {
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // defined(PXR_PYTHON_SUPPORT_ENABLED) && PXR_PYTHON_SUPPORT_ENABLED
+#endif  // PXR_PYTHON_SUPPORT_ENABLED
 
 #endif  // PXR_USD_SDF_PY_LIST_PROXY_H

@@ -9,7 +9,7 @@
 
 #include "Ar/packageResolver.h"
 #include "Ar/threadLocalScopedCache.h"
-#include "Usd/zipFile.h"
+#include "Sdf/zipFile.h"
 #include "pxr/pxrns.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -47,9 +47,9 @@ class Usd_UsdzResolverCache {
   Usd_UsdzResolverCache(const Usd_UsdzResolverCache &) = delete;
   Usd_UsdzResolverCache &operator=(const Usd_UsdzResolverCache &) = delete;
 
-  using AssetAndZipFile = std::pair<std::shared_ptr<ArAsset>, UsdZipFile>;
+  using AssetAndZipFile = std::pair<std::shared_ptr<ArAsset>, SdfZipFile>;
 
-  /// Returns the ArAsset and UsdZipFile for the given package path.
+  /// Returns the ArAsset and SdfZipFile for the given package path.
   /// If a cache scope is active in the current thread, the returned
   /// values will be cached and returned on subsequent calls to this
   /// function for the same packagePath.

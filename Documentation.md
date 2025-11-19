@@ -1,109 +1,8 @@
 # SwiftUSD Documentation
 
-Complete guide for using SwiftUSD - Swift bindings for Pixar's Universal Scene Description (USD) library.
+Practical guide for building USD applications in Swift.
 
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Installation](#installation)
-3. [Getting Started](#getting-started)
-4. [Core Concepts](#core-concepts)
-5. [API Usage](#api-usage)
-6. [Rendering with Hydra](#rendering-with-hydra)
-7. [Cross-Platform Development](#cross-platform-development)
-8. [Advanced Topics](#advanced-topics)
-9. [Examples](#examples)
-10. [Troubleshooting](#troubleshooting)
-
----
-
-## Overview
-
-SwiftUSD provides production-grade Swift bindings for Pixar's Universal Scene Description (USD) library using Swift/C++ interop. This enables you to work with USD scenes, geometry, materials, and rendering directly from Swift code.
-
-**Key Features:**
-- Direct C++ interop (no Objective-C bridging)
-- Full USD API coverage
-- Native Metal rendering via Hydra
-- Cross-platform support (macOS, iOS, visionOS, tvOS, watchOS, Linux, Windows)
-- Ergonomic Swift DSL for scene construction
-- Swift 6 strict concurrency support
-
-**Supported Platforms:**
-- macOS 14+
-- iOS 17+
-- visionOS 1+
-- tvOS 17+
-- watchOS 10+
-- Linux (Ubuntu 20.04+)
-- Windows 10+
-
----
-
-## Installation
-
-### Adding SwiftUSD to Your Project
-
-Add SwiftUSD as a dependency in your `Package.swift`:
-
-```swift
-// swift-tools-version: 6.0
-import PackageDescription
-
-let package = Package(
-  name: "MyProject",
-  platforms: [
-    .macOS(.v14),
-    .iOS(.v17),
-    .visionOS(.v1),
-    .tvOS(.v17),
-    .watchOS(.v10)
-  ],
-  dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "24.8.14")
-  ],
-  targets: [
-    .target(
-      name: "MyTarget",
-      dependencies: [
-        .product(name: "PixarUSD", package: "SwiftUSD")
-      ],
-      swiftSettings: [
-        .interoperabilityMode(.Cxx)  // REQUIRED for C++ interop
-      ]
-    )
-  ]
-)
-```
-
-### Platform-Specific Requirements
-
-#### Windows
-Add these C++ defines to your target:
-
-```swift
-cxxSettings: [
-  .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
-  .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
-  .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
-]
-```
-
-#### Linux
-Install required dependencies:
-
-```bash
-sudo apt install libstdc++-12-dev libdeflate-dev libbz2-dev zlib1g-dev \
-                 python3-dev freeglut3-dev libboost-all-dev \
-                 libxcursor-dev libxt-dev libxi-dev libxinerama-dev \
-                 libxrandr-dev libgtk-4-dev clang
-```
-
----
-
-## Getting Started
-
-### Your First USD Scene
+## Quick Start
 
 ```swift
 import PixarUSD
@@ -111,69 +10,15 @@ import PixarUSD
 // CRITICAL: Always setup resources first!
 Pixar.Bundler.shared.setup(.resources)
 
-// Create a new stage
+// Create a stage
 let stage = Usd.Stage.createNew("MyScene.usda")
 
-// Define a transform (group)
-let xform = UsdGeom.Xform.define(stage, path: "/World")
-
-// Define a sphere
-let sphere = UsdGeom.Sphere.define(stage, path: "/World/Sphere")
+// Add geometry
+let sphere = UsdGeom.Sphere.define(stage, path: "/Sphere")
 sphere.getRadiusAttr().set(2.0)
 
-// Set sphere color
-let displayColor = sphere.getDisplayColorAttr()
-displayColor.set(Vt.Vec3fArray(1, [Pixar.GfVec3f(1.0, 0.0, 0.0)]))  // Red
-
-// Save to disk
+// Save
 stage.save()
-
-print("Created scene at: MyScene.usda")
-```
-
-### Opening Existing Files
-
-```swift
-// Open a USD file
-let stage = Usd.Stage.open("/path/to/scene.usd")
-
-// Traverse all prims
-let rootPrim = stage.getPseudoRoot()
-for prim in Usd.PrimRange(rootPrim) {
-  print("Prim: \(prim.getName())")
-}
-```
-
-### Using the Declarative Swift DSL
-
-SwiftUSD provides a SwiftUI-like DSL for scene construction:
-
-```swift
-import PixarUSD
-
-// Setup resources
-Pixar.Bundler.shared.setup(.resources)
-
-// Create scene with declarative syntax
-let stage = USDStage("MyScene", ext: .usda) {
-  USDPrim("World", type: .xform) {
-    USDPrim("Camera", type: .camera) {
-      Attribute("focalLength", value: 50.0)
-    }
-
-    USDPrim("RedSphere", type: .sphere) {
-      Attribute("radius", value: 2.0)
-      Attribute("displayColor", value: Pixar.GfVec3f(1, 0, 0))
-    }
-
-    USDPrim("BlueCube", type: .cube) {
-      Attribute("size", value: 1.5)
-      Attribute("displayColor", value: Pixar.GfVec3f(0, 0, 1))
-    }
-  }
-}
-.set(doc: "Example scene with camera and geometry")
-.save()
 ```
 
 ---
@@ -182,54 +27,43 @@ let stage = USDStage("MyScene", ext: .usda) {
 
 ### USD Stage
 
-The `UsdStage` is the primary entry point and owns the entire scene graph. It represents the composed result of all layers and provides the main interface for querying and authoring scene description.
+The `UsdStage` is your scene graph - it owns all prims and provides the main API:
 
 ```swift
-// Create new stage (ASCII format)
-let stage = Usd.Stage.createNew("scene.usda")
-
-// Create binary crate stage (faster)
-let binaryStage = Usd.Stage.createNew("scene.usdc")
+// Create stages
+let stage = Usd.Stage.createNew("scene.usda")       // ASCII (human-readable)
+let stage = Usd.Stage.createNew("scene.usdc")       // Binary crate (faster)
+let stage = Usd.Stage.createInMemory()              // In-memory only
 
 // Open existing stage
 let stage = Usd.Stage.open("scene.usd")
-
-// Create in-memory stage (no file backing)
-let memoryStage = Usd.Stage.createInMemory()
-
-// Open with specific layer
+let stage = Usd.Stage.open("scene.usda")
 let layer = Sdf.Layer.findOrOpen("scene.usda")
 let stage = Usd.Stage.open(layer)
 
-// Get root layer (the authoring target)
-let rootLayer = stage.getRootLayer()
+// Stage operations
+stage.save()
+stage.export("output.usdc")
+stage.export("output.usda")
 
-// Get session layer (for temporary overrides)
-let sessionLayer = stage.getSessionLayer()
-
-// Get default prim (entry point for asset)
+// Get prims
+let rootPrim = stage.getPseudoRoot()
+let prim = stage.getPrimAtPath(Sdf.Path("/World/Sphere"))
 let defaultPrim = stage.getDefaultPrim()
 
-// Set default prim
+// Set default prim (entry point for asset)
 stage.setDefaultPrim(stage.getPrimAtPath(Sdf.Path("/World")))
 
-// Get pseudo-root (parent of all root prims)
-let pseudoRoot = stage.getPseudoRoot()
-
-// Check if stage is valid
+// Check validity
 if stage.pointee.isValid() {
   print("Stage is valid")
 }
 
-// Get stage metadata
-print("Up axis: \(Pixar.UsdGeomGetStageUpAxis(stage.pointee.getPtr()))")
-print("Meters per unit: \(Pixar.UsdGeomGetStageMetersPerUnit(stage.pointee.getPtr()))")
+// Get layers
+let rootLayer = stage.getRootLayer()
+let sessionLayer = stage.getSessionLayer()
 
-// Set stage metadata
-Pixar.UsdGeomSetStageUpAxis(stage, .y)  // Y-up
-Pixar.UsdGeomSetStageMetersPerUnit(stage, 0.01)  // Centimeters
-
-// Time-related metadata
+// Time/animation
 stage.setStartTimeCode(1.0)
 stage.setEndTimeCode(240.0)
 stage.setFramesPerSecond(24.0)
@@ -242,27 +76,25 @@ if stage.pointee.HasAuthoredTimeCodeRange() {
   print("Frame range: \(start) to \(end)")
 }
 
-// Save stage
-stage.save()
+// Stage metadata
+print("Up axis: \(Pixar.UsdGeomGetStageUpAxis(stage.pointee.getPtr()))")
+print("Meters per unit: \(Pixar.UsdGeomGetStageMetersPerUnit(stage.pointee.getPtr()))")
 
-// Export to different format
-stage.export("output.usdc")  // Binary format
-stage.export("output.usda")  // ASCII format
+Pixar.UsdGeomSetStageUpAxis(stage, .y)              // Y-up or Z-up
+Pixar.UsdGeomSetStageMetersPerUnit(stage, 0.01)     // Centimeters
 ```
 
 ### Sdf.Path - USD Path System
 
-`Sdf.Path` is USD's efficient path representation for addressing prims, attributes, and relationships.
+`Sdf.Path` is USD's efficient path representation:
 
 ```swift
 // Create prim paths
 let worldPath = Sdf.Path("/World")
 let spherePath = Sdf.Path("/World/Sphere")
 
-// Absolute root path (/)
-let rootPath = Sdf.Path.absoluteRootPath()
-
-// Empty path
+// Special paths
+let rootPath = Sdf.Path.absoluteRootPath()          // "/"
 let emptyPath = Sdf.Path.emptyPath()
 
 // Check path properties
@@ -271,37 +103,29 @@ print("Is prim path: \(worldPath.isPrimPath())")
 print("Is property path: \(spherePath.isPropertyPath())")
 
 // Path manipulation
-let parentPath = spherePath.getParentPath()  // "/World"
-let primName = spherePath.getName()  // "Sphere"
-
-// Append child path
+let parentPath = spherePath.getParentPath()         // "/World"
+let primName = spherePath.getName()                 // "Sphere"
 let childPath = worldPath.appendChild(Pixar.TfToken("Sphere"))  // "/World/Sphere"
 
-// Create attribute path
+// Property paths
 let radiusPath = spherePath.appendProperty(Pixar.TfToken("radius"))  // "/World/Sphere.radius"
-
-// Create relationship path
 let materialPath = spherePath.appendProperty(Pixar.TfToken("material:binding"))
 
-// Path prefix checking
-let hasPrefix = spherePath.hasPrefix(worldPath)  // true
-
-// Common ancestor
+// Path relationships
+let hasPrefix = spherePath.hasPrefix(worldPath)     // true
 let ancestor = Sdf.Path.findLongestPrefix(spherePath, Sdf.Path("/World/Cube"))
-
-// Make relative path
 let relativePath = spherePath.makeRelativePath(worldPath)  // "Sphere"
 ```
 
 ### Prims (Primitives)
 
-Prims are the fundamental building blocks of USD scenes. They form a hierarchical namespace and can have types, attributes, relationships, and metadata.
+Prims are the fundamental nodes in your scene hierarchy:
 
 ```swift
 // Get a prim by path
 let prim = stage.getPrimAtPath(Sdf.Path("/World/Sphere"))
 
-// Check if prim exists and is valid
+// Check validity
 if prim.isValid() {
   print("Prim is valid")
 }
@@ -310,34 +134,32 @@ if prim.isDefined() {
   print("Prim has authored scene description")
 }
 
-// Get prim properties
-print("Prim name: \(prim.getName())")  // "Sphere"
-print("Prim path: \(prim.getPath())")  // "/World/Sphere"
-print("Prim type: \(prim.getTypeName())")  // "Sphere"
+// Get properties
+print("Prim name: \(prim.getName())")               // "Sphere"
+print("Prim path: \(prim.getPath())")               // "/World/Sphere"
+print("Prim type: \(prim.getTypeName())")           // "Sphere"
 
-// Check prim type
+// Type checking
 if prim.isA(UsdGeom.Sphere.self) {
-  print("Prim is a Sphere")
+  let sphere = UsdGeom.Sphere(prim)
+  print("This is a Sphere")
 }
 
-// Type checking with multiple types
-let isGeometry = prim.isA(UsdGeom.Gprim.self)  // True for all geometry prims
+let isGeometry = prim.isA(UsdGeom.Gprim.self)       // True for all geometry
 let isXformable = prim.isA(UsdGeom.Xformable.self)  // True for transformable prims
 
 // Create new prims
-let world = stage.definePrim(Sdf.Path("/World"))  // Generic prim
-let sphere = stage.definePrim(Sdf.Path("/World/Sphere"), Pixar.TfToken("Sphere"))  // Typed prim
-
-// Override existing prim (create if doesn't exist)
+let world = stage.definePrim(Sdf.Path("/World"))
+let sphere = stage.definePrim(Sdf.Path("/World/Sphere"), Pixar.TfToken("Sphere"))
 let overridePrim = stage.overridePrim(Sdf.Path("/World/Sphere"))
 
 // Get prim specifier
 let specifier = prim.getSpecifier()  // .def, .over, or .class
 
-// Prim hierarchy navigation
+// Hierarchy navigation
 let parent = prim.getParent()
 let children = prim.getChildren()
-let allChildren = prim.getAllChildren()  // Includes inactive children
+let allChildren = prim.getAllChildren()  // Includes inactive
 
 for child in children {
   print("Child: \(child.getName())")
@@ -347,19 +169,17 @@ for child in children {
 let filterFunc: (Usd.Prim) -> Bool = { $0.isA(UsdGeom.Gprim.self) }
 let geometryChildren = prim.getFilteredChildren(Usd.PrimDefaultPredicate, filterFunc)
 
-// Get sibling
 let nextSibling = prim.getNextSibling()
 
-// Prim activation (visibility in composition)
+// Prim activation
 prim.setActive(true)
 let isActive = prim.isActive()
 
-// Prim loading (for payloads)
+// Payload loading
 if prim.isLoaded() {
   print("Prim payload is loaded")
 }
 
-// Load/unload prim
 stage.load(prim.getPath())
 stage.unload(prim.getPath())
 
@@ -370,30 +190,25 @@ if prim.getMetadata(Pixar.TfToken("comment"), &comment) {
   print("Comment: \(comment)")
 }
 
-// Documentation metadata
-prim.setDocumentation("This sphere represents the player character")
+prim.setDocumentation("This sphere represents the player")
 var doc = ""
 prim.getDocumentation(&doc)
 
-// Hidden flag (for tools, not rendering)
 prim.setHidden(true)
 let isHidden = prim.isHidden()
 
-// Instance proxies (for instancing)
+// Instancing
 let isInstance = prim.isInstance()
 if isInstance {
   let prototype = prim.getPrototype()
   print("Instance of: \(prototype.getPath())")
 }
-
-// Clear prim (remove all scene description)
-// prim.clear()  // Uncomment to use - destructive!
 ```
 
-### Prim Traversal Patterns in Swift
+### Prim Traversal
 
 ```swift
-// Basic range traversal (depth-first)
+// Basic depth-first traversal
 for prim in Usd.PrimRange(stage.getPseudoRoot()) {
   print("Visiting: \(prim.getPath())")
 }
@@ -404,7 +219,7 @@ for prim in range {
   print("Active prim: \(prim.getPath())")
 }
 
-// Custom traversal with Swift closures
+// Custom traversal with filter
 func traverseWithFilter(_ root: Usd.Prim, filter: (Usd.Prim) -> Bool) {
   if filter(root) {
     print("Matched: \(root.getPath())")
@@ -457,7 +272,7 @@ while !range.isEmpty() {
 
 ### Attributes
 
-Attributes store time-sampled or default data values on prims.
+Attributes store time-sampled or default data:
 
 ```swift
 let sphere = UsdGeom.Sphere.define(stage, path: "/Sphere")
@@ -472,7 +287,6 @@ let customAttr = prim.createAttribute(
   false  // custom attribute
 )
 
-// Create custom attribute with more control
 let velocityAttr = prim.createAttribute(
   Pixar.TfToken("custom:velocity"),
   .vector3d,
@@ -506,11 +320,10 @@ var times = [Double]()
 radiusAttr.getTimeSamples(&times)
 print("Time samples: \(times)")
 
-// Get time sample count
 let numSamples = radiusAttr.getNumTimeSamples()
 
-// Check if attribute is time-varying
-if radiusAttr.valueM ightBeTimeVarying() {
+// Check if time-varying
+if radiusAttr.valueMightBeTimeVarying() {
   print("Attribute has animation")
 }
 
@@ -520,29 +333,23 @@ print("Type: \(valueType)")
 
 // Attribute metadata
 radiusAttr.setMetadata(Pixar.TfToken("units"), Pixar.VtValue("meters"))
-
-// Set attribute documentation
 radiusAttr.setDocumentation("The radius of the sphere in meters")
 
 // Connection sources (for shading networks)
 radiusAttr.addConnection(Sdf.Path("/Materials/Shader.outputs:radius"))
 let sources = radiusAttr.getConnections()
 
-// Clear attribute value
+// Clear operations
 radiusAttr.clear()
-
-// Clear value at specific time
 radiusAttr.clearAtTime(UsdTimeCode(12.0))
-
-// Block attribute (prevent inheritance)
 radiusAttr.block()
 
-// Check if attribute is authored
+// Check authoring
 if radiusAttr.hasAuthoredValue() {
   print("Attribute has explicit value")
 }
 
-// Get all attributes on a prim
+// Get all attributes on prim
 for attr in prim.getAttributes() {
   print("Attribute: \(attr.getName())")
 }
@@ -553,10 +360,10 @@ let displayAttrs = prim.getAttributes { name in
 }
 ```
 
-### Attribute Value Types in Swift
+### Attribute Value Types
 
 ```swift
-// Scalar types
+// Scalars
 let doubleAttr = prim.createAttribute(Pixar.TfToken("myDouble"), .double, false)
 doubleAttr.set(3.14159)
 
@@ -575,7 +382,7 @@ stringAttr.set("Hello USD")
 let tokenAttr = prim.createAttribute(Pixar.TfToken("myToken"), .token, false)
 tokenAttr.set(Pixar.TfToken("constant"))
 
-// Vector types
+// Vectors
 let vec2fAttr = prim.createAttribute(Pixar.TfToken("myVec2f"), .float2, false)
 vec2fAttr.set(Pixar.GfVec2f(1.0, 2.0))
 
@@ -588,12 +395,12 @@ vec3dAttr.set(Pixar.GfVec3d(1.0, 2.0, 3.0))
 let color3fAttr = prim.createAttribute(Pixar.TfToken("myColor"), .color3f, false)
 color3fAttr.set(Pixar.GfVec3f(1.0, 0.5, 0.0))
 
-// Matrix types
+// Matrices
 let matrix4dAttr = prim.createAttribute(Pixar.TfToken("myMatrix"), .matrix4d, false)
 var identity = Pixar.GfMatrix4d(1.0)
 matrix4dAttr.set(identity)
 
-// Array types
+// Arrays
 let intArrayAttr = prim.createAttribute(Pixar.TfToken("myIntArray"), .intArray, false)
 let intArray = Vt.IntArray(3, [1, 2, 3])
 intArrayAttr.set(intArray)
@@ -605,23 +412,21 @@ let vec3fArray = Vt.Vec3fArray(2, [
 ])
 vec3fArrayAttr.set(vec3fArray)
 
-// Asset path
+// Asset paths
 let assetAttr = prim.createAttribute(Pixar.TfToken("myAsset"), .asset, false)
 assetAttr.set(Sdf.AssetPath("textures/diffuse.png"))
 ```
 
 ### Relationships
 
-Relationships create connections between prims without storing data values.
+Relationships create connections between prims without storing data:
 
 ```swift
 // Create relationship
 let materialRel = prim.createRelationship(Pixar.TfToken("material:binding"), false)
 
-// Add target
+// Add targets
 materialRel.addTarget(Sdf.Path("/Materials/RedMaterial"))
-
-// Add multiple targets
 materialRel.addTarget(Sdf.Path("/Materials/BlueMaterial"))
 
 // Set targets (replaces existing)
@@ -637,37 +442,31 @@ for i in 0..<targets.size() {
   print("Target: \(targets[i])")
 }
 
-// Get forwarded targets (follows relationships on target prims)
+// Get forwarded targets
 var forwardedTargets: Sdf.PathVector = .init()
 materialRel.getForwardedTargets(&forwardedTargets)
 
-// Check if target exists
+// Check and modify
 let hasTarget = materialRel.hasAuthoredTargets()
-
-// Remove target
 materialRel.removeTarget(Sdf.Path("/Materials/BlueMaterial"))
-
-// Clear all targets
-materialRel.clearTargets(true)  // remove all targets
-
-// Block relationship (prevent inheritance)
+materialRel.clearTargets(true)
 materialRel.blockTargets()
 
-// Get all relationships on prim
+// Get all relationships
 for rel in prim.getRelationships() {
   print("Relationship: \(rel.getName())")
 }
 ```
 
-### Tokens - High-Performance String System
+### Tokens
 
-USD uses `TfToken` for string interning, providing O(1) comparison and minimal memory overhead.
+USD uses `TfToken` for efficient string interning:
 
 ```swift
-// Create token from string
+// Create token
 let myToken = Pixar.TfToken("myIdentifier")
 
-// Access predefined schema tokens
+// Predefined schema tokens
 let defaultToken = UsdGeom.Tokens.default_
 let renderToken = UsdGeom.Tokens.render
 let proxyToken = UsdGeom.Tokens.proxy
@@ -684,87 +483,256 @@ let xformOpTranslate = UsdGeom.Tokens.xformOpTranslate
 let xformOpRotateXYZ = UsdGeom.Tokens.xformOpRotateXYZ
 let xformOpScale = UsdGeom.Tokens.xformOpScale
 
-// Shading tokens (UsdShade)
+// Shading tokens
 let surface = UsdShade.Tokens.surface
 let displacement = UsdShade.Tokens.displacement
 let volume = UsdShade.Tokens.volume
 
-// Compare tokens (pointer comparison - very fast!)
+// Token operations
 if myToken == defaultToken {
-  print("Tokens are equal")
+  print("Tokens are equal")  // Pointer comparison - very fast!
 }
 
-// Get token string
 let tokenString = String(myToken.GetString())
-print("Token as string: \(tokenString)")
-
-// Check if token is empty
 if myToken.isEmpty() {
   print("Token is empty")
 }
 
-// Token hash (for dictionaries)
 let hash = myToken.hash()
 
-// Creating tokens for custom purposes
+// Custom tokens
 let customToken = Pixar.TfToken("custom:myAttribute")
 let namespacedToken = Pixar.TfToken("myNamespace:myProperty")
 ```
 
-### Layers and Composition
+---
 
-USD's composition system combines multiple layers using a set of composition arcs. This enables non-destructive editing and powerful asset workflows.
+## Working with Geometry
+
+### Primitive Shapes
 
 ```swift
-// ==================== Layers ====================
+// Sphere
+let sphere = UsdGeom.Sphere.define(stage, path: "/Sphere")
+sphere.getRadiusAttr().set(2.0)
 
-// Create new layer (ASCII)
-let layer = Sdf.Layer.createNew("scene.usda")
+// Cube
+let cube = UsdGeom.Cube.define(stage, path: "/Cube")
+cube.getSizeAttr().set(3.0)
 
-// Create new layer (binary)
-let binaryLayer = Sdf.Layer.createNew("scene.usdc")
+// Cylinder
+let cylinder = UsdGeom.Cylinder.define(stage, path: "/Cylinder")
+cylinder.getRadiusAttr().set(1.0)
+cylinder.getHeightAttr().set(5.0)
 
-// Create anonymous (in-memory) layer
-let anonLayer = Sdf.Layer.createAnonymous()
-let namedAnonLayer = Sdf.Layer.createAnonymous("TempLayer")
+// Cone
+let cone = UsdGeom.Cone.define(stage, path: "/Cone")
+cone.getRadiusAttr().set(1.5)
+cone.getHeightAttr().set(3.0)
+```
 
-// Find or open layer (caches layers)
-let existingLayer = Sdf.Layer.findOrOpen("asset.usda")
+### Meshes
 
-// Open layer (bypasses cache)
-let freshLayer = Sdf.Layer.openAsAnonymous("asset.usda")
+```swift
+let mesh = UsdGeom.Mesh.define(stage, path: "/Mesh")
 
-// Get layer properties
-print("Layer identifier: \(layer.pointee.GetIdentifier())")
-print("Layer display name: \(layer.pointee.GetDisplayName())")
-print("Is anonymous: \(layer.pointee.IsAnonymous())")
-print("Is dirty: \(layer.pointee.IsDirty())")
+// Topology (two triangles forming a quad)
+let faceVertexCounts = Vt.IntArray(2, [3, 3])
+mesh.getFaceVertexCountsAttr().set(faceVertexCounts)
 
-// Save layer
-layer.pointee.Save()
+let faceVertexIndices = Vt.IntArray(6, [0, 1, 2, 2, 3, 0])
+mesh.getFaceVertexIndicesAttr().set(faceVertexIndices)
 
-// Export layer to different format
-layer.pointee.Export("output.usdc")
+// Points
+let points = Vt.Vec3fArray(4, [
+  Pixar.GfVec3f(0, 0, 0),
+  Pixar.GfVec3f(1, 0, 0),
+  Pixar.GfVec3f(1, 1, 0),
+  Pixar.GfVec3f(0, 1, 0)
+])
+mesh.getPointsAttr().set(points)
 
-// Clear layer
-layer.pointee.Clear()
+// Normals
+let normals = Vt.Vec3fArray(4, [
+  Pixar.GfVec3f(0, 0, 1),
+  Pixar.GfVec3f(0, 0, 1),
+  Pixar.GfVec3f(0, 0, 1),
+  Pixar.GfVec3f(0, 0, 1)
+])
+mesh.getNormalsAttr().set(normals)
 
-// Layer metadata
-layer.pointee.SetDocumentation("This layer contains...")
-let comment = layer.pointee.GetComment()
+// Subdivision
+mesh.getSubdivisionSchemeAttr().set(UsdGeom.Tokens.catmullClark.token)
+```
 
-// Set custom layer data
-var customData = Pixar.VtDictionary()
-customData["pipeline:version"] = Pixar.VtValue("1.0")
-layer.pointee.SetCustomLayerData(customData)
+### Transforms
 
-// ==================== Sublayers ====================
+```swift
+// Create transform hierarchy
+let world = UsdGeom.Xform.define(stage, path: "/World")
+let group = UsdGeom.Xform.define(stage, path: "/World/Group")
+let sphere = UsdGeom.Sphere.define(stage, path: "/World/Group/Sphere")
 
-// Create stage with root layer
+// Set transform operations
+let xformable = UsdGeom.Xformable(group.getPrim())
+
+// Translation
+let translateOp = xformable.addTranslateOp()
+translateOp.set(Pixar.GfVec3d(5, 0, 0))
+
+// Rotation (in degrees)
+let rotateOp = xformable.addRotateXYZOp()
+rotateOp.set(Pixar.GfVec3f(0, 45, 0))
+
+// Scale
+let scaleOp = xformable.addScaleOp()
+scaleOp.set(Pixar.GfVec3f(2, 2, 2))
+
+// Get computed transform matrix
+var worldTransform = Pixar.GfMatrix4d()
+xformable.getLocalTransformation(&worldTransform, time: UsdTimeCode.Default())
+```
+
+### Animation
+
+```swift
+let sphere = UsdGeom.Sphere.define(stage, path: "/AnimatedSphere")
+let radiusAttr = sphere.getRadiusAttr()
+
+// Animate radius over time
+for frame in 1...24 {
+  let time = UsdTimeCode(Double(frame))
+  let radius = 1.0 + sin(Double(frame) * 0.1)
+  radiusAttr.set(radius, time: time)
+}
+
+// Set time range
+stage.setStartTimeCode(1.0)
+stage.setEndTimeCode(24.0)
+```
+
+---
+
+## Materials and Shading
+
+### Materials
+
+```swift
+// Create material
+let material = UsdShade.Material.define(stage, path: "/Materials/RedMetal")
+
+// Create surface shader
+let shader = UsdShade.Shader.define(stage, path: "/Materials/RedMetal/Surface")
+shader.createIdAttr().set(Pixar.TfToken("UsdPreviewSurface"))
+
+// Set shader parameters
+shader.createInput(Pixar.TfToken("diffuseColor"), .color3f)
+  .set(Pixar.GfVec3f(0.8, 0.1, 0.1))
+
+shader.createInput(Pixar.TfToken("metallic"), .float)
+  .set(Float(1.0))
+
+shader.createInput(Pixar.TfToken("roughness"), .float)
+  .set(Float(0.3))
+
+// Connect shader to material
+material.createSurfaceOutput().connectToSource(
+  shader.connectableAPI(),
+  Pixar.TfToken("surface")
+)
+
+// Bind material to geometry
+let sphere = UsdGeom.Sphere.define(stage, path: "/Sphere")
+UsdShade.MaterialBindingAPI.apply(sphere.getPrim()).bind(material)
+```
+
+### Shading Networks
+
+```swift
+// Create material with texture
+let material = UsdShade.Material.define(stage, path: "/Materials/CheckerMaterial")
+
+// Texture coordinate reader
+let texCoordReader = UsdShade.Shader.define(stage, path: "/Materials/CheckerMaterial/TexCoord")
+texCoordReader.createIdAttr().set(Pixar.TfToken("UsdPrimvarReader_float2"))
+texCoordReader.createInput(Pixar.TfToken("varname"), .token)
+  .set(Pixar.TfToken("st"))
+
+// Texture
+let checker = UsdShade.Shader.define(stage, path: "/Materials/CheckerMaterial/Checker")
+checker.createIdAttr().set(Pixar.TfToken("UsdUVTexture"))
+checker.createInput(Pixar.TfToken("file"), .asset)
+  .set(Sdf.AssetPath("checker.png"))
+
+// Connect texture coordinates
+checker.createInput(Pixar.TfToken("st"), .float2)
+  .connectToSource(texCoordReader.connectableAPI(), Pixar.TfToken("result"))
+
+// Surface shader
+let surface = UsdShade.Shader.define(stage, path: "/Materials/CheckerMaterial/Surface")
+surface.createIdAttr().set(Pixar.TfToken("UsdPreviewSurface"))
+
+// Connect texture to diffuse
+surface.createInput(Pixar.TfToken("diffuseColor"), .color3f)
+  .connectToSource(checker.connectableAPI(), Pixar.TfToken("rgb"))
+
+// Connect to material
+material.createSurfaceOutput().connectToSource(
+  surface.connectableAPI(),
+  Pixar.TfToken("surface")
+)
+```
+
+### Cameras
+
+```swift
+let camera = UsdGeom.Camera.define(stage, path: "/Camera")
+
+// Set camera properties
+camera.getFocalLengthAttr().set(Float(50.0))
+camera.getHorizontalApertureAttr().set(Float(24.0))
+camera.getVerticalApertureAttr().set(Float(18.0))
+camera.getClippingRangeAttr().set(Pixar.GfVec2f(0.1, 10000.0))
+
+// Position camera
+let xformable = UsdGeom.Xformable(camera.getPrim())
+let translateOp = xformable.addTranslateOp()
+translateOp.set(Pixar.GfVec3d(10, 5, 10))
+
+let rotateOp = xformable.addRotateXYZOp()
+rotateOp.set(Pixar.GfVec3f(-30, 45, 0))
+```
+
+### Lights
+
+```swift
+// Distant light (sun/directional)
+let distantLight = UsdLux.DistantLight.define(stage, path: "/Lights/Sun")
+distantLight.getIntensityAttr().set(Float(1.0))
+distantLight.getColorAttr().set(Pixar.GfVec3f(1.0, 0.95, 0.8))
+
+// Sphere light (point light)
+let sphereLight = UsdLux.SphereLight.define(stage, path: "/Lights/Point")
+sphereLight.getIntensityAttr().set(Float(100.0))
+sphereLight.getRadiusAttr().set(Float(0.5))
+
+// Dome light (environment/HDRI)
+let domeLight = UsdLux.DomeLight.define(stage, path: "/Lights/Environment")
+domeLight.getIntensityAttr().set(Float(0.5))
+domeLight.getTextureFileAttr().set(Sdf.AssetPath("hdri/studio.hdr"))
+```
+
+---
+
+## Composition
+
+USD's power comes from composing multiple files non-destructively:
+
+### Layers and Sublayers
+
+```swift
+// Create layers
 let rootLayer = Sdf.Layer.createNew("root.usda")
-let stage = Usd.Stage.open(rootLayer)
-
-// Create sublayers
 let layoutLayer = Sdf.Layer.createNew("layout.usda")
 let animLayer = Sdf.Layer.createNew("anim.usda")
 let lightingLayer = Sdf.Layer.createNew("lighting.usda")
@@ -775,36 +743,61 @@ subLayerPaths.push_back(lightingLayer.pointee.GetIdentifier())
 subLayerPaths.push_back(animLayer.pointee.GetIdentifier())
 subLayerPaths.push_back(layoutLayer.pointee.GetIdentifier())
 
-// Insert sublayer at specific position
-subLayerPaths.insert(subLayerPaths.begin(), rootLayer.pointee.GetIdentifier())
+// Open stage with root layer
+let stage = Usd.Stage.open(rootLayer)
 
-// Remove sublayer
-subLayerPaths.erase(subLayerPaths.begin())
+// Layer operations
+print("Layer identifier: \(rootLayer.pointee.GetIdentifier())")
+print("Is dirty: \(rootLayer.pointee.IsDirty())")
 
-// Get sublayer offsets (time offsets/scales)
-let offsets = rootLayer.pointee.GetSubLayerOffsets()
+rootLayer.pointee.Save()
+rootLayer.pointee.Export("output.usdc")
+rootLayer.pointee.Clear()
 
-// Set sublayer offset
+// Layer metadata
+rootLayer.pointee.SetDocumentation("This layer contains...")
+let comment = rootLayer.pointee.GetComment()
+
+// Set sublayer offset (time offset/scale)
 var offset = Pixar.SdfLayerOffset(offset: 10.0, scale: 1.0)
 rootLayer.pointee.SetSubLayerOffset(offset, index: 0)
 
-// ==================== References ====================
+// Anonymous (in-memory) layers
+let anonLayer = Sdf.Layer.createAnonymous()
+let namedAnonLayer = Sdf.Layer.createAnonymous("TempLayer")
 
-// Add reference to external file
+// Find or open (caches layers)
+let existingLayer = Sdf.Layer.findOrOpen("asset.usda")
+
+// Edit target controls which layer receives edits
+let sessionTarget = Usd.EditTarget(stage.getSessionLayer())
+stage.setEditTarget(sessionTarget)
+
+// Edits now go to session layer (temporary overrides)
+let sphere = UsdGeom.Sphere.define(stage, path: "/TempSphere")
+
+// Reset to root layer
+stage.setEditTarget(Usd.EditTarget(stage.getRootLayer()))
+```
+
+### References
+
+```swift
+// Reference external file
 let prim = stage.definePrim(Sdf.Path("/AssetA"))
 prim.getReferences().addReference("assets/table.usd")
 
-// Add reference to specific prim in file
+// Reference specific prim in file
 prim.getReferences().addReference("assets/table.usd", Sdf.Path("/Table"))
 
-// Add reference with layer offset
+// Reference with layer offset (time offset/scale)
 prim.getReferences().addReference(
   "assets/table.usd",
   Sdf.Path("/Table"),
   Sdf.LayerOffset(offset: 0.0, scale: 1.0)
 )
 
-// Add internal reference (within same stage)
+// Internal reference (within same stage)
 prim.getReferences().addInternalReference(Sdf.Path("/Prototypes/Table"))
 
 // Remove reference
@@ -817,9 +810,11 @@ prim.getReferences().clearReferences()
 if prim.hasAuthoredReferences() {
   print("Prim has references")
 }
+```
 
-// ==================== Payloads ====================
+### Payloads (Lazy Loading)
 
+```swift
 // Payloads are like references but lazy-loaded for scalability
 let heavyPrim = stage.definePrim(Sdf.Path("/HeavyAsset"))
 
@@ -829,27 +824,27 @@ heavyPrim.getPayloads().addPayload("assets/heavy_model.usd")
 // Add payload to specific prim
 heavyPrim.getPayloads().addPayload("assets/heavy_model.usd", Sdf.Path("/Model"))
 
-// Remove payload
+// Remove/clear payloads
 heavyPrim.getPayloads().removePayload("assets/heavy_model.usd")
-
-// Clear payloads
 heavyPrim.getPayloads().clearPayloads()
 
 // Load/unload payloads at stage level
-stage.load(Sdf.Path("/HeavyAsset"))  // Load payload
-stage.unload(Sdf.Path("/HeavyAsset"))  // Unload payload
+stage.load(Sdf.Path("/HeavyAsset"))
+stage.unload(Sdf.Path("/HeavyAsset"))
 
-// Load with descendants
+// Load with control
 let loadSet = stage.getLoadSet()
 stage.loadAndUnload(Sdf.PathSet([Sdf.Path("/HeavyAsset")]), Sdf.PathSet())
+```
 
-// ==================== Inherits ====================
+### Inherits (Class-based Inheritance)
 
-// Class-based inheritance
+```swift
+// Create class prim
 let classPath = Sdf.Path("/_class_Table")
 let classPrim = stage.createClassPrim(classPath)
 
-// Set properties on class
+// Define properties on class
 let classTable = UsdGeom.Mesh(classPrim)
 // ... define table geometry ...
 
@@ -857,15 +852,23 @@ let classTable = UsdGeom.Mesh(classPrim)
 let instance = stage.definePrim(Sdf.Path("/Tables/DiningTable"))
 instance.getInherits().addInherit(classPath)
 
-// ==================== Specializes ====================
+// All instances inherit the class properties
+let instance2 = stage.definePrim(Sdf.Path("/Tables/CoffeeTable"))
+instance2.getInherits().addInherit(classPath)
+```
 
+### Specializes
+
+```swift
 // Less common, but useful for overriding strong opinions
 let basePrim = stage.definePrim(Sdf.Path("/BaseAsset"))
 let specializedPrim = stage.definePrim(Sdf.Path("/SpecializedAsset"))
 specializedPrim.getSpecializes().addSpecialize(basePrim.getPath())
+```
 
-// ==================== Variants ====================
+### Variants (Switchable Alternatives)
 
+```swift
 // Variants provide switchable alternatives
 let assetPrim = stage.definePrim(Sdf.Path("/Asset"))
 
@@ -912,21 +915,11 @@ let shadingVariantSet = assetPrim.getVariantSets().addVariantSet("shadingVariant
 shadingVariantSet.addVariant("default")
 shadingVariantSet.addVariant("weathered")
 shadingVariantSet.addVariant("damaged")
+```
 
-// ==================== Edit Targets ====================
+### Composition Query
 
-// Edit target controls which layer receives edits
-let sessionTarget = Usd.EditTarget(stage.getSessionLayer())
-stage.setEditTarget(sessionTarget)
-
-// Now all edits go to session layer (temporary overrides)
-let sphere = UsdGeom.Sphere.define(stage, path: "/TempSphere")
-
-// Reset to root layer
-stage.setEditTarget(Usd.EditTarget(stage.getRootLayer()))
-
-// ==================== Composition Query ====================
-
+```swift
 // Get prim stack (all opinions contributing to prim)
 let primStack = prim.getPrimStack()
 for spec in primStack {
@@ -948,192 +941,14 @@ for arc in arcs {
 
 ---
 
-## API Usage
-
-### Working with Geometry
-
-#### Meshes
-
-```swift
-let mesh = UsdGeom.Mesh.define(stage, path: "/Mesh")
-
-// Set topology
-let faceVertexCounts = Vt.IntArray(2, [3, 3])  // Two triangles
-mesh.getFaceVertexCountsAttr().set(faceVertexCounts)
-
-let faceVertexIndices = Vt.IntArray(6, [0, 1, 2, 2, 3, 0])
-mesh.getFaceVertexIndicesAttr().set(faceVertexIndices)
-
-// Set points
-let points = Vt.Vec3fArray(4, [
-  Pixar.GfVec3f(0, 0, 0),
-  Pixar.GfVec3f(1, 0, 0),
-  Pixar.GfVec3f(1, 1, 0),
-  Pixar.GfVec3f(0, 1, 0)
-])
-mesh.getPointsAttr().set(points)
-
-// Set normals
-let normals = Vt.Vec3fArray(4, [
-  Pixar.GfVec3f(0, 0, 1),
-  Pixar.GfVec3f(0, 0, 1),
-  Pixar.GfVec3f(0, 0, 1),
-  Pixar.GfVec3f(0, 0, 1)
-])
-mesh.getNormalsAttr().set(normals)
-
-// Set subdivision scheme
-mesh.getSubdivisionSchemeAttr().set(UsdGeom.Tokens.catmullClark.token)
-```
-
-#### Primitive Shapes
-
-```swift
-// Sphere
-let sphere = UsdGeom.Sphere.define(stage, path: "/Sphere")
-sphere.getRadiusAttr().set(2.0)
-
-// Cube
-let cube = UsdGeom.Cube.define(stage, path: "/Cube")
-cube.getSizeAttr().set(3.0)
-
-// Cylinder
-let cylinder = UsdGeom.Cylinder.define(stage, path: "/Cylinder")
-cylinder.getRadiusAttr().set(1.0)
-cylinder.getHeightAttr().set(5.0)
-
-// Cone
-let cone = UsdGeom.Cone.define(stage, path: "/Cone")
-cone.getRadiusAttr().set(1.5)
-cone.getHeightAttr().set(3.0)
-```
-
-### Transforms and Hierarchies
-
-```swift
-// Create transform hierarchy
-let world = UsdGeom.Xform.define(stage, path: "/World")
-let group = UsdGeom.Xform.define(stage, path: "/World/Group")
-let sphere = UsdGeom.Sphere.define(stage, path: "/World/Group/Sphere")
-
-// Set transform operations
-let xformable = UsdGeom.Xformable(group.getPrim())
-
-// Translation
-let translateOp = xformable.addTranslateOp()
-translateOp.set(Pixar.GfVec3d(5, 0, 0))
-
-// Rotation (in degrees)
-let rotateOp = xformable.addRotateXYZOp()
-rotateOp.set(Pixar.GfVec3f(0, 45, 0))
-
-// Scale
-let scaleOp = xformable.addScaleOp()
-scaleOp.set(Pixar.GfVec3f(2, 2, 2))
-
-// Get computed transform matrix
-var worldTransform = Pixar.GfMatrix4d()
-xformable.getLocalTransformation(&worldTransform, time: UsdTimeCode.Default())
-```
-
-### Animation
-
-```swift
-let sphere = UsdGeom.Sphere.define(stage, path: "/AnimatedSphere")
-let radiusAttr = sphere.getRadiusAttr()
-
-// Animate radius over time
-for frame in 1...24 {
-  let time = UsdTimeCode(Double(frame))
-  let radius = 1.0 + sin(Double(frame) * 0.1)
-  radiusAttr.set(radius, time: time)
-}
-
-// Set time range
-stage.setStartTimeCode(1.0)
-stage.setEndTimeCode(24.0)
-```
-
-### Materials and Shading
-
-```swift
-// Create material
-let material = UsdShade.Material.define(stage, path: "/Materials/RedMetal")
-
-// Create surface shader
-let shader = UsdShade.Shader.define(stage, path: "/Materials/RedMetal/Surface")
-shader.createIdAttr().set(Pixar.TfToken("UsdPreviewSurface"))
-
-// Set shader parameters
-shader.createInput(Pixar.TfToken("diffuseColor"), .color3f)
-  .set(Pixar.GfVec3f(0.8, 0.1, 0.1))
-
-shader.createInput(Pixar.TfToken("metallic"), .float)
-  .set(Float(1.0))
-
-shader.createInput(Pixar.TfToken("roughness"), .float)
-  .set(Float(0.3))
-
-// Connect shader to material
-material.createSurfaceOutput().connectToSource(
-  shader.connectableAPI(),
-  Pixar.TfToken("surface")
-)
-
-// Bind material to geometry
-let sphere = UsdGeom.Sphere.define(stage, path: "/Sphere")
-UsdShade.MaterialBindingAPI.apply(sphere.getPrim()).bind(material)
-```
-
-### Cameras
-
-```swift
-let camera = UsdGeom.Camera.define(stage, path: "/Camera")
-
-// Set camera properties
-camera.getFocalLengthAttr().set(Float(50.0))
-camera.getHorizontalApertureAttr().set(Float(24.0))
-camera.getVerticalApertureAttr().set(Float(18.0))
-camera.getClippingRangeAttr().set(Pixar.GfVec2f(0.1, 10000.0))
-
-// Position camera
-let xformable = UsdGeom.Xformable(camera.getPrim())
-let translateOp = xformable.addTranslateOp()
-translateOp.set(Pixar.GfVec3d(10, 5, 10))
-
-// Look at target
-let rotateOp = xformable.addRotateXYZOp()
-rotateOp.set(Pixar.GfVec3f(-30, 45, 0))
-```
-
-### Lights
-
-```swift
-// Distant light (directional)
-let distantLight = UsdLux.DistantLight.define(stage, path: "/Lights/Sun")
-distantLight.getIntensityAttr().set(Float(1.0))
-distantLight.getColorAttr().set(Pixar.GfVec3f(1.0, 0.95, 0.8))
-
-// Sphere light (point light)
-let sphereLight = UsdLux.SphereLight.define(stage, path: "/Lights/Point")
-sphereLight.getIntensityAttr().set(Float(100.0))
-sphereLight.getRadiusAttr().set(Float(0.5))
-
-// Dome light (environment)
-let domeLight = UsdLux.DomeLight.define(stage, path: "/Lights/Environment")
-domeLight.getIntensityAttr().set(Float(0.5))
-```
-
----
-
 ## Rendering with Hydra
 
-### Setting Up the Render Engine
+### Setup Render Engine
 
 ```swift
 import PixarUSD
 
-// Setup resources
+// Setup resources (REQUIRED)
 Pixar.Bundler.shared.setup(.resources)
 
 // Create or open stage
@@ -1148,20 +963,20 @@ let cameraController = CameraController(isZUp: isZUp)
 engine.setCameraController(cameraController)
 ```
 
-### Rendering a Frame
+### Render Frame
 
 ```swift
-// Render at specific time with given viewport size
+// Render at specific time with viewport size
 let viewSize = CGSize(width: 1920, height: 1080)
 let timeCode = 1.0
 
 let texture = engine.render(at: timeCode, viewSize: viewSize)
 
-// The texture is a Pixar.HgiTextureHandle that can be converted
+// texture is a Pixar.HgiTextureHandle that can be converted
 // to MTLTexture on Metal platforms
 ```
 
-### Camera Control
+### Camera Controller
 
 ```swift
 // Create camera controller
@@ -1171,14 +986,15 @@ let camera = CameraController(
   up: Pixar.GfVec3d(0, 1, 0)        // Up vector
 )
 
-// Pan camera (move eye and look-at together)
+// Pan (move eye and look-at together)
 camera.pan(delta: CGPoint(x: 10, y: -5))
 
-// Orbit camera around look-at point
+// Orbit around look-at point
 camera.orbit(delta: CGPoint(x: 45, y: 30))
 
-// Zoom camera (move along view direction)
+// Zoom (move along view direction)
 camera.zoom(delta: 2.0)
+camera.zoomScroll(delta: scrollDelta)
 
 // Focus on specific point
 camera.focus(on: Pixar.GfVec3d(5, 0, 0), distance: 10.0)
@@ -1190,347 +1006,43 @@ camera.reset()
 let viewMatrix = camera.getViewMatrix()
 ```
 
-### Metal Integration (macOS/iOS/visionOS)
-
-```swift
-#if canImport(Metal)
-import Metal
-import MetalKit
-
-class MyRenderer: NSObject, MTKViewDelegate {
-  let engine: Hydra.RenderEngine
-
-  func draw(in view: MTKView) {
-    let viewSize = view.drawableSize
-    let hgiTexture = engine.render(at: 0.0, viewSize: viewSize)
-
-    // Convert to Metal texture
-    if let metalTexture = getMetalTexture(from: hgiTexture) {
-      // Blit to view...
-    }
-  }
-
-  func getMetalTexture(from hgiTexture: Pixar.HgiTextureHandle) -> MTLTexture? {
-    guard let hgiTex = hgiTexture.Get() else { return nil }
-    let rawPtr = UnsafeRawPointer(hgiTex)
-    let texPtr: Pixar.HgiMetalTexture = Unmanaged.fromOpaque(rawPtr).takeUnretainedValue()
-    return texPtr.GetTextureId()
-  }
-}
-#endif
-```
-
 ---
 
-## Cross-Platform Development
+## Declarative Swift DSL
 
-### Platform Detection
-
-```swift
-#if os(macOS)
-  // macOS-specific code
-  import AppKit
-#elseif os(iOS) || os(visionOS)
-  // iOS/visionOS-specific code
-  import UIKit
-#elseif os(Linux)
-  // Linux-specific code
-#elseif os(Windows)
-  // Windows-specific code
-#endif
-```
-
-### SwiftCrossUI Integration
-
-SwiftUSD works with SwiftCrossUI for cross-platform UI:
+SwiftUSD provides a SwiftUI-like syntax:
 
 ```swift
-import SwiftCrossUI
 import PixarUSD
 
-@main
-struct MyApp: App {
-  typealias Backend = PlatformBackend
+Pixar.Bundler.shared.setup(.resources)
 
-  let stage: UsdStageRefPtr
-  let engine: Hydra.RenderEngine
+let stage = USDStage("MyScene", ext: .usda) {
+  USDPrim("World", type: .xform) {
+    USDPrim("Camera", type: .camera) {
+      Attribute("focalLength", value: 50.0)
+    }
 
-  init() {
-    Pixar.Bundler.shared.setup(.resources)
-    stage = Usd.Stage.createNew("scene.usda")
-    engine = Hydra.RenderEngine(stage: stage)
-  }
+    USDPrim("RedSphere", type: .sphere) {
+      Attribute("radius", value: 2.0)
+      Attribute("displayColor", value: Pixar.GfVec3f(1, 0, 0))
+    }
 
-  var body: some Scene {
-    WindowGroup("USD Viewer") {
-      ContentView(engine: engine, stage: stage)
+    USDPrim("BlueCube", type: .cube) {
+      Attribute("size", value: 1.5)
+      Attribute("displayColor", value: Pixar.GfVec3f(0, 0, 1))
     }
   }
 }
-```
-
-### File Formats
-
-```swift
-// ASCII format (human-readable, larger file size)
-stage.export("scene.usda")
-
-// Binary crate format (compact, faster loading)
-stage.export("scene.usdc")
-
-// Package format (directory with multiple files)
-stage.export("scene.usdz")
-
-// Detect format from extension
-let layer = Sdf.Layer.createNew("scene.usd", args: Sdf.FileFormat.FileFormatArguments())
+.set(doc: "Example scene")
+.save()
 ```
 
 ---
 
-## Advanced Topics
+## Complete Examples
 
-### Custom Schema Definition
-
-Create custom USD schemas for your domain-specific data:
-
-```python
-# schema.usda
-class MyCustomPrim "MyCustomPrim" {
-    double myProperty = 1.0
-    string myString = "default"
-}
-```
-
-Generate Swift bindings:
-
-```bash
-swift package plugin genschema
-```
-
-Use in Swift:
-
-```swift
-let customPrim = MyCustomPrim.define(stage, path: "/Custom")
-customPrim.getMyPropertyAttr().set(42.0)
-```
-
-### Performance Optimization
-
-```swift
-// Use binary format for large scenes
-stage.export("scene.usdc")  // Much faster than .usda
-
-// Use payloads for lazy loading
-let prim = stage.definePrim(Sdf.Path("/HeavyAsset"))
-prim.getPayloads().addPayload("asset.usd")
-
-// Unload/load payloads dynamically
-stage.unload(Sdf.Path("/HeavyAsset"))
-stage.load(Sdf.Path("/HeavyAsset"))
-
-// Use variants for asset variations
-let prim = stage.definePrim(Sdf.Path("/Asset"))
-let variantSet = prim.getVariantSets().addVariantSet("LOD")
-variantSet.addVariant("high")
-variantSet.addVariant("low")
-variantSet.setVariantSelection("high")
-```
-
-### Multi-Threading
-
-```swift
-import Work
-
-// Use USD's work dispatcher for parallelism
-var results = [Int](repeating: 0, count: 1000)
-
-WorkParallelForN(1000) { startIndex, endIndex in
-  for i in startIndex..<endIndex {
-    // Process item i
-    results[Int(i)] = processItem(i)
-  }
-}
-```
-
-### Custom Render Delegates
-
-```swift
-// Register custom render delegate
-let hgi = HgiMetal.createHgi()
-let driver = HdDriver(name: .renderDriver, driver: hgi.value)
-
-let engine = UsdImagingGL.Engine.createEngine(
-  rootPath: stage.getPseudoRoot().getPath(),
-  excludedPaths: Sdf.PathVector(),
-  invisedPaths: Sdf.PathVector(),
-  sceneDelegateId: Sdf.Path.absoluteRootPath(),
-  driver: driver
-)
-```
-
-### Scene Traversal Patterns
-
-```swift
-// Depth-first traversal
-func traverseDepthFirst(prim: Usd.Prim) {
-  print("Visiting: \(prim.getPath())")
-
-  for child in prim.getChildren() {
-    traverseDepthFirst(prim: child)
-  }
-}
-
-// Breadth-first traversal
-func traverseBreadthFirst(root: Usd.Prim) {
-  var queue: [Usd.Prim] = [root]
-
-  while !queue.isEmpty {
-    let prim = queue.removeFirst()
-    print("Visiting: \(prim.getPath())")
-
-    queue.append(contentsOf: prim.getChildren())
-  }
-}
-
-// Filtered traversal
-for prim in Usd.PrimRange(stage.getPseudoRoot()) {
-  // Only process geometry
-  if prim.isA(UsdGeom.Gprim.self) {
-    let gprim = UsdGeom.Gprim(prim)
-    print("Geometry: \(gprim.getPath())")
-  }
-}
-```
-
----
-
-## Swift 6.2 Features (Future)
-
-Swift 6.2 introduces significant enhancements to C++ interoperability that SwiftUSD can leverage for improved safety and performance. These features are currently experimental but provide a roadmap for future development.
-
-### Safe C++ Interoperability
-
-Swift 6.2 introduces safe abstractions for working with C++ pointers and views through the `SafeInteropWrappers` experimental feature.
-
-**Enable in Package.swift**:
-```swift
-.target(
-  name: "PixarUSD",
-  swiftSettings: [
-    .interoperabilityMode(.Cxx),
-    .unsafeFlags([
-      "-enable-experimental-feature", "SafeInteropWrappers"
-    ])
-  ]
-)
-```
-
-### Span and MutableSpan Types
-
-Non-escapable types providing zero-overhead, compile-time safe views into C++ collections:
-
-```swift
-// Hypothetical future USD API with lifetime annotations
-func processStageGeometry(_ stage: UsdStageRefPtr) {
-    // Returns Span<UsdPrim> with compile-time lifetime checking
-    let prims = stage.getAllPrims()
-
-    for prim in prims where prim.isA(UsdGeom.Gprim.self) {
-        // Safe: compiler ensures prim doesn't outlive stage
-        print("Processing: \(prim.getPath())")
-    }
-
-    // Compiler prevents: Cannot escape parent's lifetime
-    // globalPrims = prims  // COMPILE ERROR
-}
-```
-
-**Benefits**:
-- Zero overhead (same as raw pointers)
-- Compile-time lifetime safety
-- No heap allocations
-- Automatic bounds checking in debug mode
-
-### InlineArray for USD Math Types
-
-Fixed-size, stack-allocated arrays with C-compatible layout:
-
-```swift
-// Define Swift-native USD math types
-typealias Matrix4d = InlineArray<Double, 16>
-typealias Vec3d = InlineArray<Double, 3>
-typealias Color3f = InlineArray<Float, 3>
-
-// Usage
-var matrix = Matrix4d.identity
-matrix[0] = 1.0  // Direct subscript access
-
-var color: Color3f = [1.0, 0.5, 0.0]  // RGB
-```
-
-**Benefits**:
-- Stack-allocated (no heap)
-- C-compatible memory layout
-- Native Swift type
-- SIMD optimization potential
-
-### Lifetime Annotations
-
-C++ APIs can be annotated to communicate lifetime relationships:
-
-```cpp
-// USD C++ header with lifetime annotations
-class UsdStage {
-public:
-    // Return value's lifetime bound to 'this'
-    const UsdPrim& GetPseudoRoot() const __lifetimebound;
-
-    // View's lifetime bound to 'this'
-    std::span<const UsdPrim> GetAllPrims() const __lifetimebound;
-};
-```
-
-```swift
-// Swift automatically understands lifetime relationships
-func safeUsage(_ stage: UsdStageRefPtr) {
-    let root = stage.getPseudoRoot()  // OK: used within stage's scope
-
-    // This would be a compile error:
-    // func unsafeEscape() -> Usd.Prim {
-    //     return root  // ERROR: Cannot escape parent's lifetime
-    // }
-}
-```
-
-### Migration Path
-
-**Current (Swift 6.0/6.1)**:
-- ✅ Fully compatible, no changes required
-- Continue using existing C++ interop patterns
-
-**Swift 6.2 Experimental**:
-- Test safe interop features in non-critical code
-- Measure performance impact
-- Provide feedback to Swift team
-
-**Swift 6.2 Stable (Future)**:
-- Adopt Span/MutableSpan for USD collections
-- Use InlineArray for mathematical types
-- Annotate USD headers with lifetime bounds
-- Refactor APIs for improved safety
-
-### Resources
-
-For complete details on Swift 6.2 migration:
-- [SWIFT_6.2_MIGRATION.md](./SWIFT_6.2_MIGRATION.md) - Comprehensive migration guide
-- [SWIFT_6.2_EXAMPLES.md](./SWIFT_6.2_EXAMPLES.md) - Before/after code examples
-- [Swift Safe C++ Interop Documentation](https://www.swift.org/documentation/cxx-interop/safe-interop/)
-
----
-
-## Examples
-
-### Example 1: Create Scene with Multiple Objects
+### Example 1: Multi-Object Scene
 
 ```swift
 import PixarUSD
@@ -1539,24 +1051,23 @@ Pixar.Bundler.shared.setup(.resources)
 
 let stage = Usd.Stage.createNew("multi_object_scene.usda")
 
-// Create root transform
+// Create root
 let world = UsdGeom.Xform.define(stage, path: "/World")
 
-// Create sphere
+// Red sphere on left
 let sphere = UsdGeom.Sphere.define(stage, path: "/World/Sphere")
 sphere.getRadiusAttr().set(2.0)
 sphere.getDisplayColorAttr().set(Vt.Vec3fArray(1, [Pixar.GfVec3f(1, 0, 0)]))
 
-// Position sphere
 let sphereXform = UsdGeom.Xformable(sphere.getPrim())
 sphereXform.addTranslateOp().set(Pixar.GfVec3d(-3, 0, 0))
 
-// Create cube
+// Green cube in center
 let cube = UsdGeom.Cube.define(stage, path: "/World/Cube")
 cube.getSizeAttr().set(2.0)
 cube.getDisplayColorAttr().set(Vt.Vec3fArray(1, [Pixar.GfVec3f(0, 1, 0)]))
 
-// Create cylinder
+// Blue cylinder on right
 let cylinder = UsdGeom.Cylinder.define(stage, path: "/World/Cylinder")
 cylinder.getRadiusAttr().set(1.0)
 cylinder.getHeightAttr().set(3.0)
@@ -1565,7 +1076,7 @@ cylinder.getDisplayColorAttr().set(Vt.Vec3fArray(1, [Pixar.GfVec3f(0, 0, 1)]))
 let cylinderXform = UsdGeom.Xformable(cylinder.getPrim())
 cylinderXform.addTranslateOp().set(Pixar.GfVec3d(3, 0, 0))
 
-// Add camera
+// Camera
 let camera = UsdGeom.Camera.define(stage, path: "/Camera")
 camera.getFocalLengthAttr().set(Float(50.0))
 
@@ -1573,15 +1084,15 @@ let cameraXform = UsdGeom.Xformable(camera.getPrim())
 cameraXform.addTranslateOp().set(Pixar.GfVec3d(0, 5, 15))
 cameraXform.addRotateXYZOp().set(Pixar.GfVec3f(-15, 0, 0))
 
-// Add light
+// Light
 let light = UsdLux.DistantLight.define(stage, path: "/Light")
 light.getIntensityAttr().set(Float(1.5))
 
 stage.save()
-print("Scene created successfully!")
+print("Scene created!")
 ```
 
-### Example 2: Load and Modify Existing Scene
+### Example 2: Load and Modify Scene
 
 ```swift
 import PixarUSD
@@ -1605,7 +1116,6 @@ for prim in Usd.PrimRange(stage.getPseudoRoot()) {
   }
 }
 
-// Save modified scene
 stage.save()
 ```
 
@@ -1644,7 +1154,7 @@ for frame in 1...120 {
 stage.save()
 ```
 
-### Example 4: Material and Shading Network
+### Example 4: Shading Network
 
 ```swift
 import PixarUSD
@@ -1656,13 +1166,13 @@ let stage = Usd.Stage.createNew("shading_example.usda")
 // Create material
 let material = UsdShade.Material.define(stage, path: "/Materials/CheckerMaterial")
 
-// Create texture coordinate reader
+// Texture coordinate reader
 let texCoordReader = UsdShade.Shader.define(stage, path: "/Materials/CheckerMaterial/TexCoord")
 texCoordReader.createIdAttr().set(Pixar.TfToken("UsdPrimvarReader_float2"))
 texCoordReader.createInput(Pixar.TfToken("varname"), .token)
   .set(Pixar.TfToken("st"))
 
-// Create checker texture
+// Checker texture
 let checker = UsdShade.Shader.define(stage, path: "/Materials/CheckerMaterial/Checker")
 checker.createIdAttr().set(Pixar.TfToken("UsdUVTexture"))
 checker.createInput(Pixar.TfToken("file"), .asset)
@@ -1672,15 +1182,15 @@ checker.createInput(Pixar.TfToken("file"), .asset)
 checker.createInput(Pixar.TfToken("st"), .float2)
   .connectToSource(texCoordReader.connectableAPI(), Pixar.TfToken("result"))
 
-// Create surface shader
+// Surface shader
 let surface = UsdShade.Shader.define(stage, path: "/Materials/CheckerMaterial/Surface")
 surface.createIdAttr().set(Pixar.TfToken("UsdPreviewSurface"))
 
-// Connect checker to diffuse color
+// Connect checker to diffuse
 surface.createInput(Pixar.TfToken("diffuseColor"), .color3f)
   .connectToSource(checker.connectableAPI(), Pixar.TfToken("rgb"))
 
-// Connect surface to material
+// Connect to material
 material.createSurfaceOutput().connectToSource(
   surface.connectableAPI(),
   Pixar.TfToken("surface")
@@ -1695,136 +1205,11 @@ stage.save()
 
 ---
 
-## Troubleshooting
+## Debug and Inspection
 
-### Common Issues
-
-#### 1. "Failed to load plugin" Error
-
-**Problem**: USD can't find plugins or resources.
-
-**Solution**: Always call resource setup before any USD operations:
+### Print Stage Structure
 
 ```swift
-Pixar.Bundler.shared.setup(.resources)
-```
-
-#### 2. C++ Interop Errors
-
-**Problem**: Compilation fails with C++ namespace errors.
-
-**Solution**: Enable C++ interop in your target:
-
-```swift
-swiftSettings: [
-  .interoperabilityMode(.Cxx)
-]
-```
-
-#### 3. Empty or Invalid Stage
-
-**Problem**: Stage operations fail or return nil.
-
-**Solution**: Check if stage is valid:
-
-```swift
-let stage = Usd.Stage.open("scene.usd")
-if !stage.isValid() {
-  print("Failed to open stage")
-  return
-}
-```
-
-#### 4. Performance Issues with Large Scenes
-
-**Problem**: Slow loading or rendering of large scenes.
-
-**Solutions**:
-- Use binary `.usdc` format instead of ASCII `.usda`
-- Use payloads for lazy loading: `prim.getPayloads().addPayload("asset.usd")`
-- Load only what you need: `stage.load(path)` / `stage.unload(path)`
-- Use variants for LOD: Create high/low detail variants
-
-#### 5. Memory Issues
-
-**Problem**: High memory usage or crashes.
-
-**Solution**: USD uses reference counting automatically. Ensure you don't create retain cycles:
-
-```swift
-// Use weak references for delegates
-weak var cameraController: CameraController?
-
-// Release large stages when done
-var stage: UsdStageRefPtr? = Usd.Stage.open("huge.usd")
-// ... use stage ...
-stage = nil  // Release immediately
-```
-
-#### 6. Rendering Shows Nothing
-
-**Problem**: Viewport is black or empty.
-
-**Solutions**:
-1. Check camera setup:
-   ```swift
-   let camera = CameraController(isZUp: true)
-   engine.setCameraController(camera)
-   ```
-
-2. Verify stage has geometry:
-   ```swift
-   for prim in Usd.PrimRange(stage.getPseudoRoot()) {
-     print("Prim: \(prim.getPath())")
-   }
-   ```
-
-3. Check viewport size is valid:
-   ```swift
-   let viewSize = CGSize(width: max(1, width), height: max(1, height))
-   ```
-
-#### 7. SwiftCrossUI View Not Updating
-
-**Problem**: Changes to USD stage don't reflect in UI.
-
-**Solution**: SwiftCrossUI requires explicit view updates:
-
-```swift
-// Force redraw
-view.setNeedsDisplay(view.bounds)
-
-// Or recreate the view with updated state
-```
-
-#### 8. Windows Build Failures
-
-**Problem**: Compilation errors on Windows.
-
-**Solution**: Add required C++ defines:
-
-```swift
-cxxSettings: [
-  .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
-  .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
-  .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
-]
-```
-
-### Debug Tips
-
-#### Enable USD Logging
-
-```swift
-// Set TF_DEBUG environment variable before running
-// export TF_DEBUG="*"  # All debug output
-// export TF_DEBUG="USD_STAGE,USD_PRIM"  # Specific subsystems
-```
-
-#### Inspect Stage Structure
-
-```swift
-// Print entire stage hierarchy
 func printStage(_ stage: UsdStageRefPtr) {
   func printPrim(_ prim: Usd.Prim, indent: Int = 0) {
     let prefix = String(repeating: "  ", count: indent)
@@ -1839,7 +1224,7 @@ func printStage(_ stage: UsdStageRefPtr) {
 }
 ```
 
-#### Check Attribute Values
+### Inspect Attribute Values
 
 ```swift
 let prim = stage.getPrimAtPath(Sdf.Path("/Sphere"))
@@ -1851,35 +1236,20 @@ for attr in prim.getAttributes() {
 }
 ```
 
-### Getting Help
-
-- **Documentation**: https://wabiverse.github.io/SwiftUSD/documentation/pixarusd/
-- **USD Documentation**: https://openusd.org
-- **GitHub Issues**: https://github.com/wabiverse/SwiftUSD/issues
-- **Examples**: See `Sources/UsdView/` and `Sources/Examples/` in the repository
-
 ---
 
-## Additional Resources
+## Resources
 
-### USD Concepts
-- [USD Glossary](https://openusd.org/release/glossary.html)
-- [USD Tutorials](https://openusd.org/release/tut_usd_tutorials.html)
-- [USD Best Practices](https://openusd.org/release/api/best_practices_8dox.html)
-
-### SwiftUSD Specific
-- [API Documentation](https://wabiverse.github.io/SwiftUSD/documentation/pixarusd/)
-- [GitHub Repository](https://github.com/wabiverse/SwiftUSD)
-- [Example Applications](https://github.com/wabiverse/SwiftUSD/tree/main/Sources)
-
-### Tools
-- **usdview**: Official USD viewer (Python-based)
-- **UsdView**: Swift-based viewer in this repository
-- **usdcat**: Command-line tool for USD inspection
-- **usdedit**: Text editor for USD files
+- **API Documentation**: https://wabiverse.github.io/SwiftUSD/documentation/pixarusd/
+- **USD Documentation**: https://openusd.org
+- **GitHub Repository**: https://github.com/wabiverse/SwiftUSD
+- **Examples**: See `Sources/UsdView/` and `Sources/Examples/`
+- **Migration Guides**:
+  - [SWIFT_6.2_MIGRATION.md](./SWIFT_6.2_MIGRATION.md) - Swift 6.2 C++ interop features
+  - [XCODE_26_MIGRATION.md](./XCODE_26_MIGRATION.md) - Xcode compatibility guide
 
 ---
 
 **Version**: 24.8.14
-**Last Updated**: 2025-01-12
-**License**: Modified Apache 2.0 (see LICENSE.txt)
+**Swift**: 6.0+
+**USD**: 24.8

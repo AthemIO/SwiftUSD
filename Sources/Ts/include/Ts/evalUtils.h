@@ -8,6 +8,7 @@
 #ifndef PXR_BASE_TS_EVAL_UTILS_H
 #define PXR_BASE_TS_EVAL_UTILS_H
 
+#include "Ts/eval.h"
 #include "Ts/keyFrame.h"
 #include "Ts/keyFrameMap.h"
 #include "Ts/spline.h"
@@ -16,19 +17,20 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-enum Ts_EvalType { Ts_EvalValue, Ts_EvalDerivative };
+// Use Ts_EvalAspect from eval.h
+using Ts_EvalType = Ts_EvalAspect;
 
 // Evaluate either the value or derivative at a given time on a given side.
 VtValue Ts_Eval(const TsSpline &val, TsTime time, TsSide side, Ts_EvalType evalType);
 
 // Return piecewise linear samples for a value between two times to within
 // a given tolerance.
-TsSamples Ts_Sample(const TsSpline &val,
-                    TsTime startTime,
-                    TsTime endTime,
-                    double timeScale,
-                    double valueScale,
-                    double tolerance);
+TsSplineSamples<GfVec2d> Ts_Sample(const TsSpline &val,
+                                    TsTime startTime,
+                                    TsTime endTime,
+                                    double timeScale,
+                                    double valueScale,
+                                    double tolerance);
 
 // Return the minimum and maximum values of a value over an interval.
 std::pair<VtValue, VtValue> Ts_GetRange(const TsSpline &val, TsTime startTime, TsTime endTime);

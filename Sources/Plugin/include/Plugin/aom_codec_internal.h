@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -45,9 +45,9 @@
  */
 #ifndef AOM_AOM_INTERNAL_AOM_CODEC_INTERNAL_H_
 #define AOM_AOM_INTERNAL_AOM_CODEC_INTERNAL_H_
-#include "Plugin/hioAvif/aom/aom_decoder.h"
-#include "Plugin/hioAvif/aom/aom_encoder.h"
-#include "Plugin/hioAvif/aom/internal/common/args_helper.h"
+#include "../aom_decoder.h"
+#include "../aom_encoder.h"
+#include "common/args_helper.h"
 #include <stdarg.h>
 
 #ifdef __cplusplus
@@ -151,7 +151,8 @@ typedef aom_codec_err_t (*aom_codec_get_si_fn_t)(aom_codec_alg_priv_t *ctx,
  * \retval #AOM_CODEC_OK
  *     The internal state data was deserialized.
  */
-typedef aom_codec_err_t (*aom_codec_control_fn_t)(aom_codec_alg_priv_t *ctx, va_list ap);
+typedef aom_codec_err_t (*aom_codec_control_fn_t)(aom_codec_alg_priv_t *ctx,
+                                                  va_list ap);
 
 /*!\brief codec option setter function pointer prototype
  * This function is used to set a codec option using a key (option name) & value
@@ -185,10 +186,10 @@ typedef const struct aom_codec_ctrl_fn_map {
   aom_codec_control_fn_t fn;
 } aom_codec_ctrl_fn_map_t;
 
-#define CTRL_MAP_END {0, NULL}
+#define CTRL_MAP_END \
+  { 0, NULL }
 
-static AOM_INLINE int at_ctrl_map_end(aom_codec_ctrl_fn_map_t *e)
-{
+static inline int at_ctrl_map_end(aom_codec_ctrl_fn_map_t *e) {
   return e->ctrl_id == 0 && e->fn == NULL;
 }
 
@@ -257,26 +258,27 @@ typedef aom_image_t *(*aom_codec_get_frame_fn_t)(aom_codec_alg_priv_t *ctx,
  * #AOM_MAXIMUM_WORK_BUFFERS external frame
  * buffers.
  */
-typedef aom_codec_err_t (*aom_codec_set_fb_fn_t)(aom_codec_alg_priv_t *ctx,
-                                                 aom_get_frame_buffer_cb_fn_t cb_get,
-                                                 aom_release_frame_buffer_cb_fn_t cb_release,
-                                                 void *cb_priv);
+typedef aom_codec_err_t (*aom_codec_set_fb_fn_t)(
+    aom_codec_alg_priv_t *ctx, aom_get_frame_buffer_cb_fn_t cb_get,
+    aom_release_frame_buffer_cb_fn_t cb_release, void *cb_priv);
 
 typedef aom_codec_err_t (*aom_codec_encode_fn_t)(aom_codec_alg_priv_t *ctx,
                                                  const aom_image_t *img,
                                                  aom_codec_pts_t pts,
                                                  unsigned long duration,
                                                  aom_enc_frame_flags_t flags);
-typedef const aom_codec_cx_pkt_t *(*aom_codec_get_cx_data_fn_t)(aom_codec_alg_priv_t *ctx,
-                                                                aom_codec_iter_t *iter);
+typedef const aom_codec_cx_pkt_t *(*aom_codec_get_cx_data_fn_t)(
+    aom_codec_alg_priv_t *ctx, aom_codec_iter_t *iter);
 
-typedef aom_codec_err_t (*aom_codec_enc_config_set_fn_t)(aom_codec_alg_priv_t *ctx,
-                                                         const aom_codec_enc_cfg_t *cfg);
-typedef aom_fixed_buf_t *(*aom_codec_get_global_headers_fn_t)(aom_codec_alg_priv_t *ctx);
+typedef aom_codec_err_t (*aom_codec_enc_config_set_fn_t)(
+    aom_codec_alg_priv_t *ctx, const aom_codec_enc_cfg_t *cfg);
+typedef aom_fixed_buf_t *(*aom_codec_get_global_headers_fn_t)(
+    aom_codec_alg_priv_t *ctx);
 
-typedef aom_image_t *(*aom_codec_get_preview_frame_fn_t)(aom_codec_alg_priv_t *ctx);
+typedef aom_image_t *(*aom_codec_get_preview_frame_fn_t)(
+    aom_codec_alg_priv_t *ctx);
 
-/*!\brief Decoder algorithm interface interface
+/*!\brief Decoder algorithm interface
  *
  * All decoders \ref MUST expose a variable of this type.
  */
@@ -288,18 +290,21 @@ struct aom_codec_iface {
   aom_codec_destroy_fn_t destroy;     /**< \copydoc ::aom_codec_destroy_fn_t */
   aom_codec_ctrl_fn_map_t *ctrl_maps; /**< \copydoc ::aom_codec_ctrl_fn_map_t */
   struct aom_codec_dec_iface {
-    aom_codec_peek_si_fn_t peek_si;     /**< \copydoc ::aom_codec_peek_si_fn_t */
-    aom_codec_get_si_fn_t get_si;       /**< \copydoc ::aom_codec_get_si_fn_t */
-    aom_codec_decode_fn_t decode;       /**< \copydoc ::aom_codec_decode_fn_t */
-    aom_codec_get_frame_fn_t get_frame; /**< \copydoc ::aom_codec_get_frame_fn_t */
-    aom_codec_set_fb_fn_t set_fb_fn;    /**< \copydoc ::aom_codec_set_fb_fn_t */
+    aom_codec_peek_si_fn_t peek_si; /**< \copydoc ::aom_codec_peek_si_fn_t */
+    aom_codec_get_si_fn_t get_si;   /**< \copydoc ::aom_codec_get_si_fn_t */
+    aom_codec_decode_fn_t decode;   /**< \copydoc ::aom_codec_decode_fn_t */
+    aom_codec_get_frame_fn_t
+        get_frame;                   /**< \copydoc ::aom_codec_get_frame_fn_t */
+    aom_codec_set_fb_fn_t set_fb_fn; /**< \copydoc ::aom_codec_set_fb_fn_t */
   } dec;
   struct aom_codec_enc_iface {
     int cfg_count;
-    const aom_codec_enc_cfg_t *cfgs;        /**< \copydoc ::aom_codec_enc_cfg_t */
-    aom_codec_encode_fn_t encode;           /**< \copydoc ::aom_codec_encode_fn_t */
-    aom_codec_get_cx_data_fn_t get_cx_data; /**< \copydoc ::aom_codec_get_cx_data_fn_t */
-    aom_codec_enc_config_set_fn_t cfg_set;  /**< \copydoc ::aom_codec_enc_config_set_fn_t */
+    const aom_codec_enc_cfg_t *cfgs; /**< \copydoc ::aom_codec_enc_cfg_t */
+    aom_codec_encode_fn_t encode;    /**< \copydoc ::aom_codec_encode_fn_t */
+    aom_codec_get_cx_data_fn_t
+        get_cx_data; /**< \copydoc ::aom_codec_get_cx_data_fn_t */
+    aom_codec_enc_config_set_fn_t
+        cfg_set; /**< \copydoc ::aom_codec_enc_config_set_fn_t */
     aom_codec_get_global_headers_fn_t
         get_glob_hdrs; /**< \copydoc ::aom_codec_get_global_headers_fn_t */
     aom_codec_get_preview_frame_fn_t
@@ -340,26 +345,27 @@ struct aom_codec_pkt_list {
   struct aom_codec_cx_pkt pkts[1];
 };
 
-#define aom_codec_pkt_list_decl(n) \
-  union { \
-    struct aom_codec_pkt_list head; \
-    struct { \
-      struct aom_codec_pkt_list head; \
+#define aom_codec_pkt_list_decl(n)     \
+  union {                              \
+    struct aom_codec_pkt_list head;    \
+    struct {                           \
+      struct aom_codec_pkt_list head;  \
       struct aom_codec_cx_pkt pkts[n]; \
-    } alloc; \
+    } alloc;                           \
   }
 
 #define aom_codec_pkt_list_init(m) \
-  (m)->alloc.head.cnt = 0, \
+  (m)->alloc.head.cnt = 0,         \
   (m)->alloc.head.max = sizeof((m)->alloc.pkts) / sizeof((m)->alloc.pkts[0])
 
-int aom_codec_pkt_list_add(struct aom_codec_pkt_list *, const struct aom_codec_cx_pkt *);
+int aom_codec_pkt_list_add(struct aom_codec_pkt_list *,
+                           const struct aom_codec_cx_pkt *);
 
-const aom_codec_cx_pkt_t *aom_codec_pkt_list_get(struct aom_codec_pkt_list *list,
-                                                 aom_codec_iter_t *iter);
+const aom_codec_cx_pkt_t *aom_codec_pkt_list_get(
+    struct aom_codec_pkt_list *list, aom_codec_iter_t *iter);
 
-#include <setjmp.h>
 #include <stdio.h>
+#include <setjmp.h>
 
 struct aom_internal_error_info {
   aom_codec_err_t error_code;
@@ -371,16 +377,38 @@ struct aom_internal_error_info {
 
 #define CLANG_ANALYZER_NORETURN
 #if defined(__has_feature)
-#  if __has_feature(attribute_analyzer_noreturn)
-#    undef CLANG_ANALYZER_NORETURN
-#    define CLANG_ANALYZER_NORETURN __attribute__((analyzer_noreturn))
-#  endif
+#if __has_feature(attribute_analyzer_noreturn)
+#undef CLANG_ANALYZER_NORETURN
+#define CLANG_ANALYZER_NORETURN __attribute__((analyzer_noreturn))
+#endif
 #endif
 
+// Tells the compiler to perform `printf` format string checking if the
+// compiler supports it; see the 'format' attribute in
+// <https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html>.
+#define LIBAOM_FORMAT_PRINTF(string_index, first_to_check)
+#if defined(__has_attribute)
+#if __has_attribute(format)
+#undef LIBAOM_FORMAT_PRINTF
+#define LIBAOM_FORMAT_PRINTF(string_index, first_to_check) \
+  __attribute__((__format__(__printf__, string_index, first_to_check)))
+#endif
+#endif
+
+// Records the error code and error message. Does not call longjmp().
+void aom_set_error(struct aom_internal_error_info *info, aom_codec_err_t error,
+                   const char *fmt, ...) LIBAOM_FORMAT_PRINTF(3, 4);
+
 void aom_internal_error(struct aom_internal_error_info *info,
-                        aom_codec_err_t error,
-                        const char *fmt,
-                        ...) CLANG_ANALYZER_NORETURN;
+                        aom_codec_err_t error, const char *fmt, ...)
+    LIBAOM_FORMAT_PRINTF(3, 4) CLANG_ANALYZER_NORETURN;
+
+// Calls aom_internal_error() with the error code and error message in `src`.
+// `info` and `src` must not point to the same struct, i.e., self copy is
+// prohibited.
+void aom_internal_error_copy(struct aom_internal_error_info *info,
+                             const struct aom_internal_error_info *src)
+    CLANG_ANALYZER_NORETURN;
 
 void aom_merge_corrupted_flag(int *corrupted, int value);
 #ifdef __cplusplus

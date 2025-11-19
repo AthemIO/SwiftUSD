@@ -6,25 +6,26 @@
 //
 #include "Glf/diagnostic.h"
 
-#include <boost/python/class.hpp>
-#include <boost/python/def.hpp>
-
-using namespace boost::python;
+#include "pxr/external/boost/python/def.hpp"
+#include "pxr/external/boost/python/class.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+using namespace pxr_boost::python;
+
 void wrapDiagnostic()
-{
-  def("RegisterDefaultDebugOutputMessageCallback", &GlfRegisterDefaultDebugOutputMessageCallback);
+{    
+    def("RegisterDefaultDebugOutputMessageCallback",
+        &GlfRegisterDefaultDebugOutputMessageCallback);
 
-  class_<GlfGLQueryObject, boost::noncopyable>("GLQueryObject")
-      .def("Begin", &GlfGLQueryObject::Begin)
-      .def("BeginPrimitivesGenerated", &GlfGLQueryObject::BeginPrimitivesGenerated)
-      .def("BeginTimeElapsed", &GlfGLQueryObject::BeginTimeElapsed)
-      .def("BeginSamplesPassed", &GlfGLQueryObject::BeginSamplesPassed)
-      .def("End", &GlfGLQueryObject::End)
-      .def("GetResult", &GlfGLQueryObject::GetResult)
-      .def("GetResultNoWait", &GlfGLQueryObject::GetResultNoWait)
+    class_<GlfGLQueryObject, noncopyable>("GLQueryObject")
+        .def("Begin", &GlfGLQueryObject::Begin)
+        .def("BeginPrimitivesGenerated", &GlfGLQueryObject::BeginPrimitivesGenerated)
+        .def("BeginTimeElapsed", &GlfGLQueryObject::BeginTimeElapsed)
+        .def("BeginSamplesPassed", &GlfGLQueryObject::BeginSamplesPassed)
+        .def("End", &GlfGLQueryObject::End)
+        .def("GetResult", &GlfGLQueryObject::GetResult)
+        .def("GetResultNoWait", &GlfGLQueryObject::GetResultNoWait)
 
-      ;
+        ;
 }

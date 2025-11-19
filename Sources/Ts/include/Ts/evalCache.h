@@ -9,13 +9,14 @@
 #define PXR_BASE_TS_EVAL_CACHE_H
 
 #include "Gf/gfMath.h"
+#include "Gf/quatd.h"
+#include "Gf/quatf.h"
 #include "Ts/keyFrameUtils.h"
+#include "Ts/knotData.h"
 #include "Ts/mathUtils.h"
 #include "Ts/types.h"
 #include "Vt/value.h"
 #include "pxr/pxrns.h"
-
-#include "Tf/tfImpl.h"
 
 #include <type_traits>
 

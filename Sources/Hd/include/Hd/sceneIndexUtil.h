@@ -36,10 +36,11 @@ extern TfEnvSetting<bool> HD_USE_ENCAPSULATING_SCENE_INDICES;
 /// scene index is the given encapsulated scene index.
 ///
 HD_API
-HdSceneIndexBaseRefPtr HdMakeEncapsulatingSceneIndex(
+HdSceneIndexBaseRefPtr
+HdMakeEncapsulatingSceneIndex(
     const std::vector<HdSceneIndexBaseRefPtr> &inputScenes,
     HdSceneIndexBaseRefPtr const &encapsulatedScene);
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_IMAGING_HD_SCENE_INDEX_UTIL_H
+#endif // PXR_IMAGING_HD_SCENE_INDEX_UTIL_H

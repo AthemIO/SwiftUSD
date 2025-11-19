@@ -8,7 +8,7 @@
 #include "Work/detachedTask.h"
 #include "Work/dispatcher.h"
 #include "Work/threadLimits.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include <atomic>
 #include <chrono>

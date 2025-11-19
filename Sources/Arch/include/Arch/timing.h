@@ -11,20 +11,22 @@
 /// \ingroup group_arch_SystemFunctions
 /// High-resolution, low-cost timing routines.
 
+#include "pxr/pxrns.h"
 #include "Arch/api.h"
 #include "Arch/defines.h"
 #include "Arch/inttypes.h"
-#include "pxr/pxrns.h"
 
 /// \addtogroup group_arch_SystemFunctions
 ///@{
 
 #if defined(ARCH_OS_LINUX) && defined(ARCH_CPU_INTEL)
-#  include <x86intrin.h>
+#include <x86intrin.h>
+#elif defined(ARCH_OS_WASM_VM)
+#include <emscripten.h>
 #elif defined(ARCH_OS_DARWIN)
-#  include <mach/mach_time.h>
+#include <mach/mach_time.h>
 #elif defined(ARCH_OS_WINDOWS)
-#  include <intrin.h>
+#include <intrin.h>
 #endif
 
 #include <algorithm>
@@ -41,58 +43,71 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// timing routines varies, but on all systems, it is well under one
 /// microsecond.  The cost of this routine is in the 10s-to-100s of nanoseconds
 /// on GHz class machines.
-inline uint64_t ArchGetTickTime()
+inline uint64_t
+ArchGetTickTime()
 {
 #if defined(ARCH_OS_DARWIN)
-  // On Darwin we'll use mach_absolute_time().
-  return mach_absolute_time();
+    // On Darwin we'll use mach_absolute_time().
+    return mach_absolute_time();
 #elif defined(ARCH_CPU_INTEL)
-  // On Intel we'll use the rdtsc instruction.
-  return __rdtsc();
-#elif defined(ARCH_CPU_ARM)
-  uint64_t result;
-  __asm __volatile("mrs	%0, CNTVCT_EL0" : "=&r"(result));
-  return result;
+    // On Intel we'll use the rdtsc instruction.
+    return __rdtsc();
+#elif defined (ARCH_CPU_ARM)
+    uint64_t result;
+    #if defined(ARCH_COMPILER_MSVC)
+    // MSVC does not support inline assembly on ARM64 platforms
+    // 0x5F02 == ARM64_CNTVCT - manually calculated value avoids <windows.h>
+    result = _ReadStatusReg(0x5F02);
+    #else
+    __asm __volatile("mrs	%0, CNTVCT_EL0" : "=&r" (result));
+    #endif
+    return result;
+#elif defined(ARCH_OS_WASM_VM)
+    return static_cast<int64_t>(emscripten_get_now() * 1e+6);
 #else
-#  error Unknown architecture.
+#error Unknown architecture.
 #endif
 }
+
 
 /// Get a "start" tick time for measuring an interval of time, followed by a
 /// later call to ArchGetStopTickTime().  Or see ArchIntervalTimer.  This is
 /// like ArchGetTickTime but it includes compiler & CPU fencing & reordering
 /// constraints in an attempt to get the best measurement possible.
-inline uint64_t ArchGetStartTickTime()
+inline uint64_t
+ArchGetStartTickTime()
 {
-  uint64_t t;
-#if defined(ARCH_OS_DARWIN)
-  return ArchGetTickTime();
-#elif defined(ARCH_CPU_ARM)
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-  asm volatile("mrs %0, cntvct_el0" : "=r"(t));
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-#elif defined(ARCH_COMPILER_MSVC)
-  _mm_lfence();
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-  t = __rdtsc();
-  _mm_lfence();
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-#elif defined(ARCH_CPU_INTEL) && (defined(ARCH_COMPILER_CLANG) || defined(ARCH_COMPILER_GCC))
-  // Prevent reorders by the compiler.
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-  asm volatile(
-      "lfence\n\t"
-      "rdtsc\n\t"
-      "shl $32, %%rdx\n\t"
-      "or %%rdx, %0\n\t"
-      "lfence"
-      : "=a"(t)
-      :
-      // rdtsc writes rdx
-      // shl modifies cc flags
-      : "rdx", "cc");
+    uint64_t t;
+#if defined (ARCH_OS_DARWIN) || defined(ARCH_OS_WASM_VM) || \
+    (defined (ARCH_CPU_ARM) && defined (ARCH_COMPILER_MSVC))
+    return ArchGetTickTime();
+#elif defined (ARCH_CPU_ARM)
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+    asm volatile("mrs %0, cntvct_el0" : "=r"(t));
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+#elif defined (ARCH_COMPILER_MSVC)
+    _mm_lfence();
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+    t = __rdtsc();
+    _mm_lfence();
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+#elif defined(ARCH_CPU_INTEL) && \
+    (defined(ARCH_COMPILER_CLANG) || defined(ARCH_COMPILER_GCC))
+    // Prevent reorders by the compiler.
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+    asm volatile(
+        "lfence\n\t"
+        "rdtsc\n\t"
+        "shl $32, %%rdx\n\t"
+        "or %%rdx, %0\n\t"
+        "lfence"
+        : "=a"(t)
+        :
+        // rdtsc writes rdx
+        // shl modifies cc flags
+        : "rdx", "cc");
 #else
-#  error "Unsupported architecture."
+#error "Unsupported architecture."
 #endif
   return t;
 }
@@ -101,149 +116,144 @@ inline uint64_t ArchGetStartTickTime()
 /// ArchGetStartTickTime() or ArchIntervalTimer.  This is like ArchGetTickTime
 /// but it includes compiler & CPU fencing & reordering constraints in an
 /// attempt to get the best measurement possible.
-inline uint64_t ArchGetStopTickTime()
+inline uint64_t
+ArchGetStopTickTime()
 {
-  uint64_t t;
-#if defined(ARCH_OS_DARWIN)
-  return ArchGetTickTime();
-#elif defined(ARCH_CPU_ARM)
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-  asm volatile("mrs %0, cntvct_el0" : "=r"(t));
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-#elif defined(ARCH_COMPILER_MSVC)
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-  unsigned aux;
-  t = __rdtscp(&aux);
-  _mm_lfence();
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-#elif defined(ARCH_CPU_INTEL) && (defined(ARCH_COMPILER_CLANG) || defined(ARCH_COMPILER_GCC))
-  std::atomic_signal_fence(std::memory_order_seq_cst);
-  asm volatile(
-      "rdtscp\n\t"
-      "shl $32, %%rdx\n\t"
-      "or %%rdx, %0\n\t"
-      "lfence"
-      : "=a"(t)
-      :
-      // rdtscp writes rcx & rdx
-      // shl modifies cc flags
-      : "rcx", "rdx", "cc");
+    uint64_t t;
+#if defined (ARCH_OS_DARWIN) || defined(ARCH_OS_WASM_VM) || \
+    (defined (ARCH_CPU_ARM) && defined (ARCH_COMPILER_MSVC))
+    return ArchGetTickTime();
+#elif defined (ARCH_CPU_ARM)
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+    asm volatile("mrs %0, cntvct_el0" : "=r"(t));
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+#elif defined (ARCH_COMPILER_MSVC)
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+    unsigned aux;
+    t = __rdtscp(&aux);
+    _mm_lfence();
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+#elif defined(ARCH_CPU_INTEL) && \
+    (defined(ARCH_COMPILER_CLANG) || defined(ARCH_COMPILER_GCC))
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+    asm volatile(
+        "rdtscp\n\t"
+        "shl $32, %%rdx\n\t"
+        "or %%rdx, %0\n\t"
+        "lfence"
+        : "=a"(t)
+        :
+        // rdtscp writes rcx & rdx
+        // shl modifies cc flags
+        : "rcx", "rdx", "cc");
 #else
-#  error "Unsupported architecture."
+#error "Unsupported architecture."
 #endif
   return t;
 }
 
-#if defined(doxygen) || (!defined(ARCH_OS_DARWIN) && defined(ARCH_CPU_INTEL) && \
-                         (defined(ARCH_COMPILER_CLANG) || defined(ARCH_COMPILER_GCC)))
+#if defined (doxygen) ||                                                       \
+    (!defined(ARCH_OS_DARWIN) && defined(ARCH_CPU_INTEL) &&                    \
+     (defined(ARCH_COMPILER_CLANG) || defined(ARCH_COMPILER_GCC)))
 
 /// A simple timer class for measuring an interval of time using the
 /// ArchTickTimer facilities.
-struct ArchIntervalTimer {
-  /// Construct a timer and start timing if \p start is true.
-  explicit ArchIntervalTimer(bool start = true) : _started(start)
-  {
-    if (_started) {
-      Start();
+struct ArchIntervalTimer
+{
+    /// Construct a timer and start timing if \p start is true.
+    explicit ArchIntervalTimer(bool start=true)
+        : _started(start) {
+        if (_started) {
+            Start();
+        }
     }
-  }
 
-  /// Start the timer, or reset the start time if it has already been started.
-  void Start()
-  {
-    _started = true;
-    std::atomic_signal_fence(std::memory_order_seq_cst);
-    asm volatile(
-        "lfence\n\t"
-        "rdtsc\n\t"
-        "lfence"
-        : "=a"(_startLow), "=d"(_startHigh)::);
-  }
-
-  /// Return true if this timer is started.
-  bool IsStarted() const
-  {
-    return _started;
-  }
-
-  /// Return this timer's start time, or 0 if it hasn't been started.
-  uint64_t GetStartTicks() const
-  {
-    return (uint64_t(_startHigh) << 32) + _startLow;
-  }
-
-  /// Read and return the current time.
-  uint64_t GetCurrentTicks()
-  {
-    return ArchGetStopTickTime();
-  }
-
-  /// Read the current time and return the difference between it and the start
-  /// time.  If the timer was not started, return 0.
-  uint64_t GetElapsedTicks()
-  {
-    if (!_started) {
-      return 0;
+    /// Start the timer, or reset the start time if it has already been started.
+    void Start() {
+        _started = true;
+        std::atomic_signal_fence(std::memory_order_seq_cst);
+        asm volatile(
+            "lfence\n\t"
+            "rdtsc\n\t"
+            "lfence"
+            : "=a"(_startLow), "=d"(_startHigh) :: );
     }
-    uint32_t stopLow, stopHigh;
-    std::atomic_signal_fence(std::memory_order_seq_cst);
-    asm volatile(
-        "rdtscp\n\t"
-        "lfence"
-        : "=a"(stopLow), "=d"(stopHigh)
-        :
-        // rdtscp writes rcx
-        : "rcx");
-    return ((uint64_t(stopHigh) << 32) + stopLow) - ((uint64_t(_startHigh) << 32) + _startLow);
-  }
 
- private:
-  bool _started = false;
-  uint32_t _startLow = 0, _startHigh = 0;
+    /// Return true if this timer is started.
+    bool IsStarted() const {
+        return _started;
+    }
+
+    /// Return this timer's start time, or 0 if it hasn't been started.
+    uint64_t GetStartTicks() const {
+        return (uint64_t(_startHigh) << 32) + _startLow;
+    }
+ 
+    /// Read and return the current time.
+    uint64_t GetCurrentTicks() {
+        return ArchGetStopTickTime();
+    }
+
+    /// Read the current time and return the difference between it and the start
+    /// time.  If the timer was not started, return 0.
+    uint64_t GetElapsedTicks() {
+        if (!_started) {
+            return 0;
+        }
+        uint32_t stopLow, stopHigh;
+        std::atomic_signal_fence(std::memory_order_seq_cst);
+        asm volatile(
+            "rdtscp\n\t"
+            "lfence"
+            : "=a"(stopLow), "=d"(stopHigh)
+            :
+            // rdtscp writes rcx
+            : "rcx");
+        return ((uint64_t(stopHigh) << 32) + stopLow) -
+            ((uint64_t(_startHigh) << 32) + _startLow);
+    }
+private:
+    bool _started = false;
+    uint32_t _startLow = 0, _startHigh = 0;
 };
 
 #else
 
-struct ArchIntervalTimer {
-  explicit ArchIntervalTimer(bool start = true) : _started(start)
-  {
-    if (_started) {
-      _startTicks = ArchGetStartTickTime();
+struct ArchIntervalTimer
+{
+    explicit ArchIntervalTimer(bool start=true)
+        : _started(start) {
+        if (_started) {
+            _startTicks = ArchGetStartTickTime();
+        }
     }
-  }
 
-  void Start()
-  {
-    _started = true;
-    _startTicks = ArchGetStartTickTime();
-  }
-
-  bool IsStarted() const
-  {
-    return _started;
-  }
-
-  uint64_t GetStartTicks() const
-  {
-    return _startTicks;
-  }
-
-  uint64_t GetCurrentTicks()
-  {
-    return ArchGetStopTickTime();
-  }
-
-  uint64_t GetElapsedTicks()
-  {
-    if (!_started) {
-      return 0;
+    void Start() {
+        _started = true;
+        _startTicks = ArchGetStartTickTime();
     }
-    return ArchGetStopTickTime() - _startTicks;
-  }
 
- private:
-  bool _started = false;
-  uint64_t _startTicks;
+    bool IsStarted() const {
+        return _started;
+    }
+
+    uint64_t GetStartTicks() const {
+        return _startTicks;
+    }
+
+    uint64_t GetCurrentTicks() {
+        return ArchGetStopTickTime();
+    }
+
+    uint64_t GetElapsedTicks() {
+        if (!_started) {
+            return 0;
+        }
+        return ArchGetStopTickTime() - _startTicks;
+    }
+private:
+    bool _started = false;
+    uint64_t _startTicks;
 };
 
 #endif
@@ -265,6 +275,7 @@ uint64_t ArchGetTickQuantum();
 /// as measured at startup time.
 ARCH_API
 uint64_t ArchGetIntervalTimerTickOverhead();
+
 
 /// Convert a duration measured in "ticks", as returned by
 /// \c ArchGetTickTime(), to nanoseconds.
@@ -290,17 +301,16 @@ double ArchTicksToSeconds(uint64_t nTicks);
 /// \c ArchGetTickTime().
 ARCH_API
 uint64_t ArchSecondsToTicks(double seconds);
-
+    
 /// Get nanoseconds per tick. Useful when converting ticks obtained from
 /// \c ArchTickTime()
 ARCH_API
 double ArchGetNanosecondsPerTick();
 
 ARCH_API
-uint64_t Arch_MeasureExecutionTime(uint64_t maxTicks,
-                                   bool *reachedConsensus,
-                                   void const *m,
-                                   uint64_t (*callM)(void const *, int));
+uint64_t
+Arch_MeasureExecutionTime(uint64_t maxTicks, bool *reachedConsensus,
+                          void const *m, uint64_t (*callM)(void const *, int));
 
 /// Run \p fn repeatedly attempting to determine a consensus fastest execution
 /// time with low noise, for up to \p maxTicks, then return the consensus
@@ -308,35 +318,38 @@ uint64_t Arch_MeasureExecutionTime(uint64_t maxTicks,
 /// a best estimate instead.  If \p reachedConsensus is not null, set it to
 /// indicate whether or not a consensus was reached.  This function ignores \p
 /// maxTicks greater than 5 billion ticks and runs for up to 5 billion ticks
-/// instead. The \p fn will run for an indeterminate number of times, so it
-/// should be side-effect free.  Also, it should do essentially the same work
+/// instead. The \p fn will run for an indeterminate number of times, so it 
+/// should be side-effect free.  Also, it should do essentially the same work 
 /// on every invocation so that timing its execution makes sense.
-template<class Fn>
-uint64_t ArchMeasureExecutionTime(Fn const &fn,
-                                  uint64_t maxTicks = 1e7,
-                                  bool *reachedConsensus = nullptr)
+template <class Fn>
+uint64_t
+ArchMeasureExecutionTime(
+    Fn const &fn,
+    uint64_t maxTicks = 1e7,
+    bool *reachedConsensus = nullptr)
 {
-  auto measureN = [&fn](int nTimes) -> uint64_t {
-    ArchIntervalTimer iTimer;
-    for (int i = nTimes; i--;) {
-      std::atomic_signal_fence(std::memory_order_seq_cst);
-      (void)fn();
-      std::atomic_signal_fence(std::memory_order_seq_cst);
-    }
-    return iTimer.GetElapsedTicks();
-  };
+    auto measureN = [&fn](int nTimes) -> uint64_t {
+        ArchIntervalTimer iTimer;
+        for (int i = nTimes; i--; ) {
+            std::atomic_signal_fence(std::memory_order_seq_cst);
+            (void)fn();
+            std::atomic_signal_fence(std::memory_order_seq_cst);
+        }
+        return iTimer.GetElapsedTicks();
+    };
 
-  using MeasureNType = decltype(measureN);
-
-  return Arch_MeasureExecutionTime(
-      maxTicks,
-      reachedConsensus,
-      static_cast<void const *>(&measureN),
-      [](void const *mN, int nTimes) { return (*static_cast<MeasureNType const *>(mN))(nTimes); });
+    using MeasureNType = decltype(measureN);
+    
+    return Arch_MeasureExecutionTime(
+        maxTicks, reachedConsensus,
+        static_cast<void const *>(&measureN),
+        [](void const *mN, int nTimes) {
+            return (*static_cast<MeasureNType const *>(mN))(nTimes);
+        });
 }
 
 ///@}
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_BASE_ARCH_TIMING_H
+#endif // PXR_BASE_ARCH_TIMING_H

@@ -7,7 +7,7 @@
 
 #include "Usd/crateFile.h"
 #include "Usd/integerCoding.h"
-#include "pxr/pxrns.h"
+#include "pxr/pxr.h"
 
 #include "Ar/asset.h"
 #include "Ar/resolvedPath.h"
@@ -62,7 +62,7 @@
 #include "Tf/stringUtils.h"
 #include "Tf/token.h"
 #include "Tf/type.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 #include "Vt/dictionary.h"
 #include "Vt/value.h"
 #include "Work/dispatcher.h"
@@ -678,12 +678,12 @@ template<class FileMappingPtr> struct _MmapStream {
 
       if (ARCH_UNLIKELY(!inRange)) {
         ptrdiff_t offset = _cur - mapStart;
-        TF_THROW(UsdReadOutOfBoundsError,
-                 TfStringPrintf("Read out-of-bounds: %zd bytes at offset %td in "
-                                "a mapping of length %zd",
-                                nBytes,
-                                offset,
-                                mapLen));
+        PXR_TF_THROW(UsdReadOutOfBoundsError,
+                     TfStringPrintf("Read out-of-bounds: %zd bytes at offset %td in "
+                                    "a mapping of length %zd",
+                                    nBytes,
+                                    offset,
+                                    mapLen));
       }
     }
 
