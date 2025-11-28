@@ -21,7 +21,7 @@
 #include "Vt/array.h"
 #include "Vt/value.h"
 #include "Work/dispatcher.h"
-#include "Ar/ar.h"
+#include "Ar/Ar.h"
 #include "Ar/asset.h"
 #include "Ar/writableAsset.h"
 #include "Sdf/assetPath.h"
@@ -205,7 +205,7 @@ enum class TypeEnum {
 #define xx(ENUMNAME, ENUMVALUE, _unused1, _unused2)     \
     ENUMNAME = ENUMVALUE,
 
-#include "crateDataTypes.h"
+#include "Sdf/crateDataTypes.h"
 
 #undef xx
     NumTypes

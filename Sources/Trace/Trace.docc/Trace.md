@@ -22,7 +22,7 @@ Instrumentation is done by adding `TRACE` macros to code.
 For example:
 
 ```cpp
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 // Typical usage.
 void Foo()

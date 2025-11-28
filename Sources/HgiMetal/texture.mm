@@ -24,7 +24,7 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const & desc)
     MTLTextureUsage usage = MTLTextureUsageShaderRead;
 
     if (desc.initialData && desc.pixelsByteSize > 0) {
-        resourceOptions = hgi->GetCapabilities()->preferredStorageMode;
+        resourceOptions = hgi->GetCapabilities()->defaultStorageMode;
     }
 
     MTLPixelFormat mtlFormat = HgiMetalConversions::GetPixelFormat(
@@ -289,10 +289,10 @@ HgiMetalTexture::GetTextureId() const
     return _textureId;
 }
 
-void 
+HgiTextureUsage
 HgiMetalTexture::SubmitLayoutChange(HgiTextureUsage newLayout)
 {
-    return;
+    return 0;
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

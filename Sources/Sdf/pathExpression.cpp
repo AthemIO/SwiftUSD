@@ -16,7 +16,7 @@
 #include "Vt/arrayEdit.h"
 #include "Vt/value.h"
 
-#include "predicateExpressionParser.h"
+#include "Sdf/predicateExpressionParser.h"
 
 #include <memory>
 

@@ -11,8 +11,12 @@
 // so we duplicate this file and compile only the mm one for all apple
 // platforms.
 #if defined(__APPLE__)
+// Include Hgi headers first to ensure base class is properly defined
+// before derived classes that use 'override'
+#  include "Hgi/hgi.h"
 #  include "Hgi/hgiImpl.h"
 #  include "Hgi/tokens.h"
+#  include "Vt/value.h"
 #  include "HgiInterop/hgiInteropImpl.h"
 
 #  if defined(PXR_GL_SUPPORT_ENABLED)

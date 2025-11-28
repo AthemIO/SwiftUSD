@@ -31,7 +31,7 @@
 #include "Sdf/layer.h"
 #include "Tf/fileUtils.h"
 #include "Tf/registryManager.h"
-#include "Usd/usdaFileFormat.h"
+#include "Sdf/usdaFileFormat.h"
 #include <pxr/pxrns.h>
 
 #include <draco/compression/decode.h>
@@ -159,7 +159,7 @@ bool UsdDracoFileFormat::WriteToString(const SdfLayer &layer,
 {
   // Draco format can only describe a subset of USD content, so falling back
   // to USDA file format instead.
-  return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
+  return SdfFileFormat::FindById(SdfUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
 }
 
 bool UsdDracoFileFormat::WriteToStream(const SdfSpecHandle &spec,
@@ -168,7 +168,7 @@ bool UsdDracoFileFormat::WriteToStream(const SdfSpecHandle &spec,
 {
   // Draco format can only describe a subset of USD content, so falling back
   // to USDA file format instead.
-  return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
+  return SdfFileFormat::FindById(SdfUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

@@ -27,21 +27,20 @@
 #include "Tf/token.h"
 #include <pxr/pxrns.h>
 
-#include "Ndr/declare.h"
-#include "Ndr/discoveryPlugin.h"
-#include "Ndr/parserPlugin.h"
+#include "Sdr/declare.h"
+#include "Sdr/discoveryPlugin.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-class UsdShadersDiscoveryPlugin : public NdrDiscoveryPlugin {
+class UsdShadersDiscoveryPlugin : public SdrDiscoveryPlugin {
  public:
   UsdShadersDiscoveryPlugin() = default;
 
   ~UsdShadersDiscoveryPlugin() override = default;
 
-  virtual NdrNodeDiscoveryResultVec DiscoverNodes(const Context &context) override;
+  virtual SdrShaderNodeDiscoveryResultVec DiscoverShaderNodes(const Context &context) override;
 
-  virtual const NdrStringVec &GetSearchURIs() const override;
+  virtual const SdrStringVec &GetSearchURIs() const override;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

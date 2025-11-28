@@ -1,6 +1,11 @@
 {
   "permissions": {
-    "allow": ["Bash(swift bundler run:*)", "WebSearch"],
+    "allow": [
+      "Bash(swift bundler run:*)",
+      "WebSearch",
+      "Bash(echo:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ],
     "deny": [],
     "ask": []
   }

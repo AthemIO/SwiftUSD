@@ -574,6 +574,7 @@ let package = Package(
         .target(name: "Vt"),
         .target(name: "Ar"),
         .target(name: "Pegtl"),
+        .target(name: "Ts"),
       ],
       resources: [
         .process("Resources")
@@ -1364,6 +1365,7 @@ let package = Package(
         .target(name: "Trace"),
         .target(name: "Garch"),
         .target(name: "Hgi"),
+        .target(name: "Hf"),
         .target(name: "Vt"),
       ],
       resources: [
@@ -1556,6 +1558,7 @@ let package = Package(
         .target(name: "Tf"),
         .target(name: "Trace"),
         .target(name: "HdMtlx"),
+        .product(name: "MaterialX", package: "MetaverseKit"),
       ],
       resources: [
         .copy("shaders"),

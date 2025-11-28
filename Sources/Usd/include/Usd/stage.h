@@ -25,7 +25,7 @@
 #include "Tf/type.h"
 #include "Tf/weakBase.h"
 
-#include "Ar/ar.h"
+#include "Ar/Ar.h"
 #include "Ar/notice.h"
 #include "Sdf/declareHandles.h"
 #include "Sdf/notice.h"

@@ -4,10 +4,16 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
+#include "Arch/defines.h"
+
+// HgiInteropVulkan requires HgiVulkan which is only available on
+// platforms with Vulkan support (Linux, Windows). Exclude on macOS/iOS.
+#if !defined(ARCH_OS_DARWIN)
+
+#include "pxr/pxrns.h"
 #include "Garch/glApi.h"
 
 #include "HgiVulkan/commandQueue.h"
-#include "pxr/pxrns.h"
 #include "Hgi/blitCmdsOps.h"
 #include "HgiVulkan/hgi.h"
 #include "HgiInterop/vulkan.h"
@@ -839,3 +845,5 @@ HgiInteropVulkan::CompositeToInterop(
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // !defined(ARCH_OS_DARWIN)

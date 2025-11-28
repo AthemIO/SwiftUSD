@@ -886,9 +886,8 @@ ShaderStageData::AccumulateTextureBindings(
                 samplerSection,
                 textures[i].dimensions,
                 textures[i].format,
-                textures[i].textureType == HgiShaderTextureTypeArrayTexture,
+                textures[i].textureType,
                 textures[i].arraySize,
-                textures[i].textureType == HgiShaderTextureTypeShadowTexture,
                 textures[i].writable,
                 std::string());
 

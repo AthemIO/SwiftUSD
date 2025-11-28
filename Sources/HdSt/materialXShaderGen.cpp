@@ -9,14 +9,14 @@
 #include "HdMtlx/combinedMtlxVersion.h"
 #include "Tf/stringUtils.h"
 
-#include <MaterialXCore/Value.h>
-#include <MaterialXGenShader/Shader.h>
-#include <MaterialXGenShader/ShaderGenerator.h>
-#include <MaterialXGenShader/Syntax.h>
-#include <MaterialXGenGlsl/Nodes/SurfaceNodeGlsl.h>
-#include <MaterialXGenMsl/Nodes/SurfaceNodeMsl.h>
-#include <MaterialXGenMsl/MslResourceBindingContext.h>
-#include <MaterialXGenMsl/MslShaderGenerator.h>
+#include <MaterialX/MXCoreValue.h>
+#include <MaterialX/MXGenShaderShader.h>
+#include <MaterialX/MXGenShaderShaderGenerator.h>
+#include <MaterialX/MXGenShaderSyntax.h>
+#include <MaterialX/MXGenGlslSurfaceNodeGlsl.h>
+#include <MaterialX/MXGenMslSurfaceNodeMsl.h>
+#include <MaterialX/MXGenMslMslResourceBindingContext.h>
+#include <MaterialX/MXGenMslMslShaderGenerator.h>
 
 namespace mx = MaterialX;
 

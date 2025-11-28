@@ -77,8 +77,6 @@
 #include <Sdf/spec.h>
 #include <Sdf/specType.h>
 #include <Sdf/subLayerListEditor.h>
-#include <Sdf/textFileFormat.h>
-#include <Sdf/textFileFormat.tab.h>
 #include <Sdf/textParserContext.h>
 #include <Sdf/timeCode.h>
 #include <Sdf/tokens.h>

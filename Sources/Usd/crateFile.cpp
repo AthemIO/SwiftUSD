@@ -62,7 +62,7 @@
 #include "Tf/stringUtils.h"
 #include "Tf/token.h"
 #include "Tf/type.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 #include "Vt/dictionary.h"
 #include "Vt/value.h"
 #include "Work/dispatcher.h"
@@ -170,18 +170,6 @@ static inline int64_t WriteToAsset(ArWritableAsset *asset,
   return nwritten;
 }
 
-/// \class UsdReadOutOfBoundsError
-///
-/// Usd throws this exception when code attempts to read
-/// memory outside of the allocated range.
-class UsdReadOutOfBoundsError : public TfBaseException {
- public:
-  using TfBaseException::TfBaseException;
-  USD_API virtual ~UsdReadOutOfBoundsError() override;
-};
-
-UsdReadOutOfBoundsError::~UsdReadOutOfBoundsError() {}
-
 namespace Usd_CrateFile {
 // Metafunction that determines if a T instance can be read/written by simple
 // bitwise copy.
@@ -194,6 +182,18 @@ template<class T> struct _IsBitwiseReadWrite {
 }  // namespace Usd_CrateFile
 
 namespace {
+
+/// \class UsdReadOutOfBoundsError
+///
+/// Usd throws this exception when code attempts to read
+/// memory outside of the allocated range.
+class UsdReadOutOfBoundsError : public TfBaseException {
+ public:
+  using TfBaseException::TfBaseException;
+  virtual ~UsdReadOutOfBoundsError() override;
+};
+
+UsdReadOutOfBoundsError::~UsdReadOutOfBoundsError() {}
 
 // We use type char and a deleter for char[] instead of just using
 // type char[] due to a (now fixed) bug in libc++ in LLVM.  See
@@ -678,7 +678,7 @@ template<class FileMappingPtr> struct _MmapStream {
 
       if (ARCH_UNLIKELY(!inRange)) {
         ptrdiff_t offset = _cur - mapStart;
-        TF_THROW(UsdReadOutOfBoundsError,
+        PXR_TF_THROW(UsdReadOutOfBoundsError,
                  TfStringPrintf("Read out-of-bounds: %zd bytes at offset %td in "
                                 "a mapping of length %zd",
                                 nBytes,

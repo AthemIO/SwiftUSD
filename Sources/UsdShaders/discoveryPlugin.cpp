@@ -54,15 +54,15 @@ static std::string _GetShaderResourcePath(char const *resourceName = "")
   return path;
 }
 
-const NdrStringVec &UsdShadersDiscoveryPlugin::GetSearchURIs() const
+const SdrStringVec &UsdShadersDiscoveryPlugin::GetSearchURIs() const
 {
-  static const NdrStringVec searchPaths{_GetShaderResourcePath()};
+  static const SdrStringVec searchPaths{_GetShaderResourcePath()};
   return searchPaths;
 }
 
-NdrNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverNodes(const Context &context)
+SdrShaderNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverShaderNodes(const Context &context)
 {
-  NdrNodeDiscoveryResultVec result;
+  SdrShaderNodeDiscoveryResultVec result;
 
   static std::string shaderDefsFile = _GetShaderResourcePath("shaderDefs.usda");
   if (shaderDefsFile.empty())
@@ -85,7 +85,7 @@ NdrNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverNodes(const Context
       continue;
     }
 
-    auto discoveryResults = UsdShadeShaderDefUtils::GetNodeDiscoveryResults(shader,
+    auto discoveryResults = UsdShadeShaderDefUtils::GetDiscoveryResults(shader,
                                                                             shaderDefsFile);
 
     result.insert(result.end(), discoveryResults.begin(), discoveryResults.end());
@@ -102,6 +102,6 @@ NdrNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverNodes(const Context
   return result;
 }
 
-NDR_REGISTER_DISCOVERY_PLUGIN(UsdShadersDiscoveryPlugin);
+SDR_REGISTER_DISCOVERY_PLUGIN(UsdShadersDiscoveryPlugin);
 
 PXR_NAMESPACE_CLOSE_SCOPE

@@ -213,25 +213,25 @@ HgiMetalTextureShaderSection::HgiMetalTextureShaderSection(
     const HgiMetalSamplerShaderSection *samplerShaderSectionDependency,
     uint32_t dimensions,
     HgiFormat format,
-    bool textureArray,
+    HgiShaderTextureType textureType,
     uint32_t arrayOfTexturesSize,
-    bool shadow,
     bool writable,
     const std::string &defaultValue)
   : HgiMetalShaderSection(
-      "textureBind_" + samplerSharedIdentifier, 
+      "textureBind_" + samplerSharedIdentifier,
       attributes,
       defaultValue)
   , _samplerSharedIdentifier(samplerSharedIdentifier)
   , _samplerShaderSectionDependency(samplerShaderSectionDependency)
   , _dimensionsVar(dimensions)
   , _format(format)
-  , _textureArray(textureArray)
+  , _textureType(textureType)
   , _arrayOfTexturesSize(arrayOfTexturesSize)
-  , _shadow(shadow)
   , _writable(writable)
   , _parentScopeIdentifier(parentScopeIdentifier)
 {
+    const bool isShadow = (textureType == HgiShaderTextureTypeShadowTexture);
+
     HgiFormat baseFormat = HgiGetComponentBaseFormat(_format);
 
     switch (baseFormat) {
@@ -266,7 +266,7 @@ HgiMetalTextureShaderSection::HgiMetalTextureShaderSection(
         break;
     }
 
-    if (shadow) {
+    if (isShadow) {
         _baseType = "float";
         _returnType = "float";
     }
@@ -275,8 +275,11 @@ HgiMetalTextureShaderSection::HgiMetalTextureShaderSection(
 void
 HgiMetalTextureShaderSection::WriteType(std::ostream& ss) const
 {
+    const bool isShadow = (_textureType == HgiShaderTextureTypeShadowTexture);
+    const bool isTextureArray = (_textureType == HgiShaderTextureTypeArrayTexture);
+
     if (_arrayOfTexturesSize > 0) {
-        if (_shadow) {
+        if (isShadow) {
             ss << "array<depth" << _dimensionsVar << "d";
             ss << "<" << _baseType;
             ss << ">, " << _samplerSharedIdentifier << "_SIZE>";
@@ -286,9 +289,9 @@ HgiMetalTextureShaderSection::WriteType(std::ostream& ss) const
             ss << ">, " << _samplerSharedIdentifier << "_SIZE>";
         }
     } else {
-        if (_shadow) {
+        if (isShadow) {
             ss << "depth" << _dimensionsVar << "d";
-            if (_textureArray) {
+            if (isTextureArray) {
                 ss << "_array";
             }
             ss << "<" << _baseType;
@@ -298,7 +301,7 @@ HgiMetalTextureShaderSection::WriteType(std::ostream& ss) const
             ss << ">";
         } else {
             ss << "texture" << _dimensionsVar << "d";
-            if (_textureArray) {
+            if (isTextureArray) {
                 ss << "_array";
             }
             ss << "<" << _baseType;
@@ -362,12 +365,15 @@ HgiMetalTextureShaderSection::VisitScopeMemberDeclarations(std::ostream &ss)
 bool
 HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
 {
+    const bool isShadow = (_textureType == HgiShaderTextureTypeShadowTexture);
+    const bool isTextureArray = (_textureType == HgiShaderTextureTypeArrayTexture);
+
     const std::string defValue = _GetDefaultValue().empty()
         ? "0"
         : _GetDefaultValue();
 
     if (_arrayOfTexturesSize > 0) {
-        if (_shadow) {
+        if (isShadow) {
             ss << "depth" << _dimensionsVar << "d";
             ss << "<" << _baseType;
             ss << ">";
@@ -387,9 +393,9 @@ HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
         WriteIdentifier(ss);
         ss << "\n";
     }
-   
-    uint32_t dimensions = _textureArray ? (_dimensionsVar + 1) : _dimensionsVar;
-   
+
+    uint32_t dimensions = isTextureArray ? (_dimensionsVar + 1) : _dimensionsVar;
+
     const std::string intType = _dimensionsVar == 1 ?
         "int" :
         "ivec" + std::to_string(_dimensionsVar);
@@ -421,7 +427,7 @@ HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
         ss << "}\n";
         return true;
     }
-   
+
     // Generated code looks like this for texture 'diffuse':
     //
     // vec4 HgiGet_diffuse(vec2 coord) {
@@ -429,13 +435,13 @@ HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
     //           textureBind_diffuse.sample(samplerBind_diffuse, coord);
     //     return result;
     // }
-   
-    const std::string returnType = _shadow ? "float" : _returnType + "4";
-    const std::string coordType = 
+
+    const std::string returnType = isShadow ? "float" : _returnType + "4";
+    const std::string coordType =
         dimensions > 1 ? "vec" + std::to_string(dimensions) : "float";
     const std::string shadowCoordType = "vec" + std::to_string(dimensions + 1);
 
-    if (_shadow) {
+    if (isShadow) {
         if (_arrayOfTexturesSize > 0) {
             ss << returnType << " HgiGet_" << _samplerSharedIdentifier;
             ss << "(uint index, ";
@@ -483,7 +489,7 @@ HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
             WriteIdentifier(ss);
             ss << ".sample(";
             _samplerShaderSectionDependency->WriteIdentifier(ss);
-            if (_textureArray) {
+            if (isTextureArray) {
                 if (_dimensionsVar == 2) {
                     ss << ", coord.xy, coord.z));\n";
                 }
@@ -517,14 +523,14 @@ HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
     }
     ss << ", 0);\n";
     ss << "}\n";
-   
+
     // Generated code looks like this for texture 'diffuse':
     //
     // vec4 HgiTexelFetch_diffuse(ivec2 coord) {
     //     vec4 result =  textureBind_diffuse.read(ushort2(coord.x, coord.y));
     //     return result;
     // }
-    const std::string intCoordType = 
+    const std::string intCoordType =
         dimensions > 1 ? "ivec" + std::to_string(dimensions) : "int";
     ss << returnType << " HgiTexelFetch_" << _samplerSharedIdentifier;
     if (_arrayOfTexturesSize > 0) {
@@ -538,7 +544,7 @@ HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
     if (_arrayOfTexturesSize > 0) {
         ss << "[index]";
     }
-    if (_textureArray) {
+    if (isTextureArray) {
         if (_dimensionsVar == 2) {
             ss << ".read(ushort2(coord.x, coord.y), coord.z));\n";
         }
@@ -559,14 +565,14 @@ HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
     }
     ss << "    return result;\n";
     ss << "}\n";
-   
+
     // Generated code looks like this for texture 'diffuse':
     //
     // vec4 HgiTextureLod_diffuse(vec2 coord, float lod) {
     //     vec4 result =  textureBind_diffuse.sample(coord, level(lod));
     //     return result;
     // }
-    if (_shadow) {
+    if (isShadow) {
         ss << returnType << " HgiTextureLod_" << _samplerSharedIdentifier;
         if (_arrayOfTexturesSize > 0) {
             ss << "(uint index, " << shadowCoordType << " coord";
@@ -607,7 +613,7 @@ HgiMetalTextureShaderSection::VisitScopeFunctionDefinitions(std::ostream &ss)
         if (_arrayOfTexturesSize > 0) {
             ss << "[index]";
         }
-        if (_textureArray) {
+        if (isTextureArray) {
             if (_dimensionsVar == 2) {
                 ss << ", coord.xy, coord.z";
             }

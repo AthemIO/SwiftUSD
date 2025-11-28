@@ -209,7 +209,7 @@ HgiMetalBlitCmds::CopyTextureCpuToGpu(
     
     mtlDesc.mipmapLevelCount = dstTexDesc.mipLevels;
     mtlDesc.arrayLength = dstTexDesc.layerCount;
-    mtlDesc.resourceOptions = _hgi->GetCapabilities()->preferredStorageMode;
+    mtlDesc.resourceOptions = _hgi->GetCapabilities()->defaultStorageMode;
     mtlDesc.sampleCount = 1;
     if (dstTexDesc.type == HgiTextureType3D) {
         mtlDesc.depth = depth;

@@ -23,7 +23,7 @@
 #include "HgiMetal/shaderProgram.h"
 #include "HgiMetal/texture.h"
 
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 #include "Tf/getenv.h"
 #include "Tf/registryManager.h"
@@ -157,20 +157,6 @@ HgiMetal::~HgiMetal()
             _freeArgBuffers.pop();
         }
     }
-}
-
-HgiMetalPtr HgiMetal::CreateHgi()
-{
-  HgiMetalPtr hgi = std::make_shared<HgiMetal>();
-
-  hgi.reset(dynamic_cast<HgiMetal *>(Hgi::GetPlatformDefaultHgi()));
-
-  return hgi;
-}
-
-VtValue HgiMetal::GetValue(HgiMetalPtr ptr) const
-{
-  return VtValue(ptr.get());
 }
 
 bool

@@ -24,12 +24,12 @@
 #include "UsdAbc/alembicFileFormat.h"
 #include <pxr/pxrns.h>
 
-#include "Usd/usdaFileFormat.h"
+#include "Sdf/usdaFileFormat.h"
 #include "UsdAbc/alembicData.h"
 
 #include "Sdf/layer.h"
 
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 #include "Tf/fileUtils.h"
 #include "Tf/pathUtils.h"
@@ -54,7 +54,7 @@ UsdAbcAlembicFileFormat::UsdAbcAlembicFileFormat()
                     UsdAbcAlembicFileFormatTokens->Version,
                     UsdAbcAlembicFileFormatTokens->Target,
                     UsdAbcAlembicFileFormatTokens->Id),
-      _usda(SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id))
+      _usda(SdfFileFormat::FindById(SdfUsdaFileFormatTokens->Id))
 {
 }
 

@@ -9,6 +9,7 @@
 
 #include "HdSt/renderDelegate.h"
 #include "Hd/rendererPluginRegistry.h"
+#include "Hd/rendererCreateArgs.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -30,6 +31,17 @@ HdRenderDelegate *HdStormRendererPlugin::CreateRenderDelegate(HdRenderSettingsMa
 void HdStormRendererPlugin::DeleteRenderDelegate(HdRenderDelegate *renderDelegate)
 {
   delete renderDelegate;
+}
+
+bool HdStormRendererPlugin::IsSupported(
+    HdRendererCreateArgs const &rendererCreateArgs,
+    std::string *reasonWhyNot) const
+{
+  const bool support = rendererCreateArgs.gpuEnabled && HdStRenderDelegate::IsSupported();
+  if (!support && reasonWhyNot) {
+    *reasonWhyNot = rendererCreateArgs.gpuEnabled ? "hgi unsupported" : "no gpu";
+  }
+  return support;
 }
 
 bool HdStormRendererPlugin::IsSupported(bool gpuEnabled) const

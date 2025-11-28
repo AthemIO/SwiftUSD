@@ -23,6 +23,12 @@ class HdStormRendererPlugin final : public HdRendererPlugin
 
   virtual void DeleteRenderDelegate(HdRenderDelegate *renderDelegate) override;
 
+  // Hydra 2.0 API (required - pure virtual in base)
+  virtual bool IsSupported(
+      HdRendererCreateArgs const &rendererCreateArgs,
+      std::string *reasonWhyNot = nullptr) const override;
+
+  // Deprecated Hydra 1.0 API
   virtual bool IsSupported(bool gpuEnabled = true) const override;
 
  private:

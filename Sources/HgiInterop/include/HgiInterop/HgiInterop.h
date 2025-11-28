@@ -94,7 +94,15 @@ PXR_NAMESPACE_CLOSE_SCOPE
 
 // HgiInterop
 #include <HgiInterop/hgiInterop.h>
-#include <HgiInterop/opengl.h>
 #include <HgiInterop/api.h>
+// opengl.h and metal.h contain platform-specific code that requires special handling
+// opengl.h needs GL support, metal.h needs Objective-C++ compilation
+#if defined(PXR_GL_SUPPORT_ENABLED)
+#include <HgiInterop/opengl.h>
+#endif
+// Note: metal.h should only be included from Objective-C++ files (.mm)
+// as it includes <Metal/Metal.h> which requires Objective-C
+#if defined(__OBJC__) && defined(PXR_METAL_SUPPORT_ENABLED)
 #include <HgiInterop/metal.h>
+#endif
 #endif  // __PXR_IMAGING_HGIINTEROP_H__

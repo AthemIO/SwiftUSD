@@ -26,7 +26,7 @@
 #include <pxr/pxrns.h>
 
 #include "Pcp/dynamicFileFormatContext.h"
-#include "Usd/usdaFileFormat.h"
+#include "Sdf/usdaFileFormat.h"
 
 #include <fstream>
 #include <string>
@@ -98,7 +98,7 @@ bool UsdDancingCubesExampleFileFormat::WriteToString(const SdfLayer &layer,
                                                      const std::string &comment) const
 {
   // Write the generated contents in usda text format.
-  return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
+  return SdfFileFormat::FindById(SdfUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
 }
 
 bool UsdDancingCubesExampleFileFormat::WriteToStream(const SdfSpecHandle &spec,
@@ -106,7 +106,7 @@ bool UsdDancingCubesExampleFileFormat::WriteToStream(const SdfSpecHandle &spec,
                                                      size_t indent) const
 {
   // Write the generated contents in usda text format.
-  return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
+  return SdfFileFormat::FindById(SdfUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
 }
 
 void UsdDancingCubesExampleFileFormat::ComposeFieldsForFileFormatArguments(

@@ -7,7 +7,7 @@
 #include "pxr/pxrns.h"
 #include "Sdf/crateData.h"
 
-#include "crateFile.h"
+#include "Sdf/crateFile.h"
 
 #include "Tf/bitUtils.h"
 #include "Tf/mallocTag.h"
@@ -840,7 +840,7 @@ private:
             };
 
 #ifndef PXR_PREFER_SAFETY_OVER_SPEED
-        WorkParallelForTBBRange(
+        WorkImpl_ParallelForTBBRange(
             tbb::blocked_range<size_t>(0, specs.size()),
             [&createSpecData](tbb::blocked_range<size_t> const& r) {
                 createSpecData(r, [](auto&&...) {});
@@ -852,7 +852,7 @@ private:
         // original thread.
         tbb::concurrent_vector<TfErrorTransport> errorTransports;
 
-        WorkParallelForTBBRange(
+        WorkImpl_ParallelForTBBRange(
             tbb::blocked_range<size_t>(0, specs.size()),
             [this, &createSpecData, &errorTransports](
                 tbb::blocked_range<size_t> const& r) {

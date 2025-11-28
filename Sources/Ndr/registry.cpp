@@ -17,7 +17,7 @@
 #include "Tf/pathUtils.h"
 #include "Tf/stringUtils.h"
 #include "Tf/type.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 #include "Work/loops.h"
 #include "Work/withScopedParallelism.h"
 #include "pxr/pxrns.h"

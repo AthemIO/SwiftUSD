@@ -4,6 +4,10 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
+
+// On Apple platforms, use hgiInterop.mm instead (Objective-C++ required for Metal)
+#if !defined(__APPLE__)
+
 #include "HgiInterop/hgiInterop.h"
 #include "Hgi/hgi.h"
 #include "Hgi/tokens.h"
@@ -108,3 +112,5 @@ void HgiInterop::TransferToApp(
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // !defined(__APPLE__)
