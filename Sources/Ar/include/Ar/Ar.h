@@ -13,15 +13,38 @@
 #ifndef __PXR_USD_AR_H__
 #define __PXR_USD_AR_H__
 
-// Ar
-#include <Ar/ar.h>
+// Ar - Base types first (order matters)
+#include <Ar/api.h>
+#include <Ar/timestamp.h>
+#include <Ar/resolvedPath.h>
+#include <Ar/assetInfo.h>
+#include <Ar/asset.h>
+#include <Ar/writableAsset.h>
+#include <Ar/filesystemAsset.h>
+#include <Ar/inMemoryAsset.h>
+
+// Resolver context - must come before resolver and anything that uses context
+#include <Ar/resolverContext.h>
+#include <Ar/defineResolverContext.h>
+#include <Ar/defaultResolverContext.h>
+
+// Resolver types - depends on resolverContext
+#include <Ar/resolver.h>
+#include <Ar/resolverContextBinder.h>
+#include <Ar/resolverScopedCache.h>
+#include <Ar/threadLocalScopedCache.h>
+#include <Ar/defineResolver.h>
+#include <Ar/defaultResolver.h>
+
+// Writable assets (depends on resolver)
 #include <Ar/filesystemWritableAsset.h>
+
+// Package resolver
 #include <Ar/packageResolver.h>
 #include <Ar/packageUtils.h>
-#include <Ar/resolverScopedCache.h>
-#include <Ar/asset.h>
-#include <Ar/defaultResolver.h>
-#include <Ar/timestamp.h>
-#include <Ar/threadLocalScopedCache.h>
-#include <Ar/defineResolverContext.h>
+#include <Ar/definePackageResolver.h>
+
+// Notifications
+#include <Ar/notice.h>
+
 #endif  // __PXR_USD_AR_H__

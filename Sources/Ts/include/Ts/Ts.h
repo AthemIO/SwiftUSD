@@ -1,43 +1,31 @@
 #ifndef __PXR_BASE_TS_H__
 #define __PXR_BASE_TS_H__
 
-// Ts
+// Ts - Core types first
 #include <Ts/api.h>
-#include <Ts/data.h>
-#include <Ts/diff.h>
-#include <Ts/evalCache.h>
-#include <Ts/evalUtils.h>
-#include <Ts/evaluator.h>
-#include <Ts/keyFrame.h>
-#include <Ts/keyFrameMap.h>
-#include <Ts/keyFrameUtils.h>
-#include <Ts/loopParams.h>
-#include <Ts/mathUtils.h>
-#include <Ts/simplify.h>
-#include <Ts/spline.h>
-#include <Ts/spline_KeyFrames.h>
-#include <Ts/tsTest_AnimXEvaluator.h>
-#include <Ts/tsTest_Evaluator.h>
-#include <Ts/tsTest_Museum.h>
-#include <Ts/tsTest_SampleBezier.h>
-#include <Ts/tsTest_SampleTimes.h>
-#include <Ts/tsTest_SplineData.h>
-#include <Ts/tsTest_TsEvaluator.h>
-#include <Ts/tsTest_Types.h>
-#include <Ts/typeRegistry.h>
 #include <Ts/types.h>
-#include <Ts/wrapUtils.h>
-#include <Ts/raii.h>
-#include <Ts/splineData.h>
+
+// Ts - Data structures
 #include <Ts/knotData.h>
-#include <Ts/debugCodes.h>
-#include <Ts/knotMap.h>
-#include <Ts/regressionPreventer.h>
-#include <Ts/valueTypeDispatch.h>
-#include <Ts/typeHelpers.h>
-#include <Ts/eval.h>
-#include <Ts/tangentConversions.h>
 #include <Ts/knot.h>
+#include <Ts/knotMap.h>
+#include <Ts/splineData.h>
 #include <Ts/sample.h>
 #include <Ts/binary.h>
+
+// Ts - Spline and evaluation
+#include <Ts/spline.h>
+#include <Ts/eval.h>
+
+// Ts - Utilities
+#include <Ts/mathUtils.h>
+#include <Ts/tangentConversions.h>
+#include <Ts/regressionPreventer.h>
+#include <Ts/typeHelpers.h>
+#include <Ts/valueTypeDispatch.h>
+#include <Ts/debugCodes.h>
+
+// Note: Many headers excluded due to legacy API or incompatibility with Swift module builds
+// The Ts module in OpenUSD 25.11 had significant API changes from earlier versions
+
 #endif  // __PXR_BASE_TS_H__

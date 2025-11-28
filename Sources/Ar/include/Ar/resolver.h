@@ -11,7 +11,6 @@
 
 #include "pxr/pxrns.h"
 #include "Ar/api.h"
-#include "Ar/ar.h"
 #include "Ar/resolvedPath.h"
 #include "Ar/resolverContext.h"
 #include "Ar/timestamp.h"

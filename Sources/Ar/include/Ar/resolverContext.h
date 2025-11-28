@@ -11,7 +11,6 @@
 
 #include "pxr/pxrns.h"
 #include "Ar/api.h"
-#include "Ar/ar.h"
 
 #include "Tf/hash.h"
 #include "Tf/safeTypeCompare.h"

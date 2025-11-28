@@ -168,4 +168,4 @@ PXR_NAMESPACE_CLOSE_SCOPE
 /// \ingroup group_tf_TfCompilerAids
 #define TF_UNUSED(x) (void)x
 
-#endif  // PXR_BASE_TF__TFIMPL_H
+#endif  // PXR_BASE_TF_TFIMPL_H

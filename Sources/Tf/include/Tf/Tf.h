@@ -173,8 +173,7 @@ PXR_NAMESPACE_CLOSE_SCOPE
 
 #include "pxr/pxrns.h"
 
-// Tf - include order matters for dependencies
-// hash.h must come before refPtr, weakPtr, token which use TfHash
+// Tf umbrella includes
 #include <Tf/tf.h>
 #include <Tf/hash.h>
 #include <Tf/bits.h>

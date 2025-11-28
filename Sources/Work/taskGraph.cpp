@@ -7,6 +7,7 @@
 #include "Work/taskGraph.h"
 
 #include "Work/loops.h"
+#include "Work/loops_impl.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -15,7 +16,7 @@ WorkTaskGraph::BaseTask::~BaseTask() = default;
 void
 WorkTaskGraph::RunLists(const TaskLists &taskLists)
 {
-    WorkParallelForTBBRange(taskLists.range(), 
+    WorkImpl_ParallelForTBBRange(taskLists.range(), 
         [this] (const TaskLists::range_type &range){
             for (const TaskList &taskList: range) {
                 for (const auto task: taskList) {

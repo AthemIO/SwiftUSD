@@ -55,6 +55,10 @@ let package = Package(
       name: "Plug",
       targets: ["Plug"]
     ),
+    .library(
+      name: "Ts",
+      targets: ["Ts"]
+    ),
     // ------------ Pixar.Usd -----
     .library(
       name: "Ar",
@@ -497,6 +501,27 @@ let package = Package(
     ),
 
     .target(
+      name: "Ts",
+      dependencies: [
+        .target(name: "Arch"),
+        .target(name: "Tf"),
+        .target(name: "Gf"),
+        .target(name: "Vt"),
+        .target(name: "Trace"),
+      ],
+      cxxSettings: [
+        .define("MFB_PACKAGE_NAME", to: "Ts"),
+        .define("MFB_ALT_PACKAGE_NAME", to: "Ts"),
+        .define("MFB_PACKAGE_MODULE", to: "Ts"),
+        .define("TS_EXPORTS", to: "1"),
+        .headerSearchPath("include/Ts"),
+        .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
+        .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
+        .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
+      ]
+    ),
+
+    .target(
       name: "Ar",
       dependencies: [
         .target(name: "Arch"),
@@ -601,6 +626,7 @@ let package = Package(
         .target(name: "Ar"),
         .target(name: "Sdf"),
         .target(name: "Pcp"),
+        .target(name: "Ts"),
       ],
       resources: [
         .copy("codegenTemplates"),

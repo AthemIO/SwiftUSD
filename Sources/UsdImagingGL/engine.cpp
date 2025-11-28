@@ -46,6 +46,7 @@
 
 #include "Tf/envSetting.h"
 #include "Tf/getenv.h"
+#include "Tf/pyLock.h"
 #include "Tf/staticData.h"
 #include "Tf/stl.h"
 

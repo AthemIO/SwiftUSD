@@ -19,7 +19,7 @@ UsdImaging_MaterialBindingImplData::ClearCaches()
     // within in parallel.
     using BindCacheRange = 
         UsdShadeMaterialBindingAPI::BindingsCache::range_type;
-    WorkParallelForTBBRange(_bindingsCache.range(), 
+    WorkImpl_ParallelForTBBRange(_bindingsCache.range(), 
         []( const BindCacheRange &range) {
             for (auto entryIt = range.begin(); entryIt != range.end(); 
                 ++entryIt) {
@@ -30,7 +30,7 @@ UsdImaging_MaterialBindingImplData::ClearCaches()
 
     using CollQueryRange =
         UsdShadeMaterialBindingAPI::CollectionQueryCache::range_type;
-    WorkParallelForTBBRange(_collQueryCache.range(), 
+    WorkImpl_ParallelForTBBRange(_collQueryCache.range(), 
         []( const CollQueryRange &range) {
             for (auto entryIt = range.begin(); entryIt != range.end(); 
                 ++entryIt) {

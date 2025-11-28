@@ -338,20 +338,3 @@ private:
 PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // PXR_BASE_TRACE_TRACE_H
-#ifndef __PXR_BASE_TRACE_H__
-#define __PXR_BASE_TRACE_H__
-
-// Trace
-#include <Trace/trace.h>
-#include <Trace/counterAccumulator.h>
-#include <Trace/reporterDataSourceCollector.h>
-#include <Trace/category.h>
-#include <Trace/staticKeyData.h>
-#include <Trace/aggregateTreeBuilder.h>
-#include <Trace/collection.h>
-#include <Trace/eventList.h>
-#include <Trace/dynamicKey.h>
-#include <Trace/collector.h>
-#include <Trace/eventTreeBuilder.h>
-#include <Trace/reporterDataSourceCollection.h>
-#endif  // __PXR_BASE_TRACE_H__

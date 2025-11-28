@@ -70,7 +70,7 @@ static UsdValidationErrorVector _ShaderPropertyTypeConformance(const UsdPrim &us
       if (SdrShaderNodeConstPtr sdrShaderNode =
               SdrRegistry::GetInstance().GetShaderNodeByIdentifier(shaderId))
       {
-        for (const TfToken &propName : sdrShaderNode->GetInputNames()) {
+        for (const TfToken &propName : sdrShaderNode->GetShaderInputNames()) {
           if (const SdrShaderPropertyConstPtr sdrProp = sdrShaderNode->GetShaderInput(propName)) {
             propNameToPropertyMap.emplace(propName, sdrProp);
           }
@@ -102,7 +102,7 @@ static UsdValidationErrorVector _ShaderPropertyTypeConformance(const UsdPrim &us
       {
         shaderNodesFromSourceTypes.push_back(sdrShaderNode);
 
-        for (const TfToken &propName : sdrShaderNode->GetInputNames()) {
+        for (const TfToken &propName : sdrShaderNode->GetShaderInputNames()) {
           // Check if property has already been added to the map.
           if (propNameToPropertyMap.find(propName) == propNameToPropertyMap.end()) {
             if (const SdrShaderPropertyConstPtr sdrProp = sdrShaderNode->GetShaderInput(propName))
@@ -151,7 +151,7 @@ static UsdValidationErrorVector _ShaderPropertyTypeConformance(const UsdPrim &us
   const auto sdrPropnameToSdfType = [&propNameToPropertyMap]() {
     std::unordered_map<TfToken, SdfValueTypeName, TfToken::HashFunctor> map;
     for (const auto &prop : propNameToPropertyMap) {
-      map.emplace(prop.first, prop.second->GetTypeAsSdfType().first);
+      map.emplace(prop.first, prop.second->GetTypeAsSdfType().GetSdfType());
     }
     return map;
   }();
