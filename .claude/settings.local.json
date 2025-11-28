@@ -1,9 +1,12 @@
 {
   "permissions": {
     "allow": [
+      "Bash(swift bundler run:*)",
+      "WebSearch"
+    ],
+    "deny": [
       "Bash(swift build:*)"
     ],
-    "deny": [],
     "ask": []
   }
 }
