@@ -8,12 +8,14 @@
 #ifndef PXR_USD_PLUGIN_USD_DRACO_WRITER_H
 #define PXR_USD_PLUGIN_USD_DRACO_WRITER_H
 
-#include "UsdGeom/mesh.h"
 #include "pxr/pxrns.h"
+#include "UsdGeom/mesh.h"
 
 #include <string>
 
+
 PXR_NAMESPACE_OPEN_SCOPE
+
 
 /// Encodes mesh and writes it in Draco format to a file at \p fileName.
 bool UsdDraco_WriteDraco(const UsdGeomMesh &mesh,
@@ -30,6 +32,7 @@ bool UsdDraco_WriteDraco(const UsdGeomMesh &mesh,
 /// usdcompress.py script to determine whether a primvar should be deleted from
 /// USD mesh or remain in USD mesh.
 bool UsdDraco_PrimvarSupported(const UsdGeomPrimvar &primvar);
+
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

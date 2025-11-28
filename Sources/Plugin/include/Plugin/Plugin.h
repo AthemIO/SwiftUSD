@@ -4,7 +4,6 @@
 // Plugin
 #include <Plugin/discoveryPlugin.h>
 #include <Plugin/parserPlugin.h>
-#endif  // __PXR_USDIMAGING_PLUGIN_H__
 #ifndef __PXR_USD_PLUGIN_H__
 #define __PXR_USD_PLUGIN_H__
 
@@ -26,7 +25,6 @@
 #include <Plugin/importTranslator.h>
 #include <Plugin/oslParser.h>
 #include <Plugin/writer.h>
-#endif  // __PXR_USD_PLUGIN_H__
 #ifndef __PXR_IMAGING_PLUGIN_H__
 #define __PXR_IMAGING_PLUGIN_H__
 
@@ -144,4 +142,80 @@
 #include <Plugin/version.h>
 #include <Plugin/warped_motion.h>
 #include <Plugin/yv12config.h>
+#endif  // __PXR_USDIMAGING_PLUGIN_H__
+#endif  // __PXR_USD_PLUGIN_H__
+#include <Plugin/aom_pthread.h>
+#include <Plugin/aom_external_partition.h>
+#include <Plugin/sanitizer.h>
+#include <Plugin/pyramid.h>
+#include <Plugin/corner_detect.h>
+#include <Plugin/flow_estimation.h>
+#include <Plugin/grain_params.h>
+#include <Plugin/openexr-c.h>
+#include <Plugin/common_defs.h>
+#include <Plugin/bt_matchfinder.h>
+#include <Plugin/matchfinder_common.h>
+#include <Plugin/zlib_constants.h>
+#include <Plugin/decompress_template.h>
+#include <Plugin/ht_matchfinder.h>
+#include <Plugin/deflate_compress.h>
+#include <Plugin/decompress_impl.h>
+#include <Plugin/cpu_features.h>
+#include <Plugin/adler32_impl.h>
+#include <Plugin/matchfinder_impl.h>
+#include <Plugin/lib_common.h>
+#include <Plugin/hc_matchfinder.h>
+#include <Plugin/cpu_features_common.h>
+#include <Plugin/deflate_constants.h>
+#include <Plugin/adler32_vec_template.h>
+#include <Plugin/libdeflate.h>
+#include <Plugin/openexr_encode.h>
+#include <Plugin/internal_float_vector.h>
+#include <Plugin/openexr_compression.h>
+#include <Plugin/openexr_std_attr.h>
+#include <Plugin/internal_huf.h>
+#include <Plugin/openexr_decode.h>
+#include <Plugin/internal_dwa_compressor.h>
+#include <Plugin/openexr_base.h>
+#include <Plugin/OpenEXRConfigInternal.h>
+#include <Plugin/internal_dwa_simd.h>
+#include <Plugin/openexr_chunkio.h>
+#include <Plugin/internal_util.h>
+#include <Plugin/openexr_context.h>
+#include <Plugin/internal_dwa_classifier.h>
+#include <Plugin/internal_xdr.h>
+#include <Plugin/openexr_part.h>
+#include <Plugin/internal_coding.h>
+#include <Plugin/openexr_version.h>
+#include <Plugin/backward_compatibility.h>
+#include <Plugin/internal_opaque.h>
+#include <Plugin/internal_dwa_decoder.h>
+#include <Plugin/internal_dwa_channeldata.h>
+#include <Plugin/internal_channel_list.h>
+#include <Plugin/internal_attr.h>
+#include <Plugin/openexr_debug.h>
+#include <Plugin/openexr_coding.h>
+#include <Plugin/openexr_errors.h>
+#include <Plugin/openexr.h>
+#include <Plugin/internal_dwa_encoder.h>
+#include <Plugin/internal_memory.h>
+#include <Plugin/internal_string_vector.h>
+#include <Plugin/internal_preview.h>
+#include <Plugin/internal_cpuid.h>
+#include <Plugin/internal_file.h>
+#include <Plugin/internal_compress.h>
+#include <Plugin/internal_win32_file_impl.h>
+#include <Plugin/internal_dwa_helpers.h>
+#include <Plugin/internal_string.h>
+#include <Plugin/openexr_config.h>
+#include <Plugin/internal_constants.h>
+#include <Plugin/internal_structs.h>
+#include <Plugin/internal_decompress.h>
+#include <Plugin/openexr_attr.h>
+#include <Plugin/dwaLookups.h>
+#include <Plugin/internal_posix_file_impl.h>
+#include <Plugin/OpenEXRCoreUnity.h>
+#include <Plugin/light.h>
+#include <Plugin/debugCodes.h>
+#include <Plugin/lightSamplers.h>
 #endif  // __PXR_IMAGING_PLUGIN_H__

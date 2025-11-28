@@ -44,4 +44,5 @@
 
 #include <Pcp/layerRelocatesEditBuilder.h>
 #include <Pcp/traversalCache.h>
+#include <Pcp/dependentNamespaceEditUtils.h>
 #endif  // __PXR_USD_PCP_H__

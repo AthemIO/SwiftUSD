@@ -96,4 +96,11 @@
 #include <Gf/color.h>
 #include <Gf/colorSpace.h>
 #include <Gf/numericCast.h>
+#include <Gf/ilmbase_eLut.h>
+#include <Gf/colorSpace_data.h>
+#include <Gf/limits.h>
+#include <Gf/nanocolor.h>
+#include <Gf/math.h>
+#include <Gf/ilmbase_toFloat.h>
+#include <Gf/ostreamHelpers.h>
 #endif  // __PXR_BASE_GF_H__

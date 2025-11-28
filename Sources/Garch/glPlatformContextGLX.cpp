@@ -5,71 +5,82 @@
 // https://openusd.org/license.
 //
 /// \file glPlatformContext.cpp
-#if defined(__linux__)
 
 #include "Garch/glPlatformContext.h"
 #include "Tf/hash.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+
 //
 // GarchGLXContextState
 //
 
-GarchGLXContextState::GarchGLXContextState()
-    : display(glXGetCurrentDisplay()),
-      drawable(glXGetCurrentDrawable()),
-      context(glXGetCurrentContext()),
-      _defaultCtor(true)
+GarchGLXContextState::GarchGLXContextState() :
+    display(glXGetCurrentDisplay()),
+    drawable(glXGetCurrentDrawable()),
+    context(glXGetCurrentContext()),
+    _defaultCtor(true)
 {
-  // Do nothing
+    // Do nothing
 }
 
-GarchGLXContextState::GarchGLXContextState(Display *display_,
-                                           GLXDrawable drawable_,
-                                           GLXContext context_)
-    : display(display_), drawable(drawable_), context(context_), _defaultCtor(false)
+GarchGLXContextState::GarchGLXContextState(
+    Display* display_, GLXDrawable drawable_, GLXContext context_) :
+    display(display_), drawable(drawable_), context(context_),
+     _defaultCtor(false)
 {
-  // Do nothing
+    // Do nothing
 }
 
-bool GarchGLXContextState::operator==(const GarchGLXContextState &rhs) const
+bool
+GarchGLXContextState::operator==(const GarchGLXContextState& rhs) const
 {
-  return display == rhs.display && drawable == rhs.drawable && context == rhs.context;
+    return display  == rhs.display  &&
+           drawable == rhs.drawable &&
+           context  == rhs.context;
 }
 
-size_t GarchGLXContextState::GetHash() const
+size_t
+GarchGLXContextState::GetHash() const
 {
-  return TfHash::Combine(display, drawable, context);
+    return TfHash::Combine(        
+        display,
+        drawable,
+        context
+    );
 }
 
-bool GarchGLXContextState::IsValid() const
+bool
+GarchGLXContextState::IsValid() const
 {
-  return display && drawable && context;
+    return display && drawable && context;
 }
 
-void GarchGLXContextState::MakeCurrent()
+void
+GarchGLXContextState::MakeCurrent()
 {
-  if (IsValid()) {
-    glXMakeCurrent(display, drawable, context);
-  }
-  else if (_defaultCtor) {
-    DoneCurrent();
-  }
+    if (IsValid()) {
+        glXMakeCurrent(display, drawable, context);
+    }
+    else if (_defaultCtor) {
+        DoneCurrent();
+    }
 }
 
-void GarchGLXContextState::DoneCurrent()
+void
+GarchGLXContextState::DoneCurrent()
 {
-  if (Display *display = glXGetCurrentDisplay()) {
-    glXMakeCurrent(display, None, NULL);
-  }
+    if (Display* display = glXGetCurrentDisplay()) {
+        glXMakeCurrent(display, None, NULL);
+    }
 }
 
-GarchGLPlatformContextState GarchGetNullGLPlatformContextState()
+GarchGLPlatformContextState
+GarchGetNullGLPlatformContextState()
 {
-  return GarchGLXContextState(NULL, None, NULL);
+    return GarchGLXContextState(NULL, None, NULL);
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // defined(__linux__)

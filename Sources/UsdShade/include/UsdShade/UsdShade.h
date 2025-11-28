@@ -21,4 +21,5 @@
 #include <UsdShade/utils.h>
 #include <UsdShade/validatorTokens.h>
 
+#include <UsdShade/generatedSchema.module.h>
 #endif  // __PXR_USD_USDSHADE_H__

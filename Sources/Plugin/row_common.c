@@ -17,25 +17,25 @@
 
 #define STATIC_CAST(type, expr) (type)(expr)
 
-void CopyRow_C(const uint8_t *src, uint8_t *dst, int count)
-{
+void CopyRow_C(const uint8_t* src, uint8_t* dst, int count) {
   memcpy(dst, src, count);
 }
 
 // Blend 2 rows into 1.
-static void HalfRow_C(const uint8_t *src_uv, ptrdiff_t src_uv_stride, uint8_t *dst_uv, int width)
-{
+static void HalfRow_C(const uint8_t* src_uv,
+                      ptrdiff_t src_uv_stride,
+                      uint8_t* dst_uv,
+                      int width) {
   int x;
   for (x = 0; x < width; ++x) {
     dst_uv[x] = (src_uv[x] + src_uv[src_uv_stride + x] + 1) >> 1;
   }
 }
 
-static void HalfRow_16_C(const uint16_t *src_uv,
+static void HalfRow_16_C(const uint16_t* src_uv,
                          ptrdiff_t src_uv_stride,
-                         uint16_t *dst_uv,
-                         int width)
-{
+                         uint16_t* dst_uv,
+                         int width) {
   int x;
   for (x = 0; x < width; ++x) {
     dst_uv[x] = (src_uv[x] + src_uv[src_uv_stride + x] + 1) >> 1;
@@ -43,15 +43,14 @@ static void HalfRow_16_C(const uint16_t *src_uv,
 }
 
 // C version 2x2 -> 2x1.
-void InterpolateRow_C(uint8_t *dst_ptr,
-                      const uint8_t *src_ptr,
+void InterpolateRow_C(uint8_t* dst_ptr,
+                      const uint8_t* src_ptr,
                       ptrdiff_t src_stride,
                       int width,
-                      int source_y_fraction)
-{
+                      int source_y_fraction) {
   int y1_fraction = source_y_fraction;
   int y0_fraction = 256 - y1_fraction;
-  const uint8_t *src_ptr1 = src_ptr + src_stride;
+  const uint8_t* src_ptr1 = src_ptr + src_stride;
   int x;
   assert(source_y_fraction >= 0);
   assert(source_y_fraction < 256);
@@ -65,8 +64,9 @@ void InterpolateRow_C(uint8_t *dst_ptr,
     return;
   }
   for (x = 0; x < width; ++x) {
-    dst_ptr[0] = STATIC_CAST(uint8_t,
-                             (src_ptr[0] * y0_fraction + src_ptr1[0] * y1_fraction + 128) >> 8);
+    dst_ptr[0] = STATIC_CAST(
+        uint8_t,
+        (src_ptr[0] * y0_fraction + src_ptr1[0] * y1_fraction + 128) >> 8);
     ++src_ptr;
     ++src_ptr1;
     ++dst_ptr;
@@ -74,15 +74,14 @@ void InterpolateRow_C(uint8_t *dst_ptr,
 }
 
 // C version 2x2 -> 2x1.
-void InterpolateRow_16_C(uint16_t *dst_ptr,
-                         const uint16_t *src_ptr,
+void InterpolateRow_16_C(uint16_t* dst_ptr,
+                         const uint16_t* src_ptr,
                          ptrdiff_t src_stride,
                          int width,
-                         int source_y_fraction)
-{
+                         int source_y_fraction) {
   int y1_fraction = source_y_fraction;
   int y0_fraction = 256 - y1_fraction;
-  const uint16_t *src_ptr1 = src_ptr + src_stride;
+  const uint16_t* src_ptr1 = src_ptr + src_stride;
   int x;
   assert(source_y_fraction >= 0);
   assert(source_y_fraction < 256);
@@ -96,8 +95,9 @@ void InterpolateRow_16_C(uint16_t *dst_ptr,
     return;
   }
   for (x = 0; x < width; ++x) {
-    dst_ptr[0] = STATIC_CAST(uint16_t,
-                             (src_ptr[0] * y0_fraction + src_ptr1[0] * y1_fraction + 128) >> 8);
+    dst_ptr[0] = STATIC_CAST(
+        uint16_t,
+        (src_ptr[0] * y0_fraction + src_ptr1[0] * y1_fraction + 128) >> 8);
     ++src_ptr;
     ++src_ptr1;
     ++dst_ptr;

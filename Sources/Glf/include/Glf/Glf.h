@@ -20,4 +20,5 @@
 #include <Glf/uniformBlock.h>
 #include <Glf/utils.h>
 
+#include <Glf/testGLContext.h>
 #endif  // __PXR_IMAGING_GLF_H__

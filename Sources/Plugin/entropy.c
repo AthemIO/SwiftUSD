@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,31 +9,26 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include "Plugin/hioAvif/aom/config/aom_config.h"
+#include "config/aom_config.h"
 
-#include "Plugin/hioAvif/aom/aom_integer.h"
-#include "Plugin/hioAvif/aom/aom_mem/aom_mem.h"
-#include "Plugin/hioAvif/aom/av1/common/av1_common_int.h"
-#include "Plugin/hioAvif/aom/av1/common/blockd.h"
-#include "Plugin/hioAvif/aom/av1/common/entropy.h"
-#include "Plugin/hioAvif/aom/av1/common/entropymode.h"
-#include "Plugin/hioAvif/aom/av1/common/scan.h"
-#include "Plugin/hioAvif/aom/av1/common/token_cdfs.h"
-#include "Plugin/hioAvif/aom/av1/common/txb_common.h"
+#include "aom/aom_integer.h"
+#include "aom_mem/aom_mem.h"
+#include "av1/common/av1_common_int.h"
+#include "av1/common/blockd.h"
+#include "av1/common/entropy.h"
+#include "av1/common/entropymode.h"
+#include "av1/common/scan.h"
+#include "av1/common/token_cdfs.h"
+#include "av1/common/txb_common.h"
 
-static int get_q_ctx(int q)
-{
-  if (q <= 20)
-    return 0;
-  if (q <= 60)
-    return 1;
-  if (q <= 120)
-    return 2;
+static int get_q_ctx(int q) {
+  if (q <= 20) return 0;
+  if (q <= 60) return 1;
+  if (q <= 120) return 2;
   return 3;
 }
 
-void av1_default_coef_probs(AV1_COMMON *cm)
-{
+void av1_default_coef_probs(AV1_COMMON *cm) {
   const int index = get_q_ctx(cm->quant_params.base_qindex);
 #if CONFIG_ENTROPY_STATS
   cm->coef_cdf_category = index;
@@ -44,7 +39,8 @@ void av1_default_coef_probs(AV1_COMMON *cm)
   av1_copy(cm->fc->dc_sign_cdf, av1_default_dc_sign_cdfs[index]);
   av1_copy(cm->fc->coeff_br_cdf, av1_default_coeff_lps_multi_cdfs[index]);
   av1_copy(cm->fc->coeff_base_cdf, av1_default_coeff_base_multi_cdfs[index]);
-  av1_copy(cm->fc->coeff_base_eob_cdf, av1_default_coeff_base_eob_multi_cdfs[index]);
+  av1_copy(cm->fc->coeff_base_eob_cdf,
+           av1_default_coeff_base_eob_multi_cdfs[index]);
   av1_copy(cm->fc->eob_flag_cdf16, av1_default_eob_multi16_cdfs[index]);
   av1_copy(cm->fc->eob_flag_cdf32, av1_default_eob_multi32_cdfs[index]);
   av1_copy(cm->fc->eob_flag_cdf64, av1_default_eob_multi64_cdfs[index]);
@@ -54,28 +50,25 @@ void av1_default_coef_probs(AV1_COMMON *cm)
   av1_copy(cm->fc->eob_flag_cdf1024, av1_default_eob_multi1024_cdfs[index]);
 }
 
-static AOM_INLINE void reset_cdf_symbol_counter(aom_cdf_prob *cdf_ptr,
-                                                int num_cdfs,
-                                                int cdf_stride,
-                                                int nsymbs)
-{
+static inline void reset_cdf_symbol_counter(aom_cdf_prob *cdf_ptr, int num_cdfs,
+                                            int cdf_stride, int nsymbs) {
   for (int i = 0; i < num_cdfs; i++) {
     cdf_ptr[i * cdf_stride + nsymbs] = 0;
   }
 }
 
-#define RESET_CDF_COUNTER(cname, nsymbs) RESET_CDF_COUNTER_STRIDE(cname, nsymbs, CDF_SIZE(nsymbs))
+#define RESET_CDF_COUNTER(cname, nsymbs) \
+  RESET_CDF_COUNTER_STRIDE(cname, nsymbs, CDF_SIZE(nsymbs))
 
-#define RESET_CDF_COUNTER_STRIDE(cname, nsymbs, cdf_stride) \
-  do { \
-    aom_cdf_prob *cdf_ptr = (aom_cdf_prob *)cname; \
-    int array_size = (int)sizeof(cname) / sizeof(aom_cdf_prob); \
-    int num_cdfs = array_size / cdf_stride; \
+#define RESET_CDF_COUNTER_STRIDE(cname, nsymbs, cdf_stride)          \
+  do {                                                               \
+    aom_cdf_prob *cdf_ptr = (aom_cdf_prob *)cname;                   \
+    int array_size = (int)sizeof(cname) / sizeof(aom_cdf_prob);      \
+    int num_cdfs = array_size / cdf_stride;                          \
     reset_cdf_symbol_counter(cdf_ptr, num_cdfs, cdf_stride, nsymbs); \
   } while (0)
 
-static AOM_INLINE void reset_nmv_counter(nmv_context *nmv)
-{
+static inline void reset_nmv_counter(nmv_context *nmv) {
   RESET_CDF_COUNTER(nmv->joints_cdf, 4);
   for (int i = 0; i < 2; i++) {
     RESET_CDF_COUNTER(nmv->comps[i].classes_cdf, MV_CLASSES);
@@ -89,8 +82,7 @@ static AOM_INLINE void reset_nmv_counter(nmv_context *nmv)
   }
 }
 
-void av1_reset_cdf_symbol_counters(FRAME_CONTEXT *fc)
-{
+void av1_reset_cdf_symbol_counters(FRAME_CONTEXT *fc) {
   RESET_CDF_COUNTER(fc->txb_skip_cdf, 2);
   RESET_CDF_COUNTER(fc->eob_extra_cdf, 2);
   RESET_CDF_COUNTER(fc->dc_sign_cdf, 2);
@@ -120,8 +112,10 @@ void av1_reset_cdf_symbol_counters(FRAME_CONTEXT *fc)
   RESET_CDF_COUNTER(fc->palette_uv_size_cdf, PALETTE_SIZES);
   for (int j = 0; j < PALETTE_SIZES; j++) {
     int nsymbs = j + PALETTE_MIN_SIZE;
-    RESET_CDF_COUNTER_STRIDE(fc->palette_y_color_index_cdf[j], nsymbs, CDF_SIZE(PALETTE_COLORS));
-    RESET_CDF_COUNTER_STRIDE(fc->palette_uv_color_index_cdf[j], nsymbs, CDF_SIZE(PALETTE_COLORS));
+    RESET_CDF_COUNTER_STRIDE(fc->palette_y_color_index_cdf[j], nsymbs,
+                             CDF_SIZE(PALETTE_COLORS));
+    RESET_CDF_COUNTER_STRIDE(fc->palette_uv_color_index_cdf[j], nsymbs,
+                             CDF_SIZE(PALETTE_COLORS));
   }
   RESET_CDF_COUNTER(fc->palette_y_mode_cdf, 2);
   RESET_CDF_COUNTER(fc->palette_uv_mode_cdf, 2);
@@ -140,7 +134,6 @@ void av1_reset_cdf_symbol_counters(FRAME_CONTEXT *fc)
   reset_nmv_counter(&fc->nmvc);
   reset_nmv_counter(&fc->ndvc);
   RESET_CDF_COUNTER(fc->intrabc_cdf, 2);
-  RESET_CDF_COUNTER(fc->seg.tree_cdf, MAX_SEGMENTS);
   RESET_CDF_COUNTER(fc->seg.pred_cdf, 2);
   RESET_CDF_COUNTER(fc->seg.spatial_pred_seg_cdf, MAX_SEGMENTS);
   RESET_CDF_COUNTER(fc->filter_intra_cdfs, 2);
@@ -149,23 +142,23 @@ void av1_reset_cdf_symbol_counters(FRAME_CONTEXT *fc)
   RESET_CDF_COUNTER(fc->wiener_restore_cdf, 2);
   RESET_CDF_COUNTER(fc->sgrproj_restore_cdf, 2);
   RESET_CDF_COUNTER(fc->y_mode_cdf, INTRA_MODES);
-  RESET_CDF_COUNTER_STRIDE(fc->uv_mode_cdf[0], UV_INTRA_MODES - 1, CDF_SIZE(UV_INTRA_MODES));
+  RESET_CDF_COUNTER_STRIDE(fc->uv_mode_cdf[0], UV_INTRA_MODES - 1,
+                           CDF_SIZE(UV_INTRA_MODES));
   RESET_CDF_COUNTER(fc->uv_mode_cdf[1], UV_INTRA_MODES);
   for (int i = 0; i < PARTITION_CONTEXTS; i++) {
     if (i < 4) {
       RESET_CDF_COUNTER_STRIDE(fc->partition_cdf[i], 4, CDF_SIZE(10));
-    }
-    else if (i < 16) {
+    } else if (i < 16) {
       RESET_CDF_COUNTER(fc->partition_cdf[i], 10);
-    }
-    else {
+    } else {
       RESET_CDF_COUNTER_STRIDE(fc->partition_cdf[i], 8, CDF_SIZE(10));
     }
   }
   RESET_CDF_COUNTER(fc->switchable_interp_cdf, SWITCHABLE_FILTERS);
   RESET_CDF_COUNTER(fc->kf_y_cdf, INTRA_MODES);
   RESET_CDF_COUNTER(fc->angle_delta_cdf, 2 * MAX_ANGLE_DELTA + 1);
-  RESET_CDF_COUNTER_STRIDE(fc->tx_size_cdf[0], MAX_TX_DEPTH, CDF_SIZE(MAX_TX_DEPTH + 1));
+  RESET_CDF_COUNTER_STRIDE(fc->tx_size_cdf[0], MAX_TX_DEPTH,
+                           CDF_SIZE(MAX_TX_DEPTH + 1));
   RESET_CDF_COUNTER(fc->tx_size_cdf[1], MAX_TX_DEPTH + 1);
   RESET_CDF_COUNTER(fc->tx_size_cdf[2], MAX_TX_DEPTH + 1);
   RESET_CDF_COUNTER(fc->tx_size_cdf[3], MAX_TX_DEPTH + 1);

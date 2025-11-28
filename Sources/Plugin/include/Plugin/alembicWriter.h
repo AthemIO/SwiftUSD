@@ -9,9 +9,9 @@
 
 /// \file usdAbc/alembicWriter.h
 
-#include "Tf/declarePtrs.h"
-#include "Tf/staticTokens.h"
 #include "pxr/pxrns.h"
+#include "Tf/staticTokens.h"
+#include "Tf/declarePtrs.h"
 #include <memory>
 #include <set>
 #include <string>
@@ -28,24 +28,24 @@ TF_DECLARE_WEAK_AND_REF_PTRS(SdfAbstractData);
 /// An alembic writer suitable for an SdfAbstractData.
 ///
 class UsdAbc_AlembicDataWriter {
- public:
-  UsdAbc_AlembicDataWriter();
-  UsdAbc_AlembicDataWriter(const UsdAbc_AlembicDataWriter &) = delete;
-  UsdAbc_AlembicDataWriter &operator=(const UsdAbc_AlembicDataWriter &) = delete;
-  ~UsdAbc_AlembicDataWriter();
+public:
+    UsdAbc_AlembicDataWriter();
+    UsdAbc_AlembicDataWriter (const UsdAbc_AlembicDataWriter&) = delete;
+    UsdAbc_AlembicDataWriter& operator= (const UsdAbc_AlembicDataWriter&) = delete;
+    ~UsdAbc_AlembicDataWriter();
 
-  bool Open(const std::string &filePath, const std::string &comment);
-  bool Write(const SdfAbstractDataConstPtr &data);
-  bool Close();
+    bool Open(const std::string& filePath, const std::string& comment);
+    bool Write(const SdfAbstractDataConstPtr& data);
+    bool Close();
 
-  bool IsValid() const;
-  std::string GetErrors() const;
+    bool IsValid() const;
+    std::string GetErrors() const;
 
-  void SetFlag(const TfToken &, bool set = true);
+    void SetFlag(const TfToken&, bool set = true);
 
- private:
-  std::unique_ptr<class UsdAbc_AlembicDataWriterImpl> _impl;
-  std::string _errorLog;
+private:
+    std::unique_ptr<class UsdAbc_AlembicDataWriterImpl> _impl;
+    std::string _errorLog;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

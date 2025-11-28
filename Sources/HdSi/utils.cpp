@@ -7,8 +7,11 @@
 #include "HdSi/utils.h"
 
 #include "Hd/collectionExpressionEvaluator.h"
+#include "Hd/collectionsSchema.h"
+#include "Hd/sceneIndex.h"
+#include "Sdf/pathExpression.h"
 #include "Sdf/predicateLibrary.h"
-#include "Trace/traceImpl.h"
+#include "Trace/trace.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -20,79 +23,114 @@ namespace {
 //      /World/Foo (or //Foo) because pruning /World/Foo also prunes all of its
 //      descendants.
 //
-SdfPredicateFunctionResult _GetPruneMatchResult(const SdfPath &primPath,
-                                                const HdCollectionExpressionEvaluator &eval)
+SdfPredicateFunctionResult
+_GetPruneMatchResult(
+    const SdfPath &primPath,
+    const HdCollectionExpressionEvaluator &eval)
 {
-  TRACE_FUNCTION();
+    TRACE_FUNCTION();
 
-  // For pruning collections, an ancestral match counts.
-  //
-  const SdfPathVector prefixes = primPath.GetPrefixes();
-  for (const SdfPath &path : prefixes) {
-    const auto result = eval.Match(path);
+    // For pruning collections, an ancestral match counts.
+    //
+    const SdfPathVector prefixes = primPath.GetPrefixes();
+    for (const SdfPath &path : prefixes) {
+        const auto result = eval.Match(path);
 
-    // Short circuit when possible:
-    // 1. Path matches.
+        // Short circuit when possible:
+        // 1. Path matches.
+        if (result) {
+            return result;
+        }
+
+        // 2. Path doesn't match, nor does any of its descendants.
+        if (result.IsConstant()) {
+            return result;
+        }
+    }
+    
+    return SdfPredicateFunctionResult(false);
+}
+
+} // anon
+
+void
+HdsiUtilsCompileCollection(
+    HdCollectionsSchema &collections,
+    TfToken const& collectionName,
+    HdSceneIndexBaseRefPtr const& sceneIndex,
+    SdfPathExpression *expr,
+    std::optional<HdCollectionExpressionEvaluator> *eval)
+{
+    if (HdCollectionSchema collection =
+        collections.GetCollection(collectionName)) {
+        if (HdPathExpressionDataSourceHandle pathExprDs =
+            collection.GetMembershipExpression()) {
+            *expr = pathExprDs->GetTypedValue(0.0);
+            if (!expr->IsEmpty()) {
+                *eval = HdCollectionExpressionEvaluator(sceneIndex, *expr);
+            }
+        }
+    }
+}
+
+bool
+HdsiUtilsIsPruned(
+    const SdfPath &primPath,
+    const HdCollectionExpressionEvaluator &eval)
+{
+    if (eval.IsEmpty()) {
+        return false;
+    }
+
+    return _GetPruneMatchResult(primPath, eval);
+}
+
+void
+HdsiUtilsRemovePrunedChildren(
+    const SdfPath &parentPath,
+    const HdCollectionExpressionEvaluator &eval,
+    SdfPathVector *children)
+{
+    if (eval.IsEmpty()) {
+        return;
+    }
+    if (!children) {
+        TF_CODING_ERROR("Received null vector.");
+        return;
+    }
+    if (children->empty()) {
+        return;
+    }
+
+    const auto result = _GetPruneMatchResult(parentPath, eval);
     if (result) {
-      return result;
+        // If the parent is pruned, all its children are also pruned.
+        children->clear();
+        return;
     }
 
-    // 2. Path doesn't match, nor does any of its descendants.
+    // Parent isn't pruned. We have two possibilities:
+    // 1. Result is constant over descendants, meaning that none of the children
+    //    are pruned.
+    // 2. Result varies over descendants. We need to evaluate the expression at
+    //    each child.
+
+    // #1.
     if (result.IsConstant()) {
-      return result;
+        return;
     }
-  }
 
-  return SdfPredicateFunctionResult(false);
-}
-
-}  // namespace
-
-bool HdsiUtilsIsPruned(const SdfPath &primPath, const HdCollectionExpressionEvaluator &eval)
-{
-  return _GetPruneMatchResult(primPath, eval);
-}
-
-void HdsiUtilsRemovePrunedChildren(const SdfPath &parentPath,
-                                   const HdCollectionExpressionEvaluator &eval,
-                                   SdfPathVector *children)
-{
-  if (!children) {
-    TF_CODING_ERROR("Received null vector.");
-    return;
-  }
-  if (children->empty()) {
-    return;
-  }
-
-  const auto result = _GetPruneMatchResult(parentPath, eval);
-  if (result) {
-    // If the parent is pruned, all its children are also pruned.
-    children->clear();
-    return;
-  }
-
-  // Parent isn't pruned. We have two possibilities:
-  // 1. Result is constant over descendants, meaning that none of the children
-  //    are pruned.
-  // 2. Result varies over descendants. We need to evaluate the expression at
-  //    each child.
-
-  // #1.
-  if (result.IsConstant()) {
-    return;
-  }
-
-  // #2.
-  // We only care about the result at the child path and do not need to
-  // evaluate its descendants.
-  //
-  children->erase(std::remove_if(children->begin(),
-                                 children->end(),
-                                 [&eval, &parentPath](const SdfPath &childPath) {
-                                   return eval.Match(childPath);
-                                 }),
-                  children->end());
+    // #2.
+    // We only care about the result at the child path and do not need to 
+    // evaluate its descendants.
+    //
+    children->erase(
+        std::remove_if(
+            children->begin(), children->end(),
+            [&eval](const SdfPath &childPath) {
+                return eval.Match(childPath);
+            }),
+        children->end());
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

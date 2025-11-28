@@ -12,18 +12,17 @@
 
 #include "UsdUtils/localizeAsset.h"
 
-#include <boost/python/def.hpp>
-
-using namespace boost::python;
+#include "pxr/external/boost/python/def.hpp"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+using namespace pxr_boost::python;
+
 void wrapLocalizeAsset()
 {
-  def("LocalizeAsset",
-      UsdUtilsLocalizeAsset,
-      (arg("assetPath"),
-       arg("localizationDirectory"),
-       arg("editLayersInPlace") = false,
-       arg("processingFunc") = object()));
+    def("LocalizeAsset", UsdUtilsLocalizeAsset,
+            (arg("assetPath"),
+             arg("localizationDirectory"),
+             arg("editLayersInPlace") = false,
+             arg("processingFunc") = object()));
 }

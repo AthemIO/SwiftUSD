@@ -31,4 +31,6 @@
 #include <HgiVulkan/vk_mem_alloc.h>
 #include <HgiVulkan/vulkan.h>
 
+#include <HgiVulkan/debugCodes.h>
+#include <HgiVulkan/descriptorSetLayouts.h>
 #endif  // __PXR_IMAGING_HGIVULKAN_H__

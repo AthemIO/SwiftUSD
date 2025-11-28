@@ -26,4 +26,5 @@
 #include <UsdSkel/topology.h>
 #include <UsdSkel/utils.h>
 
+#include <UsdSkel/generatedSchema.module.h>
 #endif  // __PXR_USD_USDSKEL_H__

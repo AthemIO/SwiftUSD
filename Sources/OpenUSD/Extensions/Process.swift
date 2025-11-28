@@ -15,7 +15,7 @@ import Foundation
 /// All processes that have been created using `Process.create(_:arguments:directory:pipe:)`.
 ///
 /// If the program is killed, all processes in this array are terminated before the program exits.
-var processes: [Process] = []
+nonisolated(unsafe) var processes: [Process] = []
 
 extension Process
 {

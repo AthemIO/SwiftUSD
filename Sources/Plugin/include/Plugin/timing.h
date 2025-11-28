@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,8 +12,8 @@
 #ifndef AOM_AV1_COMMON_TIMING_H_
 #define AOM_AV1_COMMON_TIMING_H_
 
-#include "Plugin/hioAvif/aom/aom_integer.h"
-#include "Plugin/hioAvif/aom/av1/common/enums.h"
+#include "aom/aom_integer.h"
+#include "av1/common/enums.h"
 
 #define MAX_NUM_OP_POINTS 32
 
@@ -46,8 +46,10 @@ void av1_set_aom_dec_model_info(aom_dec_model_info_t *decoder_model);
 
 void av1_set_dec_model_op_parameters(aom_dec_model_op_parameters_t *op_params);
 
-void av1_set_resource_availability_parameters(aom_dec_model_op_parameters_t *op_params);
+void av1_set_resource_availability_parameters(
+    aom_dec_model_op_parameters_t *op_params);
 
-int64_t av1_max_level_bitrate(BITSTREAM_PROFILE seq_profile, int seq_level_idx, int seq_tier);
+int64_t av1_max_level_bitrate(BITSTREAM_PROFILE seq_profile, int seq_level_idx,
+                              int seq_tier);
 
 #endif  // AOM_AV1_COMMON_TIMING_H_

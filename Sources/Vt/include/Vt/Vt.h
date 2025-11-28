@@ -16,4 +16,10 @@
 #include <Vt/valueFromPython.h>
 #include <Vt/visitValue.h>
 
+#include <Vt/debugCodes.h>
+#include <Vt/arrayEdit.h>
+#include <Vt/arrayEditBuilder.h>
+#include <Vt/wrapArray.h>
+#include <Vt/arrayEditOps.h>
+#include <Vt/wrapArrayEdit.h>
 #endif  // __PXR_BASE_VT_H__

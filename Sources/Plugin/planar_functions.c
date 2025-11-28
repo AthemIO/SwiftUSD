@@ -17,15 +17,14 @@
 #include "Plugin/hioAvif/AVIF/src/src-libyuv/libyuv/scale_row.h"  // for ScaleRowDown2
 
 // Copy a plane of data
-void CopyPlane(const uint8_t *src_y,
+void CopyPlane(const uint8_t* src_y,
                int src_stride_y,
-               uint8_t *dst_y,
+               uint8_t* dst_y,
                int dst_stride_y,
                int width,
-               int height)
-{
+               int height) {
   int y;
-  void (*CopyRow)(const uint8_t *src, uint8_t *dst, int width) = CopyRow_C;
+  void (*CopyRow)(const uint8_t* src, uint8_t* dst, int width) = CopyRow_C;
   if (width <= 0 || height == 0) {
     return;
   }
@@ -54,17 +53,12 @@ void CopyPlane(const uint8_t *src_y,
   }
 }
 
-void CopyPlane_16(const uint16_t *src_y,
+void CopyPlane_16(const uint16_t* src_y,
                   int src_stride_y,
-                  uint16_t *dst_y,
+                  uint16_t* dst_y,
                   int dst_stride_y,
                   int width,
-                  int height)
-{
-  CopyPlane((const uint8_t *)src_y,
-            src_stride_y * 2,
-            (uint8_t *)dst_y,
-            dst_stride_y * 2,
-            width * 2,
-            height);
+                  int height) {
+  CopyPlane((const uint8_t*)src_y, src_stride_y * 2, (uint8_t*)dst_y,
+            dst_stride_y * 2, width * 2, height);
 }

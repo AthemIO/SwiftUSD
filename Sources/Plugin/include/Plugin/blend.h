@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,7 +12,7 @@
 #ifndef AOM_AOM_DSP_BLEND_H_
 #define AOM_AOM_DSP_BLEND_H_
 
-#include "Plugin/hioAvif/aom/aom_ports/mem.h"
+#include "aom_ports/mem.h"
 
 // Various blending functions and macros.
 // See also the aom_blend_* functions in aom_dsp_rtcd.h
@@ -23,15 +23,16 @@
 #define AOM_BLEND_A64_ROUND_BITS 6
 #define AOM_BLEND_A64_MAX_ALPHA (1 << AOM_BLEND_A64_ROUND_BITS)  // 64
 
-#define AOM_BLEND_A64(a, v0, v1) \
-  ROUND_POWER_OF_TWO((a) * (v0) + (AOM_BLEND_A64_MAX_ALPHA - (a)) * (v1), AOM_BLEND_A64_ROUND_BITS)
+#define AOM_BLEND_A64(a, v0, v1)                                          \
+  ROUND_POWER_OF_TWO((a) * (v0) + (AOM_BLEND_A64_MAX_ALPHA - (a)) * (v1), \
+                     AOM_BLEND_A64_ROUND_BITS)
 
 // Alpha blending with alpha values from the range [0, 256], where 256
 // means use the first input and 0 means use the second input.
 #define AOM_BLEND_A256_ROUND_BITS 8
 #define AOM_BLEND_A256_MAX_ALPHA (1 << AOM_BLEND_A256_ROUND_BITS)  // 256
 
-#define AOM_BLEND_A256(a, v0, v1) \
+#define AOM_BLEND_A256(a, v0, v1)                                          \
   ROUND_POWER_OF_TWO((a) * (v0) + (AOM_BLEND_A256_MAX_ALPHA - (a)) * (v1), \
                      AOM_BLEND_A256_ROUND_BITS)
 

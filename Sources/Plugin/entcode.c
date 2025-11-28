@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,7 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include "Plugin/hioAvif/aom/aom_dsp/entcode.h"
+#include "aom_dsp/entcode.h"
 
 /*Given the current total integer number of bits used and the current value of
    rng, computes the fraction number of bits used to OD_BITRES precision.
@@ -20,8 +20,7 @@
   Return: The number of bits scaled by 2**OD_BITRES.
           This will always be slightly larger than the exact value (e.g., all
            rounding error is in the positive direction).*/
-uint32_t od_ec_tell_frac(uint32_t nbits_total, uint32_t rng)
-{
+uint32_t od_ec_tell_frac(uint32_t nbits_total, uint32_t rng) {
   uint32_t nbits;
   int l;
   int i;

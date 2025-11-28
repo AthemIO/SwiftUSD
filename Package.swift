@@ -247,10 +247,10 @@ let package = Package(
       name: "UsdView",
       targets: ["UsdView"]
     ),
-    // .executable(
-    //   name: "OpenUSD",
-    //   targets: ["OpenUSD"]
-    // ),
+    .executable(
+      name: "OpenUSD",
+      targets: ["OpenUSD"]
+    ),
     .executable(
       name: "Examples",
       targets: ["Examples"]
@@ -1729,31 +1729,31 @@ let package = Package(
       ]
     ),
 
-    // .executableTarget(
-    //   name: "OpenUSD",
-    //   dependencies: [
-    //     .product(name: "Version", package: "Version"),
-    //     .product(name: "ArgumentParser", package: "swift-argument-parser"),
-    //     .product(name: "Logging", package: "swift-log"),
-    //     .product(name: "Rainbow", package: "Rainbow")
-    //   ],
-    //   resources: [
-    //     // usd source files that need modifications to work with swift are maintained out of these
-    //     // directories, if a usd source file from upstream pixar is matching any of the respective
-    //     // target/filename(.h|.cpp) patterns within any of these resource directories, the contents
-    //     // of each of the matching upstream pixar files will have their contents replaced with each
-    //     // of the respective source code files found in any of these directories.
-    //     .copy("Resources/Work")
-    //   ],
-    //   cxxSettings: [
-    //     .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
-    //     .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
-    //     .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
-    //   ],
-    //   swiftSettings: [
-    //     .enableUpcomingFeature("BareSlashRegexLiterals"),
-    //   ]
-    // ),
+    .executableTarget(
+      name: "OpenUSD",
+      dependencies: [
+        .product(name: "Version", package: "Version"),
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        .product(name: "Logging", package: "swift-log"),
+        .product(name: "Rainbow", package: "Rainbow")
+      ],
+      resources: [
+        // usd source files that need modifications to work with swift are maintained out of these
+        // directories, if a usd source file from upstream pixar is matching any of the respective
+        // target/filename(.h|.cpp) patterns within any of these resource directories, the contents
+        // of each of the matching upstream pixar files will have their contents replaced with each
+        // of the respective source code files found in any of these directories.
+        .copy("Resources/Work")
+      ],
+      cxxSettings: [
+        .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
+        .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
+        .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
+      ],
+      swiftSettings: [
+        .enableUpcomingFeature("BareSlashRegexLiterals"),
+      ]
+    ),
 
     // .plugin(
     //   name: "OpenUSDPlugin",

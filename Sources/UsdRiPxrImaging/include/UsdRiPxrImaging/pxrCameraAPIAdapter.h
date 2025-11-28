@@ -9,9 +9,9 @@
 
 /// \file
 
-#include "UsdImaging/apiSchemaAdapter.h"
-#include "UsdRiPxrImaging/api.h"
 #include "pxr/pxrns.h"
+#include "UsdRiPxrImaging/api.h"
+#include "UsdImaging/apiSchemaAdapter.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -22,24 +22,26 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// The attributes of the schema will be available under
 /// HdCameraSchema::GetNamespacedProperties().
 ///
-class UsdRiPxrImagingCameraAPIAdapter : public UsdImagingAPISchemaAdapter {
- public:
-  using BaseAdapter = UsdImagingAPISchemaAdapter;
+class UsdRiPxrImagingCameraAPIAdapter : public UsdImagingAPISchemaAdapter
+{
+public:
 
-  USDRIPXRIMAGING_API
-  HdContainerDataSourceHandle GetImagingSubprimData(
-      UsdPrim const &prim,
-      TfToken const &subprim,
-      TfToken const &appliedInstanceName,
-      const UsdImagingDataSourceStageGlobals &stageGlobals) override;
+    using BaseAdapter = UsdImagingAPISchemaAdapter;
 
-  USDRIPXRIMAGING_API
-  HdDataSourceLocatorSet InvalidateImagingSubprim(
-      UsdPrim const &prim,
-      TfToken const &subprim,
-      TfToken const &appliedInstanceName,
-      TfTokenVector const &properties,
-      UsdImagingPropertyInvalidationType invalidationType) override;
+    USDRIPXRIMAGING_API
+    HdContainerDataSourceHandle GetImagingSubprimData(
+            UsdPrim const& prim,
+            TfToken const& subprim,
+            TfToken const &appliedInstanceName,
+            const UsdImagingDataSourceStageGlobals &stageGlobals) override;
+
+    USDRIPXRIMAGING_API
+    HdDataSourceLocatorSet InvalidateImagingSubprim(
+            UsdPrim const& prim,
+            TfToken const& subprim,
+            TfToken const &appliedInstanceName,
+            TfTokenVector const& properties,
+            UsdImagingPropertyInvalidationType invalidationType) override;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

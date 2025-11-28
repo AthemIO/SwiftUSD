@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,7 +10,7 @@
  */
 #include <assert.h>
 
-#include "Plugin/hioAvif/aom/aom_integer.h"
+#include "aom/aom_integer.h"
 
 static const size_t kMaximumLeb128Size = 8;
 static const uint8_t kLeb128ByteMask = 0x7f;  // Binary: 01111111
@@ -20,8 +20,7 @@ static const uint8_t kLeb128ByteMask = 0x7f;  // Binary: 01111111
 // when decoded.
 static const uint64_t kMaximumLeb128Value = UINT32_MAX;
 
-size_t aom_uleb_size_in_bytes(uint64_t value)
-{
+size_t aom_uleb_size_in_bytes(uint64_t value) {
   size_t size = 0;
   do {
     ++size;
@@ -29,8 +28,8 @@ size_t aom_uleb_size_in_bytes(uint64_t value)
   return size;
 }
 
-int aom_uleb_decode(const uint8_t *buffer, size_t available, uint64_t *value, size_t *length)
-{
+int aom_uleb_decode(const uint8_t *buffer, size_t available, uint64_t *value,
+                    size_t *length) {
   if (buffer && value) {
     *value = 0;
     for (size_t i = 0; i < kMaximumLeb128Size && i < available; ++i) {
@@ -44,8 +43,7 @@ int aom_uleb_decode(const uint8_t *buffer, size_t available, uint64_t *value, si
         // Fail on values larger than 32-bits to ensure consistent behavior on
         // 32 and 64 bit targets: value is typically used to determine buffer
         // allocation size.
-        if (*value > UINT32_MAX)
-          return -1;
+        if (*value > UINT32_MAX) return -1;
 
         return 0;
       }
@@ -57,12 +55,11 @@ int aom_uleb_decode(const uint8_t *buffer, size_t available, uint64_t *value, si
   return -1;
 }
 
-int aom_uleb_encode(uint64_t value, size_t available, uint8_t *coded_value, size_t *coded_size)
-{
+int aom_uleb_encode(uint64_t value, size_t available, uint8_t *coded_value,
+                    size_t *coded_size) {
   const size_t leb_size = aom_uleb_size_in_bytes(value);
-  if (value > kMaximumLeb128Value || leb_size > kMaximumLeb128Size || leb_size > available ||
-      !coded_value || !coded_size)
-  {
+  if (value > kMaximumLeb128Value || leb_size > kMaximumLeb128Size ||
+      leb_size > available || !coded_value || !coded_size) {
     return -1;
   }
 
@@ -70,8 +67,7 @@ int aom_uleb_encode(uint64_t value, size_t available, uint8_t *coded_value, size
     uint8_t byte = value & 0x7f;
     value >>= 7;
 
-    if (value != 0)
-      byte |= 0x80;  // Signal that more bytes follow.
+    if (value != 0) byte |= 0x80;  // Signal that more bytes follow.
 
     *(coded_value + i) = byte;
   }
@@ -80,12 +76,11 @@ int aom_uleb_encode(uint64_t value, size_t available, uint8_t *coded_value, size
   return 0;
 }
 
-int aom_uleb_encode_fixed_size(
-    uint64_t value, size_t available, size_t pad_to_size, uint8_t *coded_value, size_t *coded_size)
-{
-  if (value > kMaximumLeb128Value || !coded_value || !coded_size || available < pad_to_size ||
-      pad_to_size > kMaximumLeb128Size)
-  {
+int aom_uleb_encode_fixed_size(uint64_t value, size_t available,
+                               size_t pad_to_size, uint8_t *coded_value,
+                               size_t *coded_size) {
+  if (value > kMaximumLeb128Value || !coded_value || !coded_size ||
+      available < pad_to_size || pad_to_size > kMaximumLeb128Size) {
     return -1;
   }
   const uint64_t limit = 1ULL << (7 * pad_to_size);
@@ -98,8 +93,7 @@ int aom_uleb_encode_fixed_size(
     uint8_t byte = value & 0x7f;
     value >>= 7;
 
-    if (i < pad_to_size - 1)
-      byte |= 0x80;  // Signal that more bytes follow.
+    if (i < pad_to_size - 1) byte |= 0x80;  // Signal that more bytes follow.
 
     *(coded_value + i) = byte;
   }

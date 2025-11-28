@@ -27,4 +27,17 @@
 #include <Ts/typeRegistry.h>
 #include <Ts/types.h>
 #include <Ts/wrapUtils.h>
+#include <Ts/raii.h>
+#include <Ts/splineData.h>
+#include <Ts/knotData.h>
+#include <Ts/debugCodes.h>
+#include <Ts/knotMap.h>
+#include <Ts/regressionPreventer.h>
+#include <Ts/valueTypeDispatch.h>
+#include <Ts/typeHelpers.h>
+#include <Ts/eval.h>
+#include <Ts/tangentConversions.h>
+#include <Ts/knot.h>
+#include <Ts/sample.h>
+#include <Ts/binary.h>
 #endif  // __PXR_BASE_TS_H__

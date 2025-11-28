@@ -7,21 +7,55 @@
 #ifndef PXR_USD_IMAGING_USD_RI_PXR_IMAGING_TOKENS_H
 #define PXR_USD_IMAGING_USD_RI_PXR_IMAGING_TOKENS_H
 
-#include "Tf/staticTokens.h"
 #include "UsdRiPxrImaging/api.h"
+
+#include "Tf/staticTokens.h"
+
 #include "pxr/pxrns.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-#define USDRIPXRIMAGING_TOKENS \
-  ((infoSource, "info:source"))(faceIndexPrimvar)( \
-      faceOffsetPrimvar)((primvarsNormals, "primvars:normals"))( \
-      ( \
-          primvarsWidths, \
-          "primvars:widths"))(ptexFaceIndex)(ptexFaceOffset)(usdPopulatedPrimCount)(usdVaryingExtent)(usdVaryingPrimvar)(usdVaryingTopology)(usdVaryingVisibility)(usdVaryingWidths)(usdVaryingNormals)(usdVaryingXform)(usdVaryingTexture)(uvPrimvar)(UsdPreviewSurface)(UsdUVTexture)(UsdPrimvarReader_float)(UsdPrimvarReader_float2)(UsdPrimvarReader_float3)(UsdPrimvarReader_float4)(UsdPrimvarReader_int)(UsdTransform2d)(pxrBarnLightFilter)(pxrIntMultLightFilter)(pxrRodLightFilter)
+#define USDRIPXRIMAGING_TOKENS   \
+    ((infoSource, "info:source")) \
+    (faceIndexPrimvar)      \
+    (faceOffsetPrimvar)     \
+    ((primvarsNormals, "primvars:normals")) \
+    ((primvarsWidths,  "primvars:widths")) \
+    (ptexFaceIndex)         \
+    (ptexFaceOffset)        \
+    (usdPopulatedPrimCount) \
+    (usdVaryingExtent)      \
+    (usdVaryingPrimvar)     \
+    (usdVaryingTopology)    \
+    (usdVaryingVisibility)  \
+    (usdVaryingWidths)      \
+    (usdVaryingNormals)     \
+    (usdVaryingXform)       \
+    (usdVaryingTexture)     \
+    (uvPrimvar)             \
+    (UsdPreviewSurface)     \
+    (UsdUVTexture)          \
+    (UsdPrimvarReader_float)\
+    (UsdPrimvarReader_float2)\
+    (UsdPrimvarReader_float3)\
+    (UsdPrimvarReader_float4)\
+    (UsdPrimvarReader_int)  \
+    (UsdTransform2d)  \
+    (pxrBarnLightFilter)    \
+    (pxrIntMultLightFilter) \
+    (pxrRodLightFilter)
 
-TF_DECLARE_PUBLIC_TOKENS(UsdRiPxrImagingTokens, USDRIPXRIMAGING_API, USDRIPXRIMAGING_TOKENS);
+TF_DECLARE_PUBLIC_TOKENS(
+    UsdRiPxrImagingTokens,
+    USDRIPXRIMAGING_API, USDRIPXRIMAGING_TOKENS);
+
+#define USDRIPXRIMAGING_PRIM_TYPE_TOKENS \
+    (projection)
+
+TF_DECLARE_PUBLIC_TOKENS(
+    UsdRiPxrImagingPrimTypeTokens,
+    USDRIPXRIMAGING_API, USDRIPXRIMAGING_PRIM_TYPE_TOKENS);
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_USD_IMAGING_USD_RI_PXR_IMAGING_TOKENS_H
+#endif //PXR_USD_IMAGING_USD_RI_PXR_IMAGING_TOKENS_H

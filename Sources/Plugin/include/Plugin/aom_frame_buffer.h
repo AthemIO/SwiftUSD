@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#include "Plugin/hioAvif/aom/aom_integer.h"
+#include "aom/aom_integer.h"
 
 /*!\brief The maximum number of work buffers used by libaom.
  *  Support maximum 4 threads to decode video in parallel.
@@ -61,8 +61,7 @@ typedef struct aom_codec_frame_buffer {
  * \param[in] min_size     Size in bytes needed by the buffer
  * \param[in,out] fb       Pointer to aom_codec_frame_buffer_t
  */
-typedef int (*aom_get_frame_buffer_cb_fn_t)(void *priv,
-                                            size_t min_size,
+typedef int (*aom_get_frame_buffer_cb_fn_t)(void *priv, size_t min_size,
                                             aom_codec_frame_buffer_t *fb);
 
 /*!\brief release frame buffer callback prototype
@@ -75,7 +74,8 @@ typedef int (*aom_get_frame_buffer_cb_fn_t)(void *priv,
  * \param[in] priv         Callback's private data
  * \param[in] fb           Pointer to aom_codec_frame_buffer_t
  */
-typedef int (*aom_release_frame_buffer_cb_fn_t)(void *priv, aom_codec_frame_buffer_t *fb);
+typedef int (*aom_release_frame_buffer_cb_fn_t)(void *priv,
+                                                aom_codec_frame_buffer_t *fb);
 
 #ifdef __cplusplus
 }  // extern "C"

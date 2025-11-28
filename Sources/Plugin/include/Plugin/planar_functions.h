@@ -13,16 +13,16 @@
 
 #include "Plugin/hioAvif/AVIF/src/src-libyuv/libyuv/basic_types.h"
 
-void CopyPlane(const uint8_t *src_y,
+void CopyPlane(const uint8_t* src_y,
                int src_stride_y,
-               uint8_t *dst_y,
+               uint8_t* dst_y,
                int dst_stride_y,
                int width,
                int height);
 
-void CopyPlane_16(const uint16_t *src_y,
+void CopyPlane_16(const uint16_t* src_y,
                   int src_stride_y,
-                  uint16_t *dst_y,
+                  uint16_t* dst_y,
                   int dst_stride_y,
                   int width,
                   int height);

@@ -11,8 +11,8 @@
 /// Utilities for converting between USD encodings and Renderman encodings in
 /// cases where there is a difference.
 
-#include "UsdRi/api.h"
 #include "pxr/pxrns.h"
+#include "UsdRi/api.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -28,7 +28,7 @@ int UsdRiConvertToRManInterpolateBoundary(const TfToken &token);
 USDRI_API
 const TfToken &UsdRiConvertFromRManInterpolateBoundary(int i);
 
-/// Given a \p token representing a UsdGeom face-varying interpolate boundary
+/// Given a \p token representing a UsdGeom face-varying interpolate boundary 
 /// value, returns corresponding rman enum (converted to int).
 USDRI_API
 int UsdRiConvertToRManFaceVaryingLinearInterpolation(const TfToken &token);
@@ -50,4 +50,4 @@ const TfToken &UsdRiConvertFromRManTriangleSubdivisionRule(int i);
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_USD_USD_RI_RMAN_UTILITIES_H
+#endif //PXR_USD_USD_RI_RMAN_UTILITIES_H

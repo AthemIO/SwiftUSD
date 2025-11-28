@@ -7,13 +7,13 @@
 #ifndef PXR_IMAGING_HD_ST_INSTANCER_H
 #define PXR_IMAGING_HD_ST_INSTANCER_H
 
+#include "pxr/pxrns.h"
+#include "HdSt/api.h"
 #include "Hd/changeTracker.h"
 #include "Hd/instancer.h"
-#include "HdSt/api.h"
 #include "Sdf/path.h"
-#include "Tf/hashmap.h"
 #include "Vt/array.h"
-#include "pxr/pxrns.h"
+#include "Tf/hashmap.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -49,48 +49,52 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 /// its instance primvars in the bound primvar arrays.
 
 class HdStInstancer : public HdInstancer {
- public:
-  /// Constructor.
-  HDST_API
-  HdStInstancer(HdSceneDelegate *delegate, SdfPath const &id);
+public:
+    /// Constructor.
+    HDST_API
+    HdStInstancer(HdSceneDelegate* delegate, SdfPath const &id);
 
-  // Updates the instance primvar buffers.
-  // XXX: Note, this is currently called from rprimUtils instead of the
-  // render index sync phase, so it needs to take a mutex.
-  HDST_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+    // Updates the instance primvar buffers.
+    // XXX: Note, this is currently called from rprimUtils instead of the
+    // render index sync phase, so it needs to take a mutex.
+    HDST_API
+    void Sync(HdSceneDelegate *sceneDelegate,
+              HdRenderParam   *renderParam,
+              HdDirtyBits     *dirtyBits) override;
 
-  HdBufferArrayRangeSharedPtr GetInstancePrimvarRange() const
-  {
-    return _instancePrimvarRange;
-  }
+    HdBufferArrayRangeSharedPtr GetInstancePrimvarRange() const {
+        return _instancePrimvarRange;
+    }
 
-  /// Populates the instance index indirection buffer for \p prototypeId and
-  /// returns a flat array of instance index tuples.
-  HDST_API
-  VtIntArray GetInstanceIndices(SdfPath const &prototypeId);
+    /// Populates the instance index indirection buffer for \p prototypeId and
+    /// returns a flat array of instance index tuples.
+    HDST_API
+    VtIntArray GetInstanceIndices(SdfPath const &prototypeId);
 
- protected:
-  HDST_API
-  void _GetInstanceIndices(SdfPath const &prototypeId,
-                           std::vector<VtIntArray> *instanceIndicesArray);
+protected:
+    HDST_API
+    void _GetInstanceIndices(SdfPath const &prototypeId,
+                             std::vector<VtIntArray> *instanceIndicesArray);
 
-  HDST_API
-  void _SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *dirtyBits);
+    HDST_API
+    void _SyncPrimvars(HdSceneDelegate *sceneDelegate,
+                       HdDirtyBits *dirtyBits);
 
- private:
-  // # of entries in an instance primvar.  This should be consistent between
-  // all primvars, and also consistent with the instance indices (meaning
-  // no instance index is out-of-range).
-  size_t _instancePrimvarNumElements;
+private:
+    // # of entries in an instance primvar.  This should be consistent between
+    // all primvars, and also consistent with the instance indices (meaning
+    // no instance index is out-of-range).
+    size_t _instancePrimvarNumElements;
 
-  // The BAR of the instance primvars for this instancer.
-  // (Note: instance indices are computed per prototype and the rprim owns
-  // the bar).
-  HdBufferArrayRangeSharedPtr _instancePrimvarRange;
+    // The BAR of the instance primvars for this instancer.
+    // (Note: instance indices are computed per prototype and the rprim owns
+    // the bar).
+    HdBufferArrayRangeSharedPtr _instancePrimvarRange;
+
+    // Visibility
+    bool _visible;
 };
+
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

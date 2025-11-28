@@ -10,4 +10,10 @@
 #include <Sdr/shaderNode.h>
 #include <Sdr/shaderProperty.h>
 
+#include <Sdr/discoveryPlugin.h>
+#include <Sdr/shaderNodeDiscoveryResult.h>
+#include <Sdr/filesystemDiscovery.h>
+#include <Sdr/parserPlugin.h>
+#include <Sdr/sdfTypeIndicator.h>
+#include <Sdr/filesystemDiscoveryHelpers.h>
 #endif  // __PXR_USD_SDR_H__

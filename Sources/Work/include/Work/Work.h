@@ -12,4 +12,19 @@
 #include <Work/utils.h>
 #include <Work/withScopedParallelism.h>
 
+#include <Work/taskGraph_defaultImpl.h>
+#include <Work/isolatingDispatcher.h>
+#include <Work/zeroAllocator.h>
+#include <Work/dispatcher_impl.h>
+#include <Work/withScopedParallelism_impl.h>
+#include <Work/threadLimits_impl.h>
+#include <Work/reduce_impl.h>
+#include <Work/taskGraph_impl.h>
+#include <Work/loops_impl.h>
+#include <Work/sort_impl.h>
+#include <Work/impl.h>
+#include <Work/detachedTask_impl.h>
+#include <Work/isolatingDispatcher_impl.h>
+#include <Work/sort.h>
+#include <Work/taskGraph.h>
 #endif  // __PXR_BASE_WORK_H__

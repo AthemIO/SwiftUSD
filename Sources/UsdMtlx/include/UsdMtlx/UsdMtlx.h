@@ -9,4 +9,7 @@
 #include <UsdMtlx/reader.h>
 #include <UsdMtlx/utils.h>
 
+#include <UsdMtlx/generatedSchema.module.h>
+#include <UsdMtlx/materialXConfigAPI.h>
+#include <UsdMtlx/tokens.h>
 #endif  // __PXR_USD_USDMTLX_H__

@@ -24,4 +24,7 @@
 #include <UsdPhysics/sphericalJoint.h>
 #include <UsdPhysics/tokens.h>
 
+#include <UsdPhysics/generatedSchema.module.h>
+#include <UsdPhysics/parseDesc.h>
+#include <UsdPhysics/parseUtils.h>
 #endif  // __PXR_USD_USDPHYSICS_H__

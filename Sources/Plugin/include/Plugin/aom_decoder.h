@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -30,8 +30,8 @@
 extern "C" {
 #endif
 
-#include "Plugin/hioAvif/aom/aom_codec.h"
-#include "Plugin/hioAvif/aom/aom_frame_buffer.h"
+#include "aom/aom_codec.h"  // IWYU pragma: export
+#include "aom/aom_frame_buffer.h"
 
 /*!\brief Current ABI version number
  *
@@ -41,7 +41,8 @@ extern "C" {
  * types, removing or reassigning enums, adding/removing/rearranging
  * fields to structures
  */
-#define AOM_DECODER_ABI_VERSION (6 + AOM_CODEC_ABI_VERSION) /**<\hideinitializer*/
+#define AOM_DECODER_ABI_VERSION \
+  (6 + AOM_CODEC_ABI_VERSION) /**<\hideinitializer*/
 
 /*! \brief Decoder capabilities bitfield
  *
@@ -51,7 +52,7 @@ extern "C" {
  *
  *  The available flags are specified by AOM_CODEC_CAP_* defines.
  */
-/*!brief Can support external frame buffers */
+/*!\brief Can support external frame buffers */
 #define AOM_CODEC_CAP_EXTERNAL_FRAME_BUFFER 0x200000
 
 /*! \brief Initialization-time Feature Enabling
@@ -88,9 +89,9 @@ typedef struct aom_codec_stream_info {
  * decoder.
  */
 typedef struct aom_codec_dec_cfg {
-  unsigned int threads;           /**< Maximum number of threads to use, default 1 */
-  unsigned int w;                 /**< Width */
-  unsigned int h;                 /**< Height */
+  unsigned int threads; /**< Maximum number of threads to use, default 1 */
+  unsigned int w;       /**< Width */
+  unsigned int h;       /**< Height */
   unsigned int allow_lowbitdepth; /**< Allow use of low-bitdepth coding path */
 } aom_codec_dec_cfg_t;            /**< alias for struct aom_codec_dec_cfg */
 
@@ -112,15 +113,14 @@ typedef struct aom_codec_dec_cfg {
  * \param[in]    ver     ABI version number. Must be set to
  *                       AOM_DECODER_ABI_VERSION
  * \retval #AOM_CODEC_OK
- *     The decoder algorithm initialized.
+ *     The decoder algorithm has been initialized.
  * \retval #AOM_CODEC_MEM_ERROR
  *     Memory allocation failed.
  */
 aom_codec_err_t aom_codec_dec_init_ver(aom_codec_ctx_t *ctx,
                                        aom_codec_iface_t *iface,
                                        const aom_codec_dec_cfg_t *cfg,
-                                       aom_codec_flags_t flags,
-                                       int ver);
+                                       aom_codec_flags_t flags, int ver);
 
 /*!\brief Convenience macro for aom_codec_dec_init_ver()
  *
@@ -151,8 +151,7 @@ aom_codec_err_t aom_codec_dec_init_ver(aom_codec_ctx_t *ctx,
  *     buffer was too short.
  */
 aom_codec_err_t aom_codec_peek_stream_info(aom_codec_iface_t *iface,
-                                           const uint8_t *data,
-                                           size_t data_sz,
+                                           const uint8_t *data, size_t data_sz,
                                            aom_codec_stream_info_t *si);
 
 /*!\brief Return information about the current stream.
@@ -169,7 +168,8 @@ aom_codec_err_t aom_codec_peek_stream_info(aom_codec_iface_t *iface,
  * \retval #AOM_CODEC_UNSUP_BITSTREAM
  *     The decoder couldn't parse the submitted data.
  */
-aom_codec_err_t aom_codec_get_stream_info(aom_codec_ctx_t *ctx, aom_codec_stream_info_t *si);
+aom_codec_err_t aom_codec_get_stream_info(aom_codec_ctx_t *ctx,
+                                          aom_codec_stream_info_t *si);
 
 /*!\brief Decode data
  *
@@ -188,10 +188,8 @@ aom_codec_err_t aom_codec_get_stream_info(aom_codec_ctx_t *ctx, aom_codec_stream
  *         see the descriptions of the other error codes in ::aom_codec_err_t
  *         for recoverability capabilities.
  */
-aom_codec_err_t aom_codec_decode(aom_codec_ctx_t *ctx,
-                                 const uint8_t *data,
-                                 size_t data_sz,
-                                 void *user_priv);
+aom_codec_err_t aom_codec_decode(aom_codec_ctx_t *ctx, const uint8_t *data,
+                                 size_t data_sz, void *user_priv);
 
 /*!\brief Decoded frames iterator
  *
@@ -246,10 +244,9 @@ aom_image_t *aom_codec_get_frame(aom_codec_ctx_t *ctx, aom_codec_iter_t *iter);
  * When decoding AV1, the application may be required to pass in at least
  * #AOM_MAXIMUM_WORK_BUFFERS external frame buffers.
  */
-aom_codec_err_t aom_codec_set_frame_buffer_functions(aom_codec_ctx_t *ctx,
-                                                     aom_get_frame_buffer_cb_fn_t cb_get,
-                                                     aom_release_frame_buffer_cb_fn_t cb_release,
-                                                     void *cb_priv);
+aom_codec_err_t aom_codec_set_frame_buffer_functions(
+    aom_codec_ctx_t *ctx, aom_get_frame_buffer_cb_fn_t cb_get,
+    aom_release_frame_buffer_cb_fn_t cb_release, void *cb_priv);
 
 /*!@} - end defgroup cap_external_frame_buffer */
 

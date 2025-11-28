@@ -9,24 +9,30 @@
 
 /// \file usdRiPxrImaging/pxrRenderTerminalHelper.h
 
-#include "Hd/material.h"
-#include "Usd/prim.h"
 #include "pxr/pxrns.h"
+#include "Usd/prim.h"
+#include "Hd/material.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+
 /// \class UsdRiPxrImagingRenderTerminalHelper
 ///
-/// Helper to translate the PxrRenderTerminalsAPI (Integrator, Sample Filter
+/// Helper to translate the PxrRenderTerminalsAPI (Integrator, Sample Filter 
 /// and Display Filter) prims into their corresponding HdMaterialNode2 resource.
 ///
-class UsdRiPxrImagingRenderTerminalHelper {
- public:
-  static HdMaterialNode2 CreateHdMaterialNode2(UsdPrim const &prim,
-                                               TfToken const &shaderIdToken,
-                                               TfToken const &primTypeToken);
+class UsdRiPxrImagingRenderTerminalHelper
+{
+public:
+    static
+    HdMaterialNode2 CreateHdMaterialNode2(
+        UsdPrim const& prim, 
+        TfToken const& shaderIdToken,
+        TfToken const& primTypeToken);
+
 };
+
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_USD_IMAGING_USD_RI_PXR_IMAGING_PXR_RENDER_TERMINAL_HELPER_H
+#endif // PXR_USD_IMAGING_USD_RI_PXR_IMAGING_PXR_RENDER_TERMINAL_HELPER_H

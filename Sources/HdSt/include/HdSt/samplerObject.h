@@ -7,18 +7,19 @@
 #ifndef PXR_IMAGING_HD_ST_SAMPLER_OBJECT_H
 #define PXR_IMAGING_HD_ST_SAMPLER_OBJECT_H
 
+#include "pxr/pxrns.h"
 #include "HdSt/api.h"
 #include "HdSt/enums.h"
-#include "pxr/pxrns.h"
 
-#include "Hd/types.h"
 #include "Hgi/handle.h"
+#include "Hd/types.h"
 
 #include <memory>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
 class Hgi;
+class HdStCubemapTextureObject;
 class HdStUvTextureObject;
 class HdStFieldTextureObject;
 class HdStPtexTextureObject;
@@ -26,7 +27,8 @@ class HdStUdimTextureObject;
 class HdSt_SamplerObjectRegistry;
 using HgiSamplerHandle = HgiHandle<class HgiSampler>;
 
-using HdStSamplerObjectSharedPtr = std::shared_ptr<class HdStSamplerObject>;
+using HdStSamplerObjectSharedPtr =
+    std::shared_ptr<class HdStSamplerObject>;
 
 /// \class HdStSamplerObject
 ///
@@ -44,15 +46,17 @@ using HdStSamplerObjectSharedPtr = std::shared_ptr<class HdStSamplerObject>;
 /// different thread. The HdSt_SamplerObjectRegistry is also dispatching
 /// by texture type to construct the corresponding sampler type.
 ///
-class HdStSamplerObject {
- public:
-  virtual ~HdStSamplerObject() = 0;
+class HdStSamplerObject
+{
+public:
+    virtual ~HdStSamplerObject() = 0;
 
- protected:
-  explicit HdStSamplerObject(HdSt_SamplerObjectRegistry *samplerObjectRegistry);
+protected:
+    explicit HdStSamplerObject(
+        HdSt_SamplerObjectRegistry * samplerObjectRegistry);
 
-  Hgi *_GetHgi() const;
-  HdSt_SamplerObjectRegistry *const _samplerObjectRegistry;
+    Hgi* _GetHgi() const;
+    HdSt_SamplerObjectRegistry * const _samplerObjectRegistry;
 };
 
 /// \class HdStUvSamplerObject
@@ -60,24 +64,24 @@ class HdStSamplerObject {
 /// A sampler suitable for HdStUvTextureObject.
 ///
 class HdStUvSamplerObject final : public HdStSamplerObject {
- public:
-  HDST_API
-  HdStUvSamplerObject(HdStUvTextureObject const &uvTexture,
-                      HdSamplerParameters const &samplerParameters,
-                      HdSt_SamplerObjectRegistry *samplerObjectRegistry);
+public:
+    HDST_API 
+    HdStUvSamplerObject(
+        HdStUvTextureObject const &uvTexture,
+        HdSamplerParameters const &samplerParameters,
+        HdSt_SamplerObjectRegistry * samplerObjectRegistry);
 
-  HDST_API
-  ~HdStUvSamplerObject() override;
+    HDST_API 
+    ~HdStUvSamplerObject() override;
 
-  /// The sampler.
-  ///
-  const HgiSamplerHandle &GetSampler() const
-  {
-    return _sampler;
-  }
+    /// The sampler.
+    ///
+    const HgiSamplerHandle &GetSampler() const {
+        return _sampler;
+    }
 
- private:
-  HgiSamplerHandle _sampler;
+private:
+    HgiSamplerHandle _sampler;
 };
 
 /// \class HdStFieldSamplerObject
@@ -85,22 +89,22 @@ class HdStUvSamplerObject final : public HdStSamplerObject {
 /// A sampler suitable for HdStFieldTextureObject.
 ///
 class HdStFieldSamplerObject final : public HdStSamplerObject {
- public:
-  HdStFieldSamplerObject(HdStFieldTextureObject const &uvTexture,
-                         HdSamplerParameters const &samplerParameters,
-                         HdSt_SamplerObjectRegistry *samplerObjectRegistry);
+public:
+    HdStFieldSamplerObject(
+        HdStFieldTextureObject const &uvTexture,
+        HdSamplerParameters const &samplerParameters,
+        HdSt_SamplerObjectRegistry * samplerObjectRegistry);
 
-  ~HdStFieldSamplerObject() override;
+    ~HdStFieldSamplerObject() override;
 
-  /// The sampler.
-  ///
-  const HgiSamplerHandle &GetSampler() const
-  {
-    return _sampler;
-  }
+    /// The sampler.
+    ///
+    const HgiSamplerHandle &GetSampler() const {
+        return _sampler;
+    }
 
- private:
-  HgiSamplerHandle _sampler;
+private:
+    HgiSamplerHandle _sampler;
 };
 
 /// \class HdStPtexSamplerObject
@@ -109,31 +113,30 @@ class HdStFieldSamplerObject final : public HdStSamplerObject {
 /// sampler to resolve handles for bindless textures.
 ///
 class HdStPtexSamplerObject final : public HdStSamplerObject {
- public:
-  HdStPtexSamplerObject(HdStPtexTextureObject const &ptexTexture,
-                        // samplerParameters are ignored by ptex
-                        HdSamplerParameters const &samplerParameters,
-                        HdSt_SamplerObjectRegistry *samplerObjectRegistry);
+public:
+    HdStPtexSamplerObject(
+        HdStPtexTextureObject const &ptexTexture,
+        // samplerParameters are ignored by ptex
+        HdSamplerParameters const &samplerParameters,
+        HdSt_SamplerObjectRegistry * samplerObjectRegistry);
 
-  ~HdStPtexSamplerObject() override;
+    ~HdStPtexSamplerObject() override;
 
-  /// The GPU sampler object for the texels texture.
-  ///
-  const HgiSamplerHandle &GetTexelsSampler() const
-  {
-    return _texelsSampler;
-  }
+    /// The GPU sampler object for the texels texture.
+    ///
+    const HgiSamplerHandle &GetTexelsSampler() const {
+        return _texelsSampler;
+    }
 
-  /// The GPU sampler object for the layout texture.
-  ///
-  const HgiSamplerHandle &GetLayoutSampler() const
-  {
-    return _layoutSampler;
-  }
+    /// The GPU sampler object for the layout texture.
+    ///
+    const HgiSamplerHandle &GetLayoutSampler() const {
+        return _layoutSampler;
+    }
 
- private:
-  HgiSamplerHandle _texelsSampler;
-  HgiSamplerHandle _layoutSampler;
+private:
+    HgiSamplerHandle _texelsSampler;
+    HgiSamplerHandle _layoutSampler;
 };
 
 /// \class HdStUdimSamplerObject
@@ -142,34 +145,62 @@ class HdStPtexSamplerObject final : public HdStSamplerObject {
 /// for the texels texture).
 ///
 class HdStUdimSamplerObject final : public HdStSamplerObject {
- public:
-  HdStUdimSamplerObject(HdStUdimTextureObject const &ptexTexture,
-                        // samplerParameters are ignored by udim (at least for now)
-                        HdSamplerParameters const &samplerParameters,
-                        HdSt_SamplerObjectRegistry *samplerObjectRegistry);
+public:
+    HdStUdimSamplerObject(
+        HdStUdimTextureObject const &ptexTexture,
+        // samplerParameters are ignored by udim (at least for now)
+        HdSamplerParameters const &samplerParameters,
+        HdSt_SamplerObjectRegistry * samplerObjectRegistry);
 
-  ~HdStUdimSamplerObject() override;
+    ~HdStUdimSamplerObject() override;
 
-  /// The GPU sampler object for the texels texture.
-  ///
-  const HgiSamplerHandle &GetTexelsSampler() const
-  {
-    return _texelsSampler;
-  }
+    /// The GPU sampler object for the texels texture.
+    ///
+    const HgiSamplerHandle &GetTexelsSampler() const {
+        return _texelsSampler;
+    }
 
-  /// The GPU sampler object for the layout texture.
-  ///
-  const HgiSamplerHandle &GetLayoutSampler() const
-  {
-    return _layoutSampler;
-  }
+    /// The GPU sampler object for the layout texture.
+    ///
+    const HgiSamplerHandle &GetLayoutSampler() const {
+        return _layoutSampler;
+    }
 
- private:
-  HgiSamplerHandle _texelsSampler;
-  HgiSamplerHandle _layoutSampler;
+private:
+    HgiSamplerHandle _texelsSampler;
+    HgiSamplerHandle _layoutSampler;
 };
 
-template<HdStTextureType textureType> struct HdSt_TypedSamplerObjectHelper;
+/// \class HdStCubemapSamplerObject
+///
+/// A sampler suitable for HdStCubemapTextureObject.
+///
+/// Note that since we default to using seamless cubemap sampling, the wrap
+/// modes specified in the sampler parameters will be ignored.
+///
+class HdStCubemapSamplerObject final : public HdStSamplerObject {
+public:
+    HDST_API 
+    HdStCubemapSamplerObject(
+        HdStCubemapTextureObject const &cubemapTexture,
+        HdSamplerParameters const &samplerParameters,
+        HdSt_SamplerObjectRegistry * samplerObjectRegistry);
+
+    HDST_API 
+    ~HdStCubemapSamplerObject() override;
+
+    /// The sampler.
+    ///
+    const HgiSamplerHandle &GetSampler() const {
+        return _sampler;
+    }
+
+private:
+    HgiSamplerHandle _sampler;
+};
+
+template<HdStTextureType textureType>
+struct HdSt_TypedSamplerObjectHelper;
 
 /// \class HdStTypedSamplerObject
 ///
@@ -177,22 +208,32 @@ template<HdStTextureType textureType> struct HdSt_TypedSamplerObjectHelper;
 /// accessed as HdStTypedSamplerObject<HdStTextureType::Uv>.
 ///
 template<HdStTextureType textureType>
-using HdStTypedSamplerObject = typename HdSt_TypedSamplerObjectHelper<textureType>::type;
+using HdStTypedSamplerObject =
+    typename HdSt_TypedSamplerObjectHelper<textureType>::type;
 
-template<> struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Uv> {
-  using type = HdStUvSamplerObject;
+template<>
+struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Uv> {
+    using type = HdStUvSamplerObject;
 };
 
-template<> struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Field> {
-  using type = HdStFieldSamplerObject;
+template<>
+struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Field> {
+    using type = HdStFieldSamplerObject;
 };
 
-template<> struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Ptex> {
-  using type = HdStPtexSamplerObject;
+template<>
+struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Ptex> {
+    using type = HdStPtexSamplerObject;
 };
 
-template<> struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Udim> {
-  using type = HdStUdimSamplerObject;
+template<>
+struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Udim> {
+    using type = HdStUdimSamplerObject;
+};
+
+template<>
+struct HdSt_TypedSamplerObjectHelper<HdStTextureType::Cubemap> {
+    using type = HdStCubemapSamplerObject;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

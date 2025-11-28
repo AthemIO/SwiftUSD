@@ -121,4 +121,13 @@
 #include <UsdImaging/usdRenderVarSchema.h>
 #include <UsdImaging/version.h>
 #include <UsdImaging/volumeAdapter.h>
+#include <UsdImaging/flattenedMaterialBindingsDataSourceProvider.h>
+#include <UsdImaging/prototypeSceneIndexUtils.h>
+#include <UsdImaging/dataSourceAttributeTypeName.h>
+#include <UsdImaging/materialBindingsSchema.h>
+#include <UsdImaging/rerootingContainerDataSource.h>
+#include <UsdImaging/sceneIndexPlugin.h>
+#include <UsdImaging/sceneIndexPrimAdapter.h>
+#include <UsdImaging/instanceProxyPathTranslationSceneIndex.h>
+#include <UsdImaging/materialBindingSchema.h>
 #endif  // __PXR_USDIMAGING_USDIMAGING_H__

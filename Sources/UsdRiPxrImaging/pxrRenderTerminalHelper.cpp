@@ -9,41 +9,50 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (inputs));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (inputs)
+);
 
-static TfToken _GetNodeTypeId(UsdPrim const &prim,
-                              TfToken const &shaderIdToken,
-                              TfToken const &primTypeToken)
+
+static TfToken
+_GetNodeTypeId(
+    UsdPrim const& prim,
+    TfToken const& shaderIdToken,
+    TfToken const& primTypeToken)
 {
-  UsdAttribute attr = prim.GetAttribute(shaderIdToken);
-  if (attr) {
-    VtValue value;
-    if (attr.Get(&value)) {
-      if (value.IsHolding<TfToken>()) {
-        return value.UncheckedGet<TfToken>();
-      }
+    UsdAttribute attr = prim.GetAttribute(shaderIdToken);
+    if (attr) {
+        VtValue value;
+        if (attr.Get(&value)) {
+            if (value.IsHolding<TfToken>()) {
+                return value.UncheckedGet<TfToken>();
+            }
+        }
     }
-  }
-  return primTypeToken;
+    return primTypeToken;
 }
 
 /* static */
-HdMaterialNode2 UsdRiPxrImagingRenderTerminalHelper::CreateHdMaterialNode2(
-    UsdPrim const &prim, TfToken const &shaderIdToken, TfToken const &primTypeToken)
+HdMaterialNode2
+UsdRiPxrImagingRenderTerminalHelper::CreateHdMaterialNode2(
+    UsdPrim const& prim,
+    TfToken const& shaderIdToken,
+    TfToken const& primTypeToken)
 {
-  HdMaterialNode2 materialNode;
-  materialNode.nodeTypeId = _GetNodeTypeId(prim, shaderIdToken, primTypeToken);
+    HdMaterialNode2 materialNode;
+    materialNode.nodeTypeId = _GetNodeTypeId(prim, shaderIdToken, primTypeToken);
 
-  UsdAttributeVector attrs = prim.GetAuthoredAttributes();
-  for (const auto &attr : attrs) {
-    VtValue value;
-    const std::pair<std::string, bool> inputName = SdfPath::StripPrefixNamespace(attr.GetName(),
-                                                                                 _tokens->inputs);
-    if (inputName.second && attr.Get(&value)) {
-      materialNode.parameters[TfToken(inputName.first)] = value;
+    UsdAttributeVector attrs = prim.GetAuthoredAttributes();
+    for (const auto& attr : attrs) {
+        VtValue value;
+        const std::pair<std::string, bool> inputName =
+            SdfPath::StripPrefixNamespace(attr.GetName(), _tokens->inputs);
+        if (inputName.second && attr.Get(&value)) {
+            materialNode.parameters[TfToken(inputName.first)] = value;
+        }
     }
-  }
-  return materialNode;
+    return materialNode;
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

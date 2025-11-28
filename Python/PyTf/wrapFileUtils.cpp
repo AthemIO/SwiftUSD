@@ -7,7 +7,7 @@
 
 #include "pxr/pxrns.h"
 
-#include <boost/python/def.hpp>
+#include "pxr/external/boost/python/def.hpp"
 
 #include "Tf/fileUtils.h"
 
@@ -15,12 +15,11 @@
 
 using std::string;
 
-using namespace boost::python;
-
 PXR_NAMESPACE_USING_DIRECTIVE
 
-void wrapFileUtils()
-{
+using namespace pxr_boost::python;
 
-  def("TouchFile", &TfTouchFile, (arg("fileName"), arg("create") = bool(false)));
+void wrapFileUtils() {
+
+    def("TouchFile", &TfTouchFile, (arg("fileName"), arg("create")=bool(false)));
 }

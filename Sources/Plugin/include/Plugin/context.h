@@ -14,7 +14,7 @@
 #include "Gf/matrix4f.h"
 #include "Vt/array.h"
 
-#include <embree3/rtcore.h>
+#include <embree4/rtcore.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -25,13 +25,15 @@ class HdRprim;
 /// A small bit of state attached to each bit of prototype geometry in embree,
 /// for the benefit of HdEmbreeRenderer::_TraceRay.
 ///
-struct HdEmbreePrototypeContext {
-  /// A pointer back to the owning HdEmbree rprim.
-  HdRprim *rprim;
-  /// A name-indexed map of primvar samplers.
-  TfHashMap<TfToken, HdEmbreePrimvarSampler *, TfToken::HashFunctor> primvarMap;
-  /// A copy of the primitive params for this rprim.
-  VtIntArray primitiveParams;
+struct HdEmbreePrototypeContext
+{
+    /// A pointer back to the owning HdEmbree rprim.
+    HdRprim *rprim;
+    /// A name-indexed map of primvar samplers.
+    TfHashMap<TfToken, HdEmbreePrimvarSampler*, TfToken::HashFunctor>
+        primvarMap;
+    /// A copy of the primitive params for this rprim.
+    VtIntArray primitiveParams;
 };
 
 ///
@@ -40,16 +42,18 @@ struct HdEmbreePrototypeContext {
 /// A small bit of state attached to each bit of instanced geometry in embree,
 /// for the benefit of HdEmbreeRenderer::_TraceRay.
 ///
-struct HdEmbreeInstanceContext {
-  /// The object-to-world transform, for transforming normals to worldspace.
-  GfMatrix4f objectToWorldMatrix;
-  /// The scene the prototype geometry lives in, for passing to
-  /// rtcInterpolate.
-  RTCScene rootScene;
-  /// The instance id of this instance.
-  int32_t instanceId;
+struct HdEmbreeInstanceContext
+{
+    /// The object-to-world transform, for transforming normals to worldspace.
+    GfMatrix4f objectToWorldMatrix;
+    /// The scene the prototype geometry lives in, for passing to
+    /// rtcInterpolate.
+    RTCScene rootScene;
+    /// The instance id of this instance.
+    int32_t instanceId;
 };
+
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif  // PXR_IMAGING_PLUGIN_HD_EMBREE_CONTEXT_H
+#endif // PXR_IMAGING_PLUGIN_HD_EMBREE_CONTEXT_H

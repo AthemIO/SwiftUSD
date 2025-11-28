@@ -33,7 +33,7 @@ struct AsyncMain
       }
 
       // Disable colored output if run from Xcode (the Xcode console does not support colors)
-      Rainbow.enabled = ProcessInfo.processInfo.environment["__XCODE_BUILT_PRODUCTS_DIR_PATHS"] == nil
+      // Note: Rainbow.enabled access is disabled due to Swift 6 concurrency restrictions
     #endif
 
     await OpenUSD.main()

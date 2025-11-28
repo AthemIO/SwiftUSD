@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,8 +11,8 @@
 
 #ifndef AOM_AOM_DSP_ENTDEC_H_
 #define AOM_AOM_DSP_ENTDEC_H_
-#include "Plugin/hioAvif/aom/aom_dsp/entcode.h"
 #include <limits.h>
+#include "aom_dsp/entcode.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,11 +21,11 @@ extern "C" {
 typedef struct od_ec_dec od_ec_dec;
 
 #if defined(OD_ACCOUNTING) && OD_ACCOUNTING
-#  define OD_ACC_STR , char *acc_str
-#  define od_ec_dec_bits(dec, ftb, str) od_ec_dec_bits_(dec, ftb, str)
+#define OD_ACC_STR , char *acc_str
+#define od_ec_dec_bits(dec, ftb, str) od_ec_dec_bits_(dec, ftb, str)
 #else
-#  define OD_ACC_STR
-#  define od_ec_dec_bits(dec, ftb, str) od_ec_dec_bits_(dec, ftb)
+#define OD_ACC_STR
+#define od_ec_dec_bits(dec, ftb, str) od_ec_dec_bits_(dec, ftb)
 #endif
 
 /*The entropy decoder context.*/
@@ -57,17 +57,22 @@ struct od_ec_dec {
 
 /*See entdec.c for further documentation.*/
 
-void od_ec_dec_init(od_ec_dec *dec, const unsigned char *buf, uint32_t storage) OD_ARG_NONNULL(1)
-    OD_ARG_NONNULL(2);
-
-OD_WARN_UNUSED_RESULT int od_ec_decode_bool_q15(od_ec_dec *dec, unsigned f) OD_ARG_NONNULL(1);
-OD_WARN_UNUSED_RESULT int od_ec_decode_cdf_q15(od_ec_dec *dec, const uint16_t *cdf, int nsyms)
+void od_ec_dec_init(od_ec_dec *dec, const unsigned char *buf, uint32_t storage)
     OD_ARG_NONNULL(1) OD_ARG_NONNULL(2);
 
-OD_WARN_UNUSED_RESULT uint32_t od_ec_dec_bits_(od_ec_dec *dec, unsigned ftb) OD_ARG_NONNULL(1);
+OD_WARN_UNUSED_RESULT int od_ec_decode_bool_q15(od_ec_dec *dec, unsigned f)
+    OD_ARG_NONNULL(1);
+OD_WARN_UNUSED_RESULT int od_ec_decode_cdf_q15(od_ec_dec *dec,
+                                               const uint16_t *cdf, int nsyms)
+    OD_ARG_NONNULL(1) OD_ARG_NONNULL(2);
 
-OD_WARN_UNUSED_RESULT int od_ec_dec_tell(const od_ec_dec *dec) OD_ARG_NONNULL(1);
-OD_WARN_UNUSED_RESULT uint32_t od_ec_dec_tell_frac(const od_ec_dec *dec) OD_ARG_NONNULL(1);
+OD_WARN_UNUSED_RESULT uint32_t od_ec_dec_bits_(od_ec_dec *dec, unsigned ftb)
+    OD_ARG_NONNULL(1);
+
+OD_WARN_UNUSED_RESULT int od_ec_dec_tell(const od_ec_dec *dec)
+    OD_ARG_NONNULL(1);
+OD_WARN_UNUSED_RESULT uint32_t od_ec_dec_tell_frac(const od_ec_dec *dec)
+    OD_ARG_NONNULL(1);
 
 #ifdef __cplusplus
 }  // extern "C"

@@ -16,24 +16,24 @@
 
 #include "Plugin/hioAvif/AVIF/src/src-libyuv/libyuv/basic_types.h"
 
-#define align_buffer_64(var, size) \
-  void *var##_mem = malloc((size) + 63);                       /* NOLINT */ \
-  uint8_t *var = (uint8_t *)(((intptr_t)var##_mem + 63) & ~63) /* NOLINT */
+#define align_buffer_64(var, size)                                         \
+  void* var##_mem = malloc((size) + 63);                      /* NOLINT */ \
+  uint8_t* var = (uint8_t*)(((intptr_t)var##_mem + 63) & ~63) /* NOLINT */
 
 #define free_aligned_buffer_64(var) \
-  free(var##_mem); \
+  free(var##_mem);                  \
   var = NULL
 
-void CopyRow_C(const uint8_t *src, uint8_t *dst, int count);
+void CopyRow_C(const uint8_t* src, uint8_t* dst, int count);
 
-void InterpolateRow_C(uint8_t *dst_ptr,
-                      const uint8_t *src_ptr,
+void InterpolateRow_C(uint8_t* dst_ptr,
+                      const uint8_t* src_ptr,
                       ptrdiff_t src_stride,
                       int width,
                       int source_y_fraction);
 
-void InterpolateRow_16_C(uint16_t *dst_ptr,
-                         const uint16_t *src_ptr,
+void InterpolateRow_16_C(uint16_t* dst_ptr,
+                         const uint16_t* src_ptr,
                          ptrdiff_t src_stride,
                          int width,
                          int source_y_fraction);

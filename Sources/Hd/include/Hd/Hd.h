@@ -193,4 +193,17 @@
 #include <Hd/tetMeshSchema.h>
 #include <Hd/tetMeshTopologySchema.h>
 
+#include <Hd/planeSchema.h>
+#include <Hd/builtinMaterialSchema.h>
+#include <Hd/cachingSceneIndex.h>
+#include <Hd/materialInterfaceParameterSchema.h>
+#include <Hd/legacyTaskSchema.h>
+#include <Hd/extComputationCpuCallback.h>
+#include <Hd/renderer.h>
+#include <Hd/legacyTaskFactory.h>
+#include <Hd/materialOverrideSchema.h>
+#include <Hd/pluginRendererUniqueHandle.h>
+#include <Hd/dataSourceLegacyTaskPrim.h>
+#include <Hd/rendererCreateArgs.h>
+#include <Hd/materialInterfaceSchema.h>
 #endif  // __PXR_IMAGING_HD_H__

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,9 +9,9 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include "Plugin/hioAvif/aom/aom_dsp/entdec.h"
-#include "Plugin/hioAvif/aom/aom_dsp/prob.h"
 #include <assert.h>
+#include "aom_dsp/entdec.h"
+#include "aom_dsp/prob.h"
 
 /*A range decoder.
   This is an entropy decoder based upon \cite{Mar79}, which is itself a
@@ -75,8 +75,7 @@
 
 /*The return value of od_ec_dec_tell does not change across an od_ec_dec_refill
    call.*/
-static void od_ec_dec_refill(od_ec_dec *dec)
-{
+static void od_ec_dec_refill(od_ec_dec *dec) {
   int s;
   od_ec_window dif;
   int16_t cnt;
@@ -123,8 +122,8 @@ static void od_ec_dec_refill(od_ec_dec *dec)
   ret: The value to return.
   Return: ret.
           This allows the compiler to jump to this function via a tail-call.*/
-static int od_ec_dec_normalize(od_ec_dec *dec, od_ec_window dif, unsigned rng, int ret)
-{
+static int od_ec_dec_normalize(od_ec_dec *dec, od_ec_window dif, unsigned rng,
+                               int ret) {
   int d;
   assert(rng <= 65535U);
   /*The number of leading zeros in the 16-bit binary representation of rng.*/
@@ -134,16 +133,15 @@ static int od_ec_dec_normalize(od_ec_dec *dec, od_ec_window dif, unsigned rng, i
   /*This is equivalent to shifting in 1's instead of 0's.*/
   dec->dif = ((dif + 1) << d) - 1;
   dec->rng = rng << d;
-  if (dec->cnt < 0)
-    od_ec_dec_refill(dec);
+  if (dec->cnt < 0) od_ec_dec_refill(dec);
   return ret;
 }
 
 /*Initializes the decoder.
   buf: The input buffer to use.
   storage: The size in bytes of the input buffer.*/
-void od_ec_dec_init(od_ec_dec *dec, const unsigned char *buf, uint32_t storage)
-{
+void od_ec_dec_init(od_ec_dec *dec, const unsigned char *buf,
+                    uint32_t storage) {
   dec->buf = buf;
   dec->tell_offs = 10 - (OD_EC_WINDOW_SIZE - 8);
   dec->end = buf + storage;
@@ -157,8 +155,7 @@ void od_ec_dec_init(od_ec_dec *dec, const unsigned char *buf, uint32_t storage)
 /*Decode a single binary value.
   f: The probability that the bit is one, scaled by 32768.
   Return: The value decoded (0 or 1).*/
-int od_ec_decode_bool_q15(od_ec_dec *dec, unsigned f)
-{
+int od_ec_decode_bool_q15(od_ec_dec *dec, unsigned f) {
   od_ec_window dif;
   od_ec_window vw;
   unsigned r;
@@ -193,8 +190,7 @@ int od_ec_decode_bool_q15(od_ec_dec *dec, unsigned f)
   nsyms: The number of symbols in the alphabet.
          This should be at most 16.
   Return: The decoded symbol s.*/
-int od_ec_decode_cdf_q15(od_ec_dec *dec, const uint16_t *icdf, int nsyms)
-{
+int od_ec_decode_cdf_q15(od_ec_dec *dec, const uint16_t *icdf, int nsyms) {
   od_ec_window dif;
   unsigned r;
   unsigned c;
@@ -209,13 +205,14 @@ int od_ec_decode_cdf_q15(od_ec_dec *dec, const uint16_t *icdf, int nsyms)
   assert(dif >> (OD_EC_WINDOW_SIZE - 16) < r);
   assert(icdf[nsyms - 1] == OD_ICDF(CDF_PROB_TOP));
   assert(32768U <= r);
-  assert(7 - EC_PROB_SHIFT - CDF_SHIFT >= 0);
+  assert(7 - EC_PROB_SHIFT >= 0);
   c = (unsigned)(dif >> (OD_EC_WINDOW_SIZE - 16));
   v = r;
   ret = -1;
   do {
     u = v;
-    v = ((r >> 8) * (uint32_t)(icdf[++ret] >> EC_PROB_SHIFT) >> (7 - EC_PROB_SHIFT - CDF_SHIFT));
+    v = ((r >> 8) * (uint32_t)(icdf[++ret] >> EC_PROB_SHIFT) >>
+         (7 - EC_PROB_SHIFT));
     v += EC_MIN_PROB * (N - ret);
   } while (c < v);
   assert(v < u);
@@ -231,8 +228,7 @@ int od_ec_decode_cdf_q15(od_ec_dec *dec, const uint16_t *icdf, int nsyms)
   Return: The number of bits.
           This will always be slightly larger than the exact value (e.g., all
            rounding error is in the positive direction).*/
-int od_ec_dec_tell(const od_ec_dec *dec)
-{
+int od_ec_dec_tell(const od_ec_dec *dec) {
   /*There is a window of bits stored in dec->dif. The difference
      (dec->bptr - dec->buf) tells us how many bytes have been read into this
      window. The difference (dec->cnt - dec->tell_offs) tells us how many of
@@ -246,7 +242,6 @@ int od_ec_dec_tell(const od_ec_dec *dec)
   Return: The number of bits scaled by 2**OD_BITRES.
           This will always be slightly larger than the exact value (e.g., all
            rounding error is in the positive direction).*/
-uint32_t od_ec_dec_tell_frac(const od_ec_dec *dec)
-{
+uint32_t od_ec_dec_tell_frac(const od_ec_dec *dec) {
   return od_ec_tell_frac(od_ec_dec_tell(dec), dec->rng);
 }

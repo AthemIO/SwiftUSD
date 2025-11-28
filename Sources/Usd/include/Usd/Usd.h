@@ -81,4 +81,8 @@
 #include <Usd/validationRegistry.h>
 #include <Usd/validator.h>
 #include <Usd/validatorTokens.h>
+#include <Usd/attributeLimits.h>
+#include <Usd/colorSpaceAPI.h>
+#include <Usd/generatedSchema.module.h>
+#include <Usd/colorSpaceDefinitionAPI.h>
 #endif  // __PXR_USD_USD_H__
