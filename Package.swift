@@ -264,12 +264,6 @@ let package = Package(
       name: "UsdGenSchemaPlugin",
       targets: ["UsdGenSchemaPlugin"]
     ),
-    // ------------- Rust USD -----
-    // .library(
-    //   name: "rust-usd",
-    //   type: .static,
-    //   targets: ["rust-usd"]
-    // ),
     // ------- Monolithic USD -----
     .library(
       name: "PixarUSD",
@@ -279,7 +273,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/wabiverse/swift-cross-ui", revision: "1a887c2"),
     .package(url: "https://github.com/wabiverse/icu.git", from: "76.1.2"),
-    .package(url: "https://github.com/wabiverse/MetaverseKit", revision: "6e909df"),
+    .package(url: "https://github.com/LynrAI/MetaverseKit", branch: "main"),
     .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.1"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
     .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
@@ -1826,17 +1820,6 @@ let package = Package(
         .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
       ]
     ),
-
-    // .target(
-    //   name: "rust-usd",
-    //   dependencies: [
-    //     .product(name: "Ptex", package: "MetaverseKit"),
-    //     .target(name: "pxr"),
-    //   ],
-    //   swiftSettings: [
-    //     .interoperabilityMode(.Cxx),
-    //   ]
-    // ),
 
     .target(
       name: "PixarUSD",
