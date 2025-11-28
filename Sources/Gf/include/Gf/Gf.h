@@ -62,7 +62,6 @@
 #include <Gf/matrixData.h>
 #include <Gf/multiInterval.h>
 #include <Gf/plane.h>
-#include <Gf/pyBufferUtils.h>
 #include <Gf/quatd.h>
 #include <Gf/quaternion.h>
 #include <Gf/quatf.h>
@@ -103,4 +102,10 @@
 #include <Gf/math.h>
 #include <Gf/ilmbase_toFloat.h>
 #include <Gf/ostreamHelpers.h>
+
+// Python-related headers - only include when Python support is enabled
+#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#include <Gf/pyBufferUtils.h>
+#endif // PXR_PYTHON_SUPPORT_ENABLED
+
 #endif  // __PXR_BASE_GF_H__

@@ -34,7 +34,6 @@
 #include <Pcp/primIndex_Graph.h>
 #include <Pcp/primIndex_StackFrame.h>
 #include <Pcp/propertyIndex.h>
-#include <Pcp/pyUtils.h>
 #include <Pcp/site.h>
 #include <Pcp/statistics.h>
 #include <Pcp/strengthOrdering.h>
@@ -45,4 +44,10 @@
 #include <Pcp/layerRelocatesEditBuilder.h>
 #include <Pcp/traversalCache.h>
 #include <Pcp/dependentNamespaceEditUtils.h>
+
+// Python-related headers - only include when Python support is enabled
+#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#include <Pcp/pyUtils.h>
+#endif // PXR_PYTHON_SUPPORT_ENABLED
+
 #endif  // __PXR_USD_PCP_H__

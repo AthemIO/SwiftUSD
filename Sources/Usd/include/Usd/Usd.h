@@ -16,7 +16,6 @@
 #include <Usd/common.h>
 #include <Usd/crateData.h>
 #include <Usd/crateFile.h>
-#include <Usd/crateInfo.h>
 #include <Usd/crateValueInliners.h>
 #include <Usd/debugCodes.h>
 #include <Usd/editContext.h>
@@ -44,8 +43,6 @@
 #include <Usd/primTypeInfo.h>
 #include <Usd/primTypeInfoCache.h>
 #include <Usd/property.h>
-#include <Usd/pyConversions.h>
-#include <Usd/pyEditContext.h>
 #include <Usd/references.h>
 #include <Usd/relationship.h>
 #include <Usd/resolveInfo.h>
@@ -62,15 +59,8 @@
 #include <Usd/timeCode.h>
 #include <Usd/tokens.h>
 #include <Usd/typed.h>
-#include <Usd/usdFileFormat.h>
-#include <Usd/usdaFileFormat.h>
-#include <Usd/usdcFileFormat.h>
-#include <Usd/usdzFileFormat.h>
-#include <Usd/usdzResolver.h>
 #include <Usd/valueUtils.h>
 #include <Usd/variantSets.h>
-#include <Usd/wrapUtils.h>
-#include <Usd/zipFile.h>
 
 #include <Usd/stage.h>
 
@@ -85,4 +75,12 @@
 #include <Usd/colorSpaceAPI.h>
 #include <Usd/generatedSchema.module.h>
 #include <Usd/colorSpaceDefinitionAPI.h>
+
+// Python-related headers - only include when Python support is enabled
+#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#include <Usd/pyConversions.h>
+#include <Usd/pyEditContext.h>
+#include <Usd/wrapUtils.h>
+#endif // PXR_PYTHON_SUPPORT_ENABLED
+
 #endif  // __PXR_USD_USD_H__

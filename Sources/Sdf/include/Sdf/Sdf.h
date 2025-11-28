@@ -68,14 +68,6 @@
 #include <Sdf/proxyPolicies.h>
 #include <Sdf/proxyTypes.h>
 #include <Sdf/pseudoRootSpec.h>
-#include <Sdf/pyChildrenProxy.h>
-#include <Sdf/pyChildrenView.h>
-#include <Sdf/pyListEditorProxy.h>
-#include <Sdf/pyListOp.h>
-#include <Sdf/pyListProxy.h>
-#include <Sdf/pyMapEditProxy.h>
-#include <Sdf/pySpec.h>
-#include <Sdf/pyUtils.h>
 #include <Sdf/reference.h>
 #include <Sdf/relationshipSpec.h>
 #include <Sdf/schema.h>
@@ -126,4 +118,17 @@
 #include <Sdf/crateFile.h>
 #include <Sdf/integerCoding.h>
 #include <Sdf/zipFile.h>
+
+// Python-related headers - only include when Python support is enabled
+#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#include <Sdf/pyChildrenProxy.h>
+#include <Sdf/pyChildrenView.h>
+#include <Sdf/pyListEditorProxy.h>
+#include <Sdf/pyListOp.h>
+#include <Sdf/pyListProxy.h>
+#include <Sdf/pyMapEditProxy.h>
+#include <Sdf/pySpec.h>
+#include <Sdf/pyUtils.h>
+#endif // PXR_PYTHON_SUPPORT_ENABLED
+
 #endif  // __PXR_USD_SDF_H__
