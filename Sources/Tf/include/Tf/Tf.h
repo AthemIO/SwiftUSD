@@ -173,8 +173,11 @@ PXR_NAMESPACE_CLOSE_SCOPE
 
 #include "pxr/pxrns.h"
 
-// Tf
+// Tf - include order matters for dependencies
+// hash.h must come before refPtr, weakPtr, token which use TfHash
 #include <Tf/tf.h>
+#include <Tf/hash.h>
+#include <Tf/bits.h>
 #include <Tf/refPtrTracker.h>
 #include <Tf/refPtr.h>
 #include <Tf/span.h>
@@ -199,15 +202,13 @@ PXR_NAMESPACE_CLOSE_SCOPE
 #include <Tf/iterator.h>
 #include <Tf/smallVector.h>
 #include <Tf/staticTokens.h>
-#include <Tf/hash.h>
 #include <Tf/getenv.h>
-#include <Tf/bits.h>
 #include <Tf/diagnosticBase.h>
 #include <Tf/fastCompression.h>
 #include <Tf/ostreamMethods.h>
 
 // Python-related headers - only include when Python support is enabled
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include <Tf/pyObjWrapper.h>
 #include <Tf/scriptModuleLoader.h>
 #include <Tf/pyInvoke.h>

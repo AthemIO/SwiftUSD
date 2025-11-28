@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/pyNoticeWrapper.h"
 
 using std::map;
@@ -45,3 +48,5 @@ TfStaticData<map<string, Tf_PyNoticeObjectGenerator::MakeObjectFunc> >
     Tf_PyNoticeObjectGenerator::_generators;
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/pyError.h"
 #include "Tf/pyInterpreter.h"
 #include "Tf/pyLock.h"
@@ -193,3 +196,5 @@ TfPyRunFile(const std::string &filename, int start,
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

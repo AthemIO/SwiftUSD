@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/pyErrorInternal.h"
 #include "Tf/pyLock.h"
 
@@ -89,3 +92,5 @@ TfPyExceptionState::GetExceptionString() const
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

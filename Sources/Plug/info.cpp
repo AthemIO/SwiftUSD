@@ -539,7 +539,7 @@ Plug_RegistrationMetadata::Plug_RegistrationMetadata(
             if (typeName == "library") {
                 type = LibraryType;
             }
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
             else if (typeName == "python") {
                 type = PythonType;
             }

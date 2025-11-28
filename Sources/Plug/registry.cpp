@@ -75,7 +75,7 @@ PlugRegistry::_RegisterPlugin(
     case Plug_RegistrationMetadata::LibraryType:
         newPlugin = PlugPlugin::_NewDynamicLibraryPlugin(metadata);
         break;
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     case Plug_RegistrationMetadata::PythonType:
         newPlugin = PlugPlugin::_NewPythonModulePlugin(metadata);
         break;

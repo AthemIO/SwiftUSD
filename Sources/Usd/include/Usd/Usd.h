@@ -77,7 +77,7 @@
 #include <Usd/colorSpaceDefinitionAPI.h>
 
 // Python-related headers - only include when Python support is enabled
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include <Usd/pyConversions.h>
 #include <Usd/pyEditContext.h>
 #include <Usd/wrapUtils.h>

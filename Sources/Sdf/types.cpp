@@ -518,7 +518,7 @@ _ValueVectorToAnyVtArray(VtValue *value, std::vector<std::string> *errMsgs,
     return true;
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 
 using _PySeqToVtArrayFn =
     bool (*)(VtValue *, std::vector<std::string> *,
@@ -686,7 +686,7 @@ _ConvertToValidMetadataDictValueInternal(
     else if (value->IsHolding<std::vector<VtValue>>()) {
         allValid &= _ValueVectorToAnyVtArray(value, errMsgs, keyPath);
     }
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     else if (value->IsHolding<TfPyObjWrapper>()) {
         allValid &= _PyObjToAnyVtArray(value, errMsgs, keyPath);
     }

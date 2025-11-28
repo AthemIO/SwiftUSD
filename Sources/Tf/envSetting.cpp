@@ -19,7 +19,7 @@
 #include "Arch/env.h"
 #include "Arch/fileSystem.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyUtils.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -44,7 +44,7 @@ public:
         if (FILE* fp = ArchOpenFile(fileName.c_str(), "r")) {
             char buffer[1024];
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
             bool syncPython = TfPyIsInitialized();
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -86,7 +86,7 @@ public:
                 }
                     
                 ArchSetEnv(key, value, /*overwrite=*/false);
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
                 if (syncPython && ArchGetEnv(key) == value) {
                     TfPySetenv(key, value);
                 }

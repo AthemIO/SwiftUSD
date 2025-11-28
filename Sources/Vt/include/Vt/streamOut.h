@@ -73,7 +73,7 @@ struct Vt_ShapeData;
 VT_API void VtStreamOutArray(std::ostream&, const Vt_ShapeData*,
                              TfFunctionRef<void(std::ostream&)>);
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 VT_API std::ostream &VtStreamOut(class TfPyObjWrapper const &, std::ostream &);
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 

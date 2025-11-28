@@ -6,6 +6,9 @@
 //
 
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Tf/makePyConstructor.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -20,3 +23,5 @@ bp::object _DummyInit(bp::tuple const & /* args */,
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

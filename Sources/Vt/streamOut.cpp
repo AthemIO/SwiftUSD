@@ -11,7 +11,7 @@
 #include "Vt/streamOut.h"
 #include "Vt/types.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyObjWrapper.h"
 #include "Tf/pyUtils.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
@@ -120,7 +120,7 @@ VtStreamOutArray(
     _StreamArrayRecursive(out, *shapeData, streamNextElem, lastDimSize, 0);
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 std::ostream &
 VtStreamOut(TfPyObjWrapper const &obj, std::ostream &stream)
 {

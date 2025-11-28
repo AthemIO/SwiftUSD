@@ -8,6 +8,9 @@
 //#include "Tf/pyModule.h"
 
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Arch/defines.h"
 
 #include "Tf/error.h"
@@ -431,3 +434,5 @@ void Tf_PyInitWrapModule(
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

@@ -7,7 +7,7 @@
 
 #include "pxr/pxrns.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 
 #include "Tf/pyLock.h"
 #include "Tf/diagnosticLite.h"

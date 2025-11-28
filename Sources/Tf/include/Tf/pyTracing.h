@@ -9,7 +9,7 @@
 
 #include "pxr/pxrns.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pySafePython.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -20,7 +20,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 /// \struct TfPyTraceInfo
 /// Structure passed to python trace functions.  See the Python C API
 /// documentation reference for the meaning of \a what and \a arg.

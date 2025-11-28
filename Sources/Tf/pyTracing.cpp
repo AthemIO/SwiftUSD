@@ -9,7 +9,7 @@
 
 #include "Tf/pyTracing.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyInterpreter.h"
 #include "Tf/pyUtils.h"
 #include "Tf/staticData.h"

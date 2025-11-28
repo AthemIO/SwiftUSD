@@ -49,7 +49,7 @@ public:
     /// plugins always report as loaded.
     PLUG_API bool IsLoaded() const;
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     /// Returns \c true if the plugin is a python module.
     PLUG_API bool IsPythonModule() const;
 #endif // PXR_PYTHON_SUPPORT_ENABLED
@@ -133,7 +133,7 @@ private:
     static std::pair<PlugPluginPtr, bool> 
     _NewDynamicLibraryPlugin(const Plug_RegistrationMetadata& metadata);
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     PLUG_LOCAL
     static std::pair<PlugPluginPtr, bool> 
     _NewPythonModulePlugin(const Plug_RegistrationMetadata& metadata);

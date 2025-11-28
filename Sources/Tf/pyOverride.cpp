@@ -4,7 +4,10 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
+
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyOverride.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -32,3 +35,5 @@ TfPyMethodResult::operator=(TfPyMethodResult const &other)
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

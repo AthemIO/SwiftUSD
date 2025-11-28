@@ -6,5 +6,11 @@
 //
 /// \file PyListProxy.cpp
 
+#include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 
 #include "Sdf/pyListProxy.h"
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

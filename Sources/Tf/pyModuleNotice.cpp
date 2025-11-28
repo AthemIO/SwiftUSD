@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/pyModuleNotice.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -19,3 +22,5 @@ TfPyModuleWasLoaded::~TfPyModuleWasLoaded() {
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

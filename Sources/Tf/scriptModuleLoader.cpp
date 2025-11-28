@@ -6,6 +6,9 @@
 //
 
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Tf/scriptModuleLoader.h"
 
 #include "Tf/debug.h"
@@ -392,3 +395,5 @@ TfScriptModuleLoader::LoadModulesForLibrary(TfToken const &lib)
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

@@ -4,7 +4,10 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
+
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Usd/pyConversions.h"
 
 #include "Vt/dictionary.h"
@@ -164,3 +167,5 @@ UsdPythonToMetadataValue(
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

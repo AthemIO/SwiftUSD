@@ -19,7 +19,7 @@
 #include "Tf/getenv.h"
 #include "Tf/instantiateSingleton.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyUtils.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -61,7 +61,7 @@ void _OutputGlobalReport()
 TraceCollector::TraceCollector()
     : _label("TraceRegistry global collector")
     , _measuredScopeOverhead(0)
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     , _isPythonTracingEnabled(false)
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 {
@@ -76,7 +76,7 @@ TraceCollector::TraceCollector()
     
     const bool globalTracing = TfGetenvBool("PXR_ENABLE_GLOBAL_TRACE", false);
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     const bool globalPyTracing =
         TfGetenvBool("PXR_ENABLE_GLOBAL_PY_TRACE", false);
     if (globalPyTracing || globalTracing) {
@@ -86,7 +86,7 @@ TraceCollector::TraceCollector()
         atexit(_OutputGlobalReport);
         SetEnabled(true);
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
         if (globalPyTracing)
             SetPythonTracingEnabled(true);
 #endif // PXR_PYTHON_SUPPORT_ENABLED
@@ -246,7 +246,7 @@ TraceCollector::CreateCollection() {
 ////////////////////////////////////////////////////////////////////////
 // Python tracing support.
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 
 static inline TraceCollector::Key
 _MakePythonScopeKey(const TfPyTraceInfo& info)
@@ -414,7 +414,7 @@ TraceCollector::_PerThreadData::CounterValue(
         TraceEvent::CounterValue, events->CacheKey(key), value, cat);
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 
 void 
 TraceCollector::_PerThreadData::PushPyScope(

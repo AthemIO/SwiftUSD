@@ -23,7 +23,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 class TfPyObjWrapper;
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -66,7 +66,7 @@ public:
         MANUFACTURABLE = 0x08,   ///< Manufacturable type (implies concrete)
     };
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     // This is a non-templated base class for the templated
     // polymorphic-to-Python infrastructure.
     struct PyPolymorphicBase
@@ -220,7 +220,7 @@ public:
         return TfType::Find<BASE>().FindDerivedByName(name);
     }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     /// Retrieve the \c TfType corresponding to an obj with the
     /// given Python class \c classObj.
     ///
@@ -280,7 +280,7 @@ public:
     TF_API
     std::vector<std::string> GetAliases(TfType derivedType) const;
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     /// Return the Python class object for this type.
     ///
     /// If this type is unknown or has not yet had a Python class
@@ -475,7 +475,7 @@ public:
     template <typename T>
     static TfType const& Define();
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     /// Define the Python class object corresponding to this TfType.
     /// \see TfTypePythonClass
     TF_API
@@ -628,7 +628,7 @@ private:
     TF_API
     FactoryBase* _GetFactory() const;
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     TF_API
     static TfType const &_FindImplPyPolymorphic(PyPolymorphicBase const *ptr);
     

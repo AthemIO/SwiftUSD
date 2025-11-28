@@ -9,7 +9,7 @@
 #include "Tf/debugCodes.h"
 #include "Tf/registryManager.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/scriptModuleLoader.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -69,7 +69,7 @@ TfDlopen(
         }
     }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     // If we successfully opened the shared library, load any script bindings if
     // scripting is initialized.
     if (handle && loadScriptBindings) {

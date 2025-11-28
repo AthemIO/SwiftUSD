@@ -15,7 +15,7 @@
 #include "Tf/stackTrace.h"
 #include "Tf/stringUtils.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyExceptionState.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -652,7 +652,7 @@ TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
                                 msg.c_str());
     }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     if (const TfPyExceptionState* exc =
             std::any_cast<TfPyExceptionState>(&info)) {
         output += TfStringPrintf("%s\n", exc->GetExceptionString().c_str());

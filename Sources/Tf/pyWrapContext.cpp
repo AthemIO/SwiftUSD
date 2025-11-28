@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/pyWrapContext.h"
 #include "Tf/diagnosticLite.h"
 #include "Tf/instantiateSingleton.h"
@@ -22,3 +25,5 @@ Tf_PyWrapContextManager::Tf_PyWrapContextManager()
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

@@ -29,7 +29,7 @@
 #include "Tf/type.h"
 #include "Trace/trace.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyInterpreter.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -64,7 +64,7 @@ PlugPlugin::_GetPluginTypeDisplayName(_Type type)
 {
     return
         type == LibraryType ? "shared library" :
-#ifdef PXR_PYTHON_SUPPORT_ENABLED        
+#if PXR_PYTHON_SUPPORT_ENABLED        
         type == PythonType ? "python module" :
 #endif // PXR_PYTHON_SUPPORT_ENABLED
         type == ResourceType ? "resource" :
@@ -143,7 +143,7 @@ PlugPlugin::_NewDynamicLibraryPlugin(const Plug_RegistrationMetadata& metadata)
                       _allPluginsByDynamicLibraryName.Get());
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 pair<PlugPluginPtr, bool>
 PlugPlugin::_NewPythonModulePlugin(const Plug_RegistrationMetadata& metadata)
 {
@@ -213,7 +213,7 @@ PlugPlugin::_Load()
 
     bool isLoaded = true;
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     if (IsPythonModule()) {
         TRACE_FUNCTION_SCOPE("python import");
         string cmd = TfStringPrintf("import %s\n", _name.c_str());
@@ -354,7 +354,7 @@ PlugPlugin::IsLoaded() const
     return _isLoaded;
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 bool
 PlugPlugin::IsPythonModule() const
 {

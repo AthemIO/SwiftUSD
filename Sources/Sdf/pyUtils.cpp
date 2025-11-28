@@ -6,6 +6,9 @@
 //
 
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Sdf/pyUtils.h"
 #include "pxr/external/boost/python/extract.hpp"
 #include "pxr/external/boost/python/object.hpp"
@@ -48,3 +51,5 @@ SdfFileFormatArgumentsFromPython(
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

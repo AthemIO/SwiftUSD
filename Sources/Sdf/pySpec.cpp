@@ -7,6 +7,9 @@
 /// \file PySpec.cpp
 
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Sdf/pySpec.h"
 #include "Sdf/layer.h"
 #include "Sdf/spec.h"
@@ -91,3 +94,5 @@ _CreateHolder(const std::type_info& ti, const SdfSpec& spec)
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

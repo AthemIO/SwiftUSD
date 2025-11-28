@@ -11,7 +11,7 @@
 #include "Tf/diagnostic.h"
 #include "Arch/errno.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyUtils.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -20,7 +20,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 bool
 TfSetenv(const std::string & name, const std::string & value)
 {
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     if (TfPyIsInitialized()) {
         return TfPySetenv(name, value);
     }
@@ -37,7 +37,7 @@ TfSetenv(const std::string & name, const std::string & value)
 bool
 TfUnsetenv(const std::string & name)
 {
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     if (TfPyIsInitialized()) {
         return TfPyUnsetenv(name);
     }

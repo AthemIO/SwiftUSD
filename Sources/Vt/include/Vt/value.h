@@ -9,11 +9,14 @@
 
 #include "pxr/pxrns.h"
 
+// Include pyObjWrapper.h unconditionally since VtValue uses TfPyObjWrapper
+// even when Python is disabled (the header provides a stub in that case).
 // XXX: Include pyLock.h after pyObjWrapper.h to work around
 // Python include ordering issues.
 #include "Tf/pyObjWrapper.h"
-
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyLock.h"
+#endif // PXR_PYTHON_SUPPORT_ENABLED
 
 #include "Arch/demangle.h"
 #include "Arch/hints.h"
@@ -101,7 +104,7 @@ struct Vt_ValueStoredType<char [N]> {
     using Type = std::string;
 };
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 VT_VALUE_SET_STORED_TYPE(pxr_boost::python::object, TfPyObjWrapper);
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -472,7 +475,7 @@ class VtValue
             return _TypedProxyEqualityImpl(a, b, 0);
         }
         static TfPyObjWrapper GetPyObj(T const &obj) {
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
             ProxiedType const &p = VtGetProxiedObject(obj);
             TfPyLock lock;
             return pxr_boost::python::api::object(p);
@@ -532,7 +535,7 @@ class VtValue
             return _ErasedProxyEqualityImpl(a, b, 0);
         }
         static TfPyObjWrapper GetPyObj(ErasedProxy const &obj) {
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
             VtValue const *val = VtGetErasedProxiedVtValue(obj);
             TfPyLock lock;
             return pxr_boost::python::api::object(*val);

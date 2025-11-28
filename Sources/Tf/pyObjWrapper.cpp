@@ -9,7 +9,7 @@
 
 #include "Tf/pyObjWrapper.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyLock.h"
 #include "Tf/pyUtils.h"
 #include "Tf/type.h"

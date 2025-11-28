@@ -19,7 +19,7 @@
 #include <Vt/arrayEditOps.h>
 
 // Python-related headers - only include when Python support is enabled
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include <Vt/arrayPyBuffer.h>
 #include <Vt/pyOperators.h>
 #include <Vt/valueFromPython.h>

@@ -23,7 +23,7 @@
 #include "Tf/typeInfoMap.h"
 #include "Tf/typeNotice.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 // XXX: This include is a hack to avoid build errors due to
 // incompatible macro definitions in pyport.h on macOS.
 #include <locale>
@@ -60,7 +60,7 @@ TfType::FactoryBase::~FactoryBase()
 {
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 TfType::PyPolymorphicBase::~PyPolymorphicBase()
 {
 }
@@ -93,7 +93,7 @@ struct TfType::_TypeInfo {
     // The size returned by sizeof(type).
     size_t sizeofType;
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     // Python class handle.
     // We use handle<> rather than pxr_boost::python::object in case Python
     // has not yet been initialized.
@@ -135,7 +135,7 @@ struct TfType::_TypeInfo {
     // A type is "defined" as soon as it has either type_info or a
     // Python class object.
     inline bool IsDefined() {
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
         return typeInfo.load() != nullptr || pyClass.get();
 #else
         return typeInfo.load() != nullptr;
@@ -187,7 +187,7 @@ struct TfType::_TypeInfo {
     }
 };
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 // Comparison for pxr_boost::python::handle.
 struct Tf_PyHandleLess
 {
@@ -286,7 +286,7 @@ public:
         _typeInfoMap.Set(typeInfo, info);
     }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     void SetPythonClass(TfType::_TypeInfo *info,
                         const pxr_boost::python::object & classObj) {
         // Hold a reference to this PyObject in our map.
@@ -319,7 +319,7 @@ public:
         return info ? *info : nullptr;
     }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     TfType::_TypeInfo *
     FindByPythonClass(const pxr_boost::python::object &classObj) const {
         pxr_boost::python::handle<> handle(
@@ -347,7 +347,7 @@ private:
     // XXX: change this to regular hash table?
     TfTypeInfoMap<TfType::_TypeInfo*> _typeInfoMap;
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     // Map of python class handles to _TypeInfo*.
     typedef map<pxr_boost::python::handle<>,
                 TfType::_TypeInfo *, Tf_PyHandleLess> PyClassMap;
@@ -532,7 +532,7 @@ TfType::_FindByTypeid(const std::type_info &typeInfo)
     return FindByName(GetCanonicalTypeName(typeInfo));
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 TfType const&
 TfType::FindByPythonClass(const TfPyObjWrapper & classObj)
 {
@@ -559,7 +559,7 @@ TfType::GetTypeid() const
     return typeInfo ? *typeInfo : typeid(void);
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 TfPyObjWrapper
 TfType::GetPythonClass() const
 {
@@ -741,7 +741,7 @@ TfType::GetAllAncestorTypes(vector<TfType> *result) const
     }
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 TfType const &
 TfType::_FindImplPyPolymorphic(PyPolymorphicBase const *ptr) {
     using namespace pxr_boost::python;
@@ -914,7 +914,7 @@ errorOut:
     return t;
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 void
 TfType::DefinePythonClass(const TfPyObjWrapper & classObj) const
 {

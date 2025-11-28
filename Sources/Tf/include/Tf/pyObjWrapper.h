@@ -12,7 +12,7 @@
 #include "Tf/api.h"
 #include "Arch/pragmas.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 // Include this header first to pick up additional mitigations
 // for build issues when including Python.h
 #include "Tf/pySafePython.h"
@@ -73,7 +73,7 @@ private:
 /// provides, by virtue of deriving from pxr_boost::python::api::object_operators<T>.
 /// However it is important to note that callers must ensure the GIL is held
 /// before using these operators!
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 class TfPyObjWrapper
     : public pxr_boost::python::api::object_operators<TfPyObjWrapper>
 {

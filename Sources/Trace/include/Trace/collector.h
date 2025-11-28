@@ -87,7 +87,7 @@ public:
         static bool IsEnabled() { return TraceCollector::IsEnabled(); }
     };
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     /// Returns whether automatic tracing of all python scopes is enabled.
     bool IsPythonTracingEnabled() const {
         return _isPythonTracingEnabled.load(std::memory_order_acquire) != 0;
@@ -430,7 +430,7 @@ private:
 
     TRACE_API void _MeasureScopeOverhead();
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     // Callback function registered as a python tracing function.
     void _PyTracingCallback(const TfPyTraceInfo &info);
 #endif // PXR_PYTHON_SUPPORT_ENABLED
@@ -548,7 +548,7 @@ private:
                     std::forward<Args>(args)...);
             }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
             void PushPyScope(const Key& key, bool enabled);
             void PopPyScope(bool enabled);
 #endif // PXR_PYTHON_SUPPORT_ENABLED

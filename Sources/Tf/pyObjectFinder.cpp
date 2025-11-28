@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/pyObjectFinder.h"
 #include "Tf/pyUtils.h"
 #include "Tf/staticData.h"
@@ -39,3 +42,5 @@ object Tf_FindPythonObject(void const *objPtr, std::type_info const &type) {
 Tf_PyObjectFinderBase::~Tf_PyObjectFinderBase() {}
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

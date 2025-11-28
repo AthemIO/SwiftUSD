@@ -39,7 +39,7 @@ struct Tf_SingletonPyGILDropper
     TF_API
     ~Tf_SingletonPyGILDropper();
 private:
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     std::unique_ptr<class TfPyLock> _pyLock;
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 };

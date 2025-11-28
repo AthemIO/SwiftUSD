@@ -4,7 +4,10 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
+
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
 
 #include "Tf/pyWeakObject.h"
 #include "Tf/instantiateSingleton.h"
@@ -144,3 +147,5 @@ Tf_PyWeakObject::Tf_PyWeakObject(pxr_boost::python::object const &obj)
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

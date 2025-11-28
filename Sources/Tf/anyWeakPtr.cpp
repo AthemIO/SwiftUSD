@@ -140,7 +140,7 @@ TfAnyWeakPtr::GetType() const
     return _Get()->GetType();
 }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 pxr_boost::python::api::object
 TfAnyWeakPtr::_GetPythonObject() const
 {

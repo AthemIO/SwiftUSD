@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/pyErrorInternal.h"
 
 #include "Tf/enum.h"
@@ -48,3 +51,5 @@ TfPyExceptionStateScope::~TfPyExceptionStateScope()
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

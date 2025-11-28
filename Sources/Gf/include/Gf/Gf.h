@@ -104,7 +104,7 @@
 #include <Gf/ostreamHelpers.h>
 
 // Python-related headers - only include when Python support is enabled
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include <Gf/pyBufferUtils.h>
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 

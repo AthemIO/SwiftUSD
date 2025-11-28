@@ -5,6 +5,10 @@
 // https://openusd.org/license.
 //
 
+#include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Usd/pyEditContext.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -24,3 +28,5 @@ UsdPyEditContext::UsdPyEditContext(
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

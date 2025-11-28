@@ -6,6 +6,9 @@
 //
 
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Gf/pyBufferUtils.h"
 #include "Gf/half.h"
 
@@ -49,3 +52,5 @@ template GF_API char *Gf_GetPyBufferFmtFor<float>();
 template GF_API char *Gf_GetPyBufferFmtFor<double>();
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

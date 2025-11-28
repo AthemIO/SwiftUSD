@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/error.h"
 #include "Tf/errorMark.h"
 #include "Tf/pyEnum.h"
@@ -402,3 +405,5 @@ Tf_PyObjectError(bool printError)
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

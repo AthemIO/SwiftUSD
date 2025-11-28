@@ -7,6 +7,9 @@
 
 #include "pxr/pxrns.h"
 
+#if PXR_PYTHON_SUPPORT_ENABLED
+
+
 #include "Tf/pyEnum.h"
 
 #include "Tf/instantiateSingleton.h"
@@ -149,3 +152,5 @@ RegisterValue(TfEnum const &e, object const &obj)
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

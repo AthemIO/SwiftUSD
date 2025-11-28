@@ -16,7 +16,7 @@
 #include "Tf/scopeDescriptionPrivate.h"
 #include "Tf/stringUtils.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyUtils.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -46,7 +46,7 @@ void
 TfPrintStackTrace(std::ostream &out, const string &reason)
 {
     ArchPrintStackTrace(out, reason);
-#ifdef PXR_PYTHON_SUPPORT_ENABLED 
+#if PXR_PYTHON_SUPPORT_ENABLED 
     vector<string> trace = TfPyGetTraceback();
     TF_REVERSE_FOR_ALL(line, trace)
         out << *line;

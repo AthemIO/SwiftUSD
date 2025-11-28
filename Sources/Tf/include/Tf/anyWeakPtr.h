@@ -17,7 +17,7 @@
 #include "Tf/type.h"
 #include "Tf/weakPtr.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 #include "Tf/pyUtils.h"
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
@@ -135,7 +135,7 @@ public:
     }
 
   private:
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     // This grants friend access to a function in the wrapper file for this
     // class.  This lets the wrapper reach down into an AnyWeakPtr to get a
     // pxr_boost::python wrapped object corresponding to the held type.  This
@@ -263,7 +263,7 @@ template <class Ptr>
 TfPyObjWrapper
 TfAnyWeakPtr::_PointerHolder<Ptr>::GetPythonObject() const
 {
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     return TfPyObject(_ptr);
 #else
     return {};

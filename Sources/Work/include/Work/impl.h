@@ -9,6 +9,8 @@
 
 /// This file pulls in the entire work implementation
 
+#include "pxr/pxrns.h"
+
 #include "Work/detachedTask_impl.h"
 #include "Work/dispatcher_impl.h"
 #include "Work/isolatingDispatcher_impl.h"
@@ -19,9 +21,12 @@
 #include "Work/threadLimits_impl.h"
 #include "Work/withScopedParallelism_impl.h"
 
-#include "pxr/pxrns.h"
 #if PXR_USE_NAMESPACES
 #define WORK_IMPL_NS PXR_NS
+#define PXR_WORK_IMPL_NAMESPACE_USING_DIRECTIVE using namespace WORK_IMPL_NS
+#else
+#define WORK_IMPL_NS
+#define PXR_WORK_IMPL_NAMESPACE_USING_DIRECTIVE
 #endif
 
 #endif // PXR_BASE_WORK_TBB_IMPL_H

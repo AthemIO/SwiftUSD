@@ -20,7 +20,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 Tf_SingletonPyGILDropper::Tf_SingletonPyGILDropper()
 {
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     if (PyGILState_Check()) {
         _pyLock = std::make_unique<TfPyLock>();
         _pyLock->BeginAllowThreads();

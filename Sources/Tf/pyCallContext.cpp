@@ -6,6 +6,9 @@
 //
 
 #include "pxr/pxrns.h"
+
+#if PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Tf/pyCallContext.h"
 #include "Tf/callContext.h"
 #include "Tf/stringUtils.h"
@@ -61,3 +64,5 @@ Tf_PythonCallContext(std::string fileName,
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE 
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

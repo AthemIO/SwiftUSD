@@ -16,7 +16,7 @@
 #include "Tf/hash.h"
 #include "Tf/safeTypeCompare.h"
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
 // XXX: This include is a hack to avoid build errors due to
 // incompatible macro definitions in pyport.h on macOS.
 #include <locale>
@@ -288,7 +288,7 @@ private:
 
         virtual TfPyObjWrapper GetPythonObj() const
         {
- #ifdef PXR_PYTHON_SUPPORT_ENABLED
+ #if PXR_PYTHON_SUPPORT_ENABLED
             TfPyLock lock;
             return pxr_boost::python::object(_context);
 #else
@@ -306,7 +306,7 @@ private:
         h.Append(context->Hash());
     }
 
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#if PXR_PYTHON_SUPPORT_ENABLED
     friend class Ar_ResolverContextPythonAccess;
 #endif
 
