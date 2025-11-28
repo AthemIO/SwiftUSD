@@ -10,7 +10,7 @@
 #include "pxr/pxrns.h"
 
 #include "Work/api.h"
-#include "Work/workTBB/dispatcher_impl.h"
+#include "Work/dispatcher_impl.h"
 
 #include <OneTBB/tbb/task_arena.h>
 

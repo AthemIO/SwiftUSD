@@ -6,6 +6,9 @@
 //
 
 #include "pxr/pxrns.h"
+
+#ifdef PXR_PYTHON_SUPPORT_ENABLED
+
 #include "Vt/valueFromPython.h"
 
 #include "Tf/pyLock.h"
@@ -69,3 +72,5 @@ Vt_ValueFromPythonRegistry::_RegisterRValue(_Extractor const &e) {
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // PXR_PYTHON_SUPPORT_ENABLED

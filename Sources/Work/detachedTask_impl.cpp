@@ -7,7 +7,7 @@
 #include "pxr/pxrns.h"
 #include "Arch/hints.h"
 
-#include "Work/workTBB/detachedTask_impl.h"
+#include "Work/detachedTask_impl.h"
 
 #include <atomic>
 #include <chrono>

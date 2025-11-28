@@ -6,7 +6,7 @@
 //
 #include "pxr/pxrns.h"
 
-#include "Work/workTBB/taskGraph_impl.h"
+#include "Work/taskGraph_impl.h"
 
 #if TBB_INTERFACE_VERSION_MAJOR < 12
 

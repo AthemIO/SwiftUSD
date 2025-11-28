@@ -5,9 +5,9 @@
 // https://openusd.org/license.
 //
 
-#include "Work/workTBB/isolatingDispatcher_impl.h"
+#include "Work/isolatingDispatcher_impl.h"
 
-#include "Work/workTBB/threadLimits_impl.h"
+#include "Work/threadLimits_impl.h"
 
 #include <OneTBB/tbb/concurrent_queue.h>
 

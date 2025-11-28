@@ -8,7 +8,7 @@
 #define PXR_BASE_WORK_TBB_DETACHED_TASK_IMPL_H
 
 #include <OneTBB/tbb/blocked_range.h>
-#include "Work/workTBB/dispatcher_impl.h"
+#include "Work/dispatcher_impl.h"
 #include "Work/api.h"
 
 #if TBB_INTERFACE_VERSION_MAJOR >= 12

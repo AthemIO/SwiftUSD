@@ -6,7 +6,7 @@
 //
 #include "pxr/pxrns.h"
 
-#include "Work/workTBB/threadLimits_impl.h"
+#include "Work/threadLimits_impl.h"
 
 // Blocked range is not used in this file, but this header happens to pull in
 // the TBB version header in a way that works in all TBB versions.

@@ -7,7 +7,7 @@
 
 #include "pxr/pxrns.h"
 
-#include "Work/workTBB/dispatcher_impl.h"
+#include "Work/dispatcher_impl.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 

@@ -9,15 +9,15 @@
 
 /// This file pulls in the entire work implementation
 
-#include "Work/workTBB/detachedTask_impl.h"
-#include "Work/workTBB/dispatcher_impl.h"
-#include "Work/workTBB/isolatingDispatcher_impl.h"
-#include "Work/workTBB/loops_impl.h"
-#include "Work/workTBB/reduce_impl.h"
-#include "Work/workTBB/sort_impl.h"
-#include "Work/workTBB/taskGraph_impl.h"
-#include "Work/workTBB/threadLimits_impl.h"
-#include "Work/workTBB/withScopedParallelism_impl.h"
+#include "Work/detachedTask_impl.h"
+#include "Work/dispatcher_impl.h"
+#include "Work/isolatingDispatcher_impl.h"
+#include "Work/loops_impl.h"
+#include "Work/reduce_impl.h"
+#include "Work/sort_impl.h"
+#include "Work/taskGraph_impl.h"
+#include "Work/threadLimits_impl.h"
+#include "Work/withScopedParallelism_impl.h"
 
 #include "pxr/pxrns.h"
 #if PXR_USE_NAMESPACES
