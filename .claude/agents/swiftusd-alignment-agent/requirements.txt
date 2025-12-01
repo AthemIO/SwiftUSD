@@ -1,0 +1,2 @@
+# No external dependencies required!
+# This agent uses Claude Code CLI which you already have with Max subscription.
