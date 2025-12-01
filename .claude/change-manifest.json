@@ -1,0 +1,320 @@
+{
+  "targetVersion": "25.11",
+  "sourceVersion": "25.11",
+  "generatedAt": "2025-12-01T00:00:00Z",
+
+  "module_removals": [
+    {
+      "module": "Ndr",
+      "removedIn": "25.08",
+      "reason": "Deprecated in 25.05, removed in 25.08. Functionality moved to Sdr.",
+      "replacement": "Sdr",
+      "action": "DELETE Sources/Ndr/, remove from Package.swift, remove all Ndr imports/dependencies"
+    }
+  ],
+
+  "api_removals": [
+    {
+      "item": "TfTemplateString",
+      "module": "Tf",
+      "removedIn": "25.11",
+      "files": ["Sources/Tf/templateString.cpp", "Sources/Tf/include/Tf/templateString.h"],
+      "action": "DELETE files, remove from umbrella header"
+    },
+    {
+      "item": "TraceEventId",
+      "module": "Trace",
+      "removedIn": "25.11",
+      "reason": "Previously deprecated",
+      "action": "DELETE if exists in SwiftUSD"
+    },
+    {
+      "item": "UsdCrateInfo",
+      "module": "Usd",
+      "removedIn": "25.11",
+      "replacement": "SdfCrateInfo (in Sdf module)",
+      "files": ["Sources/Usd/crateInfo.cpp", "Sources/Usd/include/Usd/crateInfo.h"],
+      "action": "DELETE files, use Sdf equivalents"
+    },
+    {
+      "item": "UsdUsdFileFormat",
+      "module": "Usd",
+      "removedIn": "25.11",
+      "replacement": "SdfUsdFileFormat",
+      "action": "DELETE if exists"
+    },
+    {
+      "item": "UsdUsdaFileFormat",
+      "module": "Usd",
+      "removedIn": "25.11",
+      "replacement": "SdfUsdaFileFormat",
+      "action": "DELETE if exists"
+    },
+    {
+      "item": "UsdUsdcFileFormat",
+      "module": "Usd",
+      "removedIn": "25.11",
+      "replacement": "SdfUsdcFileFormat",
+      "action": "DELETE if exists"
+    },
+    {
+      "item": "UsdUsdzFileFormat",
+      "module": "Usd",
+      "removedIn": "25.11",
+      "replacement": "SdfUsdzFileFormat",
+      "action": "DELETE if exists"
+    },
+    {
+      "item": "UsdZipFile",
+      "module": "Usd",
+      "removedIn": "25.11",
+      "replacement": "SdfZipFile",
+      "files": ["Sources/Usd/zipFile.cpp", "Sources/Usd/include/Usd/zipFile.h"],
+      "action": "DELETE files, use Sdf equivalents"
+    },
+    {
+      "item": "HdPrimDataSourceOverlayCache",
+      "module": "Hd",
+      "removedIn": "25.11",
+      "reason": "Disused cache from early Hydra 2 development",
+      "action": "DELETE if exists"
+    },
+    {
+      "item": "HdSceneIndexAdapterSceneDelegate::AppendDefaultSceneFilters",
+      "module": "Hd",
+      "removedIn": "25.11",
+      "action": "Remove function if exists"
+    },
+    {
+      "item": "coerceToWeakerOpinionType parameter from VtDictionaryOverRecursive",
+      "module": "Vt",
+      "removedIn": "25.11",
+      "action": "Update function signature"
+    },
+    {
+      "item": "Negative layer offset scale support",
+      "module": "Pcp",
+      "removedIn": "25.11",
+      "reason": "Previously deprecated, PCP_ALLOW_NEGATIVE_LAYER_OFFSET_SCALE env var removed",
+      "action": "Update code if referencing this"
+    }
+  ],
+
+  "api_renames": [
+    {
+      "old": "TF_THROW",
+      "new": "PXR_TF_THROW",
+      "module": "Tf",
+      "renamedIn": "25.08",
+      "action": "Search and replace all occurrences"
+    },
+    {
+      "old": "TRACE_DISABLE",
+      "new": "TRACE_ENABLE",
+      "module": "Trace",
+      "renamedIn": "25.11",
+      "action": "Update preprocessor defines"
+    }
+  ],
+
+  "api_deprecations": [
+    {
+      "item": "HdMaterialNetworkSchema::GetInterfaceMappings",
+      "module": "Hd",
+      "deprecatedIn": "25.11",
+      "replacement": "HdMaterialNetworkSchema::GetInterface",
+      "action": "Update usages to new API"
+    },
+    {
+      "item": "displayName, displayGroup, hidden metadata",
+      "module": "Usd",
+      "deprecatedIn": "25.11",
+      "replacement": "UsdUIObjectHints, UsdUIPropertyHints",
+      "action": "Consider updating usages"
+    },
+    {
+      "item": "TsKnot curve type",
+      "module": "Ts",
+      "deprecatedIn": "25.08",
+      "action": "Note deprecation"
+    }
+  ],
+
+  "new_apis": [
+    {
+      "item": "HdMaterialInterfaceSchema",
+      "module": "Hd",
+      "addedIn": "25.11",
+      "action": "Ensure header is included"
+    },
+    {
+      "item": "HdMaterialInterfaceParameterSchema",
+      "module": "Hd",
+      "addedIn": "25.11",
+      "action": "Ensure header is included"
+    },
+    {
+      "item": "UsdUIObjectHints",
+      "module": "UsdUI",
+      "addedIn": "25.11",
+      "action": "Ensure available"
+    },
+    {
+      "item": "UsdUIPrimHints",
+      "module": "UsdUI",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "UsdUIPropertyHints",
+      "module": "UsdUI",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "UsdUIAttributeHints",
+      "module": "UsdUI",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "UsdAttributeLimits",
+      "module": "Usd",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "UsdValidationFixer",
+      "module": "Usd",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "TsSpline::BakeInnerLoops",
+      "module": "Ts",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "TsSpline::Breakdown",
+      "module": "Ts",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "VtArray::MakeUnique",
+      "module": "Vt",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "VtArray::insert",
+      "module": "Vt",
+      "addedIn": "25.08"
+    },
+    {
+      "item": "WorkParallelForTBBRange",
+      "module": "Work",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "WorkTaskGraph",
+      "module": "Work",
+      "addedIn": "25.08"
+    },
+    {
+      "item": "SdfAnimationBlock",
+      "module": "Sdf",
+      "addedIn": "25.08"
+    },
+    {
+      "item": "SdfVariableExpressionAST",
+      "module": "Sdf",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "SdfBooleanExpression",
+      "module": "Sdf",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "UsdAttribute::AnimationBlock",
+      "module": "Usd",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "HD_PERF_ENABLE preprocessor define",
+      "module": "Hd",
+      "addedIn": "25.11"
+    },
+    {
+      "item": "HGI_API_VERSION",
+      "module": "Hgi",
+      "addedIn": "25.08"
+    }
+  ],
+
+  "signature_changes": [
+    {
+      "item": "HdRendererPlugin::IsSupported",
+      "module": "Hd",
+      "changedIn": "25.11",
+      "description": "Added overloaded version taking a struct with 'hgi' member",
+      "action": "Check compatibility"
+    },
+    {
+      "item": "HdRendererPlugin::GetDefaultPluginId",
+      "module": "Hd",
+      "changedIn": "25.11",
+      "description": "Added overloaded version taking a struct",
+      "action": "Check compatibility"
+    }
+  ],
+
+  "hydra_changes": [
+    {
+      "item": "HD_API_VERSION",
+      "changedFrom": "84",
+      "changedTo": "85",
+      "changedIn": "25.11",
+      "reason": "Breaking API change for interfaceMappings on HdMaterialNetwork schema"
+    }
+  ],
+
+  "dependency_updates": {
+    "required": {
+      "TBB": {
+        "current": "2021.10.0",
+        "required": "2021.12.0"
+      },
+      "MaterialX": {
+        "current": "1.39.x",
+        "required": "1.39.3"
+      },
+      "OpenSubdiv": {
+        "current": "3.6.1",
+        "required": "3.6.1",
+        "status": "OK"
+      },
+      "OpenEXR": {
+        "current": "3.2.1",
+        "required": "3.1.13",
+        "note": "Current is newer, should be compatible"
+      },
+      "OpenVDB": {
+        "current": "10.1.0",
+        "required": "10.1.0",
+        "status": "OK"
+      },
+      "Alembic": {
+        "current": "1.8.5",
+        "required": "1.8.5",
+        "status": "OK"
+      }
+    }
+  },
+
+  "swift_wrapper_updates": [
+    {
+      "module": "PixarUSD/Usd",
+      "action": "Remove any references to deprecated Usd file format classes",
+      "files_to_check": ["Sources/PixarUSD/Usd/*.swift"]
+    },
+    {
+      "module": "PixarUSD/Base",
+      "action": "Remove TfTemplateString wrapper if exists"
+    }
+  ]
+}

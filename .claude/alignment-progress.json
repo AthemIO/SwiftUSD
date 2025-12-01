@@ -1,0 +1,31 @@
+{
+  "targetVersion": "25.11",
+  "sourceVersion": "25.11",
+  "status": "in_progress",
+  "startedAt": "2025-12-01T00:00:00Z",
+  "phases": {
+    "metaversekit_update": "skipped",
+    "changelog_analysis": "completed",
+    "module_processing": "in_progress",
+    "build_iteration": "pending",
+    "final_validation": "pending"
+  },
+  "completedModules": ["Tf", "Usd", "Sdr", "SdrOsl", "HdSt", "UsdShade"],
+  "blockedModules": [],
+  "buildIterations": 0,
+  "lastError": "Swift toolchain/SDK version mismatch on development machine - changes are syntactically correct but cannot verify build",
+  "completedActions": [
+    "Removed TfTemplateString (removed in 25.11)",
+    "Removed UsdCrateInfo (moved to Sdf in 25.11)",
+    "Removed UsdZipFile (moved to Sdf in 25.11)",
+    "Removed Ndr module from Package.swift (merged into Sdr in 25.08)",
+    "Updated Ndr includes to Sdr includes in SdrOsl, HdSt, UsdShade",
+    "Updated NDR_REGISTER_PARSER_PLUGIN to SDR_REGISTER_PARSER_PLUGIN",
+    "Removed templateString.h from Tf umbrella header"
+  ],
+  "pendingActions": [
+    "Verify build passes once toolchain is configured correctly",
+    "Update ThirdParty renderman plugins Ndr references (not in Swift build)",
+    "Final version bump in Pixar.swift"
+  ]
+}

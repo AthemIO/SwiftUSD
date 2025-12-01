@@ -156,7 +156,6 @@
 #include <Tf/pointerAndBits.h>
 #include <Tf/regTest.h>
 #include <Tf/stopwatch.h>
-#include <Tf/templateString.h>
 #include <Tf/unicodeUtils.h>
 
 // Python tracing - provides TfPyTraceFnId (stub typedef when Python is disabled)

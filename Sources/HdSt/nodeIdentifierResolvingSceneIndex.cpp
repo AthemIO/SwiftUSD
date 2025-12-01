@@ -6,7 +6,7 @@
 
 #include "HdSt/nodeIdentifierResolvingSceneIndex.h"
 
-#include "Ndr/declare.h"
+#include "Sdr/declare.h"
 #include "Sdf/assetPath.h"
 #include "Sdr/registry.h"
 #include "Sdr/shaderNode.h"

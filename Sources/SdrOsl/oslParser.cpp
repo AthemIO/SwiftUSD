@@ -23,6 +23,7 @@
 //
 
 #include "SdrOsl/oslParser.h"
+#include "Ar/ar.h"
 #include "Ar/asset.h"
 #include "Ar/resolver.h"
 #include "Ar/resolvedPath.h"
@@ -30,9 +31,10 @@
 #include "Gf/vec2f.h"
 #include "Gf/vec3f.h"
 #include "Gf/vec4f.h"
-#include "Ndr/debugCodes.h"
-#include "Ndr/nodeDiscoveryResult.h"
+#include "Sdr/debugCodes.h"
+#include "Sdr/shaderNodeDiscoveryResult.h"
 #include "Sdf/assetPath.h"
+#include "Sdf/path.h"
 #include "Sdr/shaderMetadataHelpers.h"
 #include "Sdr/shaderNode.h"
 #include "Sdr/shaderProperty.h"
@@ -54,7 +56,7 @@ using ShaderMetadataHelpers::IsPropertyATerminal;
 using ShaderMetadataHelpers::IsTruthy;
 using ShaderMetadataHelpers::OptionVecVal;
 
-NDR_REGISTER_PARSER_PLUGIN(SdrOslParserPlugin)
+SDR_REGISTER_PARSER_PLUGIN(SdrOslParserPlugin)
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
 

@@ -81,10 +81,6 @@ let package = Package(
       targets: ["Usd"]
     ),
     .library(
-      name: "Ndr",
-      targets: ["Ndr"]
-    ),
-    .library(
       name: "Sdr",
       targets: ["Sdr"]
     ),
@@ -645,39 +641,14 @@ let package = Package(
     ),
 
     .target(
-      name: "Ndr",
-      dependencies: [
-        .target(name: "Arch"),
-        .target(name: "Tf"),
-        .target(name: "Trace"),
-        .target(name: "Vt"),
-        .target(name: "Plug"),
-        .target(name: "Ar"),
-        .target(name: "Sdf")
-      ],
-      resources: [
-        .process("Resources")
-      ],
-      cxxSettings: [
-        .define("MFB_PACKAGE_NAME", to: "Ndr"),
-        .define("MFB_ALT_PACKAGE_NAME", to: "Ndr"),
-        .define("MFB_PACKAGE_MODULE", to: "Ndr"),
-        .define("NDR_EXPORTS", to: "1"),
-        .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
-        .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
-        .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
-      ]
-    ),
-
-    .target(
       name: "Sdr",
       dependencies: [
         .target(name: "Arch"),
         .target(name: "Tf"),
         .target(name: "Trace"),
         .target(name: "Vt"),
+        .target(name: "Plug"),
         .target(name: "Sdf"),
-        .target(name: "Ndr"),
       ],
       cxxSettings: [
         .define("MFB_PACKAGE_NAME", to: "Sdr"),
@@ -729,7 +700,6 @@ let package = Package(
         .target(name: "Sdf"),
         .target(name: "Usd"),
         .target(name: "UsdGeom"),
-        .target(name: "Ndr"),
         .target(name: "Sdr"),
       ],
       resources: [
@@ -752,7 +722,6 @@ let package = Package(
         .target(name: "Arch"),
         .target(name: "Tf"),
         .target(name: "Ar"),
-        .target(name: "Ndr"),
         .target(name: "Sdr"),
         .target(name: "UsdShade"),
       ],
@@ -781,7 +750,6 @@ let package = Package(
         .target(name: "Plug"),
         .target(name: "Sdf"),
         .target(name: "Usd"),
-        .target(name: "Ndr"),
         .target(name: "Sdr"),
         .target(name: "UsdGeom"),
         .target(name: "UsdShade"),
@@ -807,7 +775,6 @@ let package = Package(
         .target(name: "Ar"),
         .target(name: "Tf"),
         .target(name: "Plug"),
-        .target(name: "Ndr"),
         .target(name: "Usd"),
         .target(name: "UsdShade"),
       ],
@@ -833,7 +800,6 @@ let package = Package(
         .target(name: "Tf"),
         .target(name: "Gf"),
         .target(name: "Ar"),
-        .target(name: "Ndr"),
         .target(name: "Sdr"),
         .target(name: "Vt"),
       ],
@@ -935,7 +901,6 @@ let package = Package(
         .target(name: "Vt"),
         .target(name: "Trace"),
         .target(name: "Ar"),
-        .target(name: "Ndr"),
         .target(name: "Sdf"),
         .target(name: "Sdr"),
         .target(name: "Usd"),
@@ -1873,7 +1838,6 @@ let package = Package(
         .target(name: "Sdf"),
         .target(name: "Pcp"),
         .target(name: "Usd"),
-        .target(name: "Ndr"),
         .target(name: "Sdr"),
         .target(name: "SdrOsl"),
         .target(name: "UsdGeom"),
