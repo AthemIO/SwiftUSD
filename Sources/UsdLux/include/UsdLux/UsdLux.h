@@ -29,5 +29,6 @@
 #include <UsdLux/volumeLightAPI.h>
 
 #include <UsdLux/domeLight_1.h>
-#include <UsdLux/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdLux/generatedSchema.module.h>
 #endif  // __PXR_USD_USDLUX_H__

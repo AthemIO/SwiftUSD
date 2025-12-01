@@ -12,7 +12,7 @@
 #include "Plugin/usdAbc/alembicUtil.h"
 #include "Plugin/usdAbc/alembicWriter.h"
 #include "Sdf/schema.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 #include "Tf/envSetting.h"
 #include "Tf/fileUtils.h"
 

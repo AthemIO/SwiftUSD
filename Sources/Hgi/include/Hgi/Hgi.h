@@ -8,6 +8,7 @@
 #define PXR_IMAGING_HGI_HGI_H
 
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 #include "Tf/token.h"
 #include "Tf/type.h"
 
@@ -91,7 +92,10 @@ using HgiUniquePtr = std::unique_ptr<class Hgi>;
 ///     for i to num_threads
 ///         hgi->SubmitCmds( cmds[i] )
 ///
-class Hgi
+/// @WABI: FIX ME
+/// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this type
+/// has deleted copy constructor which Swift can't import without annotation.
+class SWIFT_IMMORTAL_REFERENCE Hgi
 {
 public:
     HGI_API
@@ -404,4 +408,5 @@ PXR_NAMESPACE_CLOSE_SCOPE
 #include <Hgi/shaderFunction.h>
 #include <Hgi/shaderSection.h>
 #include <Hgi/capabilities.h>
+#include <Hgi/indirectCommandEncoder.h>
 #endif  // __PXR_IMAGING_HGI_H__

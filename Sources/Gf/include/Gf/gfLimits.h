@@ -4,10 +4,10 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
-#ifndef PXR_BASE_GF_LIMITS_H
-#define PXR_BASE_GF_LIMITS_H
+#ifndef PXR_BASE_GF_GF_LIMITS_H
+#define PXR_BASE_GF_GF_LIMITS_H
 
-/// \file gf/limits.h
+/// \file gf/gfLimits.h
 /// \ingroup group_gf_BasicMath
 /// Defines useful mathematical limits.
 
@@ -21,4 +21,4 @@
 /// \ingroup group_gf_LinearAlgebra
 #define GF_MIN_ORTHO_TOLERANCE 1e-6
 
-#endif
+#endif // PXR_BASE_GF_GF_LIMITS_H

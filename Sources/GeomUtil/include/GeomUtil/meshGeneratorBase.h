@@ -10,7 +10,7 @@
 #include "GeomUtil/api.h"
 
 #include "Arch/math.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Gf/matrix4d.h"
 #include "Gf/vec3d.h"
 #include "Gf/vec3f.h"

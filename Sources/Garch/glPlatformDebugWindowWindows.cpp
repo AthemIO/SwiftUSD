@@ -5,6 +5,10 @@
 // https://openusd.org/license.
 //
 
+#include "Arch/defines.h"
+
+#if defined(ARCH_OS_WINDOWS)
+
 #include "Garch/glPlatformDebugWindowWindows.h"
 #include "Garch/glDebugWindow.h"
 #include "Arch/defines.h"
@@ -250,4 +254,6 @@ Garch_GLPlatformDebugWindow::ExitApp()
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // ARCH_OS_WINDOWS
 

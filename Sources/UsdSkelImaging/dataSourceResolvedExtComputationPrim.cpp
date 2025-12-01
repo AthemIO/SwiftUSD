@@ -26,7 +26,7 @@
 #include "Gf/matrix4f.h"
 #include "Gf/quaternion.h"
 
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 

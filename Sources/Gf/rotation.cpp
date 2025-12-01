@@ -9,7 +9,7 @@
 #include "Gf/rotation.h"
 #include "Gf/matrix3d.h"
 #include "Gf/matrix4d.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Gf/ostreamHelpers.h"
 
 #include "Tf/diagnosticLite.h"

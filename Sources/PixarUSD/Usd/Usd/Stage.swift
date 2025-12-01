@@ -106,8 +106,8 @@ public extension Usd.Stage
     {
       switch self
       {
-        case .all: InitialLoadSet.LoadAll
-        case .none: InitialLoadSet.LoadNone
+        case .all: .LoadAll
+        case .none: .LoadNone
       }
     }
   }
@@ -473,7 +473,7 @@ public extension Usd.Stage
    * If `policy` is `.withoutDescendants`, then payloads on descendant prims are not loaded. */
   @discardableResult
   func load(path: Sdf.Path = Sdf.Path.absoluteRootPath(), 
-            policy: Pixar.UsdLoadPolicy = .withDescendants) -> Usd.Prim
+            policy: Pixar.UsdLoadPolicy = .UsdLoadPolicyWithDescendants) -> Usd.Prim
   {
     Load(path, policy)
   }
@@ -751,7 +751,7 @@ public extension Usd.StageRefPtr
    * If `policy` is `.withoutDescendants`, then payloads on descendant prims are not loaded. */
   @discardableResult
   func load(path: Sdf.Path = Sdf.Path.absoluteRootPath(), 
-            policy: Pixar.UsdLoadPolicy = .withDescendants) -> Usd.Prim
+            policy: Pixar.UsdLoadPolicy = .UsdLoadPolicyWithDescendants) -> Usd.Prim
   {
     pointee.load(path: path, policy: policy)
   }

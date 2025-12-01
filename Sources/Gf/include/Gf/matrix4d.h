@@ -21,8 +21,8 @@
 #include "Gf/vec4d.h"
 #include "Gf/traits.h"
 #include "Gf/homogeneous.h"
-#include "Gf/limits.h"
-#include "Gf/math.h"
+#include "Gf/gfLimits.h"
+#include "Gf/gfMath.h"
 #include "Gf/vec3d.h"
 #include "Tf/hash.h"
 

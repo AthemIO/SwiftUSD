@@ -16,14 +16,12 @@
 
 #include "Pegtl/pegtl.hpp"
 
+// For Sdf_EvalQuotedString declaration with default argument
+#include "Sdf/parserHelpers.h"
+
 #include <memory>
 
 PXR_NAMESPACE_OPEN_SCOPE
-
-// fwd decl, from parserHelpers.cpp.
-std::string
-Sdf_EvalQuotedString(const char* x, size_t n,
-                     size_t trimBothSides, unsigned int* numLines=NULL);
 
 struct SdfPredicateExprBuilder
 {

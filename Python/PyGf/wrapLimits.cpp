@@ -7,7 +7,7 @@
 #include "pxr/external/boost/python/scope.hpp"
 
 #include "pxr/pxrns.h"
-#include "Gf/limits.h"
+#include "Gf/gfLimits.h"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

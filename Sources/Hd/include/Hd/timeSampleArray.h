@@ -12,7 +12,7 @@
 #include "Hd/version.h"
 #include "Vt/array.h"
 #include "Vt/value.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Gf/quatf.h"
 #include "Tf/diagnostic.h"
 #include "Tf/smallVector.h"

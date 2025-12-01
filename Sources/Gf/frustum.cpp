@@ -13,7 +13,7 @@
 #include "Gf/plane.h"
 #include "Gf/vec2d.h"
 #include "Gf/vec2f.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Tf/enum.h"
 #include "Tf/type.h"
 

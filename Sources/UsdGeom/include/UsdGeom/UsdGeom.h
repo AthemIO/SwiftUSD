@@ -45,5 +45,6 @@
 #include <UsdGeom/capsule_1.h>
 #include <UsdGeom/cylinder_1.h>
 #include <UsdGeom/tetMesh.h>
-#include <UsdGeom/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdGeom/generatedSchema.module.h>
 #endif  // __PXR_USD_USDGEOM_H__

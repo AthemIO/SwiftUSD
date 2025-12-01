@@ -8,6 +8,7 @@
 #define PXR_IMAGING_HGI_METAL_HGIMETAL_H
 
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 #include "HgiMetal/api.h"
 #include "HgiMetal/capabilities.h"
 #include "HgiMetal/indirectCommandEncoder.h"
@@ -30,7 +31,10 @@ enum {
 ///
 /// Metal implementation of the Hydra Graphics Interface.
 ///
-class HgiMetal final : public Hgi
+/// @WABI: FIX ME
+/// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this type
+/// has deleted copy constructor which Swift can't import without annotation.
+class SWIFT_IMMORTAL_REFERENCE HgiMetal final : public Hgi
 {
 public:
     enum CommitCommandBufferWaitType {

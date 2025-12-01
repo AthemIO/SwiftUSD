@@ -4,18 +4,19 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
-#ifndef PXR_BASE_GF_MATH_H
-#define PXR_BASE_GF_MATH_H
+#ifndef PXR_BASE_GF_GF_MATH_H
+#define PXR_BASE_GF_GF_MATH_H
 
-/// \file gf/math.h
+/// \file gf/gfMath.h
 /// \ingroup group_gf_BasicMath
 /// Assorted mathematical utility functions.
 
-#include "pxr/pxrns.h"
 #include "Arch/math.h"
 #include "Gf/api.h"
 #include "Gf/traits.h"
+#include "pxr/pxrns.h"
 
+#include <cmath>
 #include <type_traits>
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -375,4 +376,4 @@ GfCompDiv(Left left, Right right) {
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // PXR_BASE_GF_MATH_H 
+#endif // PXR_BASE_GF_GF_MATH_H

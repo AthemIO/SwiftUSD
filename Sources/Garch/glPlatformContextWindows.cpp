@@ -4,6 +4,11 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
+
+#include "Arch/defines.h"
+
+#if defined(ARCH_OS_WINDOWS)
+
 #include "Garch/glPlatformContextWindows.h"
 #include "Tf/hash.h"
 
@@ -79,3 +84,5 @@ GarchGetNullGLPlatformContextState()
 
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // ARCH_OS_WINDOWS

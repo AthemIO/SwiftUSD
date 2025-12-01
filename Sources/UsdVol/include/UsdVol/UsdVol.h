@@ -10,5 +10,6 @@
 #include <UsdVol/tokens.h>
 #include <UsdVol/volume.h>
 
-#include <UsdVol/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdVol/generatedSchema.module.h>
 #endif  // __PXR_USD_USDVOL_H__

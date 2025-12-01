@@ -7,5 +7,6 @@
 #include <UsdHydra/generativeProceduralAPI.h>
 #include <UsdHydra/tokens.h>
 
-#include <UsdHydra/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdHydra/generatedSchema.module.h>
 #endif  // __PXR_USD_USDHYDRA_H__

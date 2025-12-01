@@ -11,5 +11,6 @@
 #include <UsdRi/tokens.h>
 #include <UsdRi/typeUtils.h>
 
-#include <UsdRi/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdRi/generatedSchema.module.h>
 #endif  // __PXR_USD_USDRI_H__

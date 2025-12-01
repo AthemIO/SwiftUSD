@@ -4,7 +4,21 @@
       "Bash(swift bundler run:*)",
       "WebSearch",
       "Bash(echo:*)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(cat:*)",
+      "Bash(for dir in MaterialXCore MaterialXFormat MaterialXGenShader)",
+      "Bash(do echo \"=== $dir ===\" ls ~/dev/Athem/MetaverseKit/Sources/MaterialX/source/$dir/)",
+      "Bash(for dir in MaterialXGenGlsl MaterialXGenMsl MaterialXGenOsl MaterialXRender MaterialXRenderGlsl MaterialXRenderMsl)",
+      "Bash(do)",
+      "Bash(done)",
+      "Bash(xargs:*)",
+      "Bash(swift build:*)",
+      "Bash(git checkout:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(1)",
+      "Bash(tee:*)"
     ],
     "deny": [],
     "ask": []

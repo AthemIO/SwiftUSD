@@ -9,7 +9,8 @@
 #include <UsdMtlx/reader.h>
 #include <UsdMtlx/utils.h>
 
-#include <UsdMtlx/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdMtlx/generatedSchema.module.h>
 #include <UsdMtlx/materialXConfigAPI.h>
 #include <UsdMtlx/tokens.h>
 #endif  // __PXR_USD_USDMTLX_H__

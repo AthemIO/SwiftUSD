@@ -53,7 +53,8 @@
 #include <Usd/shared.h>
 #include <Usd/specializes.h>
 #include <Usd/stageCache.h>
-#include <Usd/stageCacheContext.h>
+// Excluded: Uses TF_DEFINE_STACKED macro which is incompatible with Swift modules
+// #include <Usd/stageCacheContext.h>
 #include <Usd/stageLoadRules.h>
 #include <Usd/stagePopulationMask.h>
 #include <Usd/timeCode.h>
@@ -73,7 +74,8 @@
 #include <Usd/validatorTokens.h>
 #include <Usd/attributeLimits.h>
 #include <Usd/colorSpaceAPI.h>
-#include <Usd/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <Usd/generatedSchema.module.h>
 #include <Usd/colorSpaceDefinitionAPI.h>
 
 // Python-related headers - only include when Python support is enabled

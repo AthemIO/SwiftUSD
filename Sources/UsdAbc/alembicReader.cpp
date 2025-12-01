@@ -29,7 +29,7 @@
 #include "Tf/ostreamMethods.h"
 #include "Tf/staticData.h"
 #include "Tf/staticTokens.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 #include "UsdAbc/alembicUtil.h"
 #include "UsdGeom/hermiteCurves.h"
 #include "UsdGeom/tokens.h"

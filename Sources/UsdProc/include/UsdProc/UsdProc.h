@@ -6,5 +6,6 @@
 #include <UsdProc/generativeProcedural.h>
 #include <UsdProc/tokens.h>
 
-#include <UsdProc/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdProc/generatedSchema.module.h>
 #endif  // __PXR_USD_USDPROC_H__

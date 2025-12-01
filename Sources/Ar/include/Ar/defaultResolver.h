@@ -10,6 +10,7 @@
 /// \file ar/defaultResolver.h
 
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 #include "Ar/api.h"
 #include "Ar/defaultResolverContext.h"
 #include "Ar/resolvedPath.h"
@@ -136,7 +137,7 @@ private:
     const ArDefaultResolverContext* _GetCurrentContextPtr() const;
 
     ArResolverContext _defaultContext;
-};
+} SWIFT_IMMORTAL_REFERENCE;
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

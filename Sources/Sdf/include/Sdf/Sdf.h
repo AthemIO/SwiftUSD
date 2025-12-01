@@ -1,6 +1,14 @@
 #ifndef __PXR_USD_SDF_H__
 #define __PXR_USD_SDF_H__
 
+// Sdf depends on these modules - include their umbrellas first for Swift module builds
+#include <Tf/Tf.h>
+#include <Gf/Gf.h>
+#include <Vt/Vt.h>
+#include <Work/Work.h>
+#include <Trace/Trace.h>
+#include <Ar/Ar.h>
+
 // sdf
 #include <Sdf/api.h>
 
@@ -18,8 +26,11 @@
 #include <Sdf/childrenProxy.h>
 #include <Sdf/childrenUtils.h>
 #include <Sdf/childrenView.h>
-#include <Sdf/cleanupEnabler.h>
-#include <Sdf/cleanupTracker.h>
+// Note: cleanupEnabler.h uses TF_DEFINE_STACKED macro which creates template
+// specializations that aren't compatible with Swift's Clang modules.
+// #include <Sdf/cleanupEnabler.h>
+// Note: cleanupTracker.h depends on cleanupEnabler.h
+// #include <Sdf/cleanupTracker.h>
 #include <Sdf/connectionListEditor.h>
 #include <Sdf/copyUtils.h>
 #include <Sdf/data.h>
@@ -96,7 +107,9 @@
 #include <Sdf/pathPatternParser.h>
 #include <Sdf/textParserHelpers.h>
 #include <Sdf/usdaData.h>
-#include <Sdf/crateDataTypes.h>
+// Note: crateDataTypes.h is a macro include file (uses xx() macro) and should
+// only be included by crateFile.h with the xx macro defined. Do not include directly.
+// #include <Sdf/crateDataTypes.h>
 #include <Sdf/shared.h>
 #include <Sdf/usdzFileFormat.h>
 #include <Sdf/booleanExpression.h>
@@ -113,7 +126,9 @@
 #include <Sdf/usdzResolver.h>
 #include <Sdf/crateData.h>
 #include <Sdf/variableExpressionAST.h>
-#include <Sdf/crateFile.h>
+// Note: crateFile.h includes crateDataTypes.h with xx() macro inside namespace
+// which breaks Swift module builds. The file is internal implementation detail.
+// #include <Sdf/crateFile.h>
 #include <Sdf/integerCoding.h>
 #include <Sdf/zipFile.h>
 

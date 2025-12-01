@@ -9,7 +9,7 @@
 
 #include "pxr/pxrns.h"
 
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 
 #include <algorithm>
 

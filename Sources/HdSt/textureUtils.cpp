@@ -8,8 +8,8 @@
 #include "HdSt/textureUtils.h"
 
 #include "Gf/half.h"
-#include "Gf/math.h"
-#include "Trace/trace.h"
+#include "Gf/gfMath.h"
+#include "Trace/traceImpl.h"
 
 #include "Hgi/hgi.h"
 #include "Hgi/blitCmds.h"

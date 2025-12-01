@@ -6,7 +6,7 @@
 //
 
 #include "Tf/bits.h"
-#include "Tf/tf.h"
+#include "Tf/tfImpl.h"
 
 #include "Arch/hash.h"
 

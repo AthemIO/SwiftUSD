@@ -12,7 +12,7 @@
 #include "Vt/types.h"
 #include "Vt/dictionary.h"
 
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Gf/numericCast.h"
 #include "Tf/instantiateSingleton.h"
 #include "Tf/iterator.h"

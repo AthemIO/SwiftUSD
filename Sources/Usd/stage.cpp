@@ -50,7 +50,7 @@
 #include "Sdf/usdFileFormat.h"
 #include "Sdf/variableExpression.h"
 
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 #include "Ar/resolver.h"
 #include "Ar/resolverContext.h"
 #include "Ar/resolverContextBinder.h"
@@ -2771,6 +2771,12 @@ UsdStage::GetPrototypes() const
         }                   
     }
     return prototypePrims;
+}
+
+UsdStagePtr
+UsdStage::getPtr() const
+{
+    return TfCreateWeakPtr(const_cast<UsdStage *>(this));
 }
 
 vector<UsdPrim>
@@ -10323,4 +10329,20 @@ template USD_API bool UsdStage::_SetMetadataImpl(
     const SdfAbstractDataConstValue &);
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+/// @WABI: FIX ME
+/// Swift C++ interop retain/release functions for UsdStage
+void UsdStageRetain(PXR_NS::UsdStage *stage)
+{
+#if DEBUG_MEMORY_MANAGEMENT
+    printf("Called UsdStageRetain()\n");
+#endif /* DEBUG_MEMORY_MANAGEMENT */
+}
+
+void UsdStageRelease(PXR_NS::UsdStage *stage)
+{
+#if DEBUG_MEMORY_MANAGEMENT
+    printf("Called UsdStageRelease()\n");
+#endif /* DEBUG_MEMORY_MANAGEMENT */
+}
 

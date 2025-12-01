@@ -62,7 +62,7 @@
 #include "Tf/stringUtils.h"
 #include "Tf/token.h"
 #include "Tf/type.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 #include "Vt/dictionary.h"
 #include "Vt/value.h"
 #include "Work/dispatcher.h"

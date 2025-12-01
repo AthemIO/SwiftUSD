@@ -9,7 +9,7 @@
 #define PXR_BASE_TF_DELEGATED_COUNT_PTR_H
 
 #include "pxr/pxrns.h"
-#include "Tf/tf.h"
+#include "Tf/tfImpl.h"
 #include "Tf/api.h"
 
 #include "Tf/diagnosticLite.h"

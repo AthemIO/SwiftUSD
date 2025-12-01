@@ -12,7 +12,7 @@
 #include "pxr/pxrns.h"
 #include "UsdUtils/api.h"
 
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Tf/diagnostic.h"
 #include "Tf/staticTokens.h"
 #include "Usd/timeCode.h"

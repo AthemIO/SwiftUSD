@@ -13,7 +13,7 @@
 #include "pxr/pxrns.h"
 
 #include "Tf/api.h"
-#include "Tf/tf.h"
+#include "Tf/tfImpl.h"
 #include "Tf/hashmap.h"
 #include "Tf/hashset.h"
 #include "Tf/iterator.h"

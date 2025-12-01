@@ -10,7 +10,7 @@
 #include "pxr/pxrns.h"
 #include "Sdf/layerOffset.h"
 #include "Sdf/timeCode.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 
 #include "Tf/hash.h"
 #include "Tf/type.h"

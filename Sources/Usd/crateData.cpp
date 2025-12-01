@@ -17,7 +17,7 @@
 #include "Tf/scopeDescription.h"
 #include "Tf/stringUtils.h"
 #include "Tf/typeInfoMap.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 
 #include "Work/dispatcher.h"
 #include "Work/loops.h"

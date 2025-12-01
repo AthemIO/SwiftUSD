@@ -7,6 +7,10 @@
 #ifndef PXR_IMAGING_GARCH_GL_PLATFORM_CONTEXT_GLX_H
 #define PXR_IMAGING_GARCH_GL_PLATFORM_CONTEXT_GLX_H
 
+#include "Arch/defines.h"
+
+#if defined(ARCH_OS_LINUX)
+
 #include "pxr/pxrns.h"
 #include <GL/glx.h>
 
@@ -50,5 +54,7 @@ typedef GarchGLXContextState GarchGLPlatformContextState;
 
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // ARCH_OS_LINUX
 
 #endif  // PXR_IMAGING_GARCH_GL_PLATFORM_CONTEXT_GLX_H

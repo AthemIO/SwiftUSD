@@ -277,7 +277,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/wabiverse/swift-cross-ui", revision: "1a887c2"),
     .package(url: "https://github.com/wabiverse/icu.git", from: "76.1.2"),
-    .package(url: "https://github.com/LynrAI/MetaverseKit", branch: "main"),
+    .package(path: "../MetaverseKit"),
     .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.1"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
     .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
@@ -1571,6 +1571,8 @@ let package = Package(
         .define("MFB_PACKAGE_MODULE", to: "HdSt"),
         .define("HDST_EXPORTS", to: "1"),
         .define("PXR_MATERIALX_SUPPORT_ENABLED", to: "1"),
+        /* MaterialX GenShader source headers path for internal includes */
+        .unsafeFlags(["-I", "../MetaverseKit/Sources/MaterialX/source"]),
         .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
         .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
         .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
@@ -1588,6 +1590,7 @@ let package = Package(
         .target(name: "Work"),
         .target(name: "Hd"),
         .target(name: "HdSt"),
+        .product(name: "MaterialX", package: "MetaverseKit"),
       ],
       resources: [
         .process("Resources")
@@ -1621,6 +1624,7 @@ let package = Package(
         .target(name: "Hgi"),
         .target(name: "HgiInterop"),
         .target(name: "CameraUtil"),
+        .product(name: "MaterialX", package: "MetaverseKit"),
       ],
       resources: [
         .copy("shaders"),
@@ -1915,6 +1919,7 @@ let package = Package(
         // -------- macros. ------
         .target(name: "PixarMacros"),
         // -----------------------
+        .product(name: "MaterialX", package: "MetaverseKit"),
       ],
       cxxSettings: [
         // enable to debug swift retain/release calls.

@@ -1,223 +1,171 @@
-//
-// Copyright 2016 Pixar
-//
-// Licensed under the terms set forth in the LICENSE.txt file available at
-// https://openusd.org/license.
-//
-#ifndef PXR_BASE_TF_TF_H
-#define PXR_BASE_TF_TF_H
-
-/// \file tf/tf.h
-/// A file containing basic constants and definitions.
-
-#if defined(__cplusplus) || defined(doxygen)
-
-#include "pxr/pxrns.h"
-
-#include "Arch/buildMode.h"
-#include "Arch/math.h"
-#include "Arch/inttypes.h"
-
-#include <math.h>
-#include <utility>
-
-PXR_NAMESPACE_OPEN_SCOPE
-
-// This constant will only be defined if not defined already. This is because
-// many files need a higher limit and define this constant themselves before
-// including anything else.
-
-#ifndef TF_MAX_ARITY
-#  define TF_MAX_ARITY 7
-#endif // TF_MAX_ARITY
-
-
-/// This value may be used by functions that return a \c size_t to indicate
-/// that a special or error condition has occurred.
-/// \ingroup group_tf_TfError
-#define TF_BAD_SIZE_T SIZE_MAX
-
-/// \addtogroup group_tf_BasicMath
-///@{
-
-/// Returns the absolute value of the given \c int value.
-inline int TfAbs(int v) {
-    return (v < 0 ? -v : v);
-}
-
-/// Returns the absolute value of the given \c double value.
-inline double TfAbs(double v) {
-    return fabs(v);
-}
-
-/// Returns the smaller of the two given \c  values.
-template <class T>
-inline T TfMin(const T& v1, const T& v2) {
-    return (v1 < v2 ? v1 : v2);
-}
-
-/// Returns the larger of the two given \c  values.
-template <class T>
-inline T TfMax(const T& v1, const T& v2) {
-    return (v1 > v2 ? v1 : v2);
-}
-
-///@}
-
-/// \struct TfDeleter
-/// Function object for deleting any pointer.
-///
-/// An STL collection of pointers does not automatically delete each
-/// pointer when the collection itself is destroyed. Instead of writing
-/// \code
-///    for (list<Otter*>::iterator i = otters.begin(); i != otters.end(); ++i)
-///         delete *i;
-/// \endcode
-/// you can use \c TfDeleter and simply write
-/// \code
-/// #include <algorithm>
-///
-///    for_each(otters.begin(), otters.end(), TfDeleter());
-/// \endcode
-///
-/// \note \c TfDeleter calls the non-array version of \c delete.
-/// Don't use \c TfDeleter if you allocated your space using \c new[]
-/// (and consider using a \c vector<> in place of a built-in array).
-/// Also, note that you need to put parenthesis after \c TfDeleter
-/// in the call to \c for_each().
-///
-/// Finally, \c TfDeleter also works for map-like collections.
-/// Note that this works as follows: if \c TfDeleter is handed
-/// a datatype of type \c std::pair<T1,T2*>, then the second element
-/// of the pair is deleted, but the first (whether or not it is a pointer)
-/// is left alone.  In other words, if you give \c TfDeleter() a pair of
-/// pointers, it only deletes the second, but never the first.  This is the
-/// desired behavior for maps.
-///
-/// \ingroup group_tf_Stl
-struct TfDeleter {
-    template <class T>
-    void operator() (T* t) const {
-        delete t;
-    }
-
-    template <class T1, class T2>
-    void operator() (std::pair<T1, T2*> p) const {
-        delete p.second;
-    }
-};
-
-/*
- * The compile-time constants are not part of doxygen; if you know they're here,
- * fine, but they should be used rarely, so we don't go out of our way to
- * advertise them.
+/* ----------------------------------------------------------------
+ * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ * ----------------------------------------------------------------
+ * This software is Licensed under the terms of the Apache License,
+ * version 2.0 (the "Apache License") with the following additional
+ * modification; you may not use this file except within compliance
+ * of the Apache License and the following modification made to it.
+ * Section 6. Trademarks. is deleted and replaced with:
  *
- * Here's the idea: you may have an axiom or conditional check which is just too
- * expensive to make part of a release build. Compilers these days will optimize
- * away expressions they can evaluate at compile-time.  So you can do
+ * Trademarks. This License does not grant permission to use any of
+ * its trade names, trademarks, service marks, or the product names
+ * of this Licensor or its affiliates, except as required to comply
+ * with Section 4(c.) of this License, and to reproduce the content
+ * of the NOTICE file.
  *
- *     if (TF_DEV_BUILD)
- *         TF_AXIOM(expensiveConditional);
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND without even an
+ * implied warranty of MERCHANTABILITY, or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the Apache License for more details.
  *
- * to get a condition axiom.  You can even write
+ * You should have received a copy for this software license of the
+ * Apache License along with this program; or, if not, please write
+ * to the Free Software Foundation Inc., with the following address
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *     TF_AXIOM(!TF_DEV_BUILD || expensiveConditional);
- *
- * What you CANNOT do is write
- *      #if defined(TF_DEV_BUILD)
- * or
- *      #if TF_DEV_BUILD == 0
- *
- * The former compiles but always yields true; the latter doesn't compile.
- * In other words, you can change the flow of control using these constructs,
- * but we deliberately are prohibiting things like
- *
- * struct Bar {
- * #if ...
- *     int _onlyNeededForChecks;
- * #endif
- * };
- *
- * or creating functions which only show up in some builds.
- */
+ *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
+ * ----------------------------------------------------------------
+ *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ * ---------------------------------------------------------------- */
 
-#define TF_DEV_BUILD ARCH_DEV_BUILD
-
-PXR_NAMESPACE_CLOSE_SCOPE
-
-#endif // defined(__cplusplus)
-
-/// Stops compiler from producing unused argument or variable warnings.
-/// This is useful mainly in C, because in C++ you can just leave
-/// the variable unnamed.  However, there are situations where this
-/// can be useful even in C++, such as
-/// \code
-/// void
-/// MyClass::Method( int foo )
-/// {
-/// #if defined(__APPLE__)
-///     TF_UNUSED( foo );
-///     // do something that doesn't need foo...
-/// #else
-///     // do something that needs foo
-/// #endif
-/// } 
-/// \endcode
-///
-/// \ingroup group_tf_TfCompilerAids
-#define TF_UNUSED(x)    (void) x
-
-#endif // TF_H
 #ifndef __PXR_BASE_TF_H__
 #define __PXR_BASE_TF_H__
 
-#include "pxr/pxrns.h"
+// Tf umbrella header for Swift module builds
+// Note: Include order is critical for proper template instantiation.
 
-// Tf umbrella includes
-#include <Tf/tf.h>
+// Core foundational types (tfImpl contains TfAbs, TfMin, TfMax, TfDeleter, etc.)
+#include <Tf/tfImpl.h>
+
+// Core API and utilities
+#include <Tf/api.h>
 #include <Tf/hash.h>
-#include <Tf/bits.h>
-#include <Tf/refPtrTracker.h>
-#include <Tf/refPtr.h>
-#include <Tf/span.h>
-#include <Tf/atomicOfstreamWrapper.h>
-#include <Tf/weakPtr.h>
 #include <Tf/token.h>
-#include <Tf/expiryNotifier.h>
+#include <Tf/staticTokens.h>
+#include <Tf/smallVector.h>
+#include <Tf/span.h>
+#include <Tf/bits.h>
 #include <Tf/meta.h>
+#include <Tf/iterator.h>
+#include <Tf/stringUtils.h>
+#include <Tf/atomicOfstreamWrapper.h>
+#include <Tf/atomicRenameUtil.h>
 #include <Tf/spinRWMutex.h>
-#include <Tf/unicodeCharacterClasses.h>
+#include <Tf/spinMutex.h>
+#include <Tf/bigRWMutex.h>
 #include <Tf/cxxCast.h>
 #include <Tf/exception.h>
-#include <Tf/refBase.h>
-#include <Tf/robin_set.h>
-#include <Tf/robin_growth_policy.h>
-#include <Tf/robin_map.h>
-#include <Tf/robin_hash.h>
-#include <Tf/setenv.h>
-#include <Tf/declarePtrs.h>
-#include <Tf/CLI11.h>
-#include <Tf/typeInfoMap.h>
-#include <Tf/iterator.h>
-#include <Tf/smallVector.h>
-#include <Tf/staticTokens.h>
+
+// Utility types
+#include <Tf/bitUtils.h>
+#include <Tf/callContext.h>
+#include <Tf/dl.h>
+#include <Tf/enum.h>
+#include <Tf/envSetting.h>
+#include <Tf/error.h>
+#include <Tf/expiryNotifier.h>
+#include <Tf/fileUtils.h>
+#include <Tf/functionRef.h>
+#include <Tf/functionTraits.h>
 #include <Tf/getenv.h>
+#include <Tf/setenv.h>
+
+// Hash containers (must come before denseHashMap/denseHashSet)
+#include <Tf/hashmap.h>
+#include <Tf/hashset.h>
+#include <Tf/denseHashMap.h>
+#include <Tf/denseHashSet.h>
+
+// Robin map hash containers (provides pxr_tsl::robin_map used by Sdf predicate library)
+#include <Tf/pxrTslRobinMap/robin_map.h>
+#include <Tf/pxrTslRobinMap/robin_set.h>
+
+// Reference counting and smart pointer infrastructure
+// Order is important: refBase -> refPtr -> weakBase -> weakPtrFacade -> weakPtr -> anyWeakPtr
+#include <Tf/refBase.h>
+#include <Tf/refCount.h>
+#include <Tf/delegatedCountPtr.h>
+#include <Tf/refPtrTracker.h>
+#include <Tf/refPtr.h>
+#include <Tf/weakBase.h>
+#include <Tf/weakPtrFacade.h>
+#include <Tf/weakPtr.h>
+#include <Tf/declarePtrs.h>
+#include <Tf/nullPtr.h>
+
+// anyWeakPtr depends on weakPtr.h being fully processed, but must come before notice.h
+#include <Tf/anyWeakPtr.h>
+
+// anyUniquePtr for type-erased unique pointer storage
+#include <Tf/anyUniquePtr.h>
+
+// Type system and registry
+#include <Tf/registryManager.h>
+#include <Tf/type.h>
+#include <Tf/typeFunctions.h>
+#include <Tf/typeInfoMap.h>
+#include <Tf/typeNotice.h>
+#include <Tf/type_Impl.h>
+#include <Tf/singleton.h>
+#include <Tf/instantiateSingleton.h>
+#include <Tf/instantiateType.h>
+
+// Static data
+#include <Tf/staticData.h>
+#include <Tf/stl.h>
+
+// Scoped utilities
+#include <Tf/scoped.h>
+#include <Tf/scopeDescription.h>
+
+// Diagnostics
+#include <Tf/debug.h>
+#include <Tf/debugCodes.h>
+#include <Tf/debugNotice.h>
 #include <Tf/diagnosticBase.h>
-#include <Tf/fastCompression.h>
+#include <Tf/diagnostic.h>
+#include <Tf/diagnosticHelper.h>
+#include <Tf/diagnosticLite.h>
+#include <Tf/diagnosticMgr.h>
+#include <Tf/errorMark.h>
+#include <Tf/errorTransport.h>
+#include <Tf/mallocTag.h>
+#include <Tf/status.h>
+#include <Tf/warning.h>
+#include <Tf/stackTrace.h>
+
+// Output utilities
 #include <Tf/ostreamMethods.h>
+#include <Tf/fastCompression.h>
+#include <Tf/safeOutputFile.h>
+#include <Tf/safeTypeCompare.h>
+
+// Notification system (depends on anyWeakPtr, weakPtr, type, diagnostic, mallocTag)
+#include <Tf/notice.h>
+#include <Tf/noticeRegistry.h>
+
+// Pattern matching and paths
+#include <Tf/pathUtils.h>
+#include <Tf/patternMatcher.h>
+
+// Preprocessor utilities
+#include <Tf/preprocessorUtils.h>
+#include <Tf/preprocessorUtilsLite.h>
+
+// Other utilities
+#include <Tf/pointerAndBits.h>
+#include <Tf/regTest.h>
+#include <Tf/stopwatch.h>
+#include <Tf/templateString.h>
+#include <Tf/unicodeUtils.h>
+
+// Python tracing - provides TfPyTraceFnId (stub typedef when Python is disabled)
+#include <Tf/pyTracing.h>
 
 // Python-related headers - only include when Python support is enabled
 #if PXR_PYTHON_SUPPORT_ENABLED
 #include <Tf/pyObjWrapper.h>
-#include <Tf/scriptModuleLoader.h>
-#include <Tf/pyInvoke.h>
-#include <Tf/pyInterpreter.h>
-#include <Tf/pySafePython.h>
-#include <Tf/pyUtils.h>
-#include <Tf/pyError.h>
-#include <Tf/pyArg.h>
-#include <Tf/pyResultConversions.h>
-#include <Tf/pyEnum.h>
+#include <Tf/pyLock.h>
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
 #endif  // __PXR_BASE_TF_H__

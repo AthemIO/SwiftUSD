@@ -182,7 +182,9 @@ HdSt_TextureObjectRegistry::Commit()
             // Loading a texture file of a previously unseen type might
             // require loading a new plugin, so give up the GIL temporarily
             // to the threads loading the images.
+#if PXR_PYTHON_SUPPORT_ENABLED
             TF_PY_ALLOW_THREADS_IN_SCOPE();
+#endif
 
             // Parallel load texture files
             WorkParallelForEach(result.begin(), result.end(),

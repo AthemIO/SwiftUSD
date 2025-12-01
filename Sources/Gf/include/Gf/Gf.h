@@ -31,6 +31,12 @@
 #ifndef __PXR_BASE_GF_H__
 #define __PXR_BASE_GF_H__
 
+// Tf dependencies - must be included first for Swift module builds
+// (forward declarations are not sufficient across module boundaries)
+#include <Tf/hash.h>
+#include <Tf/token.h>
+#include <Tf/staticTokens.h>
+
 // gf
 #include <Gf/api.h>
 #include <Gf/declare.h>
@@ -92,16 +98,16 @@
 #include <Gf/vec4h.h>
 #include <Gf/vec4i.h>
 
+// nanocolor must be included before colorSpace_data.h (which uses NcColorSpace)
+#include <Gf/nanocolor.h>
 #include <Gf/color.h>
 #include <Gf/colorSpace.h>
-#include <Gf/numericCast.h>
-#include <Gf/ilmbase_eLut.h>
 #include <Gf/colorSpace_data.h>
-#include <Gf/limits.h>
-#include <Gf/nanocolor.h>
-#include <Gf/math.h>
-#include <Gf/ilmbase_toFloat.h>
+#include <Gf/numericCast.h>
 #include <Gf/ostreamHelpers.h>
+// Note: ilmbase_eLut.h and ilmbase_toFloat.h are data-only headers
+// (array initializers) meant to be #included inside variable definitions,
+// not as standalone headers. They should not be in the umbrella header.
 
 // Python-related headers - only include when Python support is enabled
 #if PXR_PYTHON_SUPPORT_ENABLED

@@ -11,7 +11,7 @@
 /// \ingroup group_gf_BasicMath
 
 #include "pxr/pxrns.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Gf/api.h"
 #include "Tf/hash.h"
 

@@ -13,7 +13,7 @@
 
 #include "UsdSkel/utils.h"
 
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 
 #include "Hd/sceneIndex.h"
 

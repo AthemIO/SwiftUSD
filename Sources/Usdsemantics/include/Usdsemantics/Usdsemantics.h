@@ -2,7 +2,8 @@
 #define __PXR_USD_USDSEMANTICS_H__
 
 // Usdsemantics
-#include <Usdsemantics/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <Usdsemantics/generatedSchema.module.h>
 #include <Usdsemantics/labelsQuery.h>
 #include <Usdsemantics/tokens.h>
 #include <Usdsemantics/labelsAPI.h>

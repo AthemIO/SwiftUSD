@@ -7,6 +7,10 @@
 #ifndef PXR_IMAGING_GARCH_GL_PLATFORM_DEBUG_WINDOW_WINDOWS_H
 #define PXR_IMAGING_GARCH_GL_PLATFORM_DEBUG_WINDOW_WINDOWS_H
 
+#include "Arch/defines.h"
+
+#if defined(ARCH_OS_WINDOWS)
+
 #include "pxr/pxrns.h"
 #include <Windows.h>
 
@@ -41,5 +45,7 @@ private:
 
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // ARCH_OS_WINDOWS
 
 #endif  // PXR_IMAGING_GARCH_GL_PLATFORM_DEBUG_WINDOW_WINDOWS_H

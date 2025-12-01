@@ -12,7 +12,7 @@
 #include "Usd/clipSet.h"
 #include "Usd/valueUtils.h"
 #include "Sdf/layer.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 

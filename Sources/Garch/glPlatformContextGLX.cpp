@@ -6,6 +6,10 @@
 //
 /// \file glPlatformContext.cpp
 
+#include "Arch/defines.h"
+
+#if defined(ARCH_OS_LINUX)
+
 #include "Garch/glPlatformContext.h"
 #include "Tf/hash.h"
 
@@ -83,4 +87,6 @@ GarchGetNullGLPlatformContextState()
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // ARCH_OS_LINUX
 

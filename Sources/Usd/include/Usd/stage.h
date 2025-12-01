@@ -10,6 +10,7 @@
 /// \file usd/stage.h
 
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 #include "Usd/api.h"
 #include "Usd/common.h"
 #include "Usd/editTarget.h"
@@ -1579,6 +1580,10 @@ public:
     USD_API
     std::vector<UsdPrim> GetPrototypes() const;
 
+    /// Implementation detail, internal function utilized by swift.
+    USD_API
+    UsdStagePtr getPtr() const;
+
     /// @}
 
 private:
@@ -2385,9 +2390,9 @@ private:
     friend class Usd_TypeQueryAccess;
     template <class T> friend struct Usd_AttrGetValueHelper;
     friend struct Usd_AttrGetUntypedValueHelper;
-    template <class RefsOrPayloadsEditorType, class RefsOrPayloadsProxyType> 
+    template <class RefsOrPayloadsEditorType, class RefsOrPayloadsProxyType>
         friend struct Usd_ListEditImpl;
-};
+} SWIFT_SHARED_REFERENCE(UsdStageRetain, UsdStageRelease);
 
 // UsdObject's typed metadata query relies on this specialization being
 // externally visible and exporting the primary template does not
@@ -2521,6 +2526,11 @@ UsdStage::_SetMetadata(const UsdObject &object, const TfToken& key,
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+/// @WABI: FIX ME
+/// Swift C++ interop retain/release functions for UsdStage
+void UsdStageRetain(PXR_NS::UsdStage *);
+void UsdStageRelease(PXR_NS::UsdStage *);
 
 #endif //PXR_USD_USD_STAGE_H
 

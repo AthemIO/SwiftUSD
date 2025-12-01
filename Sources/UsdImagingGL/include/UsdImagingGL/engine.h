@@ -11,6 +11,7 @@
 #define PXR_USD_IMAGING_USD_IMAGING_GL_ENGINE_H
 
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 #include "UsdImagingGL/api.h"
 #include "UsdImagingGL/version.h"
 #include "UsdImaging/version.h"
@@ -77,7 +78,10 @@ namespace UsdImagingGLEngine_Impl
 ///
 /// The UsdImagingGLEngine is the main entry point API for rendering USD scenes.
 ///
-class UsdImagingGLEngine
+/// @WABI: FIX ME
+/// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this type
+/// has deleted copy constructor which Swift can't import without annotation.
+class SWIFT_IMMORTAL_REFERENCE UsdImagingGLEngine
 {
 public:
     /// Parameters to construct UsdImagingGLEngine.

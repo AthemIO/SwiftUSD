@@ -11,7 +11,7 @@
 #include "Gf/vec4f.h"
 
 #include "pxr/pxrns.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Gf/ostreamHelpers.h"
 #include "Tf/type.h"
 

@@ -36,16 +36,22 @@
 #include <io.h>
 #endif
 
-PXR_NAMESPACE_OPEN_SCOPE
-
-/// \addtogroup group_arch_SystemFunctions
-///@{
+// Include limits.h/sys/param.h for PATH_MAX/MAXPATHLEN before namespace opens
+// to avoid Swift C++ interop module errors.
 #if !defined(ARCH_OS_WINDOWS)
     #ifdef _POSIX_VERSION
         #include <limits.h>                     /* for PATH_MAX */
     #else
         #include <sys/param.h>                  /* for MAXPATHLEN */
     #endif
+#endif
+
+PXR_NAMESPACE_OPEN_SCOPE
+
+/// \addtogroup group_arch_SystemFunctions
+///@{
+#if !defined(ARCH_OS_WINDOWS)
+    // PATH_MAX or MAXPATHLEN already included above
 #else
     // XXX -- Should probably have ARCH_ macro for this.
     #define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)

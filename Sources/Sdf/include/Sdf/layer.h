@@ -10,6 +10,7 @@
 /// \file sdf/layer.h
 
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 #include "Sdf/api.h"
 #include "Sdf/data.h"
 #include "Sdf/declareHandles.h"
@@ -2093,8 +2094,13 @@ private:
     // Give layer state delegates access to our data as well as to
     // the various _Prim functions.
     friend class SdfLayerStateDelegateBase;
-};
+} SWIFT_SHARED_REFERENCE(SdfLayerRetain, SdfLayerRelease);
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+/// @WABI: FIX ME
+/// Swift C++ interop retain/release functions for SdfLayer
+void SdfLayerRetain(PXR_NS::SdfLayer *);
+void SdfLayerRelease(PXR_NS::SdfLayer *);
 
 #endif // PXR_USD_SDF_LAYER_H

@@ -26,7 +26,7 @@
 #include "Gf/half.h"
 #include "RixInterfaces.h"
 #include "RtxPlugin.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 #include "pxr/imaging/hio/image.h"
 #include "pxr/imaging/hio/types.h"
 

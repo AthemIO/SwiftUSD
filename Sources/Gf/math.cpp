@@ -6,14 +6,16 @@
 //
 
 #include "pxr/pxrns.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
+
+#include <cmath>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
 double
 GfMod(double a, double b)
 {
-    double c = fmod(a, b);
+    double c = std::fmod(a, b);
     if (a < 0)
         return c ? (b + c) : 0;
     else
@@ -23,7 +25,7 @@ GfMod(double a, double b)
 float
 GfMod(float a, float b)
 {
-    double c = fmodf(a, b);
+    float c = std::fmod(a, b);
     if (a < 0)
         return c ? (b + c) : 0;
     else

@@ -9,7 +9,10 @@
 //
 // Also note that the enumerant value 0 is reserved, and corresponds to the
 // enumerant 'Invalid'.
-#include "pxr/pxrns.h"
+//
+// Note: This file is a macro data file meant to be #included with the xx()
+// macro defined. It should NOT have any #include directives as it may be
+// included inside namespaces or enum definitions.
 
 // xx(<enumerant>, <enumerant-value>, <c++ type>, <supportsArray>)
 

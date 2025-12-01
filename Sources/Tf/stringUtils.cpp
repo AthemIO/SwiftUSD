@@ -10,7 +10,7 @@
 #include "Tf/stringUtils.h"
 #include "Tf/diagnostic.h"
 #include "Tf/pathUtils.h"
-#include "Tf/tf.h"
+#include "Tf/tfImpl.h"
 #include "Tf/token.h"
 #include "Tf/staticData.h"
 #include "Arch/inttypes.h"

@@ -5,11 +5,14 @@
 // https://openusd.org/license.
 //
 
+#include "Arch/defines.h"
+
+#if defined(ARCH_OS_LINUX)
+
 #include "Garch/glDebugWindow.h"
 #include "Garch/glPlatformDebugWindowGLX.h"
 #include "Garch/glPlatformDebugContext.h"
 
-#include "Arch/defines.h"
 #include "Tf/diagnostic.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -204,4 +207,6 @@ Garch_GLPlatformDebugWindow::ExitApp()
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // ARCH_OS_LINUX
 

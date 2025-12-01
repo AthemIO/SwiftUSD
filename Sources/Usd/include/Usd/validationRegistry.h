@@ -11,6 +11,7 @@
 #include "Usd/api.h"
 #include "Usd/validator.h"
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 
 #include <memory>
 #include <shared_mutex>
@@ -139,7 +140,10 @@ PXR_NAMESPACE_OPEN_SCOPE
 ///
 /// \sa UsdValidator
 /// \sa UsdValidatorSuite
-class UsdValidationRegistry {
+/// @WABI: FIX ME
+/// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this singleton type
+/// has deleted copy constructor which Swift can't import without annotation.
+class SWIFT_IMMORTAL_REFERENCE UsdValidationRegistry {
   UsdValidationRegistry(const UsdValidationRegistry &) = delete;
   UsdValidationRegistry &operator=(const UsdValidationRegistry &) = delete;
 

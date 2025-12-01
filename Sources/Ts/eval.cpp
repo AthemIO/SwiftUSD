@@ -10,7 +10,7 @@
 #include "Ts/splineData.h"
 #include "Ts/regressionPreventer.h"
 #include "Ts/debugCodes.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Tf/diagnostic.h"
 
 #include <algorithm>

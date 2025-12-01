@@ -8,7 +8,8 @@
 #include <UsdUI/sceneGraphPrimAPI.h>
 #include <UsdUI/tokens.h>
 
-#include <UsdUI/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdUI/generatedSchema.module.h>
 #include <UsdUI/primHints.h>
 #include <UsdUI/propertyHints.h>
 #include <UsdUI/accessibilityAPI.h>

@@ -41,6 +41,7 @@
 #define NcXYZ NCCONCAT(NCNAMESPACE, XYZ)
 #define NcYxy NCCONCAT(NCNAMESPACE, Yxy)
 #define NcRGB NCCONCAT(NCNAMESPACE, RGB)
+#define NcRGBA NCCONCAT(NCNAMESPACE, RGBA)
 #define NcM33f NCCONCAT(NCNAMESPACE, M33f)
 #define NcColorSpaceDescriptor NCCONCAT(NCNAMESPACE, ColorSpaceDescriptor)
 #define NcColorSpaceM33Descriptor NCCONCAT(NCNAMESPACE, ColorSpaceM33Descriptor)
@@ -66,6 +67,14 @@ typedef struct {
   float r, g, b;
 } NcRGB;
 
+// NcRGBA is pairing of NcRGB with an alpha channel.
+// It has no intrinsic color space, nor does it define whether the alpha
+// value is straight (unassociated) or premultiplied (associated).
+typedef struct {
+  NcRGB rgb;
+  float alpha;
+} NcRGBA;
+
 // NcM33f is a 3x3 matrix of floats used for color space conversions.
 // It's stored in row major order, such that posting multiplying an NcRGB
 // as a column vector by an NcM33f will yield another NcRGB column
@@ -78,20 +87,22 @@ typedef struct {
 // The color space is defined by the red, green, and blue primaries,
 // the white point, the gamma of the log section, and the linear bias.
 typedef struct {
-  const char *name;
-  NcChromaticity redPrimary, greenPrimary, bluePrimary;
-  NcChromaticity whitePoint;
-  float gamma;       // gamma of log section
-  float linearBias;  // where the linear section ends
+  const char*       descriptiveName;
+  const char*       shortName;
+  NcChromaticity    redPrimary, greenPrimary, bluePrimary;
+  NcChromaticity    whitePoint;
+  float             gamma;       // gamma of log section
+  float             linearBias;  // where the linear section ends
 } NcColorSpaceDescriptor;
 
 // NcColorSpaceM33Descriptor describes a color space defined in terms of a
 // 3x3 matrix, the gamma of the log section, and the linear bias.
 typedef struct {
-  const char *name;
-  NcM33f rgbToXYZ;
-  float gamma;       // gamma of log section
-  float linearBias;  // where the linear section ends
+  const char*       descriptiveName;
+  const char*       shortName;
+  NcM33f            rgbToXYZ;
+  float             gamma;       // gamma of log section
+  float             linearBias;  // where the linear section ends
 } NcColorSpaceM33Descriptor;
 
 // Opaque struct for the public interface
@@ -290,12 +301,12 @@ NCAPI void NcTransformColors(const NcColorSpace *dst,
  * @param dst Pointer to the destination color space object.
  * @param src Pointer to the source color space object.
  * @param rgba Pointer to the array of RGBA colors to transform.
- * @param count Number of colors in the array.
+ * @param count Number of colors in the array. (1 RGBA quadruplet = 1 color).
  * @return void
  */
 NCAPI void NcTransformColorsWithAlpha(const NcColorSpace *dst,
                                       const NcColorSpace *src,
-                                      float *rgba,
+                                      NcRGBA *rgba,
                                       size_t count);
 
 /**

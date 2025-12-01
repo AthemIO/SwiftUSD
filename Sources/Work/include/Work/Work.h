@@ -1,6 +1,10 @@
 #ifndef __PXR_BASE_WORK_H__
 #define __PXR_BASE_WORK_H__
 
+// Tf umbrella provides all Tf dependencies needed by Work headers
+// (TfErrorMark, TfErrorTransport, etc.)
+#include <Tf/Tf.h>
+
 // work
 #include <Work/api.h>
 #include <Work/detachedTask.h>

@@ -38,7 +38,7 @@
 #include "Ar/resolverScopedCache.h"
 #include "Arch/fileSystem.h"
 #include "Arch/errno.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 #include "Tf/debug.h"
 #include "Tf/envSetting.h"
 #include "Tf/fileUtils.h"
@@ -5255,3 +5255,19 @@ SdfLayer::_Save(bool force) const
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+/// @WABI: FIX ME
+/// Swift C++ interop retain/release functions for SdfLayer
+void SdfLayerRetain(PXR_NS::SdfLayer *layer)
+{
+#if DEBUG_MEMORY_MANAGEMENT
+    printf("Called SdfLayerRetain()\n");
+#endif /* DEBUG_MEMORY_MANAGEMENT */
+}
+
+void SdfLayerRelease(PXR_NS::SdfLayer *layer)
+{
+#if DEBUG_MEMORY_MANAGEMENT
+    printf("Called SdfLayerRelease()\n");
+#endif /* DEBUG_MEMORY_MANAGEMENT */
+}

@@ -10,7 +10,7 @@
 #include "Arch/hints.h"
 #include "Tf/api.h"
 #include "Tf/hash.h"
-#include "Tf/tf.h"
+#include "Tf/tfImpl.h"
 #include "Tf/hash.h"
 #include "Tf/diagnostic.h"
 #include "Tf/iterator.h"

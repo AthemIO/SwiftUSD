@@ -7,5 +7,6 @@
 #include <UsdMedia/spatialAudio.h>
 #include <UsdMedia/tokens.h>
 
-#include <UsdMedia/generatedSchema.module.h>
+// Excluded: Python TF_WRAP macros - only used for Python bindings
+// #include <UsdMedia/generatedSchema.module.h>
 #endif  // __PXR_USD_USDMEDIA_H__

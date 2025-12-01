@@ -8,6 +8,7 @@
 #define PXR_IMAGING_HGI_GL_HGI_H
 
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 #include "HgiGL/api.h"
 #include "HgiGL/capabilities.h"
 #include "HgiGL/garbageCollector.h"
@@ -51,7 +52,10 @@ using HgiGLContextArenaHandle = HgiHandle<class HgiGLContextArena>;
 /// is used with the implied expectation that the same GL context is valid
 /// and current for the lifetime of the HgiGL instance.
 ///
-class HgiGL final : public Hgi
+/// @WABI: FIX ME
+/// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this type
+/// has deleted copy constructor which Swift can't import without annotation.
+class SWIFT_IMMORTAL_REFERENCE HgiGL final : public Hgi
 {
 public:
     HGIGL_API

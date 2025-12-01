@@ -113,6 +113,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 ///
 template<class Fn> auto WorkWithScopedParallelism(Fn &&fn, bool dropPythonGIL = true)
 {
+#if PXR_PYTHON_SUPPORT_ENABLED
   if (dropPythonGIL) {
     TF_PY_ALLOW_THREADS_IN_SCOPE();
     return tbb::this_task_arena::isolate(std::forward<Fn>(fn));
@@ -120,6 +121,9 @@ template<class Fn> auto WorkWithScopedParallelism(Fn &&fn, bool dropPythonGIL = 
   else {
     return tbb::this_task_arena::isolate(std::forward<Fn>(fn));
   }
+#else
+  return tbb::this_task_arena::isolate(std::forward<Fn>(fn));
+#endif
 }
 
 /// Similar to WorkWithScopedParallelism(), but pass a WorkDispatcher instance

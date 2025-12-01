@@ -10,7 +10,7 @@
 #include "Tf/pyUtils.h"
 #include "Tf/pyContainerConversions.h"
 
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 
 #include "Gf/vec2i.h"
 #include "Gf/vec3i.h"

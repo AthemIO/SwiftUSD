@@ -13,8 +13,8 @@
 
 #include "Hd/sceneIndex.h"
 
-#include "Gf/math.h"
-#include "Trace/trace.h"
+#include "Gf/gfMath.h"
+#include "Trace/traceImpl.h"
 
 #include <limits>
 

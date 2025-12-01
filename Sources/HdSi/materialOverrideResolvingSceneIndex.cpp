@@ -28,7 +28,7 @@
 #include "Tf/staticTokens.h"
 #include "Tf/stringUtils.h"
 #include "Tf/token.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 
 #include <memory>
 #include <unordered_map>

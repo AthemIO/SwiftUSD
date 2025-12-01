@@ -11,7 +11,7 @@
 #include "Hd/sceneIndex.h"
 #include "Sdf/pathExpression.h"
 #include "Sdf/predicateLibrary.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 

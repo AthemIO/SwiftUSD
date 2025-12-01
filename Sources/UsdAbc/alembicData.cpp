@@ -27,7 +27,7 @@
 #include "Sdf/schema.h"
 #include "Tf/envSetting.h"
 #include "Tf/fileUtils.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 #include "UsdAbc/alembicReader.h"
 #include "UsdAbc/alembicUtil.h"
 #include "UsdAbc/alembicWriter.h"

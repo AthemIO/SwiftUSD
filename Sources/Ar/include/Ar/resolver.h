@@ -10,6 +10,7 @@
 /// \file ar/resolver.h
 
 #include "pxr/pxrns.h"
+#include "Arch/swiftInterop.h"
 #include "Ar/api.h"
 #include "Ar/resolvedPath.h"
 #include "Ar/resolverContext.h"
@@ -838,7 +839,7 @@ private:
     AR_API
     const ArResolverContext* _GetInternallyManagedCurrentContext() const;
 
-};
+} SWIFT_IMMORTAL_REFERENCE;
 
 /// Returns the configured asset resolver.
 ///

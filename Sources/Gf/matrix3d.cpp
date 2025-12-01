@@ -13,7 +13,7 @@
 #include "Gf/matrix3d.h"
 #include "Gf/matrix3f.h"
 
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Gf/ostreamHelpers.h"
 #include "Tf/type.h"
 

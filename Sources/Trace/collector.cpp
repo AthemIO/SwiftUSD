@@ -11,7 +11,7 @@
 #include "Trace/collection.h"
 #include "Trace/collectionNotice.h"
 #include "Trace/reporter.h"
-#include "Trace/trace.h"
+#include "Trace/traceImpl.h"
 
 #include "Arch/stackTrace.h"
 #include "Arch/timing.h"

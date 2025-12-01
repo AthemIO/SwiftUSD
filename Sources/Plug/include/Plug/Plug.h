@@ -1,6 +1,10 @@
 #ifndef __PXR_BASE_PLUG_H__
 #define __PXR_BASE_PLUG_H__
 
+// Tf umbrella provides all Tf dependencies needed by Plug headers
+// (TfType, TfNotice, TfRefPtr, TfWeakPtr, TfDebug, etc.)
+#include <Tf/Tf.h>
+
 // plug
 #include <Plug/api.h>
 #include <Plug/debugCodes.h>

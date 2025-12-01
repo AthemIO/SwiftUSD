@@ -17,9 +17,9 @@
 #include "pxr/pxrns.h"
 #include "Tf/diagnostic.h"
 #include "Gf/api.h"
-#include "Gf/limits.h"
+#include "Gf/gfLimits.h"
 #include "Gf/traits.h"
-#include "Gf/math.h"
+#include "Gf/gfMath.h"
 #include "Tf/hash.h"
 
 #include <cstddef>

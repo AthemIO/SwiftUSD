@@ -7,6 +7,10 @@
 #ifndef PXR_IMAGING_GARCH_GL_PLATFORM_DEBUG_WINDOW_GLX_H
 #define PXR_IMAGING_GARCH_GL_PLATFORM_DEBUG_WINDOW_GLX_H
 
+#include "Arch/defines.h"
+
+#if defined(ARCH_OS_LINUX)
+
 #include "pxr/pxrns.h"
 #include "Tf/declarePtrs.h"
 #include <X11/Xlib.h>
@@ -40,5 +44,7 @@ private:
 
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+#endif // ARCH_OS_LINUX
 
 #endif  // PXR_IMAGING_GARCH_GL_PLATFORM_DEBUG_WINDOW_GLX_H
