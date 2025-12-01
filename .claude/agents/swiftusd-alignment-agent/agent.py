@@ -18,8 +18,55 @@ import os
 import re
 import subprocess
 import sys
+import threading
+import time
 from datetime import datetime
 from pathlib import Path
+
+# ANSI color codes for terminal output
+class Colors:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+    RESET = '\033[0m'
+
+def print_header(msg: str):
+    """Print a prominent header message."""
+    print(f"\n{Colors.BOLD}{Colors.HEADER}{'='*70}{Colors.RESET}")
+    print(f"{Colors.BOLD}{Colors.HEADER}{msg}{Colors.RESET}")
+    print(f"{Colors.BOLD}{Colors.HEADER}{'='*70}{Colors.RESET}\n")
+
+def print_phase(phase: str, status: str = "starting"):
+    """Print phase status with timestamp."""
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    if status == "starting":
+        icon = "🚀"
+        color = Colors.CYAN
+    elif status == "completed":
+        icon = "✅"
+        color = Colors.GREEN
+    elif status == "failed":
+        icon = "❌"
+        color = Colors.RED
+    else:
+        icon = "⏳"
+        color = Colors.YELLOW
+    print(f"{Colors.DIM}[{timestamp}]{Colors.RESET} {icon} {color}{phase}{Colors.RESET}")
+
+def print_info(msg: str):
+    """Print an info message."""
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"{Colors.DIM}[{timestamp}]{Colors.RESET} {Colors.BLUE}ℹ {msg}{Colors.RESET}")
+
+def print_progress(msg: str):
+    """Print a progress message."""
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"{Colors.DIM}[{timestamp}]{Colors.RESET} {Colors.DIM}  → {msg}{Colors.RESET}")
 
 # Configuration - All three directories are fully accessible
 DEFAULT_CONFIG = {
@@ -387,45 +434,148 @@ Work autonomously until the alignment is complete or you encounter an unrecovera
 """
 
 
-def run_claude_code(prompt: str, working_dir: Path) -> int:
-    """Run Claude Code with the given prompt."""
+class ProgressMonitor:
+    """Monitor progress file and print updates."""
+
+    def __init__(self, progress_file: Path):
+        self.progress_file = progress_file
+        self.running = False
+        self.thread = None
+        self.last_state = None
+
+    def start(self):
+        """Start monitoring in background thread."""
+        self.running = True
+        self.thread = threading.Thread(target=self._monitor_loop, daemon=True)
+        self.thread.start()
+
+    def stop(self):
+        """Stop monitoring."""
+        self.running = False
+        if self.thread:
+            self.thread.join(timeout=1)
+
+    def _monitor_loop(self):
+        """Monitor loop that checks progress file periodically."""
+        while self.running:
+            try:
+                if self.progress_file.exists():
+                    with open(self.progress_file) as f:
+                        current = json.load(f)
+
+                    # Check for phase changes
+                    if self.last_state is None:
+                        self.last_state = current
+                        self._print_initial_state(current)
+                    else:
+                        self._print_changes(self.last_state, current)
+                        self.last_state = current
+            except (json.JSONDecodeError, FileNotFoundError):
+                pass
+            time.sleep(2)  # Check every 2 seconds
+
+    def _print_initial_state(self, state: dict):
+        """Print initial state when first detected."""
+        print_info(f"Target version: {state.get('targetVersion', 'unknown')}")
+        print_info(f"Source version: {state.get('sourceVersion', 'detecting...')}")
+        phases = state.get('phases', {})
+        for phase, status in phases.items():
+            if status == 'in_progress':
+                print_phase(f"Phase: {phase.replace('_', ' ').title()}", "in_progress")
+            elif status == 'completed':
+                print_phase(f"Phase: {phase.replace('_', ' ').title()}", "completed")
+
+    def _print_changes(self, old: dict, new: dict):
+        """Print any changes between old and new state."""
+        old_phases = old.get('phases', {})
+        new_phases = new.get('phases', {})
+
+        for phase, status in new_phases.items():
+            old_status = old_phases.get(phase, 'pending')
+            if status != old_status:
+                phase_name = phase.replace('_', ' ').title()
+                if status == 'in_progress':
+                    print_phase(f"Phase: {phase_name}", "starting")
+                elif status == 'completed':
+                    print_phase(f"Phase: {phase_name}", "completed")
+                elif status == 'failed':
+                    print_phase(f"Phase: {phase_name}", "failed")
+
+        # Check for completed modules
+        old_modules = set(old.get('completedModules', []))
+        new_modules = set(new.get('completedModules', []))
+        for module in new_modules - old_modules:
+            print_progress(f"Completed module: {module}")
+
+        # Check for blocked modules
+        old_blocked = set(old.get('blockedModules', []))
+        new_blocked = set(new.get('blockedModules', []))
+        for module in new_blocked - old_blocked:
+            print(f"{Colors.YELLOW}⚠️  Module blocked: {module}{Colors.RESET}")
+
+        # Check for build iterations
+        old_iter = old.get('buildIterations', 0)
+        new_iter = new.get('buildIterations', 0)
+        if new_iter > old_iter:
+            print_progress(f"Build iteration {new_iter}")
+
+        # Check for errors
+        if new.get('lastError') and new.get('lastError') != old.get('lastError'):
+            print(f"{Colors.RED}⚠️  Error: {new['lastError'][:100]}...{Colors.RESET}")
+
+
+def run_claude_code(prompt: str, working_dir: Path, verbose: bool = False) -> int:
+    """Run Claude Code with the given prompt and real-time output."""
 
     # Create a temporary file with the prompt for complex multi-line input
     prompt_file = working_dir / ".claude" / "alignment-prompt.md"
     prompt_file.parent.mkdir(parents=True, exist_ok=True)
     prompt_file.write_text(prompt)
 
-    print(f"\n{'='*70}")
-    print("Starting Claude Code with alignment task...")
-    print(f"{'='*70}")
-    print(f"Working directory: {working_dir}")
-    print(f"Prompt saved to: {prompt_file}")
-    print(f"{'='*70}\n")
+    print_header("SwiftUSD Alignment Agent")
+    print_info(f"Working directory: {working_dir}")
+    print_info(f"Prompt saved to: {prompt_file}")
 
-    # Run Claude Code with the prompt
-    # Using --print to show output, --dangerously-skip-permissions to allow file operations
+    # Start progress monitor
+    progress_file = working_dir / ".claude" / "alignment-progress.json"
+    monitor = ProgressMonitor(progress_file)
+    monitor.start()
+
+    print_phase("Launching Claude Code", "starting")
+    print()
+
+    # Run Claude Code interactively (no --print flag) so output streams in real-time
+    # --dangerously-skip-permissions allows file operations without prompts
     cmd = [
         "claude",
-        "--print",
         "--dangerously-skip-permissions",
-        prompt
     ]
 
+    if verbose:
+        cmd.append("--verbose")
+
+    # Pass prompt as final argument
+    cmd.append(prompt)
+
     try:
-        # Run interactively so user can see progress
+        # Run with inherited stdio for real-time output visibility
         result = subprocess.run(
             cmd,
             cwd=working_dir,
-            text=True
+            text=True,
+            # Let Claude's output stream directly to terminal
         )
+        monitor.stop()
         return result.returncode
     except FileNotFoundError:
-        print("Error: 'claude' command not found.")
+        monitor.stop()
+        print(f"{Colors.RED}Error: 'claude' command not found.{Colors.RESET}")
         print("Please ensure Claude Code is installed and in your PATH.")
         print("Install with: npm install -g @anthropic-ai/claude-code")
         return 1
     except KeyboardInterrupt:
-        print("\n\nAlignment interrupted by user.")
+        monitor.stop()
+        print(f"\n\n{Colors.YELLOW}Alignment interrupted by user.{Colors.RESET}")
         print("Run with --resume to continue from checkpoint.")
         return 130
 
@@ -475,6 +625,11 @@ Uses your Claude Code Max subscription - no API key needed!
         default=True,
         help="Disable extended thinking mode (enabled by default)"
     )
+    parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Enable verbose output from Claude Code"
+    )
 
     args = parser.parse_args()
 
@@ -491,18 +646,18 @@ Uses your Claude Code Max subscription - no API key needed!
 
     for name, path in paths_to_check:
         if not path.exists():
-            print(f"Error: {name} path does not exist: {path}")
+            print(f"{Colors.RED}Error: {name} path does not exist: {path}{Colors.RESET}")
             sys.exit(1)
 
     # Auto-detect OpenUSD version
-    print(f"Detecting OpenUSD version from {openusd_path}...")
+    print_info(f"Detecting OpenUSD version from {openusd_path}...")
     try:
         target_version = detect_openusd_version(openusd_path)
     except ValueError as e:
-        print(f"Error: {e}")
+        print(f"{Colors.RED}Error: {e}{Colors.RESET}")
         sys.exit(1)
 
-    print(f"Detected OpenUSD version: {target_version}")
+    print_phase(f"Detected OpenUSD version: {target_version}", "completed")
 
     # Load previous progress if resuming
     progress_file = swiftusd_path / ".claude" / "alignment-progress.json"
@@ -511,12 +666,12 @@ Uses your Claude Code Max subscription - no API key needed!
         progress = load_progress(progress_file)
         if progress:
             if progress.get("targetVersion") == target_version:
-                print(f"Resuming previous alignment to {target_version}")
+                print_info(f"Resuming previous alignment to {target_version}")
             else:
-                print(f"Previous alignment was for {progress.get('targetVersion')}, starting fresh for {target_version}")
+                print_info(f"Previous alignment was for {progress.get('targetVersion')}, starting fresh for {target_version}")
                 progress = None
         else:
-            print("No previous progress found, starting fresh")
+            print_info("No previous progress found, starting fresh")
 
     # Generate the prompt
     prompt = create_alignment_prompt(
@@ -530,29 +685,35 @@ Uses your Claude Code Max subscription - no API key needed!
 
     # Apply ultrathink prefix (enabled by default)
     if args.ultrathink:
-        print("ULTRATHINK mode: ON (use --no-ultrathink to disable)")
+        print_info(f"{Colors.BOLD}ULTRATHINK mode: ON{Colors.RESET} (use --no-ultrathink to disable)")
         prompt = ULTRATHINK_PREFIX + prompt
     else:
-        print("ULTRATHINK mode: OFF")
+        print_info("ULTRATHINK mode: OFF")
+
+    if args.verbose:
+        print_info("Verbose mode: ON")
 
     # Run Claude Code
-    exit_code = run_claude_code(prompt, swiftusd_path)
+    exit_code = run_claude_code(prompt, swiftusd_path, verbose=args.verbose)
 
     # Check final status
     final_progress = load_progress(progress_file)
     if final_progress and final_progress.get("status") == "completed":
-        print(f"\n{'='*70}")
-        print("ALIGNMENT COMPLETED SUCCESSFULLY!")
-        print(f"{'='*70}")
-        print(f"SwiftUSD is now aligned to OpenUSD {target_version}")
+        print_header("ALIGNMENT COMPLETED SUCCESSFULLY!")
+        print(f"{Colors.GREEN}SwiftUSD is now aligned to OpenUSD {target_version}{Colors.RESET}")
     else:
-        print(f"\n{'='*70}")
-        print("ALIGNMENT INCOMPLETE")
-        print(f"{'='*70}")
+        print_header("ALIGNMENT INCOMPLETE")
         if final_progress:
-            print(f"Status: {final_progress.get('status', 'unknown')}")
-            print(f"Completed phases: {[k for k, v in final_progress.get('phases', {}).items() if v == 'completed']}")
-        print("\nRun with --resume to continue")
+            status = final_progress.get('status', 'unknown')
+            status_color = Colors.YELLOW if status == 'in_progress' else Colors.RED
+            print(f"Status: {status_color}{status}{Colors.RESET}")
+            completed = [k for k, v in final_progress.get('phases', {}).items() if v == 'completed']
+            if completed:
+                print(f"Completed phases: {Colors.GREEN}{', '.join(completed)}{Colors.RESET}")
+            blocked = final_progress.get('blockedModules', [])
+            if blocked:
+                print(f"Blocked modules: {Colors.YELLOW}{', '.join(blocked)}{Colors.RESET}")
+        print(f"\n{Colors.CYAN}Run with --resume to continue{Colors.RESET}")
 
     sys.exit(exit_code)
 

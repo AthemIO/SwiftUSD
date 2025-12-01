@@ -1,19 +1,19 @@
 {
   "targetVersion": "25.11",
   "sourceVersion": "25.11",
-  "status": "in_progress",
+  "status": "blocked",
   "startedAt": "2025-12-01T00:00:00Z",
   "phases": {
-    "metaversekit_update": "skipped",
+    "metaversekit_update": "blocked",
     "changelog_analysis": "completed",
-    "module_processing": "in_progress",
-    "build_iteration": "pending",
+    "module_processing": "completed",
+    "build_iteration": "blocked",
     "final_validation": "pending"
   },
   "completedModules": ["Tf", "Usd", "Sdr", "SdrOsl", "HdSt", "UsdShade"],
-  "blockedModules": [],
-  "buildIterations": 0,
-  "lastError": "Swift toolchain/SDK version mismatch on development machine - changes are syntactically correct but cannot verify build",
+  "blockedModules": ["MetaverseKit/OpenSubdiv"],
+  "buildIterations": 3,
+  "lastError": "MetaverseKit OpenSubdiv has mismatched source files and headers - source files reference struct members (isVal2Interior, preVal2Interior) and functions (getControlFaceVertices with different signature) that don't exist in headers. Requires getting consistent OpenSubdiv version.",
   "completedActions": [
     "Removed TfTemplateString (removed in 25.11)",
     "Removed UsdCrateInfo (moved to Sdf in 25.11)",
@@ -21,11 +21,32 @@
     "Removed Ndr module from Package.swift (merged into Sdr in 25.08)",
     "Updated Ndr includes to Sdr includes in SdrOsl, HdSt, UsdShade",
     "Updated NDR_REGISTER_PARSER_PLUGIN to SDR_REGISTER_PARSER_PLUGIN",
-    "Removed templateString.h from Tf umbrella header"
+    "Removed templateString.h from Tf umbrella header",
+    "Fixed Usd/common.h enum declarations (reverted to plain enums from enum class)",
+    "Fixed Stage.swift enum references (UsdLoadWithDescendants)"
   ],
   "pendingActions": [
-    "Verify build passes once toolchain is configured correctly",
-    "Update ThirdParty renderman plugins Ndr references (not in Swift build)",
+    "Fix MetaverseKit OpenSubdiv version mismatch (source files vs headers)",
     "Final version bump in Pixar.swift"
-  ]
+  ],
+  "metaversekitChanges": [
+    "OpenSubdiv/version.cpp - fixed include path",
+    "OpenSubdiv/include/.../level.h - added testVertexNonManifoldCrease declaration",
+    "OpenSubdiv/include/.../OSDVectorLevel.h - same fix",
+    "OpenSubdiv/osd/MTLMesh.mm - fixed include path",
+    "OpenSubdiv/osd/MTLPatchTable.mm - fixed include path",
+    "OpenSubdiv/bfr/surfaceFactory.cpp - API fix for controlFacesMayOverlap",
+    "OpenSubdiv/bfr/hash.cpp - fixed include path",
+    "OpenSubdiv/include/.../irregularPatchBuilder.h - made controlFacesMayOverlap public",
+    "OpenSubdiv/include/.../OSDBaseIrregularPatchBuilder.h - same",
+    "Package.swift - added shader source exclusions (hlsl, glsl, mtl)"
+  ],
+  "blockerDetails": {
+    "issue": "OpenSubdiv source/header version mismatch",
+    "affectedFiles": [
+      "bfr/irregularPatchBuilder.cpp - references CornerHull::isVal2Interior, preVal2Interior",
+      "bfr/irregularPatchBuilder.cpp - getControlFaceVertices signature mismatch"
+    ],
+    "resolution": "Need to get consistent OpenSubdiv 3.6.x source files and headers from official release"
+  }
 }

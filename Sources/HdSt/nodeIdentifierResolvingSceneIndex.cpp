@@ -45,9 +45,9 @@ T _GetNodeTypeInfoForSourceType(const HdMaterialNetworkInterface *const interfac
   return _GetNodeTypeInfo<T>(interface, nodeName, fullKey);
 }
 
-NdrTokenMap _ToNdrTokenMap(const VtDictionary &d)
+SdrTokenMap _ToSdrTokenMap(const VtDictionary &d)
 {
-  NdrTokenMap result;
+  SdrTokenMap result;
   for (const auto &it : d) {
     result[TfToken(it.first)] = TfStringify(it.second);
   }
@@ -60,7 +60,7 @@ SdrShaderNodeConstPtr _GetSdrShaderNodeFromSourceAsset(
   const SdfAssetPath shaderAsset = _GetNodeTypeInfoForSourceType<SdfAssetPath>(
       interface, nodeName, _tokens->sourceAsset);
 
-  const NdrTokenMap metadata = _ToNdrTokenMap(
+  const SdrTokenMap metadata = _ToSdrTokenMap(
       _GetNodeTypeInfo<VtDictionary>(interface, nodeName, _tokens->sdrMetadata));
   const TfToken subIdentifier = _GetNodeTypeInfoForSourceType<TfToken>(
       interface, nodeName, _tokens->sourceAssetSubIdentifier);
@@ -78,7 +78,7 @@ SdrShaderNodeConstPtr _GetSdrShaderNodeFromSourceCode(
   if (sourceCode.empty()) {
     return nullptr;
   }
-  const NdrTokenMap metadata = _ToNdrTokenMap(
+  const SdrTokenMap metadata = _ToSdrTokenMap(
       _GetNodeTypeInfo<VtDictionary>(interface, nodeName, _tokens->sdrMetadata));
 
   return SdrRegistry::GetInstance().GetShaderNodeFromSourceCode(sourceCode, _sourceType, metadata);

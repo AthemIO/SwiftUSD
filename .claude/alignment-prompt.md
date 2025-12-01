@@ -1,3 +1,20 @@
+## ULTRATHINK MODE ENABLED
+
+You are in extended thinking mode. For each major decision or complex problem:
+
+1. **Analyze thoroughly** - Before acting, examine the problem from multiple angles
+2. **Validate assumptions** - Check that your understanding matches the actual codebase
+3. **Consider alternatives** - Think through 2-3 approaches before choosing one
+4. **Verify changes** - After making changes, verify they compile/work before moving on
+5. **Break down blockers** - If stuck on the same issue 3+ times, step back and reconsider:
+   - Is the approach fundamentally wrong?
+   - Is there missing context from another file?
+   - Should this be skipped and revisited later?
+
+Take your time. Quality and correctness matter more than speed.
+
+---
+
 # SwiftUSD Alignment Task
 
 You are performing an autonomous alignment of SwiftUSD to OpenUSD version 25.11.
@@ -32,16 +49,37 @@ The following progress was made in a previous session:
   "status": "in_progress",
   "startedAt": "2025-12-01T00:00:00Z",
   "phases": {
-    "metaversekit_update": "pending",
-    "changelog_analysis": "in_progress",
-    "module_processing": "pending",
+    "metaversekit_update": "skipped",
+    "changelog_analysis": "completed",
+    "module_processing": "in_progress",
     "build_iteration": "pending",
     "final_validation": "pending"
   },
-  "completedModules": [],
+  "completedModules": [
+    "Tf",
+    "Usd",
+    "Sdr",
+    "SdrOsl",
+    "HdSt",
+    "UsdShade"
+  ],
   "blockedModules": [],
   "buildIterations": 0,
-  "lastError": null
+  "lastError": "Swift toolchain/SDK version mismatch on development machine - changes are syntactically correct but cannot verify build",
+  "completedActions": [
+    "Removed TfTemplateString (removed in 25.11)",
+    "Removed UsdCrateInfo (moved to Sdf in 25.11)",
+    "Removed UsdZipFile (moved to Sdf in 25.11)",
+    "Removed Ndr module from Package.swift (merged into Sdr in 25.08)",
+    "Updated Ndr includes to Sdr includes in SdrOsl, HdSt, UsdShade",
+    "Updated NDR_REGISTER_PARSER_PLUGIN to SDR_REGISTER_PARSER_PLUGIN",
+    "Removed templateString.h from Tf umbrella header"
+  ],
+  "pendingActions": [
+    "Verify build passes once toolchain is configured correctly",
+    "Update ThirdParty renderman plugins Ndr references (not in Swift build)",
+    "Final version bump in Pixar.swift"
+  ]
 }
 ```
 
