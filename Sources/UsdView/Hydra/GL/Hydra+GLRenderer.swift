@@ -44,8 +44,8 @@ import PixarUSD
         // device = hgi.device
         self.stage = stage
 
-        // TODO: HdDriver requires VtValue from hgi which has Swift interop issues
-        // let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+        // Note: Passing empty driver - UsdImagingGLEngine creates its own internal Hgi
+        // when _hgiDriver.driver.IsEmpty() is true (see engine.cpp:1502-1506)
         let driver = HdDriver(name: Tf.Token(), driver: VtValue())
 
         #if canImport(UsdImagingGL)

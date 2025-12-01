@@ -82,6 +82,9 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const & desc)
         texDesc.textureType = MTLTextureType1D;
     } else if (desc.type == HgiTextureType1DArray) {
         texDesc.textureType = MTLTextureType1DArray;
+    } else if (desc.type == HgiTextureTypeCubemap) {
+        texDesc.textureType = MTLTextureTypeCube;
+        texDesc.arrayLength = 1;
     }
 
     if (desc.sampleCount > 1) {

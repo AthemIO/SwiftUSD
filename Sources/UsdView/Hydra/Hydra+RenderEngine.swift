@@ -49,13 +49,13 @@ public enum Hydra
 
 #if canImport(Metal)
       hgi = HgiMetal.createHgi()
-      // TODO: HdDriver requires VtValue from hgi which has Swift interop issues
-      // let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+      // Note: Passing empty driver - UsdImagingGLEngine creates its own internal Hgi
+      // when _hgiDriver.driver.IsEmpty() is true (see engine.cpp:1502-1506)
       let driver = HdDriver(name: Tf.Token(), driver: VtValue())
 #else // !canImport(Metal)
       hgi = HgiGL.createHgi()
-      // TODO: HdDriver requires VtValue from hgi which has Swift interop issues
-      // let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+      // Note: Passing empty driver - UsdImagingGLEngine creates its own internal Hgi
+      // when _hgiDriver.driver.IsEmpty() is true (see engine.cpp:1502-1506)
       let driver = HdDriver(name: Tf.Token(), driver: VtValue())
 #endif // canImport(Metal)
 

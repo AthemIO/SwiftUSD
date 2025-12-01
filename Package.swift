@@ -1209,7 +1209,7 @@ let package = Package(
         .process("Resources"),
       ],
       cxxSettings: [
-        .define("MFB_PACKAGE_NAME", to: "Hd"),
+        .define("MFB_PACKAGE_NAME", to: "hd"),
         .define("MFB_ALT_PACKAGE_NAME", to: "Hd"),
         .define("MFB_PACKAGE_MODULE", to: "Hd"),
         .define("HD_EXPORTS", to: "1"),
@@ -1401,7 +1401,7 @@ let package = Package(
         .process("Resources")
       ],
       cxxSettings: [
-        .define("MFB_PACKAGE_NAME", to: "Hio"),
+        .define("MFB_PACKAGE_NAME", to: "hio"),
         .define("MFB_ALT_PACKAGE_NAME", to: "Hio"),
         .define("MFB_PACKAGE_MODULE", to: "Hio"),
         .define("HIO_EXPORTS", to: "1"),
@@ -1430,7 +1430,7 @@ let package = Package(
         .process("Resources")
       ],
       cxxSettings: [
-        .define("MFB_PACKAGE_NAME", to: "Glf"),
+        .define("MFB_PACKAGE_NAME", to: "glf"),
         .define("MFB_ALT_PACKAGE_NAME", to: "Glf"),
         .define("MFB_PACKAGE_MODULE", to: "Glf"),
         .define("GLF_EXPORTS", to: "1"),
@@ -1542,7 +1542,7 @@ let package = Package(
         .process("Resources")
       ],
       cxxSettings: [
-        .define("MFB_PACKAGE_NAME", to: "HdSt"),
+        .define("MFB_PACKAGE_NAME", to: "hdSt"),
         .define("MFB_ALT_PACKAGE_NAME", to: "HdSt"),
         .define("MFB_PACKAGE_MODULE", to: "HdSt"),
         .define("HDST_EXPORTS", to: "1"),
@@ -1613,7 +1613,7 @@ let package = Package(
         .process("Resources")
       ],
       cxxSettings: [
-        .define("MFB_PACKAGE_NAME", to: "Hdx"),
+        .define("MFB_PACKAGE_NAME", to: "hdx"),
         .define("MFB_ALT_PACKAGE_NAME", to: "Hdx"),
         .define("MFB_PACKAGE_MODULE", to: "Hdx"),
         .define("HDX_EXPORTS", to: "1"),

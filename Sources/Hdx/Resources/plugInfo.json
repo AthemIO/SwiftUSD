@@ -5,7 +5,7 @@
         "ShaderResources": "shaders"
       },
       "LibraryPath": "",
-      "Name": "Hdx",
+      "Name": "hdx",
       "ResourcePath": ".",
       "Root": ".",
       "Type": "library"
