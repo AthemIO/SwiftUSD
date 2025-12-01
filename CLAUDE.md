@@ -2,11 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## Reference Repositories
 
-SwiftUSD is a Swift Package Manager wrapper around Pixar's Universal Scene Description (USD) - an efficient, scalable system for authoring, reading, and streaming time-sampled scene description for graphics applications interchange. The project enables Swift/C++ interoperability with USD.
+When working on this codebase, use the following repositories as authoritative references:
 
-**Current OpenUSD Version**: 24.08 (see `Sources/pxr/include/pxr/pxrns.h`)
+| Repository | Purpose | URL |
+|------------|---------|-----|
+| **SwiftUSD** | Swift conventions, wrapper patterns, Package.swift structure | https://github.com/wabiverse/SwiftUSD |
+| **OpenUSD** | C++ source code alignment (OpenUSD 25.11) | https://github.com/PixarAnimationStudios/OpenUSD |
+
+- **For Swift wrapper conventions**: Follow patterns established in https://github.com/wabiverse/SwiftUSD
+- **For C++ source alignment**: Keep C++ code aligned with https://github.com/PixarAnimationStudios/OpenUSD (release v25.11)
+
+---
 
 ## Build Commands
 
@@ -23,20 +31,6 @@ swift bundler test
 ```
 
 **IMPORTANT**: You CANNOT use `swift build` to build the project. Use `swift bundler` instead. The UsdView application requires bundled resources that only swift-bundler can properly package.
-
-### Platform Support
-
-| Platform | Version | Status |
-|----------|---------|--------|
-| macOS | 14+ | Full support (primary development) |
-| visionOS | 1.0+ | Full support |
-| iOS | 17+ | Full support |
-| tvOS | 17+ | Full support |
-| watchOS | 10+ | Full support |
-| Linux | - | Partial (needs testing) |
-| Windows | - | Partial (needs testing) |
-
----
 
 ## Architecture
 
@@ -56,7 +50,7 @@ The codebase contains **73 modules** in `Sources/`, organized as follows:
 | `Plug` | Plugin framework and registry |
 | `Trace` | Performance tracing |
 | `Js` | JSON support |
-| `Ts` | Time sampling/splines (source exists, not in Package.swift) |
+| `Ts` | Time sampling/splines |
 | `Pegtl` | Parsing Expression Grammar Template Library |
 
 **USD Core** (scene description and composition):
@@ -224,13 +218,13 @@ The project tracks both USD version and package evolution in `Sources/pxr/includ
 
 ```cpp
 #define PXR_MAJOR_VERSION 0
-#define PXR_MINOR_VERSION 24
-#define PXR_PATCH_VERSION 8
-#define PXR_VERSION 2408
-#define SWIFTUSD_EVOLUTION 14  // Increment for SwiftUSD-specific changes
+#define PXR_MINOR_VERSION 25
+#define PXR_PATCH_VERSION 11
+#define PXR_VERSION 2511
+#define SWIFTUSD_EVOLUTION 15  // Increment for SwiftUSD-specific changes
 ```
 
-The Swift-visible version string is: `"24.08.14"` (see `Sources/PixarUSD/Pixar.swift`)
+The Swift-visible version string is: `"25.11.15"` (see `Sources/PixarUSD/Pixar.swift`)
 
 ---
 
@@ -467,9 +461,82 @@ Sources/PixarUSD/
 
 ---
 
+## Source Code Modification Philosophy
+
+**IMPORTANT**: The C++ source code should remain as close to upstream OpenUSD as possible. Only modify C++ source files when **absolutely necessary** for Swift C++ interop compatibility.
+
+### Why Minimize Source Changes?
+
+1. **Upgrade complexity**: Every modification must be re-applied or preserved during OpenUSD upgrades
+2. **Merge conflicts**: More changes = more conflicts when syncing upstream
+3. **Debugging difficulty**: Modified code behaves differently than documented upstream
+4. **Community alignment**: Staying close to upstream makes it easier to contribute fixes back
+
+### When Source Modification IS Acceptable
+
+Only modify C++ source when:
+- Swift C++ interop **cannot compile** the code (not just inconvenient)
+- The fix is **minimal and surgical** (one line > refactoring)
+- There is **no workaround** in the Swift wrapper layer
+- The modification is **documented** in this file
+
+### When Source Modification is NOT Acceptable
+
+Do NOT modify C++ source for:
+- Code style preferences
+- "Improvements" that aren't strictly necessary
+- Adding features (put those in PixarUSD Swift wrappers)
+- Renaming files (see Fix 7 below for why this is wrong)
+
+### Preferred Alternatives to Source Modification
+
+1. **Swift wrappers**: Add convenience APIs in `Sources/PixarUSD/`
+2. **Umbrella header exclusion**: Exclude problematic headers (last resort, document why)
+3. **Conditional compilation**: Use `#if` guards rather than changing logic
+
+---
+
+## Critical SwiftUSD Modifications
+
+These are the **essential modifications** that MUST be preserved during any OpenUSD upgrade:
+
+### 1. Namespace Configuration (CRITICAL)
+
+**File**: `Sources/pxr/include/pxr/pxrns.h`
+
+```cpp
+// SwiftUSD MUST have this line:
+#define PXR_INTERNAL_NS Pixar
+
+// Upstream OpenUSD has something like:
+// #define PXR_INTERNAL_NS pxrInternal_v0_25__pxrReserved__
+```
+
+**Why**: Swift cannot create typealiases to C++ namespaces. Without this change, all Swift code would need to use `pxrInternal_v0_25__pxrReserved__.UsdStage` instead of `Pixar.UsdStage`.
+
+**If accidentally overwritten**: All Swift code using `Pixar.*` will fail to compile.
+
+### 2. Python Support Disabled
+
+**File**: `Sources/pxr/include/pxr/pxrns.h`
+
+```cpp
+#define PXR_PYTHON_SUPPORT_ENABLED 0
+```
+
+**Why**: SwiftUSD uses Swift wrappers instead of Python bindings.
+
+### 3. Math Header Fixes
+
+**Files**: `Sources/Arch/include/Arch/math.h`, `Sources/Gf/include/Gf/math.h`
+
+Replace `<cmath>` includes and `std::` math functions with `__builtin_` intrinsics (see Fix 7 below).
+
+---
+
 ## Source-Level Fixes for Swift Compatibility
 
-When OpenUSD code doesn't compile in Swift module context, **fix the source** rather than excluding headers.
+When OpenUSD code doesn't compile in Swift module context, **fix the source** rather than excluding headers. Keep fixes **minimal and surgical**.
 
 ### Fix 1: TF_FATAL_ERROR Format Strings
 
@@ -524,6 +591,133 @@ namespace Sdf_CrateTypes {
 #elif defined(__linux__)
 #include <Module/linuxSpecific.h>
 #endif
+```
+
+### Fix 7: Python-Related Macros
+
+**Problem**: OpenUSD code uses Python-related macros like `TF_PY_ALLOW_THREADS_IN_SCOPE()` which are undefined when Python support is disabled (`PXR_PYTHON_SUPPORT_ENABLED=0`).
+
+**Fix**: Wrap Python-specific code with guards:
+```cpp
+// Before (fails when Python disabled)
+TF_PY_ALLOW_THREADS_IN_SCOPE();
+
+// After (works with Python disabled)
+#if PXR_PYTHON_SUPPORT_ENABLED
+TF_PY_ALLOW_THREADS_IN_SCOPE();
+#endif
+```
+
+**Common Python macros that need guards**:
+- `TF_PY_ALLOW_THREADS_IN_SCOPE()` - GIL release for parallel operations
+- `TfPyLock` - Python GIL lock
+- `TfPyInvoke` - Python function invocation
+- Any `#include` of `Tf/py*.h` headers
+
+**Example** (`Sources/HdSt/textureObjectRegistry.cpp`):
+```cpp
+// Loading a texture file of a previously unseen type might
+// require loading a new plugin, so give up the GIL temporarily
+// to the threads loading the images.
+#if PXR_PYTHON_SUPPORT_ENABLED
+TF_PY_ALLOW_THREADS_IN_SCOPE();
+#endif
+
+// Parallel load texture files
+WorkParallelForEach(result.begin(), result.end(), ...);
+```
+
+### Fix 8: C++ Standard Library Header Conflicts (`<cmath>`, `<climits>`, etc.)
+
+**Problem**: Swift's C++ interop uses the Clang module system, which can conflict with C++ standard library headers like `<cmath>`. When Swift imports a C++ module, header search paths between the Swift toolchain's libc++ and the system libc++ can collide, causing:
+- Redefinition errors in `std::` namespace
+- Module 'std' not found errors
+- Ambiguous function declarations
+
+**WRONG Approach - Do NOT rename files**:
+```cpp
+// DON'T DO THIS - breaks all internal includes and upstream compatibility
+// Renaming Gf/math.h -> Gf/mathFunctions.h
+// Renaming Arch/math.h -> Arch/mathArch.h
+```
+
+Renaming files breaks:
+1. All `#include "Gf/math.h"` statements across the codebase
+2. Upstream compatibility during OpenUSD upgrades
+3. The problem isn't the filename - it's what's *inside* the header
+
+**CORRECT Approach - Modify header contents**:
+
+1. **Replace `<cmath>` with C headers or direct defines**:
+```cpp
+// Before (causes Swift interop conflicts)
+#include <cmath>
+
+// After (works with Swift interop)
+// Note: We avoid #include <cmath> here due to Swift C++ interop header path
+// conflicts. M_PI is defined directly and math functions use __builtin_ intrinsics.
+#include <limits.h>  // Use C header instead of <climits>
+
+#if !defined(M_PI)
+#define M_PI 3.14159265358979323846
+#endif
+```
+
+2. **Replace `std::` math functions with compiler intrinsics**:
+```cpp
+// Before (requires <cmath>)
+inline void ArchSinCosf(float v, float *s, float *c) {
+    *s = std::sin(v);
+    *c = std::cos(v);
+}
+
+// After (no header needed, identical codegen)
+inline void ArchSinCosf(float v, float *s, float *c) {
+    *s = __builtin_sinf(v);
+    *c = __builtin_cosf(v);
+}
+```
+
+**Available `__builtin_` math intrinsics**:
+| std:: function | __builtin_ equivalent |
+|----------------|----------------------|
+| `std::sin(x)` | `__builtin_sin(x)` / `__builtin_sinf(x)` |
+| `std::cos(x)` | `__builtin_cos(x)` / `__builtin_cosf(x)` |
+| `std::sqrt(x)` | `__builtin_sqrt(x)` / `__builtin_sqrtf(x)` |
+| `std::fabs(x)` | `__builtin_fabs(x)` / `__builtin_fabsf(x)` |
+| `std::floor(x)` | `__builtin_floor(x)` / `__builtin_floorf(x)` |
+| `std::ceil(x)` | `__builtin_ceil(x)` / `__builtin_ceilf(x)` |
+| `std::pow(x,y)` | `__builtin_pow(x,y)` / `__builtin_powf(x,y)` |
+| `std::log(x)` | `__builtin_log(x)` / `__builtin_logf(x)` |
+| `std::exp(x)` | `__builtin_exp(x)` / `__builtin_expf(x)` |
+
+**Why this works**:
+- `__builtin_*` intrinsics are built into Clang/LLVM - no headers needed
+- They compile to identical machine code as `std::` equivalents
+- No module boundary crossing issues
+- Works across all platforms
+- Won't break with future Swift versions
+
+**Example from SwiftUSD** (`Sources/Arch/include/Arch/math.h`):
+```cpp
+// Note: We avoid #include <cmath> here due to Swift C++ interop header path
+// conflicts. M_PI is defined directly and math functions use __builtin_ intrinsics.
+// We use <limits.h> (C header) instead of <climits> to avoid the C++ header chain
+// that would pull in <cmath> and trigger path conflicts.
+#include <limits.h>
+
+#if !defined(M_PI)
+#define M_PI 3.14159265358979323846
+#endif
+
+inline void ArchSinCosf(float v, float *s, float *c) {
+    *s = __builtin_sinf(v);
+    *c = __builtin_cosf(v);
+}
+inline void ArchSinCos(double v, double *s, double *c) {
+    *s = __builtin_sin(v);
+    *c = __builtin_cos(v);
+}
 ```
 
 ---
@@ -583,12 +777,28 @@ In `Sources/pxr/include/pxr/pxrns.h`:
 
 For each module in `Sources/`:
 1. Download the corresponding OpenUSD release source
-2. Replace C++ source files (preserving SwiftUSD modifications)
+2. Replace C++ source files
 3. Update umbrella headers if new headers were added
 
 **Key directories to update**:
 - `Sources/<Module>/*.cpp` - Implementation files
 - `Sources/<Module>/include/<Module>/*.h` - Headers
+
+**CRITICAL**: After syncing, immediately verify/restore the critical SwiftUSD modifications (see "Critical SwiftUSD Modifications" section above):
+
+```bash
+# Verify namespace is set to Pixar (not pxrInternal_v0_XX__pxrReserved__)
+grep "PXR_INTERNAL_NS" Sources/pxr/include/pxr/pxrns.h
+
+# Should show:
+# #define PXR_INTERNAL_NS Pixar
+```
+
+If `pxrns.h` was overwritten, restore these lines:
+```cpp
+#define PXR_INTERNAL_NS Pixar
+#define PXR_PYTHON_SUPPORT_ENABLED 0
+```
 
 ### Step 3: Fix Swift Compatibility Issues
 
@@ -716,8 +926,44 @@ SwiftUSD/
 │   ├── PixarMacros/           # Swift macros
 │   ├── UsdView/               # Viewer application
 │   └── Examples/              # Example code
+├── Python/                    # OpenUSD Python bindings (NOT USED - see note below)
+├── Plugins/                   # USD plugin definitions
+├── Tests/                     # Test suites
+├── ci_scripts/                # CI/CD scripts
 └── .build/                    # Build artifacts
 ```
+
+### Python Folder (Not Used)
+
+The `Python/` folder contains OpenUSD's Python bindings (`Py<Module>/` folders) from the upstream source. **These are NOT compiled or used in SwiftUSD** because:
+
+1. Python support is disabled: `PXR_PYTHON_SUPPORT_ENABLED=0`
+2. No Python targets exist in `Package.swift`
+3. SwiftUSD uses Swift wrappers (`PixarUSD/`) instead of Python bindings
+
+The folder is preserved for:
+- Reference (e.g., `usdGenSchema.py` for understanding schema generation)
+- Potential future use if Python bindings are ever needed
+- Keeping the source tree closer to upstream OpenUSD
+
+---
+
+## Notable Missing Modules
+
+### OpenExec (Not Yet Integrated)
+
+OpenExec is a new execution/computation framework introduced in OpenUSD 25.08. It provides:
+- General-purpose framework for computational behaviors in USD scenes
+- Directed acyclic graph (DAG) for dataflow computation
+- Heavily multithreaded evaluation engine
+- Originally from Pixar's internal "Presto Execution System"
+
+**Status**: Not integrated into SwiftUSD yet. To add it would require:
+1. Downloading OpenExec source from OpenUSD 25.11
+2. Creating `Sources/Exec/` with C++ files and umbrella headers
+3. Fixing any Swift interop issues
+4. Adding Swift wrappers in `Sources/PixarUSD/`
+5. Adding targets to `Package.swift`
 
 ---
 
@@ -732,3 +978,11 @@ SwiftUSD/
 | MetaverseKit deps | `Arch` target in Package.swift |
 | Swift wrappers | `Sources/PixarUSD/` |
 | Resource init | `Pixar.Bundler.shared.setup(.resources)` |
+
+### Critical Files to Verify After OpenUSD Upgrade
+
+| File | What to Check |
+|------|---------------|
+| `Sources/pxr/include/pxr/pxrns.h` | `PXR_INTERNAL_NS Pixar` and `PXR_PYTHON_SUPPORT_ENABLED 0` |
+| `Sources/Arch/include/Arch/math.h` | Uses `__builtin_` intrinsics, not `<cmath>` |
+| `Sources/Gf/include/Gf/math.h` | Uses `__builtin_` intrinsics, not `<cmath>` |
