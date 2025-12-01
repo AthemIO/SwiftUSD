@@ -29,6 +29,26 @@ DEFAULT_CONFIG = {
     "WABIVERSE_REF": "LynrAI/SwiftUSD@77abfccf",
 }
 
+# Ultrathink mode prefix - prepended to prompt for extended thinking
+ULTRATHINK_PREFIX = """## ULTRATHINK MODE ENABLED
+
+You are in extended thinking mode. For each major decision or complex problem:
+
+1. **Analyze thoroughly** - Before acting, examine the problem from multiple angles
+2. **Validate assumptions** - Check that your understanding matches the actual codebase
+3. **Consider alternatives** - Think through 2-3 approaches before choosing one
+4. **Verify changes** - After making changes, verify they compile/work before moving on
+5. **Break down blockers** - If stuck on the same issue 3+ times, step back and reconsider:
+   - Is the approach fundamentally wrong?
+   - Is there missing context from another file?
+   - Should this be skipped and revisited later?
+
+Take your time. Quality and correctness matter more than speed.
+
+---
+
+"""
+
 
 def detect_openusd_version(openusd_path: Path) -> str:
     """
@@ -448,6 +468,13 @@ Uses your Claude Code Max subscription - no API key needed!
         action="store_true",
         help="Resume from previous checkpoint"
     )
+    parser.add_argument(
+        "--no-ultrathink",
+        dest="ultrathink",
+        action="store_false",
+        default=True,
+        help="Disable extended thinking mode (enabled by default)"
+    )
 
     args = parser.parse_args()
 
@@ -500,6 +527,13 @@ Uses your Claude Code Max subscription - no API key needed!
         wabiverse_ref=DEFAULT_CONFIG["WABIVERSE_REF"],
         progress=progress
     )
+
+    # Apply ultrathink prefix (enabled by default)
+    if args.ultrathink:
+        print("ULTRATHINK mode: ON (use --no-ultrathink to disable)")
+        prompt = ULTRATHINK_PREFIX + prompt
+    else:
+        print("ULTRATHINK mode: OFF")
 
     # Run Claude Code
     exit_code = run_claude_code(prompt, swiftusd_path)

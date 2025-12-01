@@ -60,6 +60,24 @@ python agent.py \
   --metaversekit-path ~/projects/MetaverseKit
 ```
 
+### Ultrathink Mode
+
+Ultrathink mode is **enabled by default**. It prepends extended thinking instructions to help Claude work through complex alignment problems more methodically.
+
+```bash
+# Run with ultrathink (default)
+python agent.py
+
+# Disable ultrathink for faster, simpler tasks
+python agent.py --no-ultrathink
+```
+
+When ultrathink is enabled, Claude will:
+- Analyze problems from multiple angles before acting
+- Validate assumptions against the actual codebase
+- Consider 2-3 approaches before choosing one
+- Break down blockers if stuck on the same issue 3+ times
+
 ## What the Agent Does
 
 ### Phase 0: MetaverseKit Dependency Updates
