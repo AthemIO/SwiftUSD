@@ -36,11 +36,16 @@
 #include <sstream>
 #include <map>
 
-#if defined(__APPLE__)
+// @WABI: OpenSubdiv patch shader sources may not be built in MetaverseKit.
+// Use OPENSUBDIV_HAS_PATCH_SHADERS define to control this.
+// When OPENSUBDIV_HAS_PATCH_SHADERS=0, stub implementations are used.
+#if OPENSUBDIV_HAS_PATCH_SHADERS
+#if defined(__APPLE__) && OPENSUBDIV_HAS_MTL
 #include <opensubdiv/osd/mtlPatchShaderSource.h>
 #else
 #include <opensubdiv/osd/glslPatchShaderSource.h>
 #endif
+#endif // OPENSUBDIV_HAS_PATCH_SHADERS
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -1840,8 +1845,18 @@ _GetOSDCommonShaderSource()
     // forward declarations needed by the OpenSubdiv shaders.
     std::stringstream ss;
 
-#if OPENSUBDIV_VERSION_NUMBER >= 30600
-#if defined(__APPLE__)
+// @WABI: OpenSubdiv patch shader sources may not be available in MetaverseKit.
+// Provide minimal fallback when OPENSUBDIV_HAS_PATCH_SHADERS=0.
+#if !OPENSUBDIV_HAS_PATCH_SHADERS
+    // Minimal stub - OpenSubdiv subdivision features disabled
+    ss << "FORWARD_DECL(MAT4 GetProjectionMatrix());\n"
+          "FORWARD_DECL(float GetTessLevel());\n"
+          "mat4 OsdModelViewMatrix() { return mat4(1); }\n"
+          "mat4 OsdProjectionMatrix() { return mat4(GetProjectionMatrix()); }\n"
+          "float OsdTessLevel() { return GetTessLevel(); }\n"
+          "\n";
+#elif OPENSUBDIV_VERSION_NUMBER >= 30600
+#if defined(__APPLE__) && OPENSUBDIV_HAS_MTL
     ss << OpenSubdiv::Osd::MTLPatchShaderSource::GetPatchDrawingShaderSource();
 #else
     ss << "FORWARD_DECL(MAT4 GetProjectionMatrix());\n"
@@ -1857,7 +1872,7 @@ _GetOSDCommonShaderSource()
 #else // OPENSUBDIV_VERSION_NUMBER
     // Additional declarations are needed for older OpenSubdiv versions.
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) && OPENSUBDIV_HAS_MTL
     ss << "#define CONTROL_INDICES_BUFFER_INDEX 0\n"
        << "#define OSD_PATCHPARAM_BUFFER_INDEX 0\n"
        << "#define OSD_PERPATCHVERTEX_BUFFER_INDEX 0\n"
@@ -1897,7 +1912,11 @@ std::string
 _GetOSDPatchBasisShaderSource()
 {
     std::stringstream ss;
-#if defined(__APPLE__)
+// @WABI: OpenSubdiv patch shader sources may not be available in MetaverseKit.
+#if !OPENSUBDIV_HAS_PATCH_SHADERS
+    // Minimal stub - OpenSubdiv subdivision features disabled
+    ss << "#define OSD_PATCH_BASIS_GLSL\n";
+#elif defined(__APPLE__) && OPENSUBDIV_HAS_MTL
     ss << "#define OSD_PATCH_BASIS_METAL\n";
     ss << OpenSubdiv::Osd::MTLPatchShaderSource::GetPatchBasisShaderSource();
 #else

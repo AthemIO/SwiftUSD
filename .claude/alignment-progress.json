@@ -10,10 +10,10 @@
     "build_iteration": "blocked",
     "final_validation": "pending"
   },
-  "completedModules": ["Tf", "Usd", "Sdr", "SdrOsl", "HdSt", "UsdShade"],
-  "blockedModules": ["MetaverseKit/OpenSubdiv"],
-  "buildIterations": 3,
-  "lastError": "MetaverseKit OpenSubdiv has mismatched source files and headers - source files reference struct members (isVal2Interior, preVal2Interior) and functions (getControlFaceVertices with different signature) that don't exist in headers. Requires getting consistent OpenSubdiv version.",
+  "completedModules": ["Tf", "Usd", "Sdr", "SdrOsl", "HdSt", "UsdShade", "OpenSubdiv"],
+  "blockedModules": ["MetaverseKit/MaterialX"],
+  "buildIterations": 6,
+  "lastError": "MaterialX has pre-existing issues: missing headers (MXGenShaderNodes/SourceCodeNode.h), render module incompatibilities (metal-cpp vs Objective-C), external dependencies not included. Not related to OpenUSD 25.11 alignment.",
   "completedActions": [
     "Removed TfTemplateString (removed in 25.11)",
     "Removed UsdCrateInfo (moved to Sdf in 25.11)",
@@ -23,10 +23,14 @@
     "Updated NDR_REGISTER_PARSER_PLUGIN to SDR_REGISTER_PARSER_PLUGIN",
     "Removed templateString.h from Tf umbrella header",
     "Fixed Usd/common.h enum declarations (reverted to plain enums from enum class)",
-    "Fixed Stage.swift enum references (UsdLoadWithDescendants)"
+    "Fixed Stage.swift enum references (UsdLoadWithDescendants)",
+    "Fixed OpenSubdiv IrregularPatchBuilder: added isVal2Interior, preVal2Interior to CornerHull",
+    "Fixed OpenSubdiv IrregularPatchBuilder: updated getControlFaceVertices signature",
+    "Fixed OpenSubdiv FaceVertex: updated finalizeUnOrderedTags signature (3 params)",
+    "Fixed OpenSubdiv FaceVertex: added testNonManifoldCrease declaration"
   ],
   "pendingActions": [
-    "Fix MetaverseKit OpenSubdiv version mismatch (source files vs headers)",
+    "Fix MaterialX pre-existing issues (separate from alignment)",
     "Final version bump in Pixar.swift"
   ],
   "metaversekitChanges": [
@@ -37,16 +41,19 @@
     "OpenSubdiv/osd/MTLPatchTable.mm - fixed include path",
     "OpenSubdiv/bfr/surfaceFactory.cpp - API fix for controlFacesMayOverlap",
     "OpenSubdiv/bfr/hash.cpp - fixed include path",
-    "OpenSubdiv/include/.../irregularPatchBuilder.h - made controlFacesMayOverlap public",
+    "OpenSubdiv/include/.../irregularPatchBuilder.h - made controlFacesMayOverlap public, added CornerHull members",
     "OpenSubdiv/include/.../OSDBaseIrregularPatchBuilder.h - same",
-    "Package.swift - added shader source exclusions (hlsl, glsl, mtl)"
+    "OpenSubdiv/include/.../faceVertex.h - updated finalizeUnOrderedTags, added testNonManifoldCrease",
+    "OpenSubdiv/include/.../OSDBaseFaceVertex.h - same",
+    "Package.swift - added shader source exclusions, MaterialXRender exclusions, MATERIALX_BUILD_OIIO define"
   ],
   "blockerDetails": {
-    "issue": "OpenSubdiv source/header version mismatch",
+    "issue": "MaterialX pre-existing integration issues (NOT related to OpenUSD alignment)",
     "affectedFiles": [
-      "bfr/irregularPatchBuilder.cpp - references CornerHull::isVal2Interior, preVal2Interior",
-      "bfr/irregularPatchBuilder.cpp - getControlFaceVertices signature mismatch"
+      "MaterialXGenShader/*.cpp - includes MXGenShaderNodes/*.h which don't exist",
+      "MaterialXRender/*.cpp - missing external dependencies (TinyObjLoader, Cgltf, StbImage)",
+      "MaterialXRenderMsl/*.cpp - mixes metal-cpp and Objective-C APIs"
     ],
-    "resolution": "Need to get consistent OpenSubdiv 3.6.x source files and headers from official release"
+    "resolution": "MaterialX source files need include path updates to match MetaverseKit header naming convention. Render modules need external dependencies or exclusion."
   }
 }

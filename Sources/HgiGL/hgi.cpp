@@ -71,6 +71,12 @@ HgiGL::~HgiGL()
     delete _device;
 }
 
+HgiGLPtr
+HgiGL::CreateHgi()
+{
+    return std::make_shared<HgiGL>();
+}
+
 bool
 HgiGL::IsBackendSupported() const
 {

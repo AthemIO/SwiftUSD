@@ -28,7 +28,7 @@
 #include "Tf/envSetting.h"
 #include "Tf/hash.h"
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
 #include <MaterialX/MXGenShaderShader.h>
 #endif
 
@@ -141,7 +141,7 @@ void HdStResourceRegistry::InvalidateShaderRegistry()
     _geometricShaderRegistry.Invalidate();
     _renderPassShaderRegistry.Invalidate();
     _glslfxFileRegistry.Invalidate();
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
     _materialXShaderRegistry.Invalidate();
 #endif
 }
@@ -659,7 +659,7 @@ HdStResourceRegistry::RegisterGLSLFXFile(
     return _glslfxFileRegistry.GetInstance(id);
 }
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
 HdInstance<MaterialX::ShaderPtr>
 HdStResourceRegistry::RegisterMaterialXShader(
         HdInstance<MaterialX::ShaderPtr>::ID id)
@@ -1117,7 +1117,7 @@ HdStResourceRegistry::_GarbageCollect()
     _renderPassShaderRegistry.GarbageCollect();
     _glslProgramRegistry.GarbageCollect();
     _glslfxFileRegistry.GarbageCollect();
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
     _materialXShaderRegistry.GarbageCollect();
 #endif
 

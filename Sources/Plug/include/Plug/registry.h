@@ -10,6 +10,8 @@
 #include "pxr/pxrns.h"
 #include "Plug/api.h"
 
+#include <Arch/swiftInterop.h>
+
 #include "Js/value.h"
 #include "Tf/declarePtrs.h"
 #include "Tf/hash.h"
@@ -322,6 +324,8 @@ class PlugRegistry : public TfWeakBase {
 public:
     typedef PlugRegistry This;
     typedef std::vector<TfType> TypeVector;
+    /// Swift-friendly typedef for plugin paths vector
+    using PlugPathsVector = std::vector<std::string>;
 
     /// Returns the singleton \c PlugRegistry instance.
     PLUG_API
@@ -472,7 +476,7 @@ private:
     TfHashSet<std::string, TfHash> _registeredPluginPaths;
 
     std::mutex _mutex;
-};
+} SWIFT_IMMORTAL_REFERENCE;
 
 PLUG_API_TEMPLATE_CLASS(TfSingleton<PlugRegistry>);
 

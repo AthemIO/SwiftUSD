@@ -12,6 +12,9 @@
 
 #include "pxr/pxrns.h"
 #include "Arch/swiftInterop.h"
+
+#include <memory>
+
 #include "UsdImagingGL/api.h"
 #include "UsdImagingGL/version.h"
 #include "UsdImaging/version.h"
@@ -68,6 +71,8 @@ TF_DECLARE_REF_PTRS(HdSceneIndexBase);
 TF_DECLARE_REF_PTRS(HdxTaskControllerSceneIndex);
 
 using UsdStageWeakPtr = TfWeakPtr<class UsdStage>;
+/// Swift-friendly typedef for UsdImagingGLEngine shared pointer
+using UsdImagingGLEngineSharedPtr = std::shared_ptr<class UsdImagingGLEngine>;
 
 namespace UsdImagingGLEngine_Impl
 {
@@ -154,6 +159,31 @@ public:
 
     USDIMAGINGGL_API
     ~UsdImagingGLEngine();
+
+    // @WABI: Swift-friendly static factory methods that return shared_ptr
+    USDIMAGINGGL_API
+    static UsdImagingGLEngineSharedPtr CreateEngine();
+
+    USDIMAGINGGL_API
+    static UsdImagingGLEngineSharedPtr CreateEngine(const Parameters& params);
+
+    USDIMAGINGGL_API
+    static UsdImagingGLEngineSharedPtr CreateEngine(
+        const HdDriver& driver,
+        const TfToken& rendererPluginId,
+        bool gpuEnabled);
+
+    USDIMAGINGGL_API
+    static UsdImagingGLEngineSharedPtr CreateEngine(
+        const SdfPath& rootPath,
+        const SdfPathVector& excludedPaths,
+        const SdfPathVector& invisedPaths,
+        const SdfPath& sceneDelegateID,
+        const HdDriver& driver,
+        const TfToken& rendererPluginId,
+        bool gpuEnabled,
+        bool displayUnloadedPrimsWithBounds,
+        bool allowAsynchronousSceneProcessing);
 
     /// @}
 

@@ -11,7 +11,8 @@
 #include "HdSt/subtextureIdentifier.h"
 #include "HdSt/tokens.h"
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+// @WABI: Use #if instead of #ifdef to allow PXR_MATERIALX_SUPPORT_ENABLED=0 to disable
+#if PXR_MATERIALX_SUPPORT_ENABLED
 #include "HdSt/materialXFilter.h"
 #endif
 
@@ -1116,10 +1117,11 @@ HdStMaterialNetwork::ProcessMaterialNetwork(
                                             : HdMaterialTerminalTokens->surface;
 
     SdfPath surfTerminalPath;
-    if (HdMaterialNode2 const* surfTerminal = 
+    if (HdMaterialNode2 const* surfTerminal =
             _GetTerminalNode(surfaceNetwork, terminalName, &surfTerminalPath)) {
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+// @WABI: Use #if instead of #ifdef to allow PXR_MATERIALX_SUPPORT_ENABLED=0 to disable
+#if PXR_MATERIALX_SUPPORT_ENABLED
         if (!isVolume) {
             _materialXGfx = HdSt_ApplyMaterialXFilter(&surfaceNetwork, materialId,
                                       *surfTerminal, surfTerminalPath,

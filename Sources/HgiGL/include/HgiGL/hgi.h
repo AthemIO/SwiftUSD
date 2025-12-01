@@ -26,6 +26,8 @@ class HgiGLDevice;
 using HgiGLOpsFn = std::function<void(void)>;
 using HgiGLOpsVector = std::vector<HgiGLOpsFn>;
 using HgiGLContextArenaHandle = HgiHandle<class HgiGLContextArena>;
+/// Swift-friendly typedef for HgiGL shared pointer
+using HgiGLPtr = std::shared_ptr<class HgiGL>;
 
 /// \class HgiGL
 ///
@@ -63,6 +65,10 @@ public:
 
     HGIGL_API
     ~HgiGL() override;
+
+    /// Factory method to create an HgiGL instance.
+    HGIGL_API
+    static HgiGLPtr CreateHgi();
 
     /// ------------------------------------------------------------------------
     /// Virtual API

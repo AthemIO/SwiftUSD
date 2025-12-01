@@ -20,6 +20,8 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+/// Swift-friendly typedef for HgiMetal shared pointer
+using HgiMetalPtr = std::shared_ptr<class HgiMetal>;
 
 enum {
     APIVersion_Metal1_0 = 0,
@@ -48,6 +50,10 @@ public:
 
     HGIMETAL_API
     ~HgiMetal() override;
+
+    /// Factory method to create an HgiMetal instance.
+    HGIMETAL_API
+    static HgiMetalPtr CreateHgi();
 
     HGIMETAL_API
     bool IsBackendSupported() const override;

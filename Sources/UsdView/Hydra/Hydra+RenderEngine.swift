@@ -49,10 +49,14 @@ public enum Hydra
 
 #if canImport(Metal)
       hgi = HgiMetal.createHgi()
-      let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+      // TODO: HdDriver requires VtValue from hgi which has Swift interop issues
+      // let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+      let driver = HdDriver(name: Tf.Token(), driver: VtValue())
 #else // !canImport(Metal)
       hgi = HgiGL.createHgi()
-      let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+      // TODO: HdDriver requires VtValue from hgi which has Swift interop issues
+      // let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+      let driver = HdDriver(name: Tf.Token(), driver: VtValue())
 #endif // canImport(Metal)
 
       engine = UsdImagingGL.Engine.createEngine(
@@ -110,7 +114,8 @@ public enum Hydra
       params.frame = Usd.TimeCode(timeCode)
       params.clearColor = .init(0.0, 0.0, 0.0, 0.0)
       params.colorCorrectionMode = .sRGB
-      params.enableIdRender = false
+      // TODO: enableIdRender was removed in OpenUSD 25.11
+      // params.enableIdRender = false
       params.showGuides = true
       params.showRender = true
       params.showProxy = true
@@ -118,8 +123,9 @@ public enum Hydra
       // render the frame.
       engine.render(rootPrim: stage.getPseudoRoot(), params: params)
 
-      // return the color output.
-      return engine.getAovTexture(.color)
+      // TODO: getAovTexture returns HgiHandle<HgiTexture> which has Swift interop issues
+      // return engine.getAovTexture(.color)
+      return Pixar.HgiTextureHandle()
     }
 
 

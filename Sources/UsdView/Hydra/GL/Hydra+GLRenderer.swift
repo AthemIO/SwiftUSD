@@ -27,7 +27,8 @@ import PixarUSD
     class GLRenderer
     {
       let hgi: Pixar.HgiGLPtr
-      var device: Pixar.HgiGLDevice!
+      // TODO: HgiGLDevice returns raw pointer which has Swift C++ interop issues
+      // var device: Pixar.HgiGLDevice!
 
       public var stage: UsdStageRefPtr
 
@@ -39,10 +40,13 @@ import PixarUSD
       public required init(stage: UsdStageRefPtr)
       {
         hgi = HgiGL.createHgi()
-        device = hgi.device
+        // TODO: device and value properties unavailable due to Swift C++ interop issues
+        // device = hgi.device
         self.stage = stage
 
-        let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+        // TODO: HdDriver requires VtValue from hgi which has Swift interop issues
+        // let driver = HdDriver(name: .renderDriver, driver: hgi.value)
+        let driver = HdDriver(name: Tf.Token(), driver: VtValue())
 
         #if canImport(UsdImagingGL)
           engine = UsdImagingGL.Engine.createEngine(

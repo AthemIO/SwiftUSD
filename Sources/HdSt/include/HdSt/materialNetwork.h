@@ -14,7 +14,7 @@
 #include "HdSt/textureIdentifier.h"
 #include "Vt/dictionary.h"
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
 #include <MaterialX/MXGenShaderShader.h>
 #endif
 
@@ -102,7 +102,7 @@ private:
     TextureDescriptorVector _textureDescriptors;
     HioGlslfxSharedPtr _surfaceGfx;
     size_t _surfaceGfxHash;
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
     MaterialX::ShaderPtr _materialXGfx;
 #endif
 };

@@ -447,10 +447,61 @@ UsdImagingGLEngine::_DestroyHydraObjects()
 UsdImagingGLEngine::~UsdImagingGLEngine()
 {
     TRACE_FUNCTION();
-    
+
+#if PXR_PYTHON_SUPPORT_ENABLED
     TF_PY_ALLOW_THREADS_IN_SCOPE();
+#endif
 
     _DestroyHydraObjects();
+}
+
+//----------------------------------------------------------------------------
+// @WABI: Swift-friendly static factory methods
+//----------------------------------------------------------------------------
+
+UsdImagingGLEngineSharedPtr
+UsdImagingGLEngine::CreateEngine()
+{
+    return std::make_shared<UsdImagingGLEngine>();
+}
+
+UsdImagingGLEngineSharedPtr
+UsdImagingGLEngine::CreateEngine(const Parameters& params)
+{
+    return std::make_shared<UsdImagingGLEngine>(params);
+}
+
+UsdImagingGLEngineSharedPtr
+UsdImagingGLEngine::CreateEngine(
+    const HdDriver& driver,
+    const TfToken& rendererPluginId,
+    bool gpuEnabled)
+{
+    return std::make_shared<UsdImagingGLEngine>(driver, rendererPluginId, gpuEnabled);
+}
+
+UsdImagingGLEngineSharedPtr
+UsdImagingGLEngine::CreateEngine(
+    const SdfPath& rootPath,
+    const SdfPathVector& excludedPaths,
+    const SdfPathVector& invisedPaths,
+    const SdfPath& sceneDelegateID,
+    const HdDriver& driver,
+    const TfToken& rendererPluginId,
+    bool gpuEnabled,
+    bool displayUnloadedPrimsWithBounds,
+    bool allowAsynchronousSceneProcessing)
+{
+    return std::make_shared<UsdImagingGLEngine>(
+        rootPath,
+        excludedPaths,
+        invisedPaths,
+        sceneDelegateID,
+        driver,
+        rendererPluginId,
+        gpuEnabled,
+        displayUnloadedPrimsWithBounds,
+        allowAsynchronousSceneProcessing);
 }
 
 //----------------------------------------------------------------------------

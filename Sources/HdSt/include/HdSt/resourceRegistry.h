@@ -29,7 +29,7 @@
 #include <map>
 #include <memory>
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
 #include <MaterialX/MXCoreLibrary.h>
 MATERIALX_NAMESPACE_BEGIN
     using ShaderPtr = std::shared_ptr<class Shader>;
@@ -428,7 +428,7 @@ public:
     HdInstance<HioGlslfxSharedPtr>
     RegisterGLSLFXFile(HdInstance<HioGlslfxSharedPtr>::ID id);
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
     /// Register MaterialX GLSLFX Shader.
     HDST_API
     HdInstance<MaterialX::ShaderPtr>
@@ -696,7 +696,7 @@ private:
     HdInstanceRegistry<HioGlslfxSharedPtr>
         _glslfxFileRegistry;
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
     // MaterialX glslfx shader registry
     HdInstanceRegistry<MaterialX::ShaderPtr> _materialXShaderRegistry;
 #endif

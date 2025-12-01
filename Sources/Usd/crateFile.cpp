@@ -99,35 +99,14 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<Usd_CrateFile::TimeSamples>();
 }
 
+// @WABI: These env settings are defined in Sdf/crateFile.cpp. Use extern here
+// to avoid duplicate symbol errors in SwiftPM builds where each module is
+// compiled separately.
 #define DEFAULT_NEW_VERSION "0.9.0"
-TF_DEFINE_ENV_SETTING(USD_WRITE_NEW_USDC_FILES_AS_VERSION,
-                      DEFAULT_NEW_VERSION,
-                      "When writing new Usd Crate files, write them as this version.  "
-                      "This must have the same major version as the software and have less or "
-                      "equal minor and patch versions.  This is only for new files; saving "
-                      "edits to an existing file preserves its version.");
-
-TF_DEFINE_ENV_SETTING(USDC_MMAP_PREFETCH_KB,
-                      0,
-                      "If set to a nonzero value, attempt to disable the OS's prefetching "
-                      "behavior for memory-mapped files and instead do simple aligned block "
-                      "fetches of the given size instead.  If necessary the setting value is "
-                      "rounded up to the next whole multiple of the system's page size "
-                      "(typically 4 KB).");
-
-TF_DEFINE_ENV_SETTING(USDC_ENABLE_ZERO_COPY_ARRAYS,
-                      true,
-                      "Enable the zero-copy optimization for numeric array values whose in-file "
-                      "representation matches the in-memory representation.  With this "
-                      "optimization, we create VtArrays that point directly into the memory "
-                      "mapped region rather than copying the data to heap buffers.");
-
-TF_DEFINE_ENV_SETTING(USDC_USE_ASSET,
-                      false,
-                      "If set, data for Crate files will be read using ArAsset::Read. Crate "
-                      "will not use system I/O functions like mmap or pread directly for Crate "
-                      "files on disk, but these functions may be used indirectly by ArAsset "
-                      "implementations.");
+extern TfEnvSetting<std::string> USD_WRITE_NEW_USDC_FILES_AS_VERSION;
+extern TfEnvSetting<int> USDC_MMAP_PREFETCH_KB;
+extern TfEnvSetting<bool> USDC_ENABLE_ZERO_COPY_ARRAYS;
+extern TfEnvSetting<bool> USDC_USE_ASSET;
 
 static int _GetMMapPrefetchKB()
 {

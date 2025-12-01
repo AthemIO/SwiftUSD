@@ -351,6 +351,12 @@ let package = Package(
       dependencies: [
         .target(name: "Arch"),
       ],
+      exclude: [
+        /* OpenUSD 25.11 moved these third-party files to the root of Tf/.
+           Exclude the old subdirectories to avoid duplicate symbols. */
+        "pxrDoubleConversion",
+        "pxrLZ4",
+      ],
       cxxSettings: [
         .define("MFB_PACKAGE_NAME", to: "Tf"),
         .define("MFB_ALT_PACKAGE_NAME", to: "Tf"),
@@ -1525,6 +1531,11 @@ let package = Package(
         .target(name: "HdMtlx"),
         .product(name: "MaterialX", package: "MetaverseKit"),
       ],
+      exclude: [
+        /* MaterialX shader generators excluded - MetaverseKit excludes GLSL/MSL/Vulkan generators */
+        "materialXShaderGen.cpp",
+        "materialXFilter.cpp",
+      ],
       resources: [
         .copy("shaders"),
         .copy("textures"),
@@ -1535,9 +1546,14 @@ let package = Package(
         .define("MFB_ALT_PACKAGE_NAME", to: "HdSt"),
         .define("MFB_PACKAGE_MODULE", to: "HdSt"),
         .define("HDST_EXPORTS", to: "1"),
-        .define("PXR_MATERIALX_SUPPORT_ENABLED", to: "1"),
-        /* MaterialX GenShader source headers path for internal includes */
-        .unsafeFlags(["-I", "../MetaverseKit/Sources/MaterialX/source"]),
+        /* MaterialX shader generators (materialXFilter.cpp, materialXShaderGen.cpp) are excluded
+           because MetaverseKit doesn't build MaterialX GLSL/MSL/Vulkan generators.
+           Disable MaterialX support in HdSt to prevent linker errors. */
+        .define("PXR_MATERIALX_SUPPORT_ENABLED", to: "0"),
+        /* OpenSubdiv patch shader sources (MTL/GLSL) are excluded in MetaverseKit.
+           Provide stub implementations instead. */
+        .define("OPENSUBDIV_HAS_PATCH_SHADERS", to: "0"),
+        .define("OPENSUBDIV_HAS_MTL", to: "0"),
         .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
         .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
         .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),

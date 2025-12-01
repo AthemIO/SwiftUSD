@@ -34,18 +34,20 @@ extension UsdView
       }
     }
 
+    // Use convenience methods from @Xformable macro instead of addXformOp with type enum
+    // (UsdGeomXformOp.Type enum doesn't export named values to Swift)
     let xform = UsdGeom.Xform.define(stage, path: "/Geometry")
-    xform.addXformOp(type: .translate).set(GfVec3d(0.0, 0.0, 0.0))
-    xform.addXformOp(type: .scale, precision: .float).set(GfVec3f(1, 1, 1))
+    xform.addTranslateOp().set(GfVec3d(0.0, 0.0, 0.0))
+    xform.addScaleOp().set(GfVec3f(1, 1, 1))
 
     // Create a red sphere on the left
     let sphere = UsdGeom.Sphere.define(stage, path: "/Geometry/Sphere")
-    sphere.addXformOp(type: .translate).set(GfVec3d(-1.5, 0.0, 0.0))
+    sphere.addTranslateOp().set(GfVec3d(-1.5, 0.0, 0.0))
     UsdShade.MaterialBindingAPI.apply(sphere).bind(matDef(stage, color: .red))
 
     // Create a blue cube on the right
     let cube = UsdGeom.Cube.define(stage, path: "/Geometry/Cube")
-    cube.addXformOp(type: .translate).set(GfVec3d(1.5, 0.0, 0.0))
+    cube.addTranslateOp().set(GfVec3d(1.5, 0.0, 0.0))
     UsdShade.MaterialBindingAPI.apply(cube).bind(matDef(stage, color: .blue))
 
     /* Iterate the stage and print out the path to each prim. */

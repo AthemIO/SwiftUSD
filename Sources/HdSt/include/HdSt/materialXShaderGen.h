@@ -9,9 +9,35 @@
 
 #include "pxr/pxrns.h"
 
+// MaterialX shader generators - conditionally enabled based on build configuration.
+// MetaverseKit excludes GLSL/MSL/Vulkan MaterialX generators due to API mismatches.
+// Set these to 1 if the corresponding MaterialX generator modules are available.
+#ifndef HDST_MATERIALX_GLSL_ENABLED
+#define HDST_MATERIALX_GLSL_ENABLED 0
+#endif
+
+#ifndef HDST_MATERIALX_MSL_ENABLED
+#define HDST_MATERIALX_MSL_ENABLED 0
+#endif
+
+#ifndef HDST_MATERIALX_VK_ENABLED
+#define HDST_MATERIALX_VK_ENABLED 0
+#endif
+
+#if HDST_MATERIALX_GLSL_ENABLED
 #include <MaterialX/MXGenGlslGlslShaderGenerator.h>
+#endif
+
+#if HDST_MATERIALX_MSL_ENABLED
 #include <MaterialX/MXGenMslMslShaderGenerator.h>
+#endif
+
+#if HDST_MATERIALX_VK_ENABLED
 #include <MaterialX/MXGenGlslVkShaderGenerator.h>
+#endif
+
+// Include base shader generator
+#include <MaterialX/MXGenShaderGenerator.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -100,9 +126,10 @@ protected:
 };
 
 
+#if HDST_MATERIALX_GLSL_ENABLED
 /// \class HdStMaterialXShaderGenGlsl
 ///
-/// Generates a glslfx shader with a surfaceShader function for a MaterialX 
+/// Generates a glslfx shader with a surfaceShader function for a MaterialX
 /// network, targeting OpenGL GLSL.
 
 class HdStMaterialXShaderGenGlsl
@@ -110,12 +137,12 @@ class HdStMaterialXShaderGenGlsl
 {
 public:
     HdStMaterialXShaderGenGlsl(HdSt_MxShaderGenInfo const& mxHdInfo);
-    
+
     static MaterialX::ShaderGeneratorPtr create(
             HdSt_MxShaderGenInfo const& mxHdInfo) {
         return std::make_shared<HdStMaterialXShaderGenGlsl>(mxHdInfo);
     }
-    
+
     MaterialX::ShaderPtr generate(const std::string& shaderName,
                            MaterialX::ElementPtr mxElement,
                            MaterialX::GenContext& mxContext) const override;
@@ -129,10 +156,12 @@ private:
                           MaterialX::GenContext& mxContext,
                           MaterialX::ShaderStage& mxStage) const;
 };
+#endif // HDST_MATERIALX_GLSL_ENABLED
 
+#if HDST_MATERIALX_VK_ENABLED
 /// \class HdStMaterialXShaderGenVkGlsl
 ///
-/// Generates a glslfx shader with a surfaceShader function for a MaterialX 
+/// Generates a glslfx shader with a surfaceShader function for a MaterialX
 /// network, targeting Vulkan GLSL.
 
 class HdStMaterialXShaderGenVkGlsl
@@ -140,12 +169,12 @@ class HdStMaterialXShaderGenVkGlsl
 {
 public:
     HdStMaterialXShaderGenVkGlsl(HdSt_MxShaderGenInfo const& mxHdInfo);
-    
+
     static MaterialX::ShaderGeneratorPtr create(
             HdSt_MxShaderGenInfo const& mxHdInfo) {
         return std::make_shared<HdStMaterialXShaderGenVkGlsl>(mxHdInfo);
     }
-    
+
     MaterialX::ShaderPtr generate(const std::string& shaderName,
                            MaterialX::ElementPtr mxElement,
                            MaterialX::GenContext& mxContext) const override;
@@ -159,10 +188,12 @@ private:
                           MaterialX::GenContext& mxContext,
                           MaterialX::ShaderStage& mxStage) const;
 };
+#endif // HDST_MATERIALX_VK_ENABLED
 
+#if HDST_MATERIALX_MSL_ENABLED
 /// \class HdStMaterialXShaderGenMsl
 ///
-/// Generates a glslfx shader with a surfaceShader function for a MaterialX 
+/// Generates a glslfx shader with a surfaceShader function for a MaterialX
 /// network, targeting Metal Shading Language.
 
 class HdStMaterialXShaderGenMsl
@@ -170,12 +201,12 @@ class HdStMaterialXShaderGenMsl
 {
 public:
     HdStMaterialXShaderGenMsl(HdSt_MxShaderGenInfo const& mxHdInfo);
-    
+
     static MaterialX::ShaderGeneratorPtr create(
             HdSt_MxShaderGenInfo const& mxHdInfo) {
         return std::make_shared<HdStMaterialXShaderGenMsl>(mxHdInfo);
     }
-    
+
     MaterialX::ShaderPtr generate(const std::string& shaderName,
                            MaterialX::ElementPtr mxElement,
                            MaterialX::GenContext& mxContext) const override;
@@ -183,15 +214,16 @@ private:
     void _EmitGlslfxMetalShader(const MaterialX::ShaderGraph& mxGraph,
                                 MaterialX::GenContext& mxContext,
                                 MaterialX::ShaderStage& mxStage) const;
-    
+
     /// These two helper functions generate the Glslfx-Metal Shader
     void _EmitGlslfxMetalHeader(MaterialX::GenContext& mxContext,
                                 MaterialX::ShaderStage& mxStage) const;
-    
+
     void _EmitMxFunctions(const MaterialX::ShaderGraph& mxGraph,
                           MaterialX::GenContext& mxContext,
                           MaterialX::ShaderStage& mxStage) const;
 };
+#endif // HDST_MATERIALX_MSL_ENABLED
 
 // Helper functions to aid building both MaterialX 1.38.X and 1.39.X
 // once MaterialX 1.38.X is no longer required these should likely be removed.

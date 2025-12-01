@@ -78,7 +78,7 @@ const TfTokenVector HdStRenderDelegate::SUPPORTED_SPRIM_TYPES =
     HdPrimTypeTokens->imageShader
 };
 
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
 TF_DEFINE_PRIVATE_TOKENS(
     _tokens,
     (mtlx)
@@ -562,7 +562,7 @@ HdStRenderDelegate::IsSupported(
 TfTokenVector
 HdStRenderDelegate::GetShaderSourceTypes() const
 {
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
     return {HioGlslfxTokens->glslfx, _tokens->mtlx};
 #else
     return {HioGlslfxTokens->glslfx};
@@ -572,7 +572,7 @@ HdStRenderDelegate::GetShaderSourceTypes() const
 TfTokenVector
 HdStRenderDelegate::GetMaterialRenderContexts() const
 {
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#if PXR_MATERIALX_SUPPORT_ENABLED
     return {HioGlslfxTokens->glslfx, _tokens->mtlx};
 #else
     return {HioGlslfxTokens->glslfx};

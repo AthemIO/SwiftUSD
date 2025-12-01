@@ -6,6 +6,8 @@
 //
 #include "Arch/defines.h"
 
+#include <memory>
+
 #include "Hgi/debugCodes.h"
 #include "HgiMetal/hgi.h"
 #include "HgiMetal/buffer.h"
@@ -157,6 +159,12 @@ HgiMetal::~HgiMetal()
             _freeArgBuffers.pop();
         }
     }
+}
+
+HgiMetalPtr
+HgiMetal::CreateHgi()
+{
+    return std::make_shared<HgiMetal>();
 }
 
 bool
@@ -549,6 +557,14 @@ HgiMetal::_SubmitCmds(HgiCmds* cmds, HgiSubmitWaitType wait)
     }
 
     return _workToFlush;
+}
+
+void
+HgiMetal::GarbageCollect()
+{
+    // Metal doesn't require explicit garbage collection in the same way as
+    // OpenGL. ARC handles most memory management. This is a no-op stub
+    // that satisfies the Hgi interface requirement.
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

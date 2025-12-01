@@ -97,6 +97,9 @@ public extension Usd.Stage
    *
    * Specifies the initial set of prims
    * to load when opening a UsdStage. */
+  /// Swift wrapper for UsdStage::InitialLoadSet (C++ enum doesn't export named values)
+  /// - LoadAll = 0: Load all loadable prims
+  /// - LoadNone = 1: Load no loadable prims
   enum InitialLoadingSet
   {
     case all
@@ -106,8 +109,8 @@ public extension Usd.Stage
     {
       switch self
       {
-        case .all: .LoadAll
-        case .none: .LoadNone
+        case .all: Pixar.UsdStage.InitialLoadSet(0)
+        case .none: Pixar.UsdStage.InitialLoadSet(1)
       }
     }
   }
@@ -466,14 +469,20 @@ public extension Usd.Stage
     Reload()
   }
 
+  /// UsdLoadPolicy enum values for Swift (C++ enum doesn't export named values)
+  /// - UsdLoadWithDescendants = 0: Load a prim plus all its descendants
+  /// - UsdLoadWithoutDescendants = 1: Load a prim by itself with no descendants
+  static var loadPolicyWithDescendants: Pixar.UsdLoadPolicy { Pixar.UsdLoadPolicy(0) }
+  static var loadPolicyWithoutDescendants: Pixar.UsdLoadPolicy { Pixar.UsdLoadPolicy(1) }
+
   /**
    * Modify this stage's load rules to load the prim at `path`, its
    * ancestors, and all of its descendants if `policy` is `.withDescendants`.
    *
    * If `policy` is `.withoutDescendants`, then payloads on descendant prims are not loaded. */
   @discardableResult
-  func load(path: Sdf.Path = Sdf.Path.absoluteRootPath(), 
-            policy: Pixar.UsdLoadPolicy = .UsdLoadWithDescendants) -> Usd.Prim
+  func load(path: Sdf.Path = Sdf.Path.absoluteRootPath(),
+            policy: Pixar.UsdLoadPolicy = Pixar.UsdLoadPolicy(0)) -> Usd.Prim
   {
     Load(path, policy)
   }
@@ -750,8 +759,8 @@ public extension Usd.StageRefPtr
    *
    * If `policy` is `.withoutDescendants`, then payloads on descendant prims are not loaded. */
   @discardableResult
-  func load(path: Sdf.Path = Sdf.Path.absoluteRootPath(), 
-            policy: Pixar.UsdLoadPolicy = .UsdLoadWithDescendants) -> Usd.Prim
+  func load(path: Sdf.Path = Sdf.Path.absoluteRootPath(),
+            policy: Pixar.UsdLoadPolicy = Pixar.UsdLoadPolicy(0)) -> Usd.Prim
   {
     pointee.load(path: path, policy: policy)
   }

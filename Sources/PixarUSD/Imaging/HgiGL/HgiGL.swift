@@ -21,34 +21,13 @@
     }
   }
 
-  public extension Pixar.HgiGL
-  {
-    private borrowing func GetPrimaryDeviceCopy() -> Pixar.HgiGLDevice
-    {
-      GetPrimaryDevice()
-    }
-
-    var device: Pixar.HgiGLDevice
-    {
-      GetPrimaryDeviceCopy()
-    }
-
-    func getValue(_ ptr: Pixar.HgiGLPtr) -> VtValue
-    {
-      GetValue(ptr)
-    }
-  }
-
-  public extension Pixar.HgiGLPtr
-  {
-    var device: Pixar.HgiGLDevice
-    {
-      pointee.device
-    }
-
-    var value: VtValue
-    {
-      pointee.getValue(self)
-    }
-  }
+  // TODO: HgiGLDevice and GetPrimaryDevice return raw pointers which have
+  // Swift C++ interop issues. These APIs need further work to expose safely.
+  // public extension Pixar.HgiGL
+  // {
+  //   var device: Pixar.HgiGLDevice
+  //   {
+  //     GetPrimaryDevice()
+  //   }
+  // }
 #endif /* canImport(HgiGL) */

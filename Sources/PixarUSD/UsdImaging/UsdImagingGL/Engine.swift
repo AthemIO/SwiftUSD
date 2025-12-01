@@ -115,10 +115,11 @@
       SetLightingState(lights, material, sceneAmbient)
     }
 
-    func getAovTexture(_ aovName: Hd.AovTokens) -> Pixar.HgiTextureHandle
-    {
-      GetAovTexture(aovName.token)
-    }
+    // TODO: GetAovTexture returns HgiHandle<HgiTexture> which has Swift interop issues
+    // func getAovTexture(_ aovName: Hd.AovTokens) -> Pixar.HgiTextureHandle
+    // {
+    //   GetAovTexture(aovName.token)
+    // }
   }
 
   public extension UsdImagingGL.EngineSharedPtr
@@ -158,9 +159,10 @@
       pointee.setLightingState(lights: lights, material: material, sceneAmbient: sceneAmbient)
     }
 
-    func getAovTexture(_ aovName: Hd.AovTokens) -> Pixar.HgiTextureHandle
-    {
-      pointee.getAovTexture(aovName)
-    }
+    // TODO: GetAovTexture returns HgiHandle<HgiTexture> which has Swift interop issues
+    // func getAovTexture(_ aovName: Hd.AovTokens) -> Pixar.HgiTextureHandle
+    // {
+    //   pointee.getAovTexture(aovName)
+    // }
   }
 #endif // canImport(UsdImagingGLEngine)

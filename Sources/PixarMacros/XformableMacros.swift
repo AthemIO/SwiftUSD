@@ -22,44 +22,48 @@ public struct PixarXformableMacro: MemberMacro
                                providingMembersOf _: some SwiftSyntax.DeclGroupSyntax,
                                in _: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax]
   {
+    // UsdGeomXformOp.Precision enum values (C++ enum doesn't export named values):
+    // - PrecisionDouble = 0: Double precision
+    // - PrecisionFloat = 1: Floating-point precision
+    // - PrecisionHalf = 2: Half-float precision
     let decl: DeclSyntax = """
       public func addXformOp(type: UsdGeomXformOp.`Type`,
-                             precision: UsdGeomXformOp.Precision = .PrecisionDouble,
+                             precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(0),
                              suffix: Tf.Token = Tf.Token(),
                              invert: Bool = false) -> UsdGeomXformOp
       {
         AddXformOp(type, precision, suffix, invert)
       }
 
-      public func addTranslateOp(precision: UsdGeomXformOp.Precision = .PrecisionDouble,
+      public func addTranslateOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(0),
                                  suffix: Tf.Token = Tf.Token(),
                                  invert: Bool = false) -> UsdGeomXformOp
       {
         AddTranslateOp(precision, suffix, invert)
       }
 
-      public func addScaleOp(precision: UsdGeomXformOp.Precision = .PrecisionFloat,
+      public func addScaleOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                              suffix: Tf.Token = Tf.Token(),
                              invert: Bool = false) -> UsdGeomXformOp
       {
         AddScaleOp(precision, suffix, invert)
       }
 
-      public func addRotateXOp(precision: UsdGeomXformOp.Precision = .PrecisionFloat,
+      public func addRotateXOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                                suffix: Tf.Token = Tf.Token(),
                                invert: Bool = false) -> UsdGeomXformOp
       {
         AddRotateXOp(precision, suffix, invert)
       }
 
-      public func addRotateYOp(precision: UsdGeomXformOp.Precision = .PrecisionFloat,
+      public func addRotateYOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                                suffix: Tf.Token = Tf.Token(),
                                invert: Bool = false) -> UsdGeomXformOp
       {
         AddRotateYOp(precision, suffix, invert)
       }
 
-      public func addRotateZOp(precision: UsdGeomXformOp.Precision = .PrecisionFloat,
+      public func addRotateZOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                                suffix: Tf.Token = Tf.Token(),
                                invert: Bool = false) -> UsdGeomXformOp
       {

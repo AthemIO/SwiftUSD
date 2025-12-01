@@ -16,7 +16,10 @@ import Sdf
 import Usd
 
 public typealias UsdStageCache = Pixar.UsdStageCache
-public typealias UsdStageCacheContext = Pixar.UsdStageCacheContext
+
+// TODO: UsdStageCacheContext uses TF_DEFINE_STACKED macro which creates
+// complex template metaprogramming that Swift C++ interop cannot import.
+// public typealias UsdStageCacheContext = Pixar.UsdStageCacheContext
 
 public extension UsdStageCache
 {
@@ -26,11 +29,12 @@ public extension UsdStageCache
   }
 }
 
-public extension UsdStageCacheContext
-{
-  @discardableResult
-  static func bind(cache: inout UsdStageCache) -> UsdStageCacheContext
-  {
-    UsdStageCacheContext.CreateCache(&cache)
-  }
-}
+// TODO: UsdStageCacheContext extension commented out due to Swift interop issues
+// public extension UsdStageCacheContext
+// {
+//   @discardableResult
+//   static func bind(cache: inout UsdStageCache) -> UsdStageCacheContext
+//   {
+//     UsdStageCacheContext.CreateCache(&cache)
+//   }
+// }
