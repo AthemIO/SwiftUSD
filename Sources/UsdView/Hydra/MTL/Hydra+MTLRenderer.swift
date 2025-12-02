@@ -194,26 +194,22 @@ import PixarUSD
         commandBuffer.present(drawable)
       }
 
-      // TODO: HgiMetalTexture is not exported to Swift due to C++ interop issues
-      // This function needs to be reimplemented when HgiMetalTexture becomes available
       public func getMetalTexture(from hgiTexture: Pixar.HgiTextureHandle) -> MTLTexture?
       {
-        // // get the hgi texture handle.
-        // guard let hgiTex = hgiTexture.Get()
-        // else { Msg.logger.error("HYDRA: Failed to retrieve the hgi texture."); return nil }
+        // get the hgi texture handle.
+        guard let hgiTex = hgiTexture.Get()
+        else { Msg.logger.error("HYDRA: Failed to retrieve the hgi texture."); return nil }
 
-        // // get the raw pointer from the hgi handle.
-        // let rawPtr = UnsafeRawPointer(hgiTex)
+        // get the raw pointer from the hgi handle.
+        let rawPtr = UnsafeRawPointer(hgiTex)
 
-        // // get the hgi texture from the raw pointer.
-        // let texPtr: Pixar.HgiMetalTexture = Unmanaged.fromOpaque(rawPtr).takeUnretainedValue()
+        // get the hgi texture from the raw pointer.
+        let texPtr: Pixar.HgiMetalTexture = Unmanaged.fromOpaque(rawPtr).takeUnretainedValue()
 
-        // // get the metal texture from the hgi texture.
-        // let metalTexture = texPtr.GetTextureId()
+        // get the metal texture from the hgi texture.
+        let metalTexture = texPtr.GetTextureId()
 
-        // return metalTexture
-        Msg.logger.warning("HYDRA: getMetalTexture not available - HgiMetalTexture Swift interop issue")
-        return nil
+        return metalTexture
       }
     }
   }

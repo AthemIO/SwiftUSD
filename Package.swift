@@ -1550,10 +1550,6 @@ let package = Package(
            because MetaverseKit doesn't build MaterialX GLSL/MSL/Vulkan generators.
            Disable MaterialX support in HdSt to prevent linker errors. */
         .define("PXR_MATERIALX_SUPPORT_ENABLED", to: "0"),
-        /* OpenSubdiv patch shader sources (MTL/GLSL) are excluded in MetaverseKit.
-           Provide stub implementations instead. */
-        .define("OPENSUBDIV_HAS_PATCH_SHADERS", to: "0"),
-        .define("OPENSUBDIV_HAS_MTL", to: "0"),
         .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
         .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
         .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),

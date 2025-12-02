@@ -77,6 +77,13 @@ HgiGL::CreateHgi()
     return std::make_shared<HgiGL>();
 }
 
+VtValue
+HgiGL::GetValue(HgiGLPtr ptr) const
+{
+    // HdSt expects VtValue to hold Hgi* (base class pointer), not HgiGL*
+    return VtValue(static_cast<Hgi*>(ptr.get()));
+}
+
 bool
 HgiGL::IsBackendSupported() const
 {

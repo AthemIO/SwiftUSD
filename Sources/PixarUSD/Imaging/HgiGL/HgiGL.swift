@@ -21,13 +21,19 @@
     }
   }
 
-  // TODO: HgiGLDevice and GetPrimaryDevice return raw pointers which have
-  // Swift C++ interop issues. These APIs need further work to expose safely.
-  // public extension Pixar.HgiGL
-  // {
-  //   var device: Pixar.HgiGLDevice
-  //   {
-  //     GetPrimaryDevice()
-  //   }
-  // }
+  public extension Pixar.HgiGL
+  {
+    func getValue(_ ptr: Pixar.HgiGLPtr) -> VtValue
+    {
+      GetValue(ptr)
+    }
+  }
+
+  public extension Pixar.HgiGLPtr
+  {
+    var value: VtValue
+    {
+      pointee.getValue(self)
+    }
+  }
 #endif /* canImport(HgiGL) */

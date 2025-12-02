@@ -167,6 +167,13 @@ HgiMetal::CreateHgi()
     return std::make_shared<HgiMetal>();
 }
 
+VtValue
+HgiMetal::GetValue(HgiMetalPtr ptr) const
+{
+    // HdSt expects VtValue to hold Hgi* (base class pointer), not HgiMetal*
+    return VtValue(static_cast<Hgi*>(ptr.get()));
+}
+
 bool
 HgiMetal::IsBackendSupported() const
 {

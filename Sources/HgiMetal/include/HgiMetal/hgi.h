@@ -14,6 +14,7 @@
 #include "HgiMetal/indirectCommandEncoder.h"
 #include "Hgi/hgi.h"
 #include "Hgi/tokens.h"
+#include "Vt/value.h"
 
 #import <Metal/Metal.h>
 #include <stack>
@@ -54,6 +55,10 @@ public:
     /// Factory method to create an HgiMetal instance.
     HGIMETAL_API
     static HgiMetalPtr CreateHgi();
+
+    /// @WABI: Helper to wrap HgiMetalPtr in VtValue for HdDriver
+    HGIMETAL_API
+    VtValue GetValue(HgiMetalPtr ptr) const;
 
     HGIMETAL_API
     bool IsBackendSupported() const override;

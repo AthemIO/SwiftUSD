@@ -14,6 +14,7 @@
 #include "HgiGL/garbageCollector.h"
 #include "Hgi/hgi.h"
 #include "Hgi/tokens.h"
+#include "Vt/value.h"
 
 #include <functional>
 #include <memory>
@@ -69,6 +70,10 @@ public:
     /// Factory method to create an HgiGL instance.
     HGIGL_API
     static HgiGLPtr CreateHgi();
+
+    /// @WABI: Helper to wrap HgiGLPtr in VtValue for HdDriver
+    HGIGL_API
+    VtValue GetValue(HgiGLPtr ptr) const;
 
     /// ------------------------------------------------------------------------
     /// Virtual API

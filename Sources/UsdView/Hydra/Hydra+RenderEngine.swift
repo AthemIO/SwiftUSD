@@ -49,14 +49,10 @@ public enum Hydra
 
 #if canImport(Metal)
       hgi = HgiMetal.createHgi()
-      // Note: Passing empty driver - UsdImagingGLEngine creates its own internal Hgi
-      // when _hgiDriver.driver.IsEmpty() is true (see engine.cpp:1502-1506)
-      let driver = HdDriver(name: Tf.Token(), driver: VtValue())
+      let driver = HdDriver(name: Hgi.Tokens.renderDriver.token, driver: hgi.value)
 #else // !canImport(Metal)
       hgi = HgiGL.createHgi()
-      // Note: Passing empty driver - UsdImagingGLEngine creates its own internal Hgi
-      // when _hgiDriver.driver.IsEmpty() is true (see engine.cpp:1502-1506)
-      let driver = HdDriver(name: Tf.Token(), driver: VtValue())
+      let driver = HdDriver(name: Hgi.Tokens.renderDriver.token, driver: hgi.value)
 #endif // canImport(Metal)
 
       engine = UsdImagingGL.Engine.createEngine(
@@ -123,9 +119,8 @@ public enum Hydra
       // render the frame.
       engine.render(rootPrim: stage.getPseudoRoot(), params: params)
 
-      // TODO: getAovTexture returns HgiHandle<HgiTexture> which has Swift interop issues
-      // return engine.getAovTexture(.color)
-      return Pixar.HgiTextureHandle()
+      // return the color output.
+      return engine.getAovTexture(.color)
     }
 
 
