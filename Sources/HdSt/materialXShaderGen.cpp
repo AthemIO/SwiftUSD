@@ -993,6 +993,7 @@ HdStMaterialXShaderGenGlsl::_EmitMxFunctions(
         mxGraph, mxContext, mxStage, &_tokenSubstitutions);
 }
 
+#if HDST_MATERIALX_VK_ENABLED
 // ----------------------------------------------------------------------------
 //                    HdSt MaterialX ShaderGen Vulkan GLSL
 // ----------------------------------------------------------------------------
@@ -1146,6 +1147,7 @@ HdStMaterialXShaderGenVkGlsl::_EmitMxFunctions(
     _EmitDataStructsAndFunctionDefinitions(
         mxGraph, mxContext, mxStage, &_tokenSubstitutions);
 }
+#endif // HDST_MATERIALX_VK_ENABLED
 
 // ----------------------------------------------------------------------------
 //                          HdSt MaterialX ShaderGen Metal

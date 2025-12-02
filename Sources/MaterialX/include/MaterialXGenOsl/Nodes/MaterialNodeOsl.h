@@ -1,0 +1,1 @@
+/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenOsl/Nodes/MaterialNodeOsl.h

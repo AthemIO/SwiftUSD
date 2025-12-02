@@ -18,6 +18,11 @@ let package = Package(
       name: "pxr",
       targets: ["pxr"]
     ),
+    // ------------ MaterialX -----
+    .library(
+      name: "MaterialX",
+      targets: ["MaterialX"]
+    ),
     // ----------- Pixar.Base -----
     .library(
       name: "Arch",
@@ -293,6 +298,47 @@ let package = Package(
       ]
     ),
 
+    // ------------ MaterialX 1.39.3 (aligned with OpenUSD 25.11) -----
+    .target(
+      name: "MaterialX",
+      dependencies: [
+        .product(name: "OpenImageIO", package: "MetaverseKit"),
+        .product(name: "OpenImageIO_Util", package: "MetaverseKit"),
+        .product(name: "Apple", package: "MetaverseKit", condition: .when(platforms: Arch.OS.apple.platform)),
+      ],
+      exclude: [
+        /* Files with external dependencies (TinyObj, Cgltf, StbImage) - we use OIIO instead */
+        "source/MaterialXRender/TinyObjLoader.cpp",
+        "source/MaterialXRender/CgltfLoader.cpp",
+        "source/MaterialXRender/StbImageLoader.cpp",
+        /* Template include file - not a source file */
+        "source/MaterialXRender/TextureBaker.inl",
+        /* External header-only libraries - bundled in MaterialXRender/External */
+        "source/MaterialXRender/External",
+      ],
+      sources: ["source"],
+      publicHeadersPath: "include",
+      cxxSettings: [
+        .define("GL_SILENCE_DEPRECATION", to: "1"),
+        .define("MATERIALX_BUILD_OIIO", to: "1"),
+        /* Export defines for each module */
+        .define("MATERIALX_CORE_EXPORTS", to: "1"),
+        .define("MATERIALX_FORMAT_EXPORTS", to: "1"),
+        .define("MATERIALX_GENSHADER_EXPORTS", to: "1"),
+        .define("MATERIALX_GENGLSL_EXPORTS", to: "1"),
+        .define("MATERIALX_GENMSL_EXPORTS", to: "1"),
+        .define("MATERIALX_GENOSL_EXPORTS", to: "1"),
+        .define("MATERIALX_RENDER_EXPORTS", to: "1"),
+        /* Header search path for internal includes like <MaterialXCore/Library.h> */
+        .headerSearchPath("source"),
+        /* PugiXML headers for XML parsing */
+        .headerSearchPath("source/MaterialXFormat/External/PugiXML"),
+        .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
+        .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
+        .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
+      ]
+    ),
+
     .target(
       name: "Arch",
       dependencies: [
@@ -300,7 +346,7 @@ let package = Package(
         .target(name: "pxr"),
         /* ------------ VFX Platform. ----------- */
         .product(name: "MetaTBB", package: "MetaverseKit"),
-        .product(name: "MaterialX", package: "MetaverseKit"),
+        .target(name: "MaterialX"),
         .product(name: "Alembic", package: "MetaverseKit"),
         .product(name: "OpenColorIO", package: "MetaverseKit"),
         .product(name: "OpenImageIO", package: "MetaverseKit"),
@@ -1529,12 +1575,7 @@ let package = Package(
         .target(name: "Tf"),
         .target(name: "Trace"),
         .target(name: "HdMtlx"),
-        .product(name: "MaterialX", package: "MetaverseKit"),
-      ],
-      exclude: [
-        /* MaterialX shader generators excluded - MetaverseKit excludes GLSL/MSL/Vulkan generators */
-        "materialXShaderGen.cpp",
-        "materialXFilter.cpp",
+        .target(name: "MaterialX"),
       ],
       resources: [
         .copy("shaders"),
@@ -1546,10 +1587,10 @@ let package = Package(
         .define("MFB_ALT_PACKAGE_NAME", to: "HdSt"),
         .define("MFB_PACKAGE_MODULE", to: "HdSt"),
         .define("HDST_EXPORTS", to: "1"),
-        /* MaterialX shader generators (materialXFilter.cpp, materialXShaderGen.cpp) are excluded
-           because MetaverseKit doesn't build MaterialX GLSL/MSL/Vulkan generators.
-           Disable MaterialX support in HdSt to prevent linker errors. */
-        .define("PXR_MATERIALX_SUPPORT_ENABLED", to: "0"),
+        /* MaterialX shader generators enabled - SwiftUSD includes GLSL/MSL generators */
+        .define("PXR_MATERIALX_SUPPORT_ENABLED", to: "1"),
+        .define("HDST_MATERIALX_GLSL_ENABLED", to: "1"),
+        .define("HDST_MATERIALX_MSL_ENABLED", to: "1", .when(platforms: Arch.OS.apple.platform)),
         .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
         .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
         .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
@@ -1567,7 +1608,7 @@ let package = Package(
         .target(name: "Work"),
         .target(name: "Hd"),
         .target(name: "HdSt"),
-        .product(name: "MaterialX", package: "MetaverseKit"),
+        .target(name: "MaterialX"),
       ],
       resources: [
         .process("Resources")
@@ -1601,7 +1642,7 @@ let package = Package(
         .target(name: "Hgi"),
         .target(name: "HgiInterop"),
         .target(name: "CameraUtil"),
-        .product(name: "MaterialX", package: "MetaverseKit"),
+        .target(name: "MaterialX"),
       ],
       resources: [
         .copy("shaders"),
@@ -1895,7 +1936,7 @@ let package = Package(
         // -------- macros. ------
         .target(name: "PixarMacros"),
         // -----------------------
-        .product(name: "MaterialX", package: "MetaverseKit"),
+        .target(name: "MaterialX"),
       ],
       cxxSettings: [
         // enable to debug swift retain/release calls.

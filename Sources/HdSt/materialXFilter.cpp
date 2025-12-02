@@ -184,9 +184,11 @@ _InitHdStMaterialXContext(
     if (apiName == HgiTokens->Metal) {
         return HdStMaterialXShaderGenMsl::create(mxHdInfo);
     }
+#if HDST_MATERIALX_VK_ENABLED
     if (apiName == HgiTokens->Vulkan) {
         return HdStMaterialXShaderGenVkGlsl::create(mxHdInfo);
     }
+#endif // HDST_MATERIALX_VK_ENABLED
     if (apiName == HgiTokens->OpenGL) {
         return HdStMaterialXShaderGenGlsl::create(mxHdInfo);
     }

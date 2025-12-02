@@ -1,0 +1,1 @@
+/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/CompoundNode.h
