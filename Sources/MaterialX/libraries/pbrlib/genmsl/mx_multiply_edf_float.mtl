@@ -1,0 +1,6 @@
+#include "lib/mx_closure_type.mtl"
+
+void mx_multiply_edf_float(ClosureData closureData, EDF in1, float in2, thread EDF& result)
+{
+    result = in1 * in2;
+}

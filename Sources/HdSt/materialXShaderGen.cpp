@@ -114,9 +114,20 @@ R"(#if NUM_LIGHTS > 0
 #endif
 )";
 
-static const std::string MxHdLatLongLookupCubemap = 
+static const std::string MxHdLatLongLookupCubemap =
 R"(
 vec3 mx_latlong_map_lookup(vec3 dir, mat4 transform, float lod, samplerCube envSampler)
+{
+    vec3 envDir = normalize((transform * vec4(dir,0.0)).xyz);
+    return textureLod(envSampler, envDir, lod).rgb;
+}
+
+)";
+
+// Metal version using MetalTextureCube struct
+static const std::string MxHdLatLongLookupCubemapMsl =
+R"(
+vec3 mx_latlong_map_lookup(vec3 dir, float4x4 transform, float lod, MetalTextureCube envSampler)
 {
     vec3 envDir = normalize((transform * vec4(dir,0.0)).xyz);
     return textureLod(envSampler, envDir, lod).rgb;
@@ -387,14 +398,19 @@ _GetTexcoordName(
 }
 
 template<typename Base>
-void 
+void
 HdStMaterialXShaderGen<Base>::_EmitMxInitFunction(
     mx::VariableBlock const& vertexData,
     mx::ShaderStage& mxStage) const
 {
     // Emit an overload of mx_latlong_map_lookup that is able to query the
     // cubemaps generated for the dome light.
-    Base::emitString(MxHdLatLongLookupCubemap, mxStage);
+    const std::string& target = Base::getTarget();
+    if (target == mx::MslShaderGenerator::TARGET) {
+        Base::emitString(MxHdLatLongLookupCubemapMsl, mxStage);
+    } else {
+        Base::emitString(MxHdLatLongLookupCubemap, mxStage);
+    }
 
     Base::setFunctionName("mxInit", mxStage);
     emitLine("void mxInit(vec4 Peye, vec3 Neye)", mxStage, false);
@@ -796,30 +812,35 @@ HdStMaterialXShaderGen<Base>::_EmitDataStructsAndFunctionDefinitions(
         Base::emitTransmissionRender(mxContext, mxStage);
     }
     if (shadowing) {
+        // Use the correct target and extension for each shader generator
+        const std::string& target = Base::getTarget();
+        std::string ext = (target == mx::MslShaderGenerator::TARGET) ? ".mtl" : ".glsl";
         mx::ShaderGenerator::emitLibraryInclude(
-            "pbrlib/" + mx::GlslShaderGenerator::TARGET
-            + "/lib/mx_shadow.glsl", mxContext, mxStage);
+            "pbrlib/" + target + "/lib/mx_shadow" + ext, mxContext, mxStage);
     }
 
     // Emit directional albedo table code.
     if (mxContext.getOptions().hwDirectionalAlbedoMethod ==
             mx::HwDirectionalAlbedoMethod::DIRECTIONAL_ALBEDO_TABLE ||
         mxContext.getOptions().hwWriteAlbedoTable) {
+        const std::string& target = Base::getTarget();
+        std::string ext = (target == mx::MslShaderGenerator::TARGET) ? ".mtl" : ".glsl";
         mx::ShaderGenerator::emitLibraryInclude(
-            "pbrlib/" + mx::GlslShaderGenerator::TARGET
-            + "/lib/mx_table.glsl", mxContext, mxStage);
+            "pbrlib/" + target + "/lib/mx_table" + ext, mxContext, mxStage);
         Base::emitLineBreak(mxStage);
     }
 
     // Set the include file to use for uv transformations,
     // depending on the vertical flip flag.
+    const std::string& uvTarget = Base::getTarget();
+    std::string uvExt = (uvTarget == mx::MslShaderGenerator::TARGET) ? ".mtl" : ".glsl";
     if (mxContext.getOptions().fileTextureVerticalFlip) {
         (*tokenSubstitutions)[mx::ShaderGenerator::T_FILE_TRANSFORM_UV] =
-            "mx_transform_uv_vflip.glsl";
+            "mx_transform_uv_vflip" + uvExt;
     }
     else {
         (*tokenSubstitutions)[mx::ShaderGenerator::T_FILE_TRANSFORM_UV] =
-            "mx_transform_uv.glsl";
+            "mx_transform_uv" + uvExt;
     }
 
     // Emit uv transform code globally if needed.
@@ -1312,12 +1333,29 @@ HdStMaterialXShaderGenMsl::_EmitMxFunctions(
     mx::GenContext& mxContext,
     mx::ShaderStage& mxStage) const
 {
+    // Use MSL math library - OpenUSD uses mx_math.metal but SwiftUSD MaterialX
+    // library uses .mtl extension for Metal files
     mx::ShaderGenerator::emitLibraryInclude(
         "stdlib/" + mx::MslShaderGenerator::TARGET
-        + "/lib/mx_math.metal", mxContext, mxStage);
+        + "/lib/mx_math.mtl", mxContext, mxStage);
+    // Use GLSL microfacet library - MetalizeGeneratedShader will convert to Metal
     mx::ShaderGenerator::emitLibraryInclude(
         "pbrlib/" + mx::GlslShaderGenerator::TARGET
         + "/lib/mx_microfacet.glsl", mxContext, mxStage);
+
+    // Emit closure type definitions (BSDF, EDF, surfaceshader, volumeshader)
+    // These are defined in MslSyntax but emitTypeDefinitions doesn't always emit them
+    // when they're used via GLSL code paths. We emit them here to ensure availability.
+    emitComment("Closure type definitions for PBR shaders", mxStage);
+    emitLine("struct BSDF { float3 response; float3 throughput; }", mxStage);
+    emitLine("inline BSDF MakeBSDF(float3 r, float3 t) { BSDF b; b.response = r; b.throughput = t; return b; }", mxStage);
+    emitLine("#define EDF float3", mxStage, false);
+    emitLine("struct surfaceshader { float3 color; float3 transparency; }", mxStage);
+    emitLine("inline surfaceshader MakeSurfaceShader(float3 c, float3 t) { surfaceshader s; s.color = c; s.transparency = t; return s; }", mxStage);
+    emitLine("struct volumeshader { float3 color; float3 transparency; }", mxStage);
+    emitLine("inline volumeshader MakeVolumeShader(float3 c, float3 t) { volumeshader v; v.color = c; v.transparency = t; return v; }", mxStage);
+    emitLineBreak(mxStage);
+
     _EmitConstantsUniformsAndTypeDefs(
         mxContext, mxStage,_syntax->getConstantQualifier());
 
@@ -1326,21 +1364,26 @@ HdStMaterialXShaderGenMsl::_EmitMxFunctions(
     // to the appropriate HdGetSampler function.
     if (!_bindlessTexturesEnabled) {
 
+        // Emit cubemap version of mx_latlong_map_lookup for dome light environment maps
+        // Dome lights use texturecube, so we need the MetalTextureCube overload
+        emitString(MxHdLatLongLookupCubemapMsl, mxStage);
+
         // Define mappings for the DomeLight Textures
+        // Use MakeMetalTextureCube since dome lights are cubemaps (texturecube<float>)
         emitLine("#ifdef HD_HAS_domeLightIrradiance", mxStage, false);
         emitLine("#define u_envRadiance "
-                "MetalTexture{HdGetSampler_domeLightPrefilter(), "
-                "samplerBind_domeLightPrefilter} ", mxStage, false);
+                "MakeMetalTextureCube(HdGetSampler_domeLightPrefilter(), "
+                "samplerBind_domeLightPrefilter) ", mxStage, false);
         emitLine("#define u_envIrradiance "
-                "MetalTexture{HdGetSampler_domeLightIrradiance(), "
-                "samplerBind_domeLightIrradiance} ", mxStage, false);
+                "MakeMetalTextureCube(HdGetSampler_domeLightIrradiance(), "
+                "samplerBind_domeLightIrradiance) ", mxStage, false);
         emitLine("#else", mxStage, false);
         emitLine("#define u_envRadiance "
-                "MetalTexture{HdGetSampler_domeLightFallback(), "
-                "samplerBind_domeLightFallback}", mxStage, false);
+                "MakeMetalTextureCube(HdGetSampler_domeLightFallback(), "
+                "samplerBind_domeLightFallback)", mxStage, false);
         emitLine("#define u_envIrradiance "
-                "MetalTexture{HdGetSampler_domeLightFallback(), "
-                "samplerBind_domeLightFallback}", mxStage, false);
+                "MakeMetalTextureCube(HdGetSampler_domeLightFallback(), "
+                "samplerBind_domeLightFallback)", mxStage, false);
         emitLine("#endif", mxStage, false);
         emitLineBreak(mxStage);
 

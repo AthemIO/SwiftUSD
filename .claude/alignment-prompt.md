@@ -40,50 +40,90 @@ You have FULL READ/WRITE access to these three directories:
 ## Wabiverse Conventions
 Reference: LynrAI/SwiftUSD@77abfccf (style guide for Swift wrapper patterns)
 
-## Previous Progress (Resume Mode)
-The following progress was made in a previous session:
-```json
-{
-  "targetVersion": "25.11",
-  "sourceVersion": "25.11",
-  "status": "in_progress",
-  "startedAt": "2025-12-01T00:00:00Z",
-  "phases": {
-    "metaversekit_update": "skipped",
-    "changelog_analysis": "completed",
-    "module_processing": "in_progress",
-    "build_iteration": "pending",
-    "final_validation": "pending"
-  },
-  "completedModules": [
-    "Tf",
-    "Usd",
-    "Sdr",
-    "SdrOsl",
-    "HdSt",
-    "UsdShade"
-  ],
-  "blockedModules": [],
-  "buildIterations": 0,
-  "lastError": "Swift toolchain/SDK version mismatch on development machine - changes are syntactically correct but cannot verify build",
-  "completedActions": [
-    "Removed TfTemplateString (removed in 25.11)",
-    "Removed UsdCrateInfo (moved to Sdf in 25.11)",
-    "Removed UsdZipFile (moved to Sdf in 25.11)",
-    "Removed Ndr module from Package.swift (merged into Sdr in 25.08)",
-    "Updated Ndr includes to Sdr includes in SdrOsl, HdSt, UsdShade",
-    "Updated NDR_REGISTER_PARSER_PLUGIN to SDR_REGISTER_PARSER_PLUGIN",
-    "Removed templateString.h from Tf umbrella header"
-  ],
-  "pendingActions": [
-    "Verify build passes once toolchain is configured correctly",
-    "Update ThirdParty renderman plugins Ndr references (not in Swift build)",
-    "Final version bump in Pixar.swift"
-  ]
-}
-```
+## READ-BEFORE-MODIFY PROTOCOL (MANDATORY)
 
-Continue from where you left off. Check which phases are completed and proceed with the next pending phase.
+**CRITICAL RULE**: Before modifying ANY C++ file in SwiftUSD, you MUST first read the corresponding file in OpenUSD at `/Users/jonathanpeterson/dev/OpenUSD`.
+
+### Required Workflow
+For EVERY C++ source file modification:
+
+1. **READ OpenUSD FIRST**
+   ```
+   Before editing: Sources/Tf/token.cpp
+   First read:     /Users/jonathanpeterson/dev/OpenUSD/pxr/base/tf/token.cpp
+   ```
+
+2. **COMPARE before changing**
+   - What does OpenUSD have?
+   - What does SwiftUSD currently have?
+   - What specific lines need to change?
+
+3. **APPLY only verified changes**
+   - Only add code that exists in OpenUSD
+   - Only remove code that's removed in OpenUSD
+   - Match function signatures exactly
+
+### Module Path Mapping
+| SwiftUSD Sources/ | OpenUSD pxr/ |
+|-------------------|--------------|
+| Arch/ | base/arch/ |
+| Tf/ | base/tf/ |
+| Gf/ | base/gf/ |
+| Vt/ | base/vt/ |
+| Work/ | base/work/ |
+| Plug/ | base/plug/ |
+| Trace/ | base/trace/ |
+| Js/ | base/js/ |
+| Ts/ | base/ts/ |
+| Ar/ | usd/ar/ |
+| Sdf/ | usd/sdf/ |
+| Pcp/ | usd/pcp/ |
+| Usd/ | usd/usd/ |
+| Ndr/ | usd/ndr/ |
+| Sdr/ | usd/sdr/ |
+| UsdGeom/ | usd/usdGeom/ |
+| UsdShade/ | usd/usdShade/ |
+| UsdLux/ | usd/usdLux/ |
+| UsdSkel/ | usd/usdSkel/ |
+| UsdVol/ | usd/usdVol/ |
+| UsdMedia/ | usd/usdMedia/ |
+| UsdRender/ | usd/usdRender/ |
+| UsdPhysics/ | usd/usdPhysics/ |
+| UsdProc/ | usd/usdProc/ |
+| UsdUI/ | usd/usdUI/ |
+| UsdUtils/ | usd/usdUtils/ |
+| UsdMtlx/ | usd/usdMtlx/ |
+| Hd/ | imaging/hd/ |
+| HdSt/ | imaging/hdSt/ |
+| Hgi/ | imaging/hgi/ |
+| HgiMetal/ | imaging/hgiMetal/ |
+| HgiGL/ | imaging/hgiGL/ |
+| Hdx/ | imaging/hdx/ |
+| Glf/ | imaging/glf/ |
+| Hio/ | imaging/hio/ |
+| CameraUtil/ | imaging/cameraUtil/ |
+| GeomUtil/ | imaging/geomUtil/ |
+| PxOsd/ | imaging/pxOsd/ |
+| UsdImaging/ | usdImaging/usdImaging/ |
+| UsdImagingGL/ | usdImaging/usdImagingGL/ |
+
+### Verification Checklist (apply to EACH C++ file edit)
+- [ ] Read the OpenUSD version of this file FIRST
+- [ ] Confirmed the change aligns with OpenUSD
+
+### EXCEPTIONS (files that DON'T need OpenUSD verification)
+- Swift wrapper files in `Sources/PixarUSD/` (Swift-only)
+- `Package.swift` (Swift package manager)
+- Files in `.claude/` (agent configuration)
+- Files explicitly marked as SwiftUSD-specific in CLAUDE.md
+
+### VIOLATION = STOP
+If you're about to modify a C++ file and haven't read the OpenUSD counterpart:
+**STOP. Read the OpenUSD file first. Then proceed.**
+
+---
+
+
 
 ## Your Mission
 Execute the alignment workflow autonomously, following these phases IN ORDER:
@@ -123,6 +163,11 @@ SwiftUSD must NOT contain any code that doesn't exist in OpenUSD 25.11.
    - ... up to UsdImaging
 
 3. For each module, apply changes IN THIS ORDER:
+
+   **Step 0: READ OPENUSD FIRST (REQUIRED)**
+   - For EACH C++ file you plan to modify, FIRST read the OpenUSD counterpart
+   - Example: Before editing `Sources/Tf/token.cpp`, first read `/Users/jonathanpeterson/dev/OpenUSD/pxr/base/tf/token.cpp`
+   - This is NOT optional - skip this step and you risk introducing drift
 
    **Step A: REMOVE deprecated/removed code FIRST**
    - Delete entire module directories if module was removed (e.g., Ndr/)
@@ -200,6 +245,14 @@ Use this JSON structure:
 - Follow wabiverse Swift wrapper patterns
 - If stuck on same error 3x, mark module as blocked and continue
 - For MetaverseKit updates, download official source releases
+
+## Development Environment (DO NOT CHANGE)
+The following toolchain is correctly configured and working:
+- **Xcode 16.4** - This is the correct version. DO NOT suggest changing Xcode versions.
+- **Swift 6.1** - Included with Xcode 16.4
+- **macOS Sequoia** - Current development platform
+
+If you encounter build errors, the issue is NOT the Xcode/Swift version. Focus on fixing the code.
 
 ## Git Commits & Push
 After completing each phase, commit and push your changes:

@@ -23,16 +23,18 @@ extension UsdView
 
     let stage = Usd.Stage.createNew("\(documentsDirPath())/HelloWorldExample", ext: .usd)
 
+    // Add dome light with HDRI for environment lighting
     let domeLight = UsdLux.DomeLight.define(stage, path: "/World/DefaultDomeLight")
-
     if let hdxResources = Bundle.hdx?.resourcePath {
       let tex = "\(hdxResources)/textures/StinsonBeach.hdr"
-
       if FileManager.default.fileExists(atPath: tex) {
         let hdrAsset = Sdf.AssetPath(tex)
         domeLight.createTextureFileAttr().set(hdrAsset)
       }
     }
+
+    // Add a distant light for direct illumination
+    _ = UsdLux.DistantLight.define(stage, path: "/World/DistantLight")
 
     // Use convenience methods from @Xformable macro instead of addXformOp with type enum
     // (UsdGeomXformOp.Type enum doesn't export named values to Swift)
@@ -40,15 +42,15 @@ extension UsdView
     xform.addTranslateOp().set(GfVec3d(0.0, 0.0, 0.0))
     xform.addScaleOp().set(GfVec3f(1, 1, 1))
 
-    // Create a red sphere on the left
+    // Create an orange metallic sphere on the left (using MaterialX)
     let sphere = UsdGeom.Sphere.define(stage, path: "/Geometry/Sphere")
     sphere.addTranslateOp().set(GfVec3d(-1.5, 0.0, 0.0))
-    UsdShade.MaterialBindingAPI.apply(sphere).bind(matDef(stage, color: .red))
+    UsdShade.MaterialBindingAPI.apply(sphere).bind(matDefMtlxMetallic(stage, color: .orange, roughness: 0.15))
 
-    // Create a blue cube on the right
+    // Create a blue cube with subsurface scattering on the right (using MaterialX)
     let cube = UsdGeom.Cube.define(stage, path: "/Geometry/Cube")
     cube.addTranslateOp().set(GfVec3d(1.5, 0.0, 0.0))
-    UsdShade.MaterialBindingAPI.apply(cube).bind(matDef(stage, color: .blue))
+    UsdShade.MaterialBindingAPI.apply(cube).bind(matDefMtlxSubsurface(stage, color: .blue, subsurfaceScale: 0.5))
 
     /* Iterate the stage and print out the path to each prim. */
 

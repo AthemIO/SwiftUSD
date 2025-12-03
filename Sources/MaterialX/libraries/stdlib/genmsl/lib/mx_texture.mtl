@@ -1,0 +1,60 @@
+#ifndef MX_TEXTURE_MTL
+#define MX_TEXTURE_MTL
+
+struct MetalTexture
+{
+    texture2d<float> tex;
+    sampler s;
+
+    // needed for Storm
+    int get_width() { return tex.get_width(); }
+    int get_height() { return tex.get_height(); }
+    int get_num_mip_levels() { return tex.get_num_mip_levels(); }
+};
+
+// Cube map texture support for environment lighting
+struct MetalTextureCube
+{
+    texturecube<float> tex;
+    sampler s;
+
+    // needed for Storm
+    int get_num_mip_levels() { return tex.get_num_mip_levels(); }
+};
+
+// Helper function to create MetalTextureCube (Metal doesn't allow aggregate initialization for texturecube)
+inline struct MetalTextureCube MakeMetalTextureCube(texturecube<float> tex, sampler s)
+{
+    struct MetalTextureCube result;
+    result.tex = tex;
+    result.s = s;
+    return result;
+}
+
+inline float4 texture(struct MetalTexture mtlTex, float2 uv)
+{
+    return mtlTex.tex.sample(mtlTex.s, uv);
+}
+
+inline float4 textureLod(struct MetalTexture mtlTex, float2 uv, float lod)
+{
+    return mtlTex.tex.sample(mtlTex.s, uv, level(lod));
+}
+
+// Cube map texture sampling
+inline float4 textureLod(struct MetalTextureCube mtlTex, float3 dir, float lod)
+{
+    return mtlTex.tex.sample(mtlTex.s, dir, level(lod));
+}
+
+inline int2 textureSize(struct MetalTexture mtlTex, int mipLevel)
+{
+    return int2(mtlTex.tex.get_width(), mtlTex.tex.get_height());
+}
+
+inline int textureQueryLevels(struct MetalTextureCube mtlTex)
+{
+    return mtlTex.get_num_mip_levels();
+}
+
+#endif // MX_TEXTURE_MTL

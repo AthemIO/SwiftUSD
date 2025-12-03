@@ -110,6 +110,10 @@ let package = Package(
       targets: ["SdrOsl"]
     ),
     .library(
+      name: "SdrGlslfx",
+      targets: ["SdrGlslfx"]
+    ),
+    .library(
       name: "UsdAbc",
       targets: ["UsdAbc"]
     ),
@@ -317,6 +321,12 @@ let package = Package(
         "source/MaterialXRender/External",
       ],
       sources: ["source"],
+      resources: [
+        /* MaterialX standard library - shader templates, node definitions, etc.
+         * Using .copy() to preserve directory structure and avoid Metal shader compilation
+         * (the .metal files are GLSL-like templates, not compilable Metal shaders) */
+        .copy("libraries")
+      ],
       publicHeadersPath: "include",
       cxxSettings: [
         .define("GL_SILENCE_DEPRECATION", to: "1"),
@@ -864,6 +874,31 @@ let package = Package(
         .define("MFB_PACKAGE_MODULE", to: "SdrOsl"),
         .define("SDROSL_EXPORTS", to: "1"),
         .define("PXR_OSL_SUPPORT_ENABLED", to: "0"),
+        .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
+        .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
+        .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
+      ]
+    ),
+
+    .target(
+      name: "SdrGlslfx",
+      dependencies: [
+        .target(name: "Arch"),
+        .target(name: "Tf"),
+        .target(name: "Gf"),
+        .target(name: "Vt"),
+        .target(name: "Ar"),
+        .target(name: "Sdr"),
+        .target(name: "Hio"),
+      ],
+      resources: [
+        .process("Resources")
+      ],
+      cxxSettings: [
+        .define("MFB_PACKAGE_NAME", to: "SdrGlslfx"),
+        .define("MFB_ALT_PACKAGE_NAME", to: "SdrGlslfx"),
+        .define("MFB_PACKAGE_MODULE", to: "SdrGlslfx"),
+        .define("SDRGLSLFX_EXPORTS", to: "1"),
         .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
         .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
         .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
@@ -1893,6 +1928,7 @@ let package = Package(
         .target(name: "Usd"),
         .target(name: "Sdr"),
         .target(name: "SdrOsl"),
+        .target(name: "SdrGlslfx"),
         .target(name: "UsdGeom"),
         .target(name: "UsdShade"),
         .target(name: "UsdLux"),

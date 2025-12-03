@@ -39,7 +39,7 @@ MATERIALX_NAMESPACE_BEGIN
 
 const string MslShaderGenerator::TARGET = "genmsl";
 const string MslShaderGenerator::VERSION = "2.3";
-const string MslSamplingIncludeFilename = "stdlib/genmsl/lib/mx_sampling.metal";
+const string MslSamplingIncludeFilename = "stdlib/genmsl/lib/mx_sampling.mtl";
 
 //
 // MslShaderGenerator methods
@@ -616,15 +616,15 @@ void MslShaderGenerator::emitSpecularEnvironment(GenContext& context, ShaderStag
     int specularMethod = context.getOptions().hwSpecularEnvironmentMethod;
     if (specularMethod == SPECULAR_ENVIRONMENT_FIS)
     {
-        emitLibraryInclude("pbrlib/genglsl/lib/mx_environment_fis.glsl", context, stage);
+        emitLibraryInclude("pbrlib/genmsl/lib/mx_environment_fis.mtl", context, stage);
     }
     else if (specularMethod == SPECULAR_ENVIRONMENT_PREFILTER)
     {
-        emitLibraryInclude("pbrlib/genglsl/lib/mx_environment_prefilter.glsl", context, stage);
+        emitLibraryInclude("pbrlib/genmsl/lib/mx_environment_prefilter.mtl", context, stage);
     }
     else if (specularMethod == SPECULAR_ENVIRONMENT_NONE)
     {
-        emitLibraryInclude("pbrlib/genglsl/lib/mx_environment_none.glsl", context, stage);
+        emitLibraryInclude("pbrlib/genmsl/lib/mx_environment_none.mtl", context, stage);
     }
     else
     {
@@ -638,11 +638,11 @@ void MslShaderGenerator::emitTransmissionRender(GenContext& context, ShaderStage
     int transmissionMethod = context.getOptions().hwTransmissionRenderMethod;
     if (transmissionMethod == TRANSMISSION_REFRACTION)
     {
-        emitLibraryInclude("pbrlib/genglsl/lib/mx_transmission_refract.glsl", context, stage);
+        emitLibraryInclude("pbrlib/genmsl/lib/mx_transmission_refract.mtl", context, stage);
     }
     else if (transmissionMethod == TRANSMISSION_OPACITY)
     {
-        emitLibraryInclude("pbrlib/genglsl/lib/mx_transmission_opacity.glsl", context, stage);
+        emitLibraryInclude("pbrlib/genmsl/lib/mx_transmission_opacity.mtl", context, stage);
     }
     else
     {
@@ -717,7 +717,7 @@ void MslShaderGenerator::emitConstantBufferDeclarations(GenContext& context,
 
 void MslShaderGenerator::emitMetalTextureClass(GenContext& context, ShaderStage& stage) const
 {
-    emitLibraryInclude("stdlib/genmsl/lib/mx_texture.metal", context, stage);
+    emitLibraryInclude("stdlib/genmsl/lib/mx_texture.mtl", context, stage);
 }
 
 void MslShaderGenerator::emitLightData(GenContext& context, ShaderStage& stage) const
@@ -852,7 +852,7 @@ bool MslShaderGenerator::requiresLighting(const ShaderGraph& graph) const
 
 void MslShaderGenerator::emitMathMatrixScalarMathOperators(GenContext& context, ShaderStage& stage) const
 {
-    emitLibraryInclude("stdlib/genmsl/lib/mx_matscalaroperators.metal", context, stage);
+    emitLibraryInclude("stdlib/genmsl/lib/mx_matscalaroperators.mtl", context, stage);
 }
 
 void MslShaderGenerator::emitPixelStage(const ShaderGraph& graph, GenContext& context, ShaderStage& stage) const
@@ -922,7 +922,7 @@ void MslShaderGenerator::emitPixelStage(const ShaderGraph& graph, GenContext& co
         emitLine("{}", stage, false);
 
         // Add common math functions
-        emitLibraryInclude("stdlib/genmsl/lib/mx_math.metal", context, stage);
+        emitLibraryInclude("stdlib/genmsl/lib/mx_math.mtl", context, stage);
         emitLineBreak(stage);
 
         if (lighting)

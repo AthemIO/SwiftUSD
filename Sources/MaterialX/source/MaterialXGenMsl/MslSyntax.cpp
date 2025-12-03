@@ -261,10 +261,11 @@ MslSyntax::MslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
         std::make_shared<AggregateTypeSyntax>(
             this,
             "BSDF",
-            "BSDF{float3(0.0),float3(1.0)}",
+            "MakeBSDF(float3(0.0),float3(1.0))",
             EMPTY_STRING,
             EMPTY_STRING,
-            "struct BSDF { float3 response; float3 throughput; };"));
+            "struct BSDF { float3 response; float3 throughput; };\n"
+            "inline BSDF MakeBSDF(float3 r, float3 t) { BSDF b; b.response = r; b.throughput = t; return b; }"));
 
     registerTypeSyntax(
         Type::EDF,
@@ -281,7 +282,7 @@ MslSyntax::MslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
         std::make_shared<AggregateTypeSyntax>(
             this,
             "BSDF",
-            "BSDF{float3(0.0),float3(1.0)}",
+            "MakeBSDF(float3(0.0),float3(1.0))",
             EMPTY_STRING));
 
     registerTypeSyntax(
@@ -289,20 +290,22 @@ MslSyntax::MslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
         std::make_shared<AggregateTypeSyntax>(
             this,
             "surfaceshader",
-            "surfaceshader{float3(0.0),float3(0.0)}",
+            "MakeSurfaceShader(float3(0.0),float3(0.0))",
             EMPTY_STRING,
             EMPTY_STRING,
-            "struct surfaceshader { float3 color; float3 transparency; };"));
+            "struct surfaceshader { float3 color; float3 transparency; };\n"
+            "inline surfaceshader MakeSurfaceShader(float3 c, float3 t) { surfaceshader s; s.color = c; s.transparency = t; return s; }"));
 
     registerTypeSyntax(
         Type::VOLUMESHADER,
         std::make_shared<AggregateTypeSyntax>(
             this,
             "volumeshader",
-            "volumeshader{float3(0.0),float3(0.0)}",
+            "MakeVolumeShader(float3(0.0),float3(0.0))",
             EMPTY_STRING,
             EMPTY_STRING,
-            "struct volumeshader { float3 color; float3 transparency; };"));
+            "struct volumeshader { float3 color; float3 transparency; };\n"
+            "inline volumeshader MakeVolumeShader(float3 c, float3 t) { volumeshader v; v.color = c; v.transparency = t; return v; }"));
 
     registerTypeSyntax(
         Type::DISPLACEMENTSHADER,

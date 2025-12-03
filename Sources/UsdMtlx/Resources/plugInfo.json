@@ -14,11 +14,11 @@
             "target": "usd"
           },
           "UsdMtlxDiscoveryPlugin": {
-            "bases": ["NdrDiscoveryPlugin"],
+            "bases": ["SdrDiscoveryPlugin"],
             "displayName": "MaterialX Discovery"
           },
           "UsdMtlxParserPlugin": {
-            "bases": ["NdrParserPlugin"],
+            "bases": ["SdrParserPlugin"],
             "displayName": "MaterialX Node Parser"
           }
         }

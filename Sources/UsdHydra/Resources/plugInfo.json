@@ -4,7 +4,7 @@
       "Info": {
         "Types": {
           "UsdHydraDiscoveryPlugin": {
-            "bases": ["NdrDiscoveryPlugin"],
+            "bases": ["SdrDiscoveryPlugin"],
             "displayName": "Discovery plugin for deprecated hydra shaders."
           },
           "UsdHydraGenerativeProceduralAPI": {

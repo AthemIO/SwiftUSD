@@ -1,0 +1,17 @@
+#ifndef MX_ENVIRONMENT_NONE_MTL
+#define MX_ENVIRONMENT_NONE_MTL
+
+// Note: mx_microfacet_specular.mtl is included early by HdSt's _EmitMxFunctions
+// so FresnelData is already defined when this file is included.
+
+vec3 mx_environment_radiance(vec3 N, vec3 V, vec3 X, vec2 roughness, int distribution, FresnelData fd)
+{
+    return vec3(0.0);
+}
+
+vec3 mx_environment_irradiance(vec3 N)
+{
+    return vec3(0.0);
+}
+
+#endif // MX_ENVIRONMENT_NONE_MTL

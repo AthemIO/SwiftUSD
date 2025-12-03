@@ -1,0 +1,19 @@
+{
+  "Plugins": [
+    {
+      "Type": "library",
+      "Name": "SdrGlslfx",
+      "Root": ".",
+      "LibraryPath": "",
+      "ResourcePath": ".",
+      "Info": {
+        "Types": {
+          "SdrGlslfxParserPlugin": {
+            "bases": ["SdrParserPlugin"],
+            "displayName": "Glslfx Node Parser"
+          }
+        }
+      }
+    }
+  ]
+}

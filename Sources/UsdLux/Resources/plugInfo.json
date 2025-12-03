@@ -179,10 +179,10 @@
             "schemaKind": "singleApplyAPI"
           },
           "UsdLux_DiscoveryPlugin": {
-            "bases": ["NdrDiscoveryPlugin"]
+            "bases": ["SdrDiscoveryPlugin"]
           },
           "UsdLux_LightDefParserPlugin": {
-            "bases": ["NdrParserPlugin"]
+            "bases": ["SdrParserPlugin"]
           }
         }
       },

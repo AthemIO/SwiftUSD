@@ -1,0 +1,12 @@
+#ifndef MX_TRANSMISSION_OPACITY_MTL
+#define MX_TRANSMISSION_OPACITY_MTL
+
+// Note: mx_microfacet_specular.mtl is included early by HdSt's _EmitMxFunctions
+// so FresnelData is already defined when this file is included.
+
+vec3 mx_surface_transmission(vec3 N, vec3 V, vec3 X, vec2 alpha, int distribution, FresnelData fd, vec3 tint)
+{
+    return tint;
+}
+
+#endif // MX_TRANSMISSION_OPACITY_MTL

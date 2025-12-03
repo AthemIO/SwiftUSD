@@ -1,0 +1,7 @@
+#include "lib/mx_closure_type.mtl"
+
+void mx_layer_vdf(ClosureData closureData, BSDF top, BSDF base, thread BSDF& result)
+{
+    result.response = top.response + base.response;
+    result.throughput = top.throughput + base.throughput;
+}

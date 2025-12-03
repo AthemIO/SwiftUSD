@@ -110,7 +110,6 @@
 #include <Hd/pluginRenderDelegateUniqueHandle.h>
 #include <Hd/points.h>
 #include <Hd/prefixingSceneIndex.h>
-#include <Hd/primDataSourceOverlayCache.h>
 #include <Hd/primGather.h>
 #include <Hd/primOriginSchema.h>
 #include <Hd/primTypeIndex.h>

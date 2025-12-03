@@ -23,6 +23,10 @@ public extension Bundle
   #endif
 
   /**
+   * Where ``MaterialX`` application bundle resources are located. */
+  static let materialX = Bundle(path: "\(pxrRoot)/SwiftUSD_MaterialX\(ext)")
+
+  /**
    * Where ``Ar`` application bundle resources are located. */
   static let ar = Bundle(path: "\(pxrRoot)/SwiftUSD_Ar\(ext)")
 
@@ -61,6 +65,10 @@ public extension Bundle
   /**
    * Where ``SdrOsl`` application bundle resources are located. */
   static let sdrOsl = Bundle(path: "\(pxrRoot)/SwiftUSD_SdrOsl\(ext)")
+
+  /**
+   * Where ``SdrGlslfx`` application bundle resources are located. */
+  static let sdrGlslfx = Bundle(path: "\(pxrRoot)/SwiftUSD_SdrGlslfx\(ext)")
 
   /**
    * Where ``UsdAbc`` application bundle resources are located. */

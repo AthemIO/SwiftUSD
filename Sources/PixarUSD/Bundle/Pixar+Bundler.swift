@@ -53,6 +53,18 @@ public extension Pixar
 
       /* 3. registers all plugins discovered in any plugPaths. */
       Pixar.PlugRegistry.GetInstance().RegisterPlugins(plugPaths)
+
+      /* 4. Set up MaterialX standard library search path.
+       *    UsdMtlx and HdMtlx look for MaterialX libraries via the
+       *    PXR_MTLX_STDLIB_SEARCH_PATHS environment variable. */
+      if let materialXBundle = Bundle.materialX,
+         let materialXLibraries = materialXBundle.path(forResource: "libraries", ofType: nil)
+      {
+        #if DEBUG_PIXAR_BUNDLE
+          Msg.logger.log(level: .info, "Setting MaterialX stdlib path -> \(materialXLibraries)")
+        #endif /* DEBUG_PIXAR_BUNDLE */
+        setenv("PXR_MTLX_STDLIB_SEARCH_PATHS", materialXLibraries, 1)
+      }
     }
   }
 }

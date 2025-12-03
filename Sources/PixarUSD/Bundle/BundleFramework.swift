@@ -24,6 +24,7 @@ public enum BundleFramework: CaseIterable
   case usdLux
   case usdHydra
   case sdrOsl
+  case sdrGlslfx
   case usdAbc
   case usdDraco
   case usdMedia
@@ -61,6 +62,7 @@ public enum BundleFramework: CaseIterable
       case .usdLux: Bundle.usdLux?.resourcePath
       case .usdHydra: Bundle.usdHydra?.resourcePath
       case .sdrOsl: Bundle.sdrOsl?.resourcePath
+      case .sdrGlslfx: Bundle.sdrGlslfx?.resourcePath
       case .usdAbc: Bundle.usdAbc?.resourcePath
       case .usdDraco: Bundle.usdDraco?.resourcePath
       case .usdMedia: Bundle.usdMedia?.resourcePath

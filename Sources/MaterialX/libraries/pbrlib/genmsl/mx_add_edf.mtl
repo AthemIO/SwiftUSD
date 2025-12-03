@@ -1,0 +1,6 @@
+#include "lib/mx_closure_type.mtl"
+
+void mx_add_edf(ClosureData closureData, EDF in1, EDF in2, thread EDF& result)
+{
+    result = in1 + in2;
+}

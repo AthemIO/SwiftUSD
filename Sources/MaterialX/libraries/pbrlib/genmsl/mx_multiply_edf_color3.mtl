@@ -1,0 +1,6 @@
+#include "lib/mx_closure_type.mtl"
+
+void mx_multiply_edf_color3(ClosureData closureData, EDF in1, vec3 in2, thread EDF& result)
+{
+    result = in1 * in2;
+}
