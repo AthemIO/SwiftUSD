@@ -419,6 +419,14 @@ Use this JSON structure:
 - If stuck on same error 3x, mark module as blocked and continue
 - For MetaverseKit updates, download official source releases
 
+## Development Environment (DO NOT CHANGE)
+The following toolchain is correctly configured and working:
+- **Xcode 16.4** - This is the correct version. DO NOT suggest changing Xcode versions.
+- **Swift 6.1** - Included with Xcode 16.4
+- **macOS Sequoia** - Current development platform
+
+If you encounter build errors, the issue is NOT the Xcode/Swift version. Focus on fixing the code.
+
 ## Git Commits & Push
 After completing each phase, commit and push your changes:
 
