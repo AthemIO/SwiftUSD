@@ -44,10 +44,55 @@ extension UsdView
     xform.addTranslateOp().set(GfVec3d(0.0, 0.0, 0.0))
     xform.addScaleOp().set(GfVec3f(1, 1, 1))
 
-    // Create an orange metallic sphere on the left (using MaterialX)
-    let sphere = UsdGeom.Sphere.define(stage, path: "/Geometry/Sphere")
-    sphere.addTranslateOp().set(GfVec3d(-1.5, 0.0, 0.0))
-    UsdShade.MaterialBindingAPI.apply(sphere).bind(matDefMtlxMetallic(stage, color: .orange, roughness: 0.15))
+    // Create a subdivided cube mesh on the left (using OpenSubdiv Catmull-Clark)
+    // This demonstrates OpenSubdiv - a cube becomes smooth/rounded when subdivided
+    let subdividedMesh = UsdGeom.Mesh.define(stage, path: "/Geometry/SubdividedCube")
+    subdividedMesh.addTranslateOp().set(GfVec3d(-1.5, 0.0, 0.0))
+
+    // Define cube vertices (8 corners of a unit cube centered at origin)
+    var points = Vt.Vec3fArray()
+    points.push_back(GfVec3f(-0.5, -0.5, -0.5))  // 0: back-bottom-left
+    points.push_back(GfVec3f( 0.5, -0.5, -0.5))  // 1: back-bottom-right
+    points.push_back(GfVec3f( 0.5,  0.5, -0.5))  // 2: back-top-right
+    points.push_back(GfVec3f(-0.5,  0.5, -0.5))  // 3: back-top-left
+    points.push_back(GfVec3f(-0.5, -0.5,  0.5))  // 4: front-bottom-left
+    points.push_back(GfVec3f( 0.5, -0.5,  0.5))  // 5: front-bottom-right
+    points.push_back(GfVec3f( 0.5,  0.5,  0.5))  // 6: front-top-right
+    points.push_back(GfVec3f(-0.5,  0.5,  0.5))  // 7: front-top-left
+    subdividedMesh.CreatePointsAttr(Vt.Value(points), false)
+
+    // Define 6 quad faces (4 vertices each)
+    var faceVertexCounts = Vt.IntArray()
+    for _ in 0..<6 { faceVertexCounts.push_back(4) }
+    subdividedMesh.CreateFaceVertexCountsAttr(Vt.Value(faceVertexCounts), false)
+
+    // Define face vertex indices (counter-clockwise winding)
+    var faceVertexIndices = Vt.IntArray()
+    // Front face
+    faceVertexIndices.push_back(4); faceVertexIndices.push_back(5)
+    faceVertexIndices.push_back(6); faceVertexIndices.push_back(7)
+    // Back face
+    faceVertexIndices.push_back(1); faceVertexIndices.push_back(0)
+    faceVertexIndices.push_back(3); faceVertexIndices.push_back(2)
+    // Top face
+    faceVertexIndices.push_back(3); faceVertexIndices.push_back(7)
+    faceVertexIndices.push_back(6); faceVertexIndices.push_back(2)
+    // Bottom face
+    faceVertexIndices.push_back(0); faceVertexIndices.push_back(1)
+    faceVertexIndices.push_back(5); faceVertexIndices.push_back(4)
+    // Right face
+    faceVertexIndices.push_back(1); faceVertexIndices.push_back(2)
+    faceVertexIndices.push_back(6); faceVertexIndices.push_back(5)
+    // Left face
+    faceVertexIndices.push_back(0); faceVertexIndices.push_back(4)
+    faceVertexIndices.push_back(7); faceVertexIndices.push_back(3)
+    subdividedMesh.CreateFaceVertexIndicesAttr(Vt.Value(faceVertexIndices), false)
+
+    // Apply Catmull-Clark subdivision (OpenSubdiv)
+    subdividedMesh.CreateSubdivisionSchemeAttr(Vt.Value(Tf.Token("catmullClark")), false)
+
+    // Bind orange metallic material
+    UsdShade.MaterialBindingAPI.apply(subdividedMesh.GetPrim()).bind(matDefMtlxMetallic(stage, color: .orange, roughness: 0.15))
 
     // Create a blue cube with subsurface scattering on the right (using MaterialX)
     let cube = UsdGeom.Cube.define(stage, path: "/Geometry/Cube")

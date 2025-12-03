@@ -15,9 +15,11 @@ import Vt
 
 public typealias VtVec3fArray = Pixar.VtVec3fArray
 public typealias VtFloatArray = Pixar.VtFloatArray
+public typealias VtIntArray = Pixar.VtIntArray
 
 public extension Vt
 {
   typealias Vec3fArray = VtVec3fArray
   typealias FloatArray = VtFloatArray
+  typealias IntArray = VtIntArray
 }
