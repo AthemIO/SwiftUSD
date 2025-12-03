@@ -114,6 +114,7 @@ R"(#if NUM_LIGHTS > 0
 #endif
 )";
 
+// GLSL version for dome light cubemap lookup
 static const std::string MxHdLatLongLookupCubemap =
 R"(
 vec3 mx_latlong_map_lookup(vec3 dir, mat4 transform, float lod, samplerCube envSampler)
@@ -124,10 +125,10 @@ vec3 mx_latlong_map_lookup(vec3 dir, mat4 transform, float lod, samplerCube envS
 
 )";
 
-// Metal version using MetalTextureCube struct
+// Metal version for dome light cubemap lookup
 static const std::string MxHdLatLongLookupCubemapMsl =
 R"(
-vec3 mx_latlong_map_lookup(vec3 dir, float4x4 transform, float lod, MetalTextureCube envSampler)
+vec3 mx_latlong_map_lookup(vec3 dir, float4x4 transform, float lod, MetalTexture envSampler)
 {
     vec3 envDir = normalize((transform * vec4(dir,0.0)).xyz);
     return textureLod(envSampler, envDir, lod).rgb;
@@ -1333,29 +1334,12 @@ HdStMaterialXShaderGenMsl::_EmitMxFunctions(
     mx::GenContext& mxContext,
     mx::ShaderStage& mxStage) const
 {
-    // Use MSL math library - OpenUSD uses mx_math.metal but SwiftUSD MaterialX
-    // library uses .mtl extension for Metal files
     mx::ShaderGenerator::emitLibraryInclude(
         "stdlib/" + mx::MslShaderGenerator::TARGET
         + "/lib/mx_math.mtl", mxContext, mxStage);
-    // Use GLSL microfacet library - MetalizeGeneratedShader will convert to Metal
-    mx::ShaderGenerator::emitLibraryInclude(
-        "pbrlib/" + mx::GlslShaderGenerator::TARGET
-        + "/lib/mx_microfacet.glsl", mxContext, mxStage);
-
-    // Emit closure type definitions (BSDF, EDF, surfaceshader, volumeshader)
-    // These are defined in MslSyntax but emitTypeDefinitions doesn't always emit them
-    // when they're used via GLSL code paths. We emit them here to ensure availability.
-    emitComment("Closure type definitions for PBR shaders", mxStage);
-    emitLine("struct BSDF { float3 response; float3 throughput; }", mxStage);
-    emitLine("inline BSDF MakeBSDF(float3 r, float3 t) { BSDF b; b.response = r; b.throughput = t; return b; }", mxStage);
-    emitLine("#define EDF float3", mxStage, false);
-    emitLine("struct surfaceshader { float3 color; float3 transparency; }", mxStage);
-    emitLine("inline surfaceshader MakeSurfaceShader(float3 c, float3 t) { surfaceshader s; s.color = c; s.transparency = t; return s; }", mxStage);
-    emitLine("struct volumeshader { float3 color; float3 transparency; }", mxStage);
-    emitLine("inline volumeshader MakeVolumeShader(float3 c, float3 t) { volumeshader v; v.color = c; v.transparency = t; return v; }", mxStage);
-    emitLineBreak(mxStage);
-
+    // Note: We don't include mx_microfacet.glsl here for MSL because
+    // the MSL environment files (mx_environment_fis.mtl, etc.) already
+    // include mx_microfacet_specular.mtl which provides these functions.
     _EmitConstantsUniformsAndTypeDefs(
         mxContext, mxStage,_syntax->getConstantQualifier());
 
@@ -1364,26 +1348,21 @@ HdStMaterialXShaderGenMsl::_EmitMxFunctions(
     // to the appropriate HdGetSampler function.
     if (!_bindlessTexturesEnabled) {
 
-        // Emit cubemap version of mx_latlong_map_lookup for dome light environment maps
-        // Dome lights use texturecube, so we need the MetalTextureCube overload
-        emitString(MxHdLatLongLookupCubemapMsl, mxStage);
-
         // Define mappings for the DomeLight Textures
-        // Use MakeMetalTextureCube since dome lights are cubemaps (texturecube<float>)
         emitLine("#ifdef HD_HAS_domeLightIrradiance", mxStage, false);
         emitLine("#define u_envRadiance "
-                "MakeMetalTextureCube(HdGetSampler_domeLightPrefilter(), "
-                "samplerBind_domeLightPrefilter) ", mxStage, false);
+                "MetalTexture{HdGetSampler_domeLightPrefilter(), "
+                "samplerBind_domeLightPrefilter} ", mxStage, false);
         emitLine("#define u_envIrradiance "
-                "MakeMetalTextureCube(HdGetSampler_domeLightIrradiance(), "
-                "samplerBind_domeLightIrradiance) ", mxStage, false);
+                "MetalTexture{HdGetSampler_domeLightIrradiance(), "
+                "samplerBind_domeLightIrradiance} ", mxStage, false);
         emitLine("#else", mxStage, false);
         emitLine("#define u_envRadiance "
-                "MakeMetalTextureCube(HdGetSampler_domeLightFallback(), "
-                "samplerBind_domeLightFallback)", mxStage, false);
+                "MetalTexture{HdGetSampler_domeLightFallback(), "
+                "samplerBind_domeLightFallback}", mxStage, false);
         emitLine("#define u_envIrradiance "
-                "MakeMetalTextureCube(HdGetSampler_domeLightFallback(), "
-                "samplerBind_domeLightFallback)", mxStage, false);
+                "MetalTexture{HdGetSampler_domeLightFallback(), "
+                "samplerBind_domeLightFallback}", mxStage, false);
         emitLine("#endif", mxStage, false);
         emitLineBreak(mxStage);
 
