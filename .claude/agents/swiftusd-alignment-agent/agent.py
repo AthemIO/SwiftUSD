@@ -96,6 +96,92 @@ Take your time. Quality and correctness matter more than speed.
 
 """
 
+# Read-before-modify protocol - ensures OpenUSD verification before any SwiftUSD changes
+READ_BEFORE_MODIFY_PROTOCOL = """## READ-BEFORE-MODIFY PROTOCOL (MANDATORY)
+
+**CRITICAL RULE**: Before modifying ANY C++ file in SwiftUSD, you MUST first read the corresponding file in OpenUSD at `{openusd_path}`.
+
+### Required Workflow
+For EVERY C++ source file modification:
+
+1. **READ OpenUSD FIRST**
+   ```
+   Before editing: Sources/Tf/token.cpp
+   First read:     {openusd_path}/pxr/base/tf/token.cpp
+   ```
+
+2. **COMPARE before changing**
+   - What does OpenUSD have?
+   - What does SwiftUSD currently have?
+   - What specific lines need to change?
+
+3. **APPLY only verified changes**
+   - Only add code that exists in OpenUSD
+   - Only remove code that's removed in OpenUSD
+   - Match function signatures exactly
+
+### Module Path Mapping
+| SwiftUSD Sources/ | OpenUSD pxr/ |
+|-------------------|--------------|
+| Arch/ | base/arch/ |
+| Tf/ | base/tf/ |
+| Gf/ | base/gf/ |
+| Vt/ | base/vt/ |
+| Work/ | base/work/ |
+| Plug/ | base/plug/ |
+| Trace/ | base/trace/ |
+| Js/ | base/js/ |
+| Ts/ | base/ts/ |
+| Ar/ | usd/ar/ |
+| Sdf/ | usd/sdf/ |
+| Pcp/ | usd/pcp/ |
+| Usd/ | usd/usd/ |
+| Ndr/ | usd/ndr/ |
+| Sdr/ | usd/sdr/ |
+| UsdGeom/ | usd/usdGeom/ |
+| UsdShade/ | usd/usdShade/ |
+| UsdLux/ | usd/usdLux/ |
+| UsdSkel/ | usd/usdSkel/ |
+| UsdVol/ | usd/usdVol/ |
+| UsdMedia/ | usd/usdMedia/ |
+| UsdRender/ | usd/usdRender/ |
+| UsdPhysics/ | usd/usdPhysics/ |
+| UsdProc/ | usd/usdProc/ |
+| UsdUI/ | usd/usdUI/ |
+| UsdUtils/ | usd/usdUtils/ |
+| UsdMtlx/ | usd/usdMtlx/ |
+| Hd/ | imaging/hd/ |
+| HdSt/ | imaging/hdSt/ |
+| Hgi/ | imaging/hgi/ |
+| HgiMetal/ | imaging/hgiMetal/ |
+| HgiGL/ | imaging/hgiGL/ |
+| Hdx/ | imaging/hdx/ |
+| Glf/ | imaging/glf/ |
+| Hio/ | imaging/hio/ |
+| CameraUtil/ | imaging/cameraUtil/ |
+| GeomUtil/ | imaging/geomUtil/ |
+| PxOsd/ | imaging/pxOsd/ |
+| UsdImaging/ | usdImaging/usdImaging/ |
+| UsdImagingGL/ | usdImaging/usdImagingGL/ |
+
+### Verification Checklist (apply to EACH C++ file edit)
+- [ ] Read the OpenUSD version of this file FIRST
+- [ ] Confirmed the change aligns with OpenUSD
+
+### EXCEPTIONS (files that DON'T need OpenUSD verification)
+- Swift wrapper files in `Sources/PixarUSD/` (Swift-only)
+- `Package.swift` (Swift package manager)
+- Files in `.claude/` (agent configuration)
+- Files explicitly marked as SwiftUSD-specific in CLAUDE.md
+
+### VIOLATION = STOP
+If you're about to modify a C++ file and haven't read the OpenUSD counterpart:
+**STOP. Read the OpenUSD file first. Then proceed.**
+
+---
+
+"""
+
 
 def detect_openusd_version(openusd_path: Path) -> str:
     """
@@ -180,6 +266,11 @@ The following progress was made in a previous session:
 Continue from where you left off. Check which phases are completed and proceed with the next pending phase.
 """
 
+    # Format the read-before-modify protocol with OpenUSD path
+    read_before_modify = READ_BEFORE_MODIFY_PROTOCOL.format(
+        openusd_path=openusd_path
+    )
+
     return f"""# SwiftUSD Alignment Task
 
 You are performing an autonomous alignment of SwiftUSD to OpenUSD version {target_version}.
@@ -204,6 +295,8 @@ You have FULL READ/WRITE access to these three directories:
 
 ## Wabiverse Conventions
 Reference: {wabiverse_ref} (style guide for Swift wrapper patterns)
+
+{read_before_modify}
 {progress_section}
 ## Your Mission
 Execute the alignment workflow autonomously, following these phases IN ORDER:
@@ -243,6 +336,11 @@ SwiftUSD must NOT contain any code that doesn't exist in OpenUSD {target_version
    - ... up to UsdImaging
 
 3. For each module, apply changes IN THIS ORDER:
+
+   **Step 0: READ OPENUSD FIRST (REQUIRED)**
+   - For EACH C++ file you plan to modify, FIRST read the OpenUSD counterpart
+   - Example: Before editing `Sources/Tf/token.cpp`, first read `{openusd_path}/pxr/base/tf/token.cpp`
+   - This is NOT optional - skip this step and you risk introducing drift
 
    **Step A: REMOVE deprecated/removed code FIRST**
    - Delete entire module directories if module was removed (e.g., Ndr/)
