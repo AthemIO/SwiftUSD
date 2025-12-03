@@ -107,7 +107,8 @@
 #include <Tf/typeNotice.h>
 #include <Tf/type_Impl.h>
 #include <Tf/singleton.h>
-#include <Tf/instantiateSingleton.h>
+// Note: instantiateSingleton.h is intentionally excluded - it can only be included
+// once per .cpp file and is meant for singleton instantiation in implementation files
 #include <Tf/instantiateType.h>
 
 // Static data
