@@ -1,0 +1,7 @@
+#include "lib/mx_closure_type.mtl"
+
+void mx_displacement_float(float disp, float scale, thread displacementshader& result)
+{
+    result.offset = vec3(disp);
+    result.scale = scale;
+}

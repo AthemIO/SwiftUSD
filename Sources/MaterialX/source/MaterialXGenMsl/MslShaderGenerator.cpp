@@ -938,20 +938,20 @@ void MslShaderGenerator::emitPixelStage(const ShaderGraph& graph, GenContext& co
                          context.getOptions().hwWriteDepthMoments;
         if (shadowing)
         {
-            emitLibraryInclude("pbrlib/genglsl/lib/mx_shadow.glsl", context, stage);
+            emitLibraryInclude("pbrlib/genmsl/lib/mx_shadow.mtl", context, stage);
         }
 
         // Emit directional albedo table code.
         if (context.getOptions().hwWriteAlbedoTable)
         {
-            emitLibraryInclude("pbrlib/genglsl/lib/mx_generate_albedo_table.glsl", context, stage);
+            emitLibraryInclude("pbrlib/genmsl/lib/mx_generate_albedo_table.mtl", context, stage);
             emitLineBreak(stage);
         }
 
         // Emit environment prefiltering code
         if (context.getOptions().hwWriteEnvPrefilter)
         {
-            emitLibraryInclude("pbrlib/genglsl/lib/mx_generate_prefilter_env.glsl", context, stage);
+            emitLibraryInclude("pbrlib/genmsl/lib/mx_generate_prefilter_env.mtl", context, stage);
             emitLineBreak(stage);
         }
 
@@ -959,17 +959,17 @@ void MslShaderGenerator::emitPixelStage(const ShaderGraph& graph, GenContext& co
         // depending on the vertical flip flag.
         if (context.getOptions().fileTextureVerticalFlip)
         {
-            _tokenSubstitutions[ShaderGenerator::T_FILE_TRANSFORM_UV] = "mx_transform_uv_vflip.glsl";
+            _tokenSubstitutions[ShaderGenerator::T_FILE_TRANSFORM_UV] = "mx_transform_uv_vflip.mtl";
         }
         else
         {
-            _tokenSubstitutions[ShaderGenerator::T_FILE_TRANSFORM_UV] = "mx_transform_uv.glsl";
+            _tokenSubstitutions[ShaderGenerator::T_FILE_TRANSFORM_UV] = "mx_transform_uv.mtl";
         }
 
         // Emit uv transform code globally if needed.
         if (context.getOptions().hwAmbientOcclusion)
         {
-            emitLibraryInclude("stdlib/genglsl/lib/" + _tokenSubstitutions[ShaderGenerator::T_FILE_TRANSFORM_UV], context, stage);
+            emitLibraryInclude("stdlib/genmsl/lib/" + _tokenSubstitutions[ShaderGenerator::T_FILE_TRANSFORM_UV], context, stage);
         }
 
         emitLightFunctionDefinitions(graph, context, stage);

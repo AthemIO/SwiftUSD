@@ -34,7 +34,9 @@ extension UsdView
     }
 
     // Add a distant light for direct illumination
-    _ = UsdLux.DistantLight.define(stage, path: "/World/DistantLight")
+    let distantLight = UsdLux.DistantLight.define(stage, path: "/World/DistantLight")
+    // Rotate the distant light to shine from above-front-left
+    distantLight.addRotateXYZOp().set(GfVec3f(-45.0, -30.0, 0.0))
 
     // Use convenience methods from @Xformable macro instead of addXformOp with type enum
     // (UsdGeomXformOp.Type enum doesn't export named values to Swift)

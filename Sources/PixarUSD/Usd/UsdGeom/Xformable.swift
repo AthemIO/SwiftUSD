@@ -48,6 +48,10 @@ public protocol GeomXformable
   func addRotateZOp(precision: UsdGeomXformOp.Precision,
                     suffix: Tf.Token,
                     invert: Bool) -> UsdGeomXformOp
+
+  func addRotateXYZOp(precision: UsdGeomXformOp.Precision,
+                      suffix: Tf.Token,
+                      invert: Bool) -> UsdGeomXformOp
 }
 
 @Xformable

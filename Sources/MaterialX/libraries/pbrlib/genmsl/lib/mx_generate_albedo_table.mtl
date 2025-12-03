@@ -1,0 +1,13 @@
+#include "mx_microfacet_sheen.mtl"
+#include "mx_microfacet_specular.mtl"
+
+// Note: In Metal, fragment position is passed as a parameter to the fragment function.
+// The $albedoTableSize variable is substituted by the shader generator.
+// The UV coordinates are computed from the fragment position and table size.
+vec3 mx_generate_dir_albedo_table(vec2 fragCoord)
+{
+    vec2 uv = fragCoord / $albedoTableSize;
+    vec2 ggxDirAlbedo = mx_ggx_dir_albedo(uv.x, uv.y, vec3(1, 0, 0), vec3(0, 1, 0)).xy;
+    float sheenDirAlbedo = mx_imageworks_sheen_dir_albedo(uv.x, uv.y);
+    return vec3(ggxDirAlbedo, sheenDirAlbedo);
+}

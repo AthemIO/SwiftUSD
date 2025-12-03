@@ -55,6 +55,16 @@ inline volumeshader MakeVolumeShader(vec3 c, vec3 t) {
     return v;
 }
 
+// Note: displacementshader struct is already defined in MslSyntax.cpp
+// as a built-in type: struct displacementshader { float3 offset; float scale; };
+
+inline displacementshader MakeDisplacementShader(vec3 o, float s) {
+    displacementshader d;
+    d.offset = o;
+    d.scale = s;
+    return d;
+}
+
 struct ClosureData {
     int closureType;
     vec3 L;

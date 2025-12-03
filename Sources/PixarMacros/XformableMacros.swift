@@ -69,6 +69,13 @@ public struct PixarXformableMacro: MemberMacro
       {
         AddRotateZOp(precision, suffix, invert)
       }
+
+      public func addRotateXYZOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
+                                 suffix: Tf.Token = Tf.Token(),
+                                 invert: Bool = false) -> UsdGeomXformOp
+      {
+        AddRotateXYZOp(precision, suffix, invert)
+      }
       """
 
     return [decl]

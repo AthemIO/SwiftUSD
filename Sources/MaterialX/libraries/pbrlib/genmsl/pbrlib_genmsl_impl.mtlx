@@ -25,6 +25,9 @@
   <!-- <sheen_bsdf> -->
   <implementation name="IM_sheen_bsdf_genmsl" nodedef="ND_sheen_bsdf" file="mx_sheen_bsdf.mtl" function="mx_sheen_bsdf" target="genmsl" />
 
+  <!-- <chiang_hair_bsdf> -->
+  <implementation name="IM_chiang_hair_bsdf_genmsl" nodedef="ND_chiang_hair_bsdf" file="mx_chiang_hair_bsdf.mtl" function="mx_chiang_hair_bsdf" target="genmsl" />
+
   <!-- <anisotropic_vdf> -->
   <implementation name="IM_anisotropic_vdf_genmsl" nodedef="ND_anisotropic_vdf" file="mx_anisotropic_vdf.mtl" function="mx_anisotropic_vdf" target="genmsl" />
 
@@ -55,6 +58,10 @@
   <!-- <surface> -->
   <implementation name="IM_surface_genmsl" nodedef="ND_surface" target="genmsl" />
 
+  <!-- <displacement> -->
+  <implementation name="IM_displacement_float_genmsl" nodedef="ND_displacement_float" file="mx_displacement_float.mtl" function="mx_displacement_float" target="genmsl" />
+  <implementation name="IM_displacement_vector3_genmsl" nodedef="ND_displacement_vector3" file="mx_displacement_vector3.mtl" function="mx_displacement_vector3" target="genmsl" />
+
   <!-- <light> -->
   <implementation name="IM_light_genmsl" nodedef="ND_light" target="genmsl" />
 
@@ -66,5 +73,17 @@
 
   <!-- <artistic_ior> -->
   <implementation name="IM_artistic_ior_genmsl" nodedef="ND_artistic_ior" file="mx_artistic_ior.mtl" function="mx_artistic_ior" target="genmsl" />
+
+  <!-- <blackbody> -->
+  <implementation name="IM_blackbody_genmsl" nodedef="ND_blackbody" file="mx_blackbody.mtl" function="mx_blackbody" target="genmsl" />
+
+  <!-- <deon_hair_absorption_from_melanin -->
+  <implementation name="IM_deon_hair_absorption_from_melanin_genmsl" nodedef="ND_deon_hair_absorption_from_melanin" file="mx_chiang_hair_bsdf.mtl" function="mx_deon_hair_absorption_from_melanin" target="genmsl" />
+
+  <!-- <chiang_hair_absorption_from_color -->
+  <implementation name="IM_chiang_hair_absorption_from_color_genmsl" nodedef="ND_chiang_hair_absorption_from_color" file="mx_chiang_hair_bsdf.mtl" function="mx_chiang_hair_absorption_from_color" target="genmsl" />
+
+  <!-- <chiang_hair_roughness -->
+  <implementation name="IM_chiang_hair_roughness_genmsl" nodedef="ND_chiang_hair_roughness" file="mx_chiang_hair_bsdf.mtl" function="mx_chiang_hair_roughness" target="genmsl" />
 
 </materialx>

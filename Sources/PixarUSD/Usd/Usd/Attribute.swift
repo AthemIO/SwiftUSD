@@ -38,4 +38,28 @@ public extension Usd.Attribute
   {
     Set(value, time)
   }
+
+  @discardableResult
+  func set(_ value: Bool, time: UsdTimeCode = UsdTimeCode.Default()) -> Bool
+  {
+    Set(value, time)
+  }
+
+  @discardableResult
+  func set(_ value: Int, time: UsdTimeCode = UsdTimeCode.Default()) -> Bool
+  {
+    Set(Int32(value), time)
+  }
+
+  @discardableResult
+  func set(_ value: Float, time: UsdTimeCode = UsdTimeCode.Default()) -> Bool
+  {
+    Set(value, time)
+  }
+
+  @discardableResult
+  func set(_ value: Double, time: UsdTimeCode = UsdTimeCode.Default()) -> Bool
+  {
+    Set(value, time)
+  }
 }
