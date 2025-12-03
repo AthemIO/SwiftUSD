@@ -52,9 +52,8 @@ inline int2 textureSize(struct MetalTexture mtlTex, int mipLevel)
     return int2(mtlTex.tex.get_width(), mtlTex.tex.get_height());
 }
 
-inline int textureQueryLevels(struct MetalTextureCube mtlTex)
-{
-    return mtlTex.get_num_mip_levels();
-}
+// Note: textureQueryLevels is provided as a macro by Storm's shader generation:
+// #define textureQueryLevels(texture) texture.get_num_mip_levels()
+// Both MetalTexture and MetalTextureCube have get_num_mip_levels() methods so the macro works.
 
 #endif // MX_TEXTURE_MTL

@@ -126,9 +126,12 @@ vec3 mx_latlong_map_lookup(vec3 dir, mat4 transform, float lod, samplerCube envS
 )";
 
 // Metal version for dome light cubemap lookup
+// Note: Uses MetalTextureCube (not MetalTexture) since dome lights use cubemaps.
+// A matching overload for MetalTextureCube is also defined in mx_microfacet_specular.mtl
+// but we keep this here to ensure it's defined early before environment lighting code.
 static const std::string MxHdLatLongLookupCubemapMsl =
 R"(
-vec3 mx_latlong_map_lookup(vec3 dir, float4x4 transform, float lod, MetalTexture envSampler)
+vec3 mx_latlong_map_lookup(vec3 dir, float4x4 transform, float lod, MetalTextureCube envSampler)
 {
     vec3 envDir = normalize((transform * vec4(dir,0.0)).xyz);
     return textureLod(envSampler, envDir, lod).rgb;
@@ -1323,6 +1326,24 @@ HdStMaterialXShaderGenMsl::_EmitGlslfxMetalHeader(
     emitLineBreak(mxStage);
     emitLine("//Metal Shading Language version " + getVersion(), mxStage, false);
     emitLine("#define __METAL__ 1", mxStage, false);
+
+    // Add GLSL to Metal type mappings (normally in emitDirectives)
+    emitLine("#define vec2 float2", mxStage, false);
+    emitLine("#define vec3 float3", mxStage, false);
+    emitLine("#define vec4 float4", mxStage, false);
+    emitLine("#define ivec2 int2", mxStage, false);
+    emitLine("#define ivec3 int3", mxStage, false);
+    emitLine("#define ivec4 int4", mxStage, false);
+    emitLine("#define uvec2 uint2", mxStage, false);
+    emitLine("#define uvec3 uint3", mxStage, false);
+    emitLine("#define uvec4 uint4", mxStage, false);
+    emitLine("#define bvec2 bool2", mxStage, false);
+    emitLine("#define bvec3 bool3", mxStage, false);
+    emitLine("#define bvec4 bool4", mxStage, false);
+    emitLine("#define mat3 float3x3", mxStage, false);
+    emitLine("#define mat4 float4x4", mxStage, false);
+    emitLineBreak(mxStage);
+
     emitMetalTextureClass(mxContext, mxStage);
 }
 
@@ -1337,9 +1358,10 @@ HdStMaterialXShaderGenMsl::_EmitMxFunctions(
     mx::ShaderGenerator::emitLibraryInclude(
         "stdlib/" + mx::MslShaderGenerator::TARGET
         + "/lib/mx_math.mtl", mxContext, mxStage);
-    // Note: We don't include mx_microfacet.glsl here for MSL because
-    // the MSL environment files (mx_environment_fis.mtl, etc.) already
-    // include mx_microfacet_specular.mtl which provides these functions.
+    // Note: Closure types (BSDF, surfaceshader, etc.) are defined in mx_closure_type.mtl
+    // which is included by the BSDF node implementations (mx_dielectric_bsdf.mtl, etc.)
+    // when they are processed during emitFunctionDefinitions.
+
     _EmitConstantsUniformsAndTypeDefs(
         mxContext, mxStage,_syntax->getConstantQualifier());
 
@@ -1349,20 +1371,21 @@ HdStMaterialXShaderGenMsl::_EmitMxFunctions(
     if (!_bindlessTexturesEnabled) {
 
         // Define mappings for the DomeLight Textures
+        // Note: Dome light textures are cubemaps, so we use MakeMetalTextureCube
         emitLine("#ifdef HD_HAS_domeLightIrradiance", mxStage, false);
         emitLine("#define u_envRadiance "
-                "MetalTexture{HdGetSampler_domeLightPrefilter(), "
-                "samplerBind_domeLightPrefilter} ", mxStage, false);
+                "MakeMetalTextureCube(HdGetSampler_domeLightPrefilter(), "
+                "samplerBind_domeLightPrefilter) ", mxStage, false);
         emitLine("#define u_envIrradiance "
-                "MetalTexture{HdGetSampler_domeLightIrradiance(), "
-                "samplerBind_domeLightIrradiance} ", mxStage, false);
+                "MakeMetalTextureCube(HdGetSampler_domeLightIrradiance(), "
+                "samplerBind_domeLightIrradiance) ", mxStage, false);
         emitLine("#else", mxStage, false);
         emitLine("#define u_envRadiance "
-                "MetalTexture{HdGetSampler_domeLightFallback(), "
-                "samplerBind_domeLightFallback}", mxStage, false);
+                "MakeMetalTextureCube(HdGetSampler_domeLightFallback(), "
+                "samplerBind_domeLightFallback)", mxStage, false);
         emitLine("#define u_envIrradiance "
-                "MetalTexture{HdGetSampler_domeLightFallback(), "
-                "samplerBind_domeLightFallback}", mxStage, false);
+                "MakeMetalTextureCube(HdGetSampler_domeLightFallback(), "
+                "samplerBind_domeLightFallback)", mxStage, false);
         emitLine("#endif", mxStage, false);
         emitLineBreak(mxStage);
 

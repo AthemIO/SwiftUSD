@@ -1,7 +1,8 @@
 #include "mx_microfacet.mtl"
 
-constant float FUJII_CONSTANT_1 = 0.5 - 2.0 / (3.0 * M_PI);
-constant float FUJII_CONSTANT_2 = 2.0 / 3.0 - 28.0 / (15.0 * M_PI);
+// Use const instead of constant to work inside class scope in Storm's generated code
+const float FUJII_CONSTANT_1 = 0.5 - 2.0 / (3.0 * M_PI);
+const float FUJII_CONSTANT_2 = 2.0 / 3.0 - 28.0 / (15.0 * M_PI);
 
 // Qualitative Oren-Nayar diffuse with simplified math:
 // https://www1.cs.columbia.edu/CAVE/publications/pdfs/Oren_SIGGRAPH94.pdf

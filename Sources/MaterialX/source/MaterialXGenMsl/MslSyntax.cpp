@@ -256,16 +256,18 @@ MslSyntax::MslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
             EMPTY_STRING,
             EMPTY_STRING));
 
+    // NOTE: BSDF, EDF, VDF, surfaceshader, volumeshader type definitions are provided
+    // by mx_closure_type.mtl library file. We don't emit them here to avoid duplicates.
+    // The library file is included when BSDF node implementations are used.
     registerTypeSyntax(
         Type::BSDF,
         std::make_shared<AggregateTypeSyntax>(
             this,
             "BSDF",
-            "MakeBSDF(float3(0.0),float3(1.0))",
+            "MakeBSDF(vec3(0.0),vec3(1.0))",
             EMPTY_STRING,
             EMPTY_STRING,
-            "struct BSDF { float3 response; float3 throughput; };\n"
-            "inline BSDF MakeBSDF(float3 r, float3 t) { BSDF b; b.response = r; b.throughput = t; return b; }"));
+            EMPTY_STRING));  // Definition provided by mx_closure_type.mtl
 
     registerTypeSyntax(
         Type::EDF,
@@ -274,15 +276,15 @@ MslSyntax::MslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
             "EDF",
             "EDF(0.0)",
             "EDF(0.0)",
-            "float3",
-            "#define EDF float3"));
+            "vec3",
+            EMPTY_STRING));  // Definition provided by mx_closure_type.mtl
 
     registerTypeSyntax(
         Type::VDF,
         std::make_shared<AggregateTypeSyntax>(
             this,
             "BSDF",
-            "MakeBSDF(float3(0.0),float3(1.0))",
+            "MakeBSDF(vec3(0.0),vec3(1.0))",
             EMPTY_STRING));
 
     registerTypeSyntax(
@@ -290,22 +292,20 @@ MslSyntax::MslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
         std::make_shared<AggregateTypeSyntax>(
             this,
             "surfaceshader",
-            "MakeSurfaceShader(float3(0.0),float3(0.0))",
+            "MakeSurfaceShader(vec3(0.0),vec3(0.0))",
             EMPTY_STRING,
             EMPTY_STRING,
-            "struct surfaceshader { float3 color; float3 transparency; };\n"
-            "inline surfaceshader MakeSurfaceShader(float3 c, float3 t) { surfaceshader s; s.color = c; s.transparency = t; return s; }"));
+            EMPTY_STRING));  // Definition provided by mx_closure_type.mtl
 
     registerTypeSyntax(
         Type::VOLUMESHADER,
         std::make_shared<AggregateTypeSyntax>(
             this,
             "volumeshader",
-            "MakeVolumeShader(float3(0.0),float3(0.0))",
+            "MakeVolumeShader(vec3(0.0),vec3(0.0))",
             EMPTY_STRING,
             EMPTY_STRING,
-            "struct volumeshader { float3 color; float3 transparency; };\n"
-            "inline volumeshader MakeVolumeShader(float3 c, float3 t) { volumeshader v; v.color = c; v.transparency = t; return v; }"));
+            EMPTY_STRING));  // Definition provided by mx_closure_type.mtl
 
     registerTypeSyntax(
         Type::DISPLACEMENTSHADER,

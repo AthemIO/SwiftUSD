@@ -3,9 +3,10 @@
 
 #include "mx_microfacet.mtl"
 
-constant int FRESNEL_MODEL_DIELECTRIC = 0;
-constant int FRESNEL_MODEL_CONDUCTOR = 1;
-constant int FRESNEL_MODEL_SCHLICK = 2;
+// Use const instead of constant to work inside class scope in Storm's generated code
+const int FRESNEL_MODEL_DIELECTRIC = 0;
+const int FRESNEL_MODEL_CONDUCTOR = 1;
+const int FRESNEL_MODEL_SCHLICK = 2;
 
 // Parameters for Fresnel calculations
 struct FresnelData
@@ -500,6 +501,10 @@ vec3 mx_latlong_map_lookup(vec3 dir, float4x4 transform, float lod, MetalTexture
     vec2 uv = mx_latlong_projection(envDir);
     return envSampler.tex.sample(envSampler.s, uv, level(lod)).rgb;
 }
+
+// Note: Cubemap overload for MetalTextureCube is provided by Storm's shader generator
+// (HdStMaterialXShaderGen) via MxHdLatLongLookupCubemapMsl. It's emitted early in the
+// generated shader before this file is included, so we don't duplicate it here.
 
 // Return the mip level with the appropriate coverage for a filtered importance sample.
 // https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch20.html
