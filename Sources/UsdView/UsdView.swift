@@ -13,8 +13,6 @@
 import Foundation
 import PixarUSD
 import SwiftCrossUI
-import ExecUsd
-import ExecGeom
 
 /// ``UsdView``
 ///
@@ -62,46 +60,6 @@ struct UsdView: App {
 
         Msg.logger.log(level: .info, "UsdView launched | USD v\(Pixar.version).")
 
-        // Test OpenExec integration
-        testOpenExec(stage: stage)
-    }
-
-    /// Test OpenExec integration by computing transforms using the ExecUsd system.
-    private func testOpenExec(stage: UsdStageRefPtr) {
-        print("=== OpenExec Test ===")
-
-        // Create an ExecUsdSystem from the stage
-        var execSystem = Pixar.ExecUsdSystem(stage)
-
-        // Get the root prim to test with
-        let rootPath = Sdf.Path("/World")
-        let rootPrim = stage.pointee.GetPrimAtPath(rootPath)
-
-        guard rootPrim.IsValid() else {
-            print("OpenExec: No valid prim at /World, skipping test")
-            return
-        }
-
-        // Create a value key for the computeLocalToWorldTransform computation
-        let computationToken = Pixar.ExecGeomXformableTokens.computeLocalToWorldTransform
-        let valueKey = Pixar.ExecUsdValueKey(rootPrim, computationToken)
-
-        // Build a request with the value key
-        var valueKeys = std.vector<Pixar.ExecUsdValueKey>()
-        valueKeys.push_back(valueKey)
-
-        var request = execSystem.BuildRequest(std.move(valueKeys))
-
-        if request.IsValid() {
-            // Compute the request
-            let cacheView = execSystem.Compute(request)
-            let result = cacheView.Get(0)
-            print("OpenExec: Computed transform for /World: \(result)")
-        } else {
-            print("OpenExec: Request is not valid")
-        }
-
-        print("=== OpenExec Test Complete ===")
     }
 
     var body: some Scene {

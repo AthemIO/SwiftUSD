@@ -1895,9 +1895,10 @@ VdfParallelExecutorEngineBase<Derived, DataManager>::_ComputeNode(
         if (!privateBuffer->GetExecutorCache()) {
             // No output value: Spit out a warning.
             TF_WARN(
-                "No value set for output " + output.GetDebugName() +
-                " of type " + output.GetSpec().GetType().GetTypeName() +
-                " named " + output.GetName().GetString());
+                "No value set for output '%s' of type '%s' named '%s'",
+                output.GetDebugName().c_str(),
+                output.GetSpec().GetType().GetTypeName().c_str(),
+                output.GetName().GetString().c_str());
 
             // Fill the output with a default value.
             VdfExecutionTypeRegistry::FillVector(

@@ -26,10 +26,28 @@ import PixarUSD
 
       private var inFlightSemaphore = DispatchSemaphore(value: 1)
 
+      // Animation playback state
+      private var startTimeCode: Double = 0.0
+      private var endTimeCode: Double = 0.0
+      private var framesPerSecond: Double = 24.0
+      private var currentTimeCode: Double = 0.0
+      private var lastFrameTime: CFTimeInterval = 0.0
+      private var isAnimating: Bool = false
+
       convenience init(hydra: Hydra.RenderEngine)
       {
         self.init(device: hydra.hydraDevice)!
         self.hydra = hydra
+
+        // Read animation parameters from the stage
+        if hydra.stage.pointee.HasAuthoredTimeCodeRange() {
+          startTimeCode = hydra.stage.pointee.GetStartTimeCode()
+          endTimeCode = hydra.stage.pointee.GetEndTimeCode()
+          framesPerSecond = hydra.stage.pointee.GetFramesPerSecond()
+          currentTimeCode = startTimeCode
+          isAnimating = (endTimeCode > startTimeCode)
+          lastFrameTime = CACurrentMediaTime()
+        }
       }
 
       init?(device: MTLDevice)
@@ -111,11 +129,26 @@ import PixarUSD
       public func draw(in view: MTKView)
       {
         view.drawableSize = CGSize(
-          width: (view.frame.size.width > 0) ? view.frame.size.width : 400, 
+          width: (view.frame.size.width > 0) ? view.frame.size.width : 400,
           height: (view.frame.size.height > 0) ? view.frame.size.height : 300
         )
 
-        drawFrame(in: view, timeCode: 0.0)
+        // Advance animation time if the stage has animation
+        if isAnimating {
+          let currentTime = CACurrentMediaTime()
+          let elapsedSeconds = currentTime - lastFrameTime
+          lastFrameTime = currentTime
+
+          // Advance time based on elapsed real time and frames per second
+          currentTimeCode += elapsedSeconds * framesPerSecond
+
+          // Loop the animation
+          if currentTimeCode > endTimeCode {
+            currentTimeCode = startTimeCode + (currentTimeCode - endTimeCode).truncatingRemainder(dividingBy: (endTimeCode - startTimeCode))
+          }
+        }
+
+        drawFrame(in: view, timeCode: currentTimeCode)
       }
 
       /// draw the scene, and blit the result to the view.

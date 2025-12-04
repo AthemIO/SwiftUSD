@@ -32,7 +32,12 @@ enum USDExamples
     SceneDescriptionExamples.run()
 
     // scene cache examples.
-    StageCacheExamples.run()
+    // StageCacheExamples.run()  // Disabled - uses deprecated API
+
+    // OpenExec examples
+    // Now fixed: The System wrapper tracks all requests and ensures they are
+    // destroyed before the system, preventing use-after-free crashes.
+    OpenExecExamples.run()
 
     Msg.logger.info("program completed succesfully, exiting...")
   }

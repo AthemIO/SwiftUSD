@@ -1364,6 +1364,9 @@ let package = Package(
         .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
         .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
         .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
+        // Add private directory to include path for headers that crash Swift's C++ interop
+        // These headers are in private/Exec/ so includes like "Exec/system.h" work
+        .headerSearchPath("private"),
       ]
     ),
 
@@ -1390,6 +1393,11 @@ let package = Package(
         .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
         .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
         .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
+        // Add private directory to include path for headers that crash Swift's C++ interop
+        // These headers are in private/ExecUsd/ so includes like "ExecUsd/system.h" work
+        .headerSearchPath("private"),
+        // Add Exec's private directory so ExecUsd can find Exec's non-public headers
+        .headerSearchPath("../Exec/private"),
       ]
     ),
 
@@ -1413,6 +1421,8 @@ let package = Package(
         .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", .when(platforms: [.windows])),
         .define("_ALLOW_KEYWORD_MACROS", to: "1", .when(platforms: [.windows])),
         .define("static_assert(_conditional, ...)", to: "", .when(platforms: [.windows])),
+        // Add Exec's private directory so ExecGeom can find Exec's non-public headers
+        .headerSearchPath("../Exec/private"),
       ]
     ),
 

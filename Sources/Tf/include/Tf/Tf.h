@@ -58,6 +58,7 @@
 
 // Utility types
 #include <Tf/bitUtils.h>
+#include <Tf/compressedBits.h>
 #include <Tf/callContext.h>
 #include <Tf/dl.h>
 #include <Tf/enum.h>

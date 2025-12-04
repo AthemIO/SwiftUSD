@@ -94,10 +94,14 @@
 #include <Vdf/inputVector.h>
 #include <Vdf/inputValuesPointer.h>
 #include <Vdf/inputAndOutputSpecs.h>
+#include <Vdf/inputAndOutputSpecsRegistry.h>
 #include <Vdf/output.h>
 #include <Vdf/outputSpec.h>
 #include <Vdf/maskedOutput.h>
 #include <Vdf/maskedOutputVector.h>
+
+// Mask registry
+#include <Vdf/maskRegistry.h>
 
 // Network components
 #include <Vdf/connection.h>
@@ -181,6 +185,7 @@
 // Graphing/visualization
 #include <Vdf/grapher.h>
 #include <Vdf/grapherOptions.h>
+#include <Vdf/dotGrapher.h>
 
 // Isolated network support
 #include <Vdf/isolatedSubnetwork.h>

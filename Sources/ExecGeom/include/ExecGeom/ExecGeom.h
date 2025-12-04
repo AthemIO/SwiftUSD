@@ -40,4 +40,7 @@
 // Tokens for computation names
 #include <ExecGeom/tokens.h>
 
+// Swift bridge functions for token access
+#include <ExecGeom/swiftBridge.h>
+
 #endif  // __PXR_EXEC_EXECGEOM_H__

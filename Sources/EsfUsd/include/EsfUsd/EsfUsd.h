@@ -49,4 +49,8 @@
 #include <EsfUsd/attributeQuery.h>
 #include <EsfUsd/relationship.h>
 
+// Note: The following headers are excluded from the umbrella because they
+// cause Swift C++ interop issues:
+// - pch.h: Precompiled header with <cmath> and other problematic includes
+
 #endif  // __PXR_EXEC_ESFUSD_H__

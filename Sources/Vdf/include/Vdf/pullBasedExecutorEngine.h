@@ -1020,9 +1020,10 @@ VdfPullBasedExecutorEngine<DataManagerType>::_ComputeNode(
             // requested because otherwise, it wouldn't be in the schedule,
             // because of VdfScheduler::_RemoveTrivialNodes.)
             TF_WARN(
-                "No value set for output " + output.GetDebugName() +
-                " of type " + output.GetSpec().GetType().GetTypeName() +
-                " named " + output.GetName().GetString());
+                "No value set for output '%s' of type '%s' named '%s'",
+                output.GetDebugName().c_str(),
+                output.GetSpec().GetType().GetTypeName().c_str(),
+                output.GetName().GetString().c_str());
 
             //XXX: This is not 100% right when we use a single data flow
             //     element to hold multiple values (as we do for shaped

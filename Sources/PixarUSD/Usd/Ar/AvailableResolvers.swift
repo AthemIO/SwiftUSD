@@ -28,10 +28,12 @@ public extension Ar
       all().empty() == false
     else { return [] }
 
-    return all().map
-    {
-      // return list of all type names.
-      String($0.GetTypeName().pointee)
+    // Convert C++ vector to Swift array
+    var result: [String] = []
+    let vec = all()
+    for i in 0..<vec.size() {
+      result.append(String(vec[i].GetTypeName().pointee))
     }
+    return result
   }
 }

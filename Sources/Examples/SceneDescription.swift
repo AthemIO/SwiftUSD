@@ -20,11 +20,11 @@ func createScene()
   let stage = Usd.Stage.createNew("\(documentsDirPath())/HelloWorldExample", ext: .usd)
 
   let xform = UsdGeom.Xform.define(stage, path: "/Geometry")
-  xform.addXformOp(type: .translate).set(GfVec3d(0.0, 5.0, 0.0))
-  xform.addXformOp(type: .scale, precision: .float).set(GfVec3f(5, 5, 5))
+  xform.addTranslateOp().set(GfVec3d(0.0, 5.0, 0.0))
+  xform.addScaleOp().set(GfVec3f(5, 5, 5))
 
   let sphere = UsdGeom.Sphere.define(stage, path: "/Geometry/Sphere")
-  sphere.addXformOp(type: .translate).set(GfVec3d(0.0, 0.0, -5.0))
+  sphere.addTranslateOp().set(GfVec3d(0.0, 0.0, -5.0))
 
   /* Create a colored material for the sphere prim. */
 
