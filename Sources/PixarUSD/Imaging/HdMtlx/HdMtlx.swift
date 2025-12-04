@@ -10,33 +10,25 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * ---------------------------------------------------------------- */
 
-import UsdMtlx
+import HdMtlx
 
 /**
- * # ``UsdMtlx``
+ * # ``HdMtlx``
  *
- * **USD MaterialX Integration**
+ * **Hydra MaterialX Integration**
  *
  * ## Overview
  *
- * **UsdMtlx** provides utilities for translating MaterialX documents
- * to USD scene description. MaterialX is an open standard for representing
- * rich material and look-development content in computer graphics.
+ * **HdMtlx** provides utilities for using MaterialX in the Hydra
+ * rendering framework. It enables conversion between USD/Hydra material
+ * networks and MaterialX documents for shader generation.
  *
  * ## Key Features
  *
- * - Convert MaterialX documents to USD shading networks
- * - Query MaterialX search paths and type mappings
- * - Access MaterialX standard library definitions
+ * - Convert Hydra material networks to MaterialX documents
+ * - Access MaterialX standard libraries for rendering
+ * - Convert parameter values to MaterialX string representations
+ * - Create MaterialX-compatible names from USD paths
  */
-public enum UsdMtlx
+public enum HdMtlx
 {}
-
-// MARK: - Type Conversion Utilities
-
-public typealias UsdMtlxUsdTypeInfo = Pixar.UsdMtlxUsdTypeInfo
-
-public extension UsdMtlx
-{
-  typealias UsdTypeInfo = UsdMtlxUsdTypeInfo
-}

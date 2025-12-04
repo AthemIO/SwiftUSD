@@ -24,6 +24,7 @@
 
 #include "Tf/token.h"
 #include "Tf/type.h"
+#include "Arch/swiftInterop.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -254,10 +255,14 @@ public:
         /// Get separated tangents array
         const VtVec3fArray& GetTangents() const { return _tangents; }
 
+        // Swift interop: Hide from Swift to avoid nested type name cycle
+        SWIFT_PRIVATE
         bool operator==(const PointAndTangentArrays& other) {
             return (GetPoints() == other.GetPoints()) &&
                    (GetTangents() == other.GetTangents());
         }
+        // Swift interop: Hide from Swift to avoid nested type name cycle
+        SWIFT_PRIVATE
         bool operator!=(const PointAndTangentArrays& other) {
             return !((*this) == other);
         }

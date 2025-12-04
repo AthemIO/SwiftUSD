@@ -15,6 +15,7 @@
 #include "Sdf/changeList.h"
 #include "Sdf/path.h"
 #include "Tf/notice.h"
+#include "Arch/swiftInterop.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -255,10 +256,14 @@ public:
                     return result;
                 }
 
+                // Swift interop: Hide from Swift to avoid nested type name cycle
+                SWIFT_PRIVATE
                 bool operator==(const iterator& other) const{
                     return _underlyingIterator == other._underlyingIterator;
                 }
 
+                // Swift interop: Hide from Swift to avoid nested type name cycle
+                SWIFT_PRIVATE
                 bool operator!=(const iterator& other) const{
                     return _underlyingIterator != other._underlyingIterator;
                 }

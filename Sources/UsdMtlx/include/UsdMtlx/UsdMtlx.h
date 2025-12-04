@@ -13,4 +13,8 @@
 // #include <UsdMtlx/generatedSchema.module.h>
 #include <UsdMtlx/materialXConfigAPI.h>
 #include <UsdMtlx/tokens.h>
+
+// Swift Bridge - provides Swift-compatible wrappers for MaterialX shared_ptr types
+#include <UsdMtlx/swiftBridge.h>
+
 #endif  // __PXR_USD_USDMTLX_H__

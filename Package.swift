@@ -1769,6 +1769,9 @@ let package = Package(
         .target(name: "Hd"),
         .target(name: "PxOsd"),
       ],
+      resources: [
+        .process("Resources")
+      ],
       cxxSettings: [
         .define("MFB_PACKAGE_NAME", to: "HdSi"),
         .define("MFB_ALT_PACKAGE_NAME", to: "HdSi"),

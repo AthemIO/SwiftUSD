@@ -131,6 +131,10 @@ public extension Bundle
   static let hgiGL = Bundle(path: "\(pxrRoot)/SwiftUSD_HgiGL\(ext)")
 
   /**
+   * Where ``HdSi`` application bundle resources are located. */
+  static let hdSi = Bundle(path: "\(pxrRoot)/SwiftUSD_HdSi\(ext)")
+
+  /**
    * Where ``HdSt`` application bundle resources are located. */
   static let hdSt = Bundle(path: "\(pxrRoot)/SwiftUSD_HdSt\(ext)")
 

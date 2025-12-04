@@ -231,6 +231,29 @@
   __attribute__((swift_attr("~Copyable")))
 #endif /* SWIFT_NONCOPYABLE */
 
+#if !defined(SWIFT_RETURNS_UNRETAINED)
+/// Specifies that a function returning a pointer to a SWIFT_SHARED_REFERENCE
+/// type does NOT increment the reference count. The caller receives a "borrowed"
+/// reference that is only valid as long as the source object is alive.
+#define SWIFT_RETURNS_UNRETAINED \
+  __attribute__((swift_attr("returns_unretained")))
+#endif /* SWIFT_RETURNS_UNRETAINED */
+
+#if !defined(SWIFT_RETURNS_RETAINED)
+/// Specifies that a function returning a pointer to a SWIFT_SHARED_REFERENCE
+/// type increments the reference count. The caller receives an "owned" reference
+/// and is responsible for releasing it.
+#define SWIFT_RETURNS_RETAINED \
+  __attribute__((swift_attr("returns_retained")))
+#endif /* SWIFT_RETURNS_RETAINED */
+
+#if !defined(SWIFT_PRIVATE)
+/// Hides a declaration from Swift. Use this for declarations that cause
+/// Swift C++ interop issues (like nested type operator overloads that
+/// create name resolution cycles) but need to remain available for C++.
+#define SWIFT_PRIVATE __attribute__((swift_private))
+#endif /* SWIFT_PRIVATE */
+
 #else /* !_CXX_INTEROP_HAS_ATTRIBUTE */
 
 // Empty defines for compilers that don't support `attribute(swift_attr)`.
@@ -278,6 +301,18 @@
 #if !defined(SWIFT_NONCOPYABLE)
 #define SWIFT_NONCOPYABLE
 #endif // SWIFT_NONCOPYABLE
+
+#if !defined(SWIFT_RETURNS_UNRETAINED)
+#define SWIFT_RETURNS_UNRETAINED
+#endif // SWIFT_RETURNS_UNRETAINED
+
+#if !defined(SWIFT_RETURNS_RETAINED)
+#define SWIFT_RETURNS_RETAINED
+#endif // SWIFT_RETURNS_RETAINED
+
+#if !defined(SWIFT_PRIVATE)
+#define SWIFT_PRIVATE
+#endif // SWIFT_PRIVATE
 
 #endif /* !_CXX_INTEROP_HAS_ATTRIBUTE */
 

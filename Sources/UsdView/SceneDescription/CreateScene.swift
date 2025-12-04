@@ -300,14 +300,14 @@ extension UsdView
     // Position sphere in front of the other objects
     sphere.addTranslateOp().set(GfVec3d(0.0, 0.0, 1.5))
 
-    // Add custom bounce animation with physics-like damping
+    // Add custom bounce animation with heavy damping (loses 50% height each bounce)
     let sphereBounceOp = sphere.addTranslateOp(suffix: Tf.Token("bounce"))
     let bounceSamples = createBounceSpline(
-      bounceHeight: 1.5,
-      numBounces: 4,
-      dampingFactor: 0.7,
+      bounceHeight: 2.0,
+      numBounces: 6,
+      dampingFactor: 0.5,
       startFrame: 0.0,
-      framesPerBounce: 40.0
+      framesPerBounce: 35.0
     )
     for sample in bounceSamples {
       sphereBounceOp.set(GfVec3d(0.0, sample.value, 0.0), time: Usd.TimeCode(sample.time))

@@ -40,36 +40,36 @@
       let vertexShader = glCreateShader(GLenum(GL_VERTEX_SHADER))
       let fragmentShader = glCreateShader(GLenum(GL_FRAGMENT_SHADER))
 
-      var VS3 = """
+      let VS3 = """
       #version 140
       uniform vec4 rect;
       in vec2 st;
       void main() {
-        gl_Position = vec4(rect.x + rect.z*st.x, rect.y + rect.w*st.y, 0, 1); 
+        gl_Position = vec4(rect.x + rect.z*st.x, rect.y + rect.w*st.y, 0, 1);
       }
       """
-      var FS3 = """
+      let FS3 = """
       #version 140
       out vec4 fragColor;
       uniform vec4 color;
-      void main() { 
-        fragColor = color; 
+      void main() {
+        fragColor = color;
       }
       """
 
-      var VS2 = """
+      let VS2 = """
       #version 120
       uniform vec4 rect;
       attribute vec2 st;
       void main() {
-        gl_Position = vec4(rect.x + rect.z*st.x, rect.y + rect.w*st.y, 0, 1); 
+        gl_Position = vec4(rect.x + rect.z*st.x, rect.y + rect.w*st.y, 0, 1);
       }
       """
-      var FS2 = """
+      let FS2 = """
       #version 120
       uniform vec4 color;
-      void main() { 
-        gl_FragColor = color; 
+      void main() {
+        gl_FragColor = color;
       }
       """
 

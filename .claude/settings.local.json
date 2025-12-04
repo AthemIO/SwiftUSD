@@ -20,7 +20,8 @@
       "Bash(1)",
       "Bash(tee:*)",
       "Bash(swift package describe:*)",
-      "Bash(TF_DEBUG=HDST_DUMP_SHADER_SOURCE ./.build/bundler/UsdView.app/Contents/MacOS/UsdView:*)"
+      "Bash(TF_DEBUG=HDST_DUMP_SHADER_SOURCE ./.build/bundler/UsdView.app/Contents/MacOS/UsdView:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

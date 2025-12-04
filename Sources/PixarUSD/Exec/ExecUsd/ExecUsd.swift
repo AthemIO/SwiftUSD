@@ -166,7 +166,7 @@ public extension ExecUsd {
             }
 
             // Build the request using the opaque system pointer
-            var handle = Pixar.ExecUsd_Swift_BuildRequest(ptr, vec)
+            let handle = Pixar.ExecUsd_Swift_BuildRequest(ptr, vec)
             return Request(handle: handle)
         }
 

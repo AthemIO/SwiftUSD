@@ -56,6 +56,24 @@
             "loadWithRenderer": "GL",
             "priority": 0,
             "displayName": "Scene index to resolve velocity-based motion."
+          },
+          "HdSt_RenderPassPruneSceneIndexPlugin": {
+            "bases": ["HdSceneIndexPlugin"],
+            "loadWithRenderer": "GL",
+            "priority": 0,
+            "displayName": "Scene Index to resolve render pass prune rules."
+          },
+          "HdSt_RenderPassVisibilitySceneIndexPlugin": {
+            "bases": ["HdSceneIndexPlugin"],
+            "loadWithRenderer": "GL",
+            "priority": 0,
+            "displayName": "Scene Index to resolve render pass visibility rules."
+          },
+          "HdSt_UnboundMaterialPruningSceneIndexPlugin": {
+            "bases": ["HdSceneIndexPlugin"],
+            "loadWithRenderer": "GL",
+            "priority": 0,
+            "displayName": "Scene index to prune materials that aren't bound."
           }
         },
         "ShaderResources": "shaders"

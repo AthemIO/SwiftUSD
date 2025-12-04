@@ -418,6 +418,7 @@
 #include "Tf/api.h"
 
 #include "Arch/hints.h"
+#include "Arch/swiftInterop.h"
 
 
 #include <typeinfo>
