@@ -148,7 +148,7 @@ import PixarUSD
           }
         }
 
-        drawFrame(in: view, timeCode: currentTimeCode)
+        _ = drawFrame(in: view, timeCode: currentTimeCode)
       }
 
       /// draw the scene, and blit the result to the view.
