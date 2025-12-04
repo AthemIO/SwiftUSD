@@ -244,10 +244,10 @@ extension UsdView
     // Apply Catmull-Clark subdivision (OpenSubdiv)
     subdividedMesh.CreateSubdivisionSchemeAttr(Vt.Value(Tf.Token("catmullClark")), false)
 
-    // Bind orange metallic material
-    UsdShade.MaterialBindingAPI.apply(subdividedMesh.GetPrim()).bind(matDefMtlxMetallic(stage, color: .orange, roughness: 0.15))
+    // Bind orange metallic material (MaterialX primary with UsdPreviewSurface fallback)
+    UsdShade.MaterialBindingAPI.apply(subdividedMesh.GetPrim()).bind(matDefMetallicWithFallback(stage, color: .orange, roughness: 0.15))
 
-    // Create a blue cube with subsurface scattering on the right (using MaterialX)
+    // Create a blue cube with subsurface scattering on the right
     let cube = UsdGeom.Cube.define(stage, path: "/Geometry/Cube")
     cube.addTranslateOp().set(GfVec3d(1.5, 0.0, 0.0))
 
@@ -291,7 +291,8 @@ extension UsdView
       cubeTranslateYOp.set(GfVec3d(0.0, sample.value, 0.0), time: Usd.TimeCode(sample.time))
     }
 
-    UsdShade.MaterialBindingAPI.apply(cube).bind(matDefMtlxSubsurface(stage, color: .blue, subsurfaceScale: 0.5))
+    // Bind blue subsurface scattering material (MaterialX primary with UsdPreviewSurface fallback)
+    UsdShade.MaterialBindingAPI.apply(cube).bind(matDefSubsurfaceWithFallback(stage, color: .blue, subsurfaceScale: 0.5))
 
     // Create a bouncing sphere with custom physics-based bounce animation
     let sphere = UsdGeom.Sphere.define(stage, path: "/Geometry/BouncingSphere")
@@ -313,8 +314,8 @@ extension UsdView
       sphereBounceOp.set(GfVec3d(0.0, sample.value, 0.0), time: Usd.TimeCode(sample.time))
     }
 
-    // Bind a shiny red material to the sphere
-    UsdShade.MaterialBindingAPI.apply(sphere).bind(matDefMtlxMetallic(stage, color: .red, roughness: 0.05))
+    // Bind shiny red metallic material (MaterialX primary with UsdPreviewSurface fallback)
+    UsdShade.MaterialBindingAPI.apply(sphere).bind(matDefMetallicWithFallback(stage, color: .red, roughness: 0.05))
 
     /* Iterate the stage and print out the path to each prim. */
 

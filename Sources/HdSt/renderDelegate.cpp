@@ -563,7 +563,8 @@ TfTokenVector
 HdStRenderDelegate::GetShaderSourceTypes() const
 {
 #if PXR_MATERIALX_SUPPORT_ENABLED
-    return {HioGlslfxTokens->glslfx, _tokens->mtlx};
+    // MaterialX first for preferred shader generation, glslfx as fallback
+    return {_tokens->mtlx, HioGlslfxTokens->glslfx};
 #else
     return {HioGlslfxTokens->glslfx};
 #endif
@@ -573,7 +574,8 @@ TfTokenVector
 HdStRenderDelegate::GetMaterialRenderContexts() const
 {
 #if PXR_MATERIALX_SUPPORT_ENABLED
-    return {HioGlslfxTokens->glslfx, _tokens->mtlx};
+    // MaterialX first for preferred material resolution, glslfx as fallback
+    return {_tokens->mtlx, HioGlslfxTokens->glslfx};
 #else
     return {HioGlslfxTokens->glslfx};
 #endif

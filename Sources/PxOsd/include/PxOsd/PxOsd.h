@@ -8,4 +8,5 @@
 #include <PxOsd/refinerFactory.h>
 #include <PxOsd/subdivTags.h>
 #include <PxOsd/tokens.h>
+#include <PxOsd/swiftInterop.h>
 #endif  // __PXR_IMAGING_PXOSD_H__
