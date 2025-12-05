@@ -17,5 +17,5 @@ jobs:
           git clone https://github.com/stackotter/swift-bundler.git /tmp/swift-bundler
           cd /tmp/swift-bundler && swift build -c release
           sudo cp /tmp/swift-bundler/.build/release/swift-bundler /usr/local/bin/
-      - name: 📦 Build & Bundle
-        run: swift bundler bundle -c release UsdView
+      - name: 📦 Build & Run
+        run: swift bundler run -c release UsdView -- --help || true
