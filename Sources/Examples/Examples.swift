@@ -39,6 +39,9 @@ enum USDExamples
     // destroyed before the system, preventing use-after-free crashes.
     OpenExecExamples.run()
 
+    // OpenExec Benchmark - performance testing of the execution framework
+    OpenExecBenchmark.run()
+
     Msg.logger.info("program completed succesfully, exiting...")
   }
 }

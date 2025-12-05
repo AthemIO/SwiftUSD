@@ -80,8 +80,6 @@ public final class CameraController {
 
         eye = eye + panDelta
         at = at + panDelta
-
-        NSLog("Pan - eye: \(eye), at: \(at)")
     }
 
     /// Orbit camera around the look-at point
@@ -105,7 +103,6 @@ public final class CameraController {
         let rotatedVec2 = rotMatrix.Transform(eyeRelative)
         eye = at + rotatedVec2
 
-        NSLog("Orbit - eye: \(eye), at: \(at)")
     }
 
     /// Zoom camera by moving eye position along view direction
@@ -113,16 +110,12 @@ public final class CameraController {
     public func zoom(delta: Double) {
         let camFront = (at - eye).GetNormalized()
         eye = eye + (camFront * delta * zoomSensitivity)
-
-        NSLog("Zoom - eye: \(eye), at: \(at)")
     }
 
     /// Zoom using scroll wheel
     public func zoomScroll(delta: Double) {
         let camFront = (at - eye).GetNormalized()
         eye = eye + (camFront * delta * zoomSensitivity * 1.0)  // Reduced multiplier for smoother zoom
-
-        NSLog("ZoomScroll - eye: \(eye), at: \(at)")
     }
 
     /// Focus on a point by setting look-at and adjusting eye position
@@ -131,16 +124,12 @@ public final class CameraController {
         let viewDirection = (eye - at).GetNormalized()
         at = point
         eye = at + (viewDirection * distance)
-
-        NSLog("Focus - eye: \(eye), at: \(at)")
     }
 
     /// Reset camera to default view
     public func reset() {
         eye = Pixar.GfVec3d(5, 3, 5)
         at = Pixar.GfVec3d(0, 0, 0)
-
-        NSLog("Reset - eye: \(eye), at: \(at)")
     }
 
     /// Get the view matrix (camera transform)

@@ -1,8 +1,8 @@
 --acronyms ID,URL,UUID
 --allman true
 --assetliterals visual-width
---asynccapturing 
---beforemarks 
+--asynccapturing
+--beforemarks
 --binarygrouping 4,8
 --categorymark "MARK: %c"
 --classthreshold 0
@@ -23,10 +23,10 @@
 --fractiongrouping disabled
 --fragment false
 --funcattributes preserve
---generictypes 
+--generictypes
 --groupedextension "MARK: %c"
 --guardelse auto
---header "/* ----------------------------------------------------------------\n * :: :  M  E  T  A  V  E  R  S  E  :                            ::\n * ----------------------------------------------------------------\n * Licensed under the terms set forth in the LICENSE.txt file, this\n * file is available at https://openusd.org/license.\n *\n *                                        Copyright (C) 2016 Pixar.\n *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.\n * ----------------------------------------------------------------\n *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .\n * ---------------------------------------------------------------- */"
+--header "/* ----------------------------------------------------------------\n * :: :  A  T  H  E  M  :                            ::\n * ----------------------------------------------------------------\n * Licensed under the terms set forth in the LICENSE.txt file, this\n * file is available at https://openusd.org/license.\n *\n *                                        Copyright (C) 2016 Pixar.\n *         Copyright (C) 2025 Afloat Technologies. All Rights Reserved.\n * ----------------------------------------------------------------\n *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .\n * ---------------------------------------------------------------- */"
 --hexgrouping 4,8
 --hexliteralcase uppercase
 --ifdef indent
@@ -34,17 +34,17 @@
 --indent 2
 --indentcase true
 --indentstrings true
---lifecycle 
+--lifecycle
 --lineaftermarks true
 --linebreaks lf
 --markcategories true
 --markextensions always
 --marktypes always
 --maxwidth none
---modifierorder 
---nevertrailing 
---nospaceoperators 
---nowrapoperators 
+--modifierorder
+--nevertrailing
+--nospaceoperators
+--nowrapoperators
 --octalgrouping 4,8
 --operatorfunc spaced
 --organizetypes actor,class,enum,struct
@@ -52,7 +52,7 @@
 --ranges spaced
 --redundanttype infer-locals-only
 --self remove
---selfrequired 
+--selfrequired
 --semicolons inline
 --shortoptionals always
 --smarttabs enabled
@@ -61,8 +61,8 @@
 --structthreshold 0
 --swiftversion 5.9
 --tabwidth unspecified
---throwcapturing 
---trailingclosures 
+--throwcapturing
+--trailingclosures
 --trimwhitespace always
 --typeattributes preserve
 --typeblanklines remove

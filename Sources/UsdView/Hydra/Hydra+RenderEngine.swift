@@ -111,7 +111,7 @@ public enum Hydra
       params.clearColor = .init(0.0, 0.0, 0.0, 0.0)
       params.colorCorrectionMode = .sRGB
       // Enable OpenSubdiv refinement: complexity 1.0 = refineLevel 0, 2.0 = refineLevel 8
-      params.complexity = 1.5  // Approximately refineLevel 4
+      params.complexity = 1.2  // Lower subdivision for spheres
       // TODO: enableIdRender was removed in OpenUSD 25.11
       // params.enableIdRender = false
       params.showGuides = true

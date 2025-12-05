@@ -311,7 +311,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/wabiverse/swift-cross-ui", revision: "1a887c2"),
     .package(url: "https://github.com/wabiverse/icu.git", from: "76.1.2"),
-    .package(path: "../MetaverseKit"),
+    .package(url: "https://github.com/LynrAI/MetaverseKit.git", branch: "main"),
     .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.1"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
     .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),

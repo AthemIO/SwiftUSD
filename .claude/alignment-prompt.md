@@ -125,6 +125,106 @@ If you're about to modify a C++ file and haven't read the OpenUSD counterpart:
 
 
 
+## Previous Progress (Resume Mode)
+The following progress was made in a previous session:
+```json
+{
+  "targetVersion": "25.11",
+  "sourceVersion": "25.11",
+  "status": "completed",
+  "startedAt": "2025-12-03T10:00:00Z",
+  "completedAt": "2025-12-03T10:15:00Z",
+  "phases": {
+    "metaversekit_update": "completed",
+    "changelog_analysis": "completed",
+    "module_processing": "completed",
+    "build_iteration": "completed",
+    "final_validation": "completed"
+  },
+  "completedModules": [
+    "Arch",
+    "Tf",
+    "Gf",
+    "Vt",
+    "Work",
+    "Plug",
+    "Trace",
+    "Js",
+    "Ts",
+    "Ar",
+    "Sdf",
+    "Pcp",
+    "Usd",
+    "Kind",
+    "Sdr",
+    "SdrOsl",
+    "SdrGlslfx",
+    "UsdGeom",
+    "UsdShade",
+    "UsdLux",
+    "UsdSkel",
+    "UsdPhysics",
+    "UsdVol",
+    "UsdMedia",
+    "UsdUI",
+    "UsdRender",
+    "UsdRi",
+    "UsdProc",
+    "UsdHydra",
+    "UsdUtils",
+    "UsdAbc",
+    "UsdDraco",
+    "UsdMtlx",
+    "Garch",
+    "Hf",
+    "Hd",
+    "HdAr",
+    "HdGp",
+    "HdMtlx",
+    "HdSi",
+    "HdSt",
+    "HdStorm",
+    "Hdx",
+    "Hgi",
+    "HgiGL",
+    "HgiMetal",
+    "HgiInterop",
+    "Hio",
+    "HioOpenVDB",
+    "Glf",
+    "PxOsd",
+    "CameraUtil",
+    "GeomUtil",
+    "UsdImaging",
+    "UsdImagingGL",
+    "UsdShaders",
+    "UsdAppUtils",
+    "UsdProcImaging",
+    "UsdRiPxrImaging",
+    "UsdSkelImaging",
+    "UsdVolImaging"
+  ],
+  "blockedModules": [],
+  "buildIterations": 1,
+  "lastError": null,
+  "changes": {
+    "removed": [
+      "HdPrimDataSourceOverlayCache (removed per 25.11 CHANGELOG)"
+    ],
+    "renamed": [
+      "TF_THROW -> PXR_TF_THROW (already completed)"
+    ],
+    "verified": [
+      "Ndr module not present (removed per 25.08 CHANGELOG)",
+      "TfTemplateString not present (removed per 25.11 CHANGELOG)",
+      "TraceEventId not present (removed per 25.11 CHANGELOG)"
+    ]
+  }
+}
+```
+
+Continue from where you left off. Check which phases are completed and proceed with the next pending phase.
+
 ## Your Mission
 Execute the alignment workflow autonomously, following these phases IN ORDER:
 

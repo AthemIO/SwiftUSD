@@ -39,7 +39,7 @@ struct UsdView: App {
         Pixar.Bundler.shared.setup(.resources)
 
         // create a new usd stage.
-        stage = UsdView.createScene()
+        stage = UsdView.createOpenExecBenchmarkScene()
 
         // setup hydra to render the usd stage.
         engine = Hydra.RenderEngine(stage: stage)
@@ -47,10 +47,6 @@ struct UsdView: App {
         // create camera controller with Z-up based on stage
         let isZUp = Hydra.RenderEngine.isZUp(for: stage)
         cameraController = CameraController(isZUp: isZUp)
-
-        print(
-            "Camera initialized - isZUp: \(isZUp), eye: \(cameraController.eye), at: \(cameraController.at)"
-        )
 
         // create selection manager
         // selectionManager = SelectionManager(stage: stage)
