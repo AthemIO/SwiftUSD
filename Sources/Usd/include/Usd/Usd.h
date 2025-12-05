@@ -68,10 +68,8 @@
 #include <Usd/collectionPredicateLibrary.h>
 #include <Usd/crateDataTypes.h>
 #include <Usd/namespaceEditor.h>
-#include <Usd/validationError.h>
-#include <Usd/validationRegistry.h>
-#include <Usd/validator.h>
-#include <Usd/validatorTokens.h>
+// Validation moved to UsdValidation module in OpenUSD 25.11
+// #include <UsdValidation/UsdValidation.h>
 #include <Usd/attributeLimits.h>
 #include <Usd/colorSpaceAPI.h>
 // Excluded: Python TF_WRAP macros - only used for Python bindings

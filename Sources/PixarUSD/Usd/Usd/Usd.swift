@@ -25,22 +25,14 @@ public enum Usd
 {}
 
 // MARK: - OpenUSD 25.11 Validation Framework
-
-public typealias UsdValidator = Pixar.UsdValidator
-public typealias UsdValidationError = Pixar.UsdValidationError
-public typealias UsdValidationRegistry = Pixar.UsdValidationRegistry
-
-public extension Usd
-{
-  /// Validator for checking USD scene compliance.
-  typealias Validator = UsdValidator
-
-  /// Error type returned by validation operations.
-  typealias ValidationError = UsdValidationError
-
-  /// Registry for managing USD validators.
-  typealias ValidationRegistry = UsdValidationRegistry
-}
+// Note: For full validation support, see the UsdValidation module.
+// The validation framework provides validators for checking USD content
+// against various rules and best practices.
+//
+// Example usage:
+//   import UsdValidation
+//   let context = UsdValidation.Context(keywords: [Tf.Token("UsdCoreValidators")])
+//   let errors = context.validate(stage)
 
 // MARK: - OpenUSD 25.11 Namespace Editor
 

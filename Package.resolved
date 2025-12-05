@@ -1,5 +1,5 @@
 {
-  "originHash" : "d01eaf47e6f8e406bbbff897faecd3282da5298f5d439c7fd1935790a1a40bac",
+  "originHash" : "f6e9aa3bb27a3afed7e6ac084447bea0f922c389343b5193daef08a92c778bf3",
   "pins" : [
     {
       "identity" : "icu",
@@ -40,7 +40,7 @@
     {
       "identity" : "metaversekit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LynrAI/MetaverseKit.git",
+      "location" : "https://github.com/AthemIO/MetaverseKit.git",
       "state" : {
         "branch" : "main",
         "revision" : "cb7fb2b50c23355ee5594cdb49db62676a295dd0"

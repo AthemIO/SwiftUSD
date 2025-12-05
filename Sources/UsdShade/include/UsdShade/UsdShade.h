@@ -19,7 +19,8 @@
 #include <UsdShade/types.h>
 #include <UsdShade/udimUtils.h>
 #include <UsdShade/utils.h>
-#include <UsdShade/validatorTokens.h>
+// Validation moved to UsdShadeValidators module in OpenUSD 25.11
+// #include <UsdShadeValidators/UsdShadeValidators.h>
 
 // Excluded: Python TF_WRAP macros - only used for Python bindings
 // #include <UsdShade/generatedSchema.module.h>
