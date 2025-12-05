@@ -1,5 +1,7 @@
 # SwiftUSD
 
+[![OpenUSD](https://img.shields.io/badge/OpenUSD-25.11-blue)](https://openusd.org)
+
 **OpenUSD for Swift** — Pixar's Universal Scene Description with native Swift bindings.
 
 Built and maintained by [ATHEM](https://github.com/AthemIO).
@@ -9,8 +11,6 @@ Built and maintained by [ATHEM](https://github.com/AthemIO).
 ## Overview
 
 SwiftUSD brings [OpenUSD](https://openusd.org) to Swift through C++ interoperability, enabling you to author, read, and manipulate USD scene description directly in Swift applications.
-
-**Current Version:** OpenUSD 25.11
 
 ## Installation
 
