@@ -1,6 +1,12 @@
 # SwiftUSD
 
 [![OpenUSD](https://img.shields.io/badge/OpenUSD-25.11-blue)](https://openusd.org)
+[![Swift](https://img.shields.io/badge/Swift-6.0-orange)](https://swift.org)
+
+[![macOS](https://img.shields.io/badge/macOS-14%2B-black?logo=apple)](https://developer.apple.com/macos/)
+[![visionOS](https://img.shields.io/badge/visionOS-1%2B-black?logo=apple)](https://developer.apple.com/visionos/)
+[![iOS](https://img.shields.io/badge/iOS-17%2B-black?logo=apple)](https://developer.apple.com/ios/)
+[![Linux](https://img.shields.io/badge/Linux-Ubuntu-orange?logo=ubuntu)](https://ubuntu.com)
 
 **OpenUSD for Swift** — Pixar's Universal Scene Description with native Swift bindings.
 
@@ -69,13 +75,6 @@ swift bundler run -c release UsdView
 # Run examples
 swift bundler run -c release Examples
 ```
-
-## Platforms
-
-- macOS 14+
-- visionOS 1+
-- iOS 17+
-- Linux (Ubuntu)
 
 ## License
 
