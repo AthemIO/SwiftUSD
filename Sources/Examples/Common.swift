@@ -8,12 +8,11 @@
 
 import Foundation
 
-public func documentsDirPath() -> String
-{
-  #if os(macOS) || os(iOS) || os(visionOS) || os(tvOS) || os(watchOS)
-    let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-    return paths[0].path
-  #else
-    return "."
-  #endif
+public func documentsDirPath() -> String {
+    #if os(macOS) || os(iOS) || os(visionOS) || os(tvOS) || os(watchOS)
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0].path
+    #else
+        return "."
+    #endif
 }

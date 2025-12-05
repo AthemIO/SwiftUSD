@@ -10,34 +10,32 @@ import Foundation
 import PixarUSD
 
 @main
-enum USDExamples
-{
-  static func main()
-  {
-    Msg.logger.info("launched test program 'USDExamples'.")
+enum USDExamples {
+    static func main() {
+        Msg.logger.info("launched test program 'USDExamples'.")
 
-    /* Setup all usd resources (python, plugins, resources). */
-    Pixar.Bundler.shared.setup(.resources)
+        /* Setup all usd resources (python, plugins, resources). */
+        Pixar.Bundler.shared.setup(.resources)
 
-    Msg.logger.info("succesfully registered all usd plugins.")
+        Msg.logger.info("succesfully registered all usd plugins.")
 
-    // custom ar resolver examples.
-    ArResolverExamples.run()
+        // custom ar resolver examples.
+        ArResolverExamples.run()
 
-    // scene description examples.
-    SceneDescriptionExamples.run()
+        // scene description examples.
+        SceneDescriptionExamples.run()
 
-    // scene cache examples.
-    // StageCacheExamples.run()  // Disabled - uses deprecated API
+        // scene cache examples.
+        // StageCacheExamples.run()  // Disabled - uses deprecated API
 
-    // OpenExec examples
-    // Now fixed: The System wrapper tracks all requests and ensures they are
-    // destroyed before the system, preventing use-after-free crashes.
-    OpenExecExamples.run()
+        // OpenExec examples
+        // Now fixed: The System wrapper tracks all requests and ensures they are
+        // destroyed before the system, preventing use-after-free crashes.
+        OpenExecExamples.run()
 
-    // OpenExec Benchmark - performance testing of the execution framework
-    OpenExecBenchmark.run()
+        // OpenExec Benchmark - performance testing of the execution framework
+        OpenExecBenchmark.run()
 
-    Msg.logger.info("program completed succesfully, exiting...")
-  }
+        Msg.logger.info("program completed succesfully, exiting...")
+    }
 }

@@ -80,3 +80,7 @@ swift bundler run -c release Examples
 ## License
 
 SwiftUSD is licensed under the [Apache License 2.0](https://openusd.org/license).
+
+---
+
+Originally created by [Wabiverse](https://github.com/wabiverse).
