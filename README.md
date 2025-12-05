@@ -1,7 +1,7 @@
 # SwiftUSD
 
 [![OpenUSD](https://img.shields.io/badge/OpenUSD-25.11-blue)](https://openusd.org)
-[![Swift](https://img.shields.io/badge/Swift-6.0-orange)](https://swift.org)
+[![Swift](https://img.shields.io/badge/Swift-6.1-orange)](https://swift.org)
 
 [![macOS](https://img.shields.io/github/actions/workflow/status/AthemIO/SwiftUSD/swift-macos.yml?label=macOS&logo=apple)](https://github.com/AthemIO/SwiftUSD/actions/workflows/swift-macos.yml)
 [![Linux](https://img.shields.io/github/actions/workflow/status/AthemIO/SwiftUSD/swift-debug-ubuntu.yml?label=Linux&logo=ubuntu)](https://github.com/AthemIO/SwiftUSD/actions/workflows/swift-debug-ubuntu.yml)

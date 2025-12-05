@@ -413,7 +413,7 @@ public extension ExecUsd
     /// Subscript access to computed values.
     public subscript(index: Int) -> Pixar.VtValue
     {
-      get(index: index)
+      return get(index: index)
     }
   }
 }
