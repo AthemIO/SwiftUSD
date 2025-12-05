@@ -3,10 +3,6 @@
 [![OpenUSD](https://img.shields.io/badge/OpenUSD-25.11-blue)](https://openusd.org)
 [![Swift](https://img.shields.io/badge/Swift-6.1-orange)](https://swift.org)
 
-[![macOS](https://img.shields.io/github/actions/workflow/status/AthemIO/SwiftUSD/swift-macos.yml?label=macOS&logo=apple)](https://github.com/AthemIO/SwiftUSD/actions/workflows/swift-macos.yml)
-[![Linux](https://img.shields.io/github/actions/workflow/status/AthemIO/SwiftUSD/swift-ubuntu.yml?label=Linux&logo=ubuntu)](https://github.com/AthemIO/SwiftUSD/actions/workflows/swift-ubuntu.yml)
-[![Windows](https://img.shields.io/github/actions/workflow/status/AthemIO/SwiftUSD/swift-debug-windows.yml?label=Windows&logo=windows)](https://github.com/AthemIO/SwiftUSD/actions/workflows/swift-debug-windows.yml)
-
 **OpenUSD for Swift** — Pixar's Universal Scene Description with native Swift bindings.
 
 Built and maintained by [ATHEM](https://github.com/AthemIO).
