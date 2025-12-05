@@ -21,32 +21,47 @@ import UsdValidation
  * ## Overview
  *
  * **UsdValidation** provides a pluggable validation framework for USD content.
- * It allows developers to write custom validators that check USD layers, stages,
+ * It allows developers to run validators that check USD layers, stages,
  * and prims for compliance with various rules and best practices.
  *
  * The validation framework consists of:
- * - ``Validator`` - Individual validation rules that check specific aspects of USD content
+ * - ``Context`` - Execution context for running validators on stages, layers, or prims
+ * - ``Registry`` - Central registry for discovering and querying validators
+ * - ``Validator`` - Individual validation rules (accessed via Registry)
  * - ``ValidatorSuite`` - Collections of related validators
- * - ``Context`` - Execution context for running validators
- * - ``Registry`` - Central registry for discovering and managing validators
  * - ``Error`` - Results from validation with severity levels and site information
  *
- * ## Limitations
+ * ## Usage
+ *
+ * ```swift
+ * // Create a validation context with core USD validators
+ * let context = UsdValidation.Context(keywords: [Tf.Token("UsdCoreValidators")])
+ *
+ * // Validate a stage
+ * let errors = context.validate(stage: myStage)
+ *
+ * // Process errors
+ * for i in 0..<errors.size() {
+ *     let error = errors[i]
+ *     print("[\(error.GetType())]: \(error.GetMessage())")
+ * }
+ * ```
+ *
+ * ## Swift Bridge Layer
  *
  * Some C++ types in UsdValidation use `std::function` and `std::variant` which
- * are not fully compatible with Swift C++ interop. The following limitations apply:
+ * are not directly compatible with Swift C++ interop. SwiftUSD provides a bridge
+ * layer (swiftBridge.h) that enables full access to the validation framework.
  *
- * - Creating custom validators from Swift is not currently supported
- * - The `UsdValidationRegistry` singleton may not be directly accessible
- * - Validator task functions cannot be called directly from Swift
+ * The following features are available:
+ * - Create validation contexts from keywords, metadata, or schema types
+ * - Run validators on layers, stages, or prims
+ * - Query the registry for validators by name, keyword, plugin, or schema type
+ * - Access validator metadata and documentation
+ * - Run individual validators directly
  *
- * However, you can still:
- * - Query validator metadata
- * - Access validation errors and their properties
- * - Use validation error sites to locate issues
- *
- * For full validation support, consider using the C++ API directly or
- * via Python bindings.
+ * Note: Creating custom validators from Swift is not currently supported.
+ * Custom validators must be implemented in C++ and registered via plugins.
  *
  * New in OpenUSD 25.11.
  */
