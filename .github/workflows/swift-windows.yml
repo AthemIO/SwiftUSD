@@ -1,4 +1,4 @@
-name: Run Tests (Microsoft Windows)
+name: Swift (Windows)
 
 on: [push]
 
