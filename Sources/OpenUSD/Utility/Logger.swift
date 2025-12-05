@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Foundation
@@ -28,7 +24,7 @@ struct Handler: LogHandler
 
   func log(level: Logger.Level, message: Logger.Message, metadata _: Logger.Metadata?, source _: String, file _: String, function _: String, line _: UInt)
   {
-    /// The standard error stream used for logging errors.
+    // The standard error stream used for logging errors.
     var standardError = FileHandle.standardError
 
     let output = "\(level.coloring(level.rawValue + ":")) \(message)"

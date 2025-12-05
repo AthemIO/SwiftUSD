@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 #if canImport(OpenGL)
@@ -41,37 +37,37 @@
       let fragmentShader = glCreateShader(GLenum(GL_FRAGMENT_SHADER))
 
       let VS3 = """
-      #version 140
-      uniform vec4 rect;
-      in vec2 st;
-      void main() {
-        gl_Position = vec4(rect.x + rect.z*st.x, rect.y + rect.w*st.y, 0, 1);
-      }
-      """
+        #version 140
+        uniform vec4 rect;
+        in vec2 st;
+        void main() {
+          gl_Position = vec4(rect.x + rect.z*st.x, rect.y + rect.w*st.y, 0, 1);
+        }
+        """
       let FS3 = """
-      #version 140
-      out vec4 fragColor;
-      uniform vec4 color;
-      void main() {
-        fragColor = color;
-      }
-      """
+        #version 140
+        out vec4 fragColor;
+        uniform vec4 color;
+        void main() {
+          fragColor = color;
+        }
+        """
 
       let VS2 = """
-      #version 120
-      uniform vec4 rect;
-      attribute vec2 st;
-      void main() {
-        gl_Position = vec4(rect.x + rect.z*st.x, rect.y + rect.w*st.y, 0, 1);
-      }
-      """
+        #version 120
+        uniform vec4 rect;
+        attribute vec2 st;
+        void main() {
+          gl_Position = vec4(rect.x + rect.z*st.x, rect.y + rect.w*st.y, 0, 1);
+        }
+        """
       let FS2 = """
-      #version 120
-      uniform vec4 color;
-      void main() {
-        gl_FragColor = color;
-      }
-      """
+        #version 120
+        uniform vec4 color;
+        void main() {
+          gl_FragColor = color;
+        }
+        """
 
       var vsSource: UnsafePointer<GLchar>?
       var fsSource: UnsafePointer<GLchar>?
@@ -119,7 +115,7 @@
       for (k, v) in uniformDict
       {
         var param = k
-        uniformLocations[param] = glGetUniformLocation(self.program, &param)
+        uniformLocations[param] = glGetUniformLocation(program, &param)
       }
     }
 

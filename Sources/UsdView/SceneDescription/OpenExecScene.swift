@@ -1,19 +1,15 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Foundation
 import PixarUSD
 
-/**
+/* 
  * OpenExec Visual Benchmark Scene
  *
  * Creates a visually rich scene demonstrating OpenExec capabilities:
@@ -47,9 +43,11 @@ extension UsdView
 
     // Add dome light with HDRI for environment lighting
     let domeLight = UsdLux.DomeLight.define(stage, path: "/World/DefaultDomeLight")
-    if let hdxResources = Bundle.hdx?.resourcePath {
+    if let hdxResources = Bundle.hdx?.resourcePath
+    {
       let tex = "\(hdxResources)/textures/StinsonBeach.hdr"
-      if FileManager.default.fileExists(atPath: tex) {
+      if FileManager.default.fileExists(atPath: tex)
+      {
         let hdrAsset = Sdf.AssetPath(tex)
         domeLight.createTextureFileAttr().set(hdrAsset)
       }
@@ -86,7 +84,8 @@ extension UsdView
       ("Saturn", 12.0, 0.7, 0.6, .yellow, 3),
     ]
 
-    for (index, planet) in planets.enumerated() {
+    for (index, planet) in planets.enumerated()
+    {
       createPlanetSystemForBenchmark(
         stage: stage,
         parentPath: "/SolarSystem",
@@ -112,7 +111,8 @@ extension UsdView
     Msg.logger.info("")
     Msg.logger.info("=== OpenExec Benchmark Scene Created ===")
     var primCount = 0
-    for prim in stage.traverse() {
+    for prim in stage.traverse()
+    {
       primCount += 1
     }
     Msg.logger.info("Total prims: \(primCount)")
@@ -133,8 +133,9 @@ extension UsdView
     orbitSpeed: Double,
     color: ShadeColor,
     moonCount: Int,
-    planetIndex: Int
-  ) {
+    planetIndex _: Int
+  )
+  {
     // Orbit pivot - rotates around the parent (sun)
     let orbitPath = "\(parentPath)/\(name)_Orbit"
     let orbit = UsdGeom.Xform.define(stage, path: orbitPath)
@@ -161,7 +162,8 @@ extension UsdView
     )
 
     // Create moons
-    for moonIndex in 0..<moonCount {
+    for moonIndex in 0 ..< moonCount
+    {
       createMoonForBenchmark(
         stage: stage,
         parentPath: planetPath,
@@ -171,7 +173,8 @@ extension UsdView
     }
 
     // Add rings to Saturn-like planets
-    if name == "Saturn" {
+    if name == "Saturn"
+    {
       createRingsForBenchmark(stage: stage, planetPath: planetPath, innerRadius: size * 1.5, outerRadius: size * 2.5)
     }
   }
@@ -181,7 +184,8 @@ extension UsdView
     parentPath: String,
     planetSize: Double,
     moonIndex: Int
-  ) {
+  )
+  {
     // Moon orbit pivot
     let moonOrbitPath = "\(parentPath)/Moon\(moonIndex)_Orbit"
     let moonOrbit = UsdGeom.Xform.define(stage, path: moonOrbitPath)
@@ -217,7 +221,8 @@ extension UsdView
     planetPath: String,
     innerRadius: Double,
     outerRadius: Double
-  ) {
+  )
+  {
     // Create ring as a torus-like structure using multiple thin cylinders
     let ringsPath = "\(planetPath)/Rings"
     let rings = UsdGeom.Xform.define(stage, path: ringsPath)
@@ -227,7 +232,8 @@ extension UsdView
 
     // Create ring segments
     let segmentCount = 12
-    for i in 0..<segmentCount {
+    for i in 0 ..< segmentCount
+    {
       let angle = Double(i) * (360.0 / Double(segmentCount))
       let radius = (innerRadius + outerRadius) / 2.0
 
@@ -256,7 +262,8 @@ extension UsdView
     innerRadius: Double,
     outerRadius: Double,
     count: Int
-  ) {
+  )
+  {
     // Use PointInstancer for GPU-accelerated rendering
     // This allows thousands of asteroids with a single draw call!
     let beltPath = "\(parentPath)/AsteroidBelt"
@@ -285,9 +292,10 @@ extension UsdView
     var orientations = Pixar.VtQuathArray()
     var scales = Pixar.VtVec3fArray()
 
-    for i in 0..<count {
+    for i in 0 ..< count
+    {
       let angle = Double(i) * (360.0 / Double(count))
-      let radius = innerRadius + Double.random(in: 0...(outerRadius - innerRadius))
+      let radius = innerRadius + Double.random(in: 0 ... (outerRadius - innerRadius))
 
       // All instances use prototype 0 (the only one)
       protoIndices.push_back(0)
@@ -296,7 +304,7 @@ extension UsdView
       let radians = angle * .pi / 180.0
       let x = Float(cos(radians) * radius)
       let z = Float(sin(radians) * radius)
-      let y = Float.random(in: -0.2...0.2)
+      let y = Float.random(in: -0.2 ... 0.2)
       positions.push_back(GfVec3f(x, y, z))
 
       // Use identity orientation (1, 0, 0, 0) - the random non-uniform scale provides visual variety
@@ -304,7 +312,7 @@ extension UsdView
       orientations.push_back(Pixar.GfQuath.GetIdentity())
 
       // Random scale
-      let size = Float.random(in: 0.05...0.15)
+      let size = Float.random(in: 0.05 ... 0.15)
       scales.push_back(GfVec3f(size, size * 0.7, size * 0.8))
     }
 
@@ -321,8 +329,10 @@ extension UsdView
     _ rotateOp: Pixar.UsdGeomXformOp,
     duration: Int,
     rotations: Double
-  ) {
-    for frame in stride(from: 0, through: duration, by: 2) {
+  )
+  {
+    for frame in stride(from: 0, through: duration, by: 2)
+    {
       let progress = Double(frame) / Double(duration)
       let angle = Float(progress * rotations * 360.0)
       rotateOp.set(angle, time: Usd.TimeCode(Double(frame)))

@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import ExecGeom
@@ -49,58 +45,64 @@ public enum ExecGeom {}
 
 // MARK: - ExecGeom.Xformable
 
-public extension ExecGeom {
+public extension ExecGeom
+{
+  /**
+   * # ``ExecGeom/Xformable``
+   *
+   * Tokens and computations for UsdGeomXformable prims.
+   *
+   * ## Overview
+   *
+   * The `Xformable` namespace provides access to computation tokens
+   * that can be used with `ExecUsd.ValueKey` to request geometric
+   * transformation computations.
+   */
+  enum Xformable
+  {
     /**
-     * # ``ExecGeom/Xformable``
+     * The computation token for computing local-to-world transformation.
      *
-     * Tokens and computations for UsdGeomXformable prims.
+     * When used with `ExecUsd.ValueKey`, this computation returns a
+     * `GfMatrix4d` representing the full transformation from the prim's
+     * local coordinate space to world space.
      *
-     * ## Overview
+     * ## Example
      *
-     * The `Xformable` namespace provides access to computation tokens
-     * that can be used with `ExecUsd.ValueKey` to request geometric
-     * transformation computations.
+     * ```swift
+     * let valueKey = ExecUsd.ValueKey(
+     *     prim: myXformPrim,
+     *     computation: ExecGeom.Xformable.computeLocalToWorldTransform
+     * )
+     * ```
      */
-    enum Xformable {
-        /**
-         * The computation token for computing local-to-world transformation.
-         *
-         * When used with `ExecUsd.ValueKey`, this computation returns a
-         * `GfMatrix4d` representing the full transformation from the prim's
-         * local coordinate space to world space.
-         *
-         * ## Example
-         *
-         * ```swift
-         * let valueKey = ExecUsd.ValueKey(
-         *     prim: myXformPrim,
-         *     computation: ExecGeom.Xformable.computeLocalToWorldTransform
-         * )
-         * ```
-         */
-        public static var computeLocalToWorldTransform: Pixar.TfToken {
-            Pixar.ExecGeom_Swift_GetComputeLocalToWorldTransformToken()
-        }
+    public static var computeLocalToWorldTransform: Pixar.TfToken
+    {
+      Pixar.ExecGeom_Swift_GetComputeLocalToWorldTransformToken()
     }
+  }
 }
 
 // MARK: - Direct Token Access
 
-public extension ExecGeom {
-    /**
-     * # ``ExecGeom/Tokens``
-     *
-     * Direct access to all ExecGeom tokens.
-     *
-     * ## Overview
-     *
-     * Provides direct access to the underlying C++ token static instances
-     * for cases where you need the raw token values.
-     */
-    enum Tokens {
-        /// The token for the computeLocalToWorldTransform computation.
-        public static var computeLocalToWorldTransform: Pixar.TfToken {
-            Pixar.ExecGeom_Swift_GetComputeLocalToWorldTransformToken()
-        }
+public extension ExecGeom
+{
+  /**
+   * # ``ExecGeom/Tokens``
+   *
+   * Direct access to all ExecGeom tokens.
+   *
+   * ## Overview
+   *
+   * Provides direct access to the underlying C++ token static instances
+   * for cases where you need the raw token values.
+   */
+  enum Tokens
+  {
+    /// The token for the computeLocalToWorldTransform computation.
+    public static var computeLocalToWorldTransform: Pixar.TfToken
+    {
+      Pixar.ExecGeom_Swift_GetComputeLocalToWorldTransformToken()
     }
+  }
 }

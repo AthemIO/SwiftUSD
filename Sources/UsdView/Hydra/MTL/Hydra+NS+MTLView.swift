@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Foundation
@@ -17,10 +13,10 @@ import PixarUSD
   import SwiftCrossUI
 
   #if os(macOS)
+    import AppKitBackend
     import Combine
     import Metal
     import MetalKit
-    import AppKitBackend
 
     public extension Hydra
     {
@@ -37,7 +33,8 @@ import PixarUSD
 
         override public var canBecomeKeyView: Bool { true }
 
-        override public func viewDidMoveToWindow() {
+        override public func viewDidMoveToWindow()
+        {
           super.viewDidMoveToWindow()
           // Ensure we become first responder when added to window
           window?.makeFirstResponder(self)
@@ -140,9 +137,12 @@ import PixarUSD
           let cubeDistance = (cubePosition - cameraPosition).GetLength()
 
           // Focus on the nearest object
-          if sphereDistance < cubeDistance {
+          if sphereDistance < cubeDistance
+          {
             camera.focus(on: spherePosition, distance: 5.0)
-          } else {
+          }
+          else
+          {
             camera.focus(on: cubePosition, distance: 5.0)
           }
         }
@@ -152,7 +152,7 @@ import PixarUSD
           let modifiers = event.modifierFlags
 
           // Left Mouse (no modifiers) = Orbit
-          if event.type == .leftMouseDown && !modifiers.contains(.shift) && !modifiers.contains(.option)
+          if event.type == .leftMouseDown, !modifiers.contains(.shift), !modifiers.contains(.option)
           {
             return .orbit
           }

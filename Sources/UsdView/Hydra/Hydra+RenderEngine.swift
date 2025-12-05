@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Foundation
@@ -26,11 +22,11 @@ public enum Hydra
   {
     public var stage: UsdStageRefPtr
 
-#if canImport(Metal)
-    private let hgi: Pixar.HgiMetalPtr
-#else // !canImport(Metal)
-    private let hgi: Pixar.HgiGLPtr
-#endif // canImport(Metal)
+    #if canImport(Metal)
+      private let hgi: Pixar.HgiMetalPtr
+    #else // !canImport(Metal)
+      private let hgi: Pixar.HgiGLPtr
+    #endif // canImport(Metal)
 
     private let engine: UsdImagingGL.EngineSharedPtr
 
@@ -47,13 +43,13 @@ public enum Hydra
     {
       self.stage = stage
 
-#if canImport(Metal)
-      hgi = HgiMetal.createHgi()
-      let driver = HdDriver(name: Hgi.Tokens.renderDriver.token, driver: hgi.value)
-#else // !canImport(Metal)
-      hgi = HgiGL.createHgi()
-      let driver = HdDriver(name: Hgi.Tokens.renderDriver.token, driver: hgi.value)
-#endif // canImport(Metal)
+      #if canImport(Metal)
+        hgi = HgiMetal.createHgi()
+        let driver = HdDriver(name: Hgi.Tokens.renderDriver.token, driver: hgi.value)
+      #else // !canImport(Metal)
+        hgi = HgiGL.createHgi()
+        let driver = HdDriver(name: Hgi.Tokens.renderDriver.token, driver: hgi.value)
+      #endif // canImport(Metal)
 
       engine = UsdImagingGL.Engine.createEngine(
         rootPath: stage.getPseudoRoot().getPath(),
@@ -78,7 +74,9 @@ public enum Hydra
     public func render(at timeCode: Double, viewSize: CGSize) -> Pixar.HgiTextureHandle
     {
       // draws the scene using hydra.
-      guard let camera = cameraController else {
+      guard let camera = cameraController
+      else
+      {
         Msg.logger.log(level: .error, "RenderEngine: No camera controller set")
         return Pixar.HgiTextureHandle()
       }
@@ -87,7 +85,7 @@ public enum Hydra
       let viewMatrix = camera.getViewMatrix()
 
       // Compute projection matrix
-      let fov = 60.0  // Default FOV
+      let fov = 60.0 // Default FOV
       let nearPlane = 1.0
       let farPlane = 100_000.0
       var frustum = Pixar.GfFrustum()
@@ -111,7 +109,7 @@ public enum Hydra
       params.clearColor = .init(0.0, 0.0, 0.0, 0.0)
       params.colorCorrectionMode = .sRGB
       // Enable OpenSubdiv refinement: complexity 1.0 = refineLevel 0, 2.0 = refineLevel 8
-      params.complexity = 1.2  // Lower subdivision for spheres
+      params.complexity = 1.2 // Lower subdivision for spheres
       // TODO: enableIdRender was removed in OpenUSD 25.11
       // params.enableIdRender = false
       params.showGuides = true
@@ -125,8 +123,7 @@ public enum Hydra
       return engine.getAovTexture(.color)
     }
 
-
-    /// creates a light source located at the camera position.
+    // creates a light source located at the camera position.
     // func computeCameraLight(cameraTransform: Gf.Matrix4d) -> Pixar.GlfSimpleLight
     // {
     //   let cameraPosition = Pixar.GfVec3f(cameraTransform.ExtractTranslation())
@@ -196,23 +193,22 @@ public enum Hydra
       return bboxCache
     }
 
+    #if canImport(Metal)
+      public var hydraDevice: MTLDevice
+      {
+        hgi.device
+      }
 
-#if canImport(Metal)
-    public var hydraDevice: MTLDevice
-    {
-      hgi.device
-    }
-
-    public func getHgi() -> Pixar.HgiMetalPtr
-    {
-      hgi
-    }
-#else // !canImport(Metal)
-    public func getHgi() -> Pixar.HgiGLPtr
-    {
-      hgi
-    }
-#endif // canImport(Metal)
+      public func getHgi() -> Pixar.HgiMetalPtr
+      {
+        hgi
+      }
+    #else // !canImport(Metal)
+      public func getHgi() -> Pixar.HgiGLPtr
+      {
+        hgi
+      }
+    #endif // canImport(Metal)
 
     public func getEngine() -> UsdImagingGL.EngineSharedPtr
     {

@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Foundation
@@ -93,14 +89,14 @@ class FreeCamera
   func getViewMatrix() -> Gf.Matrix4d
   {
     // compute the z-axis of the camera (view direction).
-    let zAxis = (self.position - (self.position + self.front)).getNormalized()
-    
+    let zAxis = (position - (position + front)).getNormalized()
+
     // compute the x-axis (right vector), the cross product of the up vector and z-axis.
     let xAxis = Gf.cross(up, zAxis).getNormalized()
-    
+
     // compute the y-axis (up vector) as the cross product of z-axis and x-axis.
     let yAxis = Gf.cross(zAxis, xAxis)
-    
+
     // construct the rotation matrix.
     var rotation = Gf.Matrix4d(1.0)
     rotation[0] = Gf.Vec4d(xAxis[0], yAxis[0], zAxis[0], 0)
@@ -108,14 +104,14 @@ class FreeCamera
     rotation[2] = Gf.Vec4d(xAxis[2], yAxis[2], zAxis[2], 0)
     rotation[3] = Gf.Vec4d(0, 0, 0, 1)
 
-    rotation.SetTranslate(Gf.Vec3d(-self.position[0], -self.position[1], -self.position[2]))
+    rotation.SetTranslate(Gf.Vec3d(-position[0], -position[1], -position[2]))
 
     return rotation
   }
 
   func getProjectionMatrix(aspectRatio: Double) -> Gf.Matrix4d
   {
-    let fov = Gf.degreesToRadians(angle: self.zoom)
+    let fov = Gf.degreesToRadians(angle: zoom)
     let nearClip = 0.1
     let farClip = 1000.0
     let tanHalfFov = tan(fov / 2.0)

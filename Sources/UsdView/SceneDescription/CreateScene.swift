@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Foundation
@@ -40,7 +36,8 @@ extension UsdView
     let frameStep = 1.0 / Double(samplesPerFrame)
 
     // For each pair of keyframes, interpolate with ease-in/ease-out
-    for i in 0..<(keyframes.count - 1) {
+    for i in 0 ..< (keyframes.count - 1)
+    {
       let kf1 = keyframes[i]
       let kf2 = keyframes[i + 1]
 
@@ -50,7 +47,8 @@ extension UsdView
       let v2 = kf2.value
 
       var t = t1
-      while t < t2 {
+      while t < t2
+      {
         // Normalize time to [0, 1]
         let u = (t - t1) / (t2 - t1)
 
@@ -60,7 +58,8 @@ extension UsdView
         // Interpolate value
         let value = v1 + (v2 - v1) * ease
 
-        if t >= startFrame && t <= endFrame {
+        if t >= startFrame, t <= endFrame
+        {
           samples.append((time: t, value: value))
         }
         t += frameStep
@@ -68,7 +67,8 @@ extension UsdView
     }
 
     // Add the final keyframe
-    if let last = keyframes.last, last.time <= endFrame {
+    if let last = keyframes.last, last.time <= endFrame
+    {
       samples.append((time: last.time, value: last.value))
     }
 
@@ -99,13 +99,15 @@ extension UsdView
     var currentTime = startFrame
     var currentHeight = bounceHeight
 
-    for bounce in 0..<numBounces {
+    for bounce in 0 ..< numBounces
+    {
       let bounceDuration = framesPerBounce * pow(dampingFactor, Double(bounce))
       let halfDuration = bounceDuration / 2.0
 
       // Sample the upward arc (rising)
       var t: Double = 0
-      while t < halfDuration {
+      while t < halfDuration
+      {
         let u = t / halfDuration
         // Parabolic motion: h = h_max * (1 - (1-u)²) for rising
         // Simplified: value increases with deceleration
@@ -119,7 +121,8 @@ extension UsdView
 
       // Sample the downward arc (falling)
       t = 0
-      while t < halfDuration {
+      while t < halfDuration
+      {
         let u = t / halfDuration
         // Parabolic motion: h = h_max * (1 - u²) for falling
         // Value decreases with acceleration (gravity)
@@ -155,9 +158,11 @@ extension UsdView
 
     // Add dome light with HDRI for environment lighting
     let domeLight = UsdLux.DomeLight.define(stage, path: "/World/DefaultDomeLight")
-    if let hdxResources = Bundle.hdx?.resourcePath {
+    if let hdxResources = Bundle.hdx?.resourcePath
+    {
       let tex = "\(hdxResources)/textures/StinsonBeach.hdr"
-      if FileManager.default.fileExists(atPath: tex) {
+      if FileManager.default.fileExists(atPath: tex)
+      {
         let hdrAsset = Sdf.AssetPath(tex)
         domeLight.createTextureFileAttr().set(hdrAsset)
       }
@@ -198,25 +203,29 @@ extension UsdView
     )
 
     // Apply the smooth rotation samples
-    for sample in smoothRotation {
+    for sample in smoothRotation
+    {
       subdivRotateOp.set(Float(sample.value), time: Usd.TimeCode(sample.time))
     }
 
     // Define cube vertices (8 corners of a unit cube centered at origin)
     var points = Vt.Vec3fArray()
-    points.push_back(GfVec3f(-0.5, -0.5, -0.5))  // 0: back-bottom-left
-    points.push_back(GfVec3f( 0.5, -0.5, -0.5))  // 1: back-bottom-right
-    points.push_back(GfVec3f( 0.5,  0.5, -0.5))  // 2: back-top-right
-    points.push_back(GfVec3f(-0.5,  0.5, -0.5))  // 3: back-top-left
-    points.push_back(GfVec3f(-0.5, -0.5,  0.5))  // 4: front-bottom-left
-    points.push_back(GfVec3f( 0.5, -0.5,  0.5))  // 5: front-bottom-right
-    points.push_back(GfVec3f( 0.5,  0.5,  0.5))  // 6: front-top-right
-    points.push_back(GfVec3f(-0.5,  0.5,  0.5))  // 7: front-top-left
+    points.push_back(GfVec3f(-0.5, -0.5, -0.5)) // 0: back-bottom-left
+    points.push_back(GfVec3f(0.5, -0.5, -0.5)) // 1: back-bottom-right
+    points.push_back(GfVec3f(0.5, 0.5, -0.5)) // 2: back-top-right
+    points.push_back(GfVec3f(-0.5, 0.5, -0.5)) // 3: back-top-left
+    points.push_back(GfVec3f(-0.5, -0.5, 0.5)) // 4: front-bottom-left
+    points.push_back(GfVec3f(0.5, -0.5, 0.5)) // 5: front-bottom-right
+    points.push_back(GfVec3f(0.5, 0.5, 0.5)) // 6: front-top-right
+    points.push_back(GfVec3f(-0.5, 0.5, 0.5)) // 7: front-top-left
     subdividedMesh.CreatePointsAttr(Vt.Value(points), false)
 
     // Define 6 quad faces (4 vertices each)
     var faceVertexCounts = Vt.IntArray()
-    for _ in 0..<6 { faceVertexCounts.push_back(4) }
+    for _ in 0 ..< 6
+    {
+      faceVertexCounts.push_back(4)
+    }
     subdividedMesh.CreateFaceVertexCountsAttr(Vt.Value(faceVertexCounts), false)
 
     // Define face vertex indices (counter-clockwise winding)
@@ -264,7 +273,8 @@ extension UsdView
       endFrame: 120.0,
       samplesPerFrame: 1
     )
-    for sample in smoothCubeRotation {
+    for sample in smoothCubeRotation
+    {
       cubeRotateOp.set(Float(sample.value), time: Usd.TimeCode(sample.time))
     }
 
@@ -287,7 +297,8 @@ extension UsdView
       endFrame: 120.0,
       samplesPerFrame: 1
     )
-    for sample in smoothBounce {
+    for sample in smoothBounce
+    {
       cubeTranslateYOp.set(GfVec3d(0.0, sample.value, 0.0), time: Usd.TimeCode(sample.time))
     }
 
@@ -310,7 +321,8 @@ extension UsdView
       startFrame: 0.0,
       framesPerBounce: 35.0
     )
-    for sample in bounceSamples {
+    for sample in bounceSamples
+    {
       sphereBounceOp.set(GfVec3d(0.0, sample.value, 0.0), time: Usd.TimeCode(sample.time))
     }
 

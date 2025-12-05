@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Foundation
@@ -40,7 +36,8 @@ import PixarUSD
         self.hydra = hydra
 
         // Read animation parameters from the stage
-        if hydra.stage.pointee.HasAuthoredTimeCodeRange() {
+        if hydra.stage.pointee.HasAuthoredTimeCodeRange()
+        {
           startTimeCode = hydra.stage.pointee.GetStartTimeCode()
           endTimeCode = hydra.stage.pointee.GetEndTimeCode()
           framesPerSecond = hydra.stage.pointee.GetFramesPerSecond()
@@ -67,23 +64,28 @@ import PixarUSD
           let defaultLibrary: MTLLibrary
 
           // Method 1: Try loading from bundle
-          if let bundleLibrary = try? device.makeDefaultLibrary(bundle: .usdview) {
+          if let bundleLibrary = try? device.makeDefaultLibrary(bundle: .usdview)
+          {
             defaultLibrary = bundleLibrary
           }
           // Method 2: Try loading from main bundle (for bundled apps)
-          else if let mainLibrary = try? device.makeDefaultLibrary(bundle: .main) {
+          else if let mainLibrary = try? device.makeDefaultLibrary(bundle: .main)
+          {
             defaultLibrary = mainLibrary
           }
           // Method 3: Try the device's default library (looks in app bundle)
-          else if let deviceLibrary = device.makeDefaultLibrary() {
+          else if let deviceLibrary = device.makeDefaultLibrary()
+          {
             defaultLibrary = deviceLibrary
           }
           // Method 4: Try loading from explicit path
           else if let bundlePath = Bundle.usdview.resourcePath,
-                  let pathLibrary = try? device.makeLibrary(filepath: "\(bundlePath)/default.metallib") {
+                  let pathLibrary = try? device.makeLibrary(filepath: "\(bundlePath)/default.metallib")
+          {
             defaultLibrary = pathLibrary
           }
-          else {
+          else
+          {
             Msg.logger.error("HYDRA: Failed to load Metal library from any source")
             return
           }
@@ -134,7 +136,8 @@ import PixarUSD
         )
 
         // Advance animation time if the stage has animation
-        if isAnimating {
+        if isAnimating
+        {
           let currentTime = CACurrentMediaTime()
           let elapsedSeconds = currentTime - lastFrameTime
           lastFrameTime = currentTime
@@ -143,8 +146,9 @@ import PixarUSD
           currentTimeCode += elapsedSeconds * framesPerSecond
 
           // Loop the animation
-          if currentTimeCode > endTimeCode {
-            currentTimeCode = startTimeCode + (currentTimeCode - endTimeCode).truncatingRemainder(dividingBy: (endTimeCode - startTimeCode))
+          if currentTimeCode > endTimeCode
+          {
+            currentTimeCode = startTimeCode + (currentTimeCode - endTimeCode).truncatingRemainder(dividingBy: endTimeCode - startTimeCode)
           }
         }
 
@@ -194,14 +198,17 @@ import PixarUSD
       public func blitToView(_ view: MTKView, commandBuffer: MTLCommandBuffer, texture: MTLTexture)
       {
         // Ensure the view has a valid drawable before attempting to get the render pass descriptor
-        guard let drawable = view.currentDrawable else {
+        guard let drawable = view.currentDrawable
+        else
+        {
           // This can happen if the view size is invalid or no drawable is available
           // Just skip this frame - it's normal during initialization or window resizing
           return
         }
 
         guard let renderPassDescriptor = view.currentRenderPassDescriptor
-        else {
+        else
+        {
           Msg.logger.error("HYDRA: Failed to blit because there is no render pass descriptor for the current view.")
           return
         }

@@ -1,20 +1,16 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Foundation
 import PixarUSD
 import QuartzCore
 
-/**
+/* 
  * OpenExec Benchmark Suite
  *
  * Comprehensive benchmark for testing OpenExec execution system performance.
@@ -48,12 +44,14 @@ public struct OpenExecBenchmarkConfig
   public init() {}
 
   /// Total number of prims created
-  public var totalPrims: Int {
+  public var totalPrims: Int
+  {
     // Each level has siblingsPerLevel prims, and we have hierarchyDepth levels
     // Plus one root prim
-    var total = 1  // Root
+    var total = 1 // Root
     var currentLevelPrims = 1
-    for _ in 0..<hierarchyDepth {
+    for _ in 0 ..< hierarchyDepth
+    {
       currentLevelPrims *= siblingsPerLevel
       total += currentLevelPrims
     }
@@ -122,7 +120,8 @@ public enum OpenExecBenchmark
 
     // Add slow rotation to root (animates entire hierarchy)
     let rootRotate = root.addRotateYOp()
-    for frame in stride(from: 0, through: config.animationFrames, by: 1) {
+    for frame in stride(from: 0, through: config.animationFrames, by: 1)
+    {
       let angle = Float(frame) * (360.0 / Float(config.animationFrames))
       rootRotate.set(angle, time: Usd.TimeCode(Double(frame)))
     }
@@ -149,19 +148,22 @@ public enum OpenExecBenchmark
     maxDepth: Int,
     siblingsPerLevel: Int,
     animationFrames: Int
-  ) {
+  )
+  {
     guard currentDepth < maxDepth else { return }
 
     let spacing = 2.0 / Double(siblingsPerLevel)
 
-    for i in 0..<siblingsPerLevel {
+    for i in 0 ..< siblingsPerLevel
+    {
       let name = "Level\(currentDepth)_Child\(i)"
       let path = "\(parentPath)/\(name)"
 
       // Create either an xform (interior) or sphere (leaf)
       let isLeaf = currentDepth == maxDepth - 1
 
-      if isLeaf {
+      if isLeaf
+      {
         let sphere = UsdGeom.Sphere.define(stage, path: path)
         sphere.CreateRadiusAttr(Vt.Value(0.1), false)
 
@@ -171,13 +173,15 @@ public enum OpenExecBenchmark
 
         // Add scale animation for visual feedback
         let scaleOp = sphere.addScaleOp()
-        for frame in stride(from: 0, through: animationFrames, by: 4) {
+        for frame in stride(from: 0, through: animationFrames, by: 4)
+        {
           let phase = Double(frame + i * 10) / Double(animationFrames) * .pi * 2
           let scale = Float(1.0 + 0.3 * sin(phase))
           scaleOp.set(GfVec3f(scale, scale, scale), time: Usd.TimeCode(Double(frame)))
         }
       }
-      else {
+      else
+      {
         let xform = UsdGeom.Xform.define(stage, path: path)
 
         // Position child with offset
@@ -186,8 +190,9 @@ public enum OpenExecBenchmark
 
         // Add rotation animation at different speeds per level
         let rotateOp = xform.addRotateZOp()
-        let rotationSpeed = Float(currentDepth + 1) * 45.0  // Faster at deeper levels
-        for frame in stride(from: 0, through: animationFrames, by: 2) {
+        let rotationSpeed = Float(currentDepth + 1) * 45.0 // Faster at deeper levels
+        for frame in stride(from: 0, through: animationFrames, by: 2)
+        {
           let angle = Float(frame) * rotationSpeed / Float(animationFrames)
           rotateOp.set(angle, time: Usd.TimeCode(Double(frame)))
         }
@@ -209,10 +214,12 @@ public enum OpenExecBenchmark
   public static func collectXformablePrims(stage: UsdStageRefPtr) -> [Pixar.UsdPrim]
   {
     var prims: [Pixar.UsdPrim] = []
-    for prim in stage.traverse() {
+    for prim in stage.traverse()
+    {
       // Check if prim has xform ops (is transformable)
       let xformable = Pixar.UsdGeomXformable(prim)
-      if xformable.GetXformOpOrderAttr().IsValid() {
+      if xformable.GetXformOpOrderAttr().IsValid()
+      {
         prims.append(prim)
       }
     }
@@ -241,7 +248,9 @@ public enum OpenExecBenchmark
     let system = ExecUsd.System(stage: stage)
     results.systemCreationTime = CACurrentMediaTime() - systemStart
 
-    guard system.isValid else {
+    guard system.isValid
+    else
+    {
       Msg.logger.error("Failed to create ExecUsd.System!")
       return results
     }
@@ -252,14 +261,16 @@ public enum OpenExecBenchmark
     Msg.logger.info("Found \(prims.count) xformable prims")
 
     // 3. Benchmark single prim computation
-    if let firstPrim = prims.first {
+    if let firstPrim = prims.first
+    {
       let singleKey = ExecUsd.ValueKey(
         prim: firstPrim,
         computation: ExecGeom.Xformable.computeLocalToWorldTransform
       )
 
       var totalTime: Double = 0
-      for _ in 0..<config.iterations {
+      for _ in 0 ..< config.iterations
+      {
         let start = CACurrentMediaTime()
         var request = system.buildRequest(valueKeys: [singleKey])
         let _ = system.compute(request: &request)
@@ -270,7 +281,8 @@ public enum OpenExecBenchmark
     }
 
     // 4. Benchmark batch computation (all prims at once)
-    let valueKeys = prims.map { prim in
+    let valueKeys = prims.map
+    { prim in
       ExecUsd.ValueKey(
         prim: prim,
         computation: ExecGeom.Xformable.computeLocalToWorldTransform
@@ -278,16 +290,19 @@ public enum OpenExecBenchmark
     }
 
     var batchTotalTime: Double = 0
-    for _ in 0..<config.iterations {
+    for _ in 0 ..< config.iterations
+    {
       let start = CACurrentMediaTime()
       var request = system.buildRequest(valueKeys: valueKeys)
       let cacheView = system.compute(request: &request)
 
       // Verify results
       var validResults = 0
-      for i in 0..<prims.count {
+      for i in 0 ..< prims.count
+      {
         let value = cacheView.get(index: i)
-        if !value.IsEmpty() {
+        if !value.IsEmpty()
+        {
           validResults += 1
         }
       }
@@ -301,10 +316,12 @@ public enum OpenExecBenchmark
     let timeStep = Double(config.animationFrames) / Double(config.timeSamples)
     var animTotalTime: Double = 0
 
-    for iteration in 0..<config.iterations {
+    for iteration in 0 ..< config.iterations
+    {
       let start = CACurrentMediaTime()
 
-      for i in 0..<config.timeSamples {
+      for i in 0 ..< config.timeSamples
+      {
         let time = Double(i) * timeStep
         system.changeTime(time)
 
@@ -314,7 +331,8 @@ public enum OpenExecBenchmark
 
       animTotalTime += CACurrentMediaTime() - start
 
-      if iteration == 0 {
+      if iteration == 0
+      {
         Msg.logger.info("Animation pass \(iteration + 1): \(config.timeSamples) time samples computed")
       }
     }
@@ -388,9 +406,12 @@ public enum OpenExecBenchmark
 
     let results = runBenchmark(config: config)
 
-    if results.computationsPerSecond > 0 {
+    if results.computationsPerSecond > 0
+    {
       Msg.logger.info("Quick test PASSED - OpenExec is functional")
-    } else {
+    }
+    else
+    {
       Msg.logger.error("Quick test FAILED - OpenExec may have issues")
     }
   }

@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Arch
@@ -43,7 +39,6 @@ public extension Pixar
       var plugPaths = Pixar.PlugRegistry.PlugPathsVector()
       _ = resources.map
       { path in
-
         #if DEBUG_PIXAR_BUNDLE
           Msg.logger.log(level: .info, "Adding usd resource -> \(path)")
         #endif /* DEBUG_PIXAR_BUNDLE */

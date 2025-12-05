@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import ArgumentParser
@@ -79,7 +75,7 @@ struct UpdateCommand: AsyncCommand
       async let uim = try Pxr.usdImaging.enumerate(packagePath: pkgDir)
 
       // 3. wait for all usd source to be updated.
-      let _ = try await [bse, img, usd, uim]
+      _ = try await [bse, img, usd, uim]
     }
 
     // Output the time elapsed and app bundle location
@@ -116,7 +112,6 @@ public enum Pxr: String, CaseIterable
 
     return try list.compactMap
     { pxrPath in
-
       // ----------- determine target and source paths -----------
 
       let suffix = path(from: pxrPath).split(separator: "pxr/\(rawValue)/").last ?? ""
@@ -457,7 +452,7 @@ public enum Pxr: String, CaseIterable
      * survive future releases of openusd, while also making any potential
      * modifications to openusd source code easy to maintain, and clearly
      * defined, all wabi openusd source code modifications will live here. */
-    public static func apply(to source: inout String, fileURL: URL, target: String)
+    static func apply(to source: inout String, fileURL: URL, target: String)
     {
       // if a upstream source file matches a existing file in resources...
 
@@ -475,7 +470,7 @@ public enum Pxr: String, CaseIterable
 
     /**
      * Patches openusd headers for the pxr namespace, tbb headers, etc. */
-    public static func headers(to source: inout String)
+    static func headers(to source: inout String)
     {
       /* ----- pxr namespace headers. ----- */
 

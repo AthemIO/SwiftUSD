@@ -1,20 +1,16 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
+import CxxStdlib
 import Foundation
 import PixarUSD
-import CxxStdlib
 
-/**
+/* 
  * OpenExec Examples
  *
  * Demonstrates using the OpenExec execution system to compute values
@@ -46,7 +42,9 @@ func testExecUsdSystem()
 
   // Create an execution system from the stage
   let system = ExecUsd.System(stage: stage)
-  guard system.isValid else {
+  guard system.isValid
+  else
+  {
     Msg.logger.error("Failed to create ExecUsd.System!")
     return
   }
@@ -57,7 +55,9 @@ func testExecUsdSystem()
   let childPrim = stage.getPrim(at: "/Root/Child")
   let spherePrim = stage.getPrim(at: "/Root/Child/Sphere")
 
-  guard rootPrim.IsValid(), childPrim.IsValid(), spherePrim.IsValid() else {
+  guard rootPrim.IsValid(), childPrim.IsValid(), spherePrim.IsValid()
+  else
+  {
     Msg.logger.error("Failed to get prims from stage!")
     return
   }
@@ -80,7 +80,9 @@ func testExecUsdSystem()
 
   // Build a request for all three transforms at once
   var request = system.buildRequest(valueKeys: [rootKey, childKey, sphereKey])
-  guard request.isValid else {
+  guard request.isValid
+  else
+  {
     Msg.logger.error("Failed to build request!")
     return
   }
@@ -88,7 +90,9 @@ func testExecUsdSystem()
 
   // Compute the transforms
   let cacheView = system.compute(request: &request)
-  guard cacheView.isValid else {
+  guard cacheView.isValid
+  else
+  {
     Msg.logger.error("Compute returned invalid cache view!")
     return
   }
@@ -105,13 +109,16 @@ func testExecUsdSystem()
   Msg.logger.info("Sphere transform empty: \(sphereTransform.IsEmpty())")
 
   // If non-empty, extract as GfMatrix4d
-  if !rootTransform.IsEmpty() {
+  if !rootTransform.IsEmpty()
+  {
     Msg.logger.info("Root transform type: \(rootTransform.GetTypeName())")
   }
-  if !childTransform.IsEmpty() {
+  if !childTransform.IsEmpty()
+  {
     Msg.logger.info("Child transform type: \(childTransform.GetTypeName())")
   }
-  if !sphereTransform.IsEmpty() {
+  if !sphereTransform.IsEmpty()
+  {
     Msg.logger.info("Sphere transform type: \(sphereTransform.GetTypeName())")
   }
 
@@ -171,7 +178,9 @@ func testAnimatedScene()
 
   // Create the execution system
   let system = ExecUsd.System(stage: stage)
-  guard system.isValid else {
+  guard system.isValid
+  else
+  {
     Msg.logger.error("Failed to create ExecUsd.System!")
     return
   }
@@ -180,7 +189,9 @@ func testAnimatedScene()
   let ballPrim = stage.getPrim(at: "/BouncingBall")
   let ball2Prim = stage.getPrim(at: "/MovingBall")
 
-  guard ballPrim.IsValid(), ball2Prim.IsValid() else {
+  guard ballPrim.IsValid(), ball2Prim.IsValid()
+  else
+  {
     Msg.logger.error("Failed to get ball prims!")
     return
   }
@@ -201,7 +212,8 @@ func testAnimatedScene()
   // Sample at various frames to show animation
   let sampleTimes: [Double] = [0.0, 6.0, 12.0, 18.0, 24.0, 36.0, 48.0]
 
-  for time in sampleTimes {
+  for time in sampleTimes
+  {
     // Change the time in the system
     system.changeTime(time)
 
@@ -209,7 +221,8 @@ func testAnimatedScene()
     var request = system.buildRequest(valueKeys: [ballKey, ball2Key])
     let cacheView = system.compute(request: &request)
 
-    if cacheView.isValid {
+    if cacheView.isValid
+    {
       let ballTransform = cacheView.get(index: 0)
       let ball2Transform = cacheView.get(index: 1)
 
@@ -217,10 +230,13 @@ func testAnimatedScene()
       Msg.logger.info("Time \(time):")
       Msg.logger.info("  BouncingBall empty: \(ballTransform.IsEmpty())")
       Msg.logger.info("  MovingBall empty: \(ball2Transform.IsEmpty())")
-      if !ballTransform.IsEmpty() {
+      if !ballTransform.IsEmpty()
+      {
         Msg.logger.info("  BouncingBall type: \(ballTransform.GetTypeName())")
       }
-    } else {
+    }
+    else
+    {
       Msg.logger.warning("Cache view invalid at time \(time)")
     }
   }

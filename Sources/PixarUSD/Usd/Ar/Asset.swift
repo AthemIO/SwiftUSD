@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import Ar
@@ -33,7 +29,8 @@ public extension ArAsset
   func read(count: Int, offset: Int = 0) -> Data?
   {
     var buffer = [UInt8](repeating: 0, count: count)
-    let bytesRead = buffer.withUnsafeMutableBufferPointer { ptr in
+    let bytesRead = buffer.withUnsafeMutableBufferPointer
+    { ptr in
       Read(ptr.baseAddress, count, offset)
     }
     guard bytesRead > 0 else { return nil }
@@ -62,7 +59,8 @@ public extension ArWritableAsset
   @discardableResult
   func write(_ data: Data, at offset: Int = 0) -> Int
   {
-    data.withUnsafeBytes { ptr in
+    data.withUnsafeBytes
+    { ptr in
       Int(Write(ptr.baseAddress, data.count, offset))
     }
   }

@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 
 import UsdLux
@@ -74,7 +70,8 @@ public extension UsdLux.ShadowAPI
   @discardableResult
   func createShadowEnableAttr(_ defaultValue: Bool? = nil) -> Usd.Attribute
   {
-    if let value = defaultValue {
+    if let value = defaultValue
+    {
       return CreateShadowEnableAttr(Vt.Value(value), false)
     }
     return CreateShadowEnableAttr(Vt.Value(), false)
@@ -90,7 +87,8 @@ public extension UsdLux.ShadowAPI
   @discardableResult
   func createShadowColorAttr(_ defaultValue: GfVec3f? = nil) -> Usd.Attribute
   {
-    if let value = defaultValue {
+    if let value = defaultValue
+    {
       return CreateShadowColorAttr(Vt.Value(value), false)
     }
     return CreateShadowColorAttr(Vt.Value(), false)
@@ -106,7 +104,8 @@ public extension UsdLux.ShadowAPI
   @discardableResult
   func createShadowDistanceAttr(_ defaultValue: Float? = nil) -> Usd.Attribute
   {
-    if let value = defaultValue {
+    if let value = defaultValue
+    {
       return CreateShadowDistanceAttr(Vt.Value(value), false)
     }
     return CreateShadowDistanceAttr(Vt.Value(), false)
@@ -122,7 +121,8 @@ public extension UsdLux.ShadowAPI
   @discardableResult
   func createShadowFalloffAttr(_ defaultValue: Float? = nil) -> Usd.Attribute
   {
-    if let value = defaultValue {
+    if let value = defaultValue
+    {
       return CreateShadowFalloffAttr(Vt.Value(value), false)
     }
     return CreateShadowFalloffAttr(Vt.Value(), false)
@@ -138,7 +138,8 @@ public extension UsdLux.ShadowAPI
   @discardableResult
   func createShadowFalloffGammaAttr(_ defaultValue: Float? = nil) -> Usd.Attribute
   {
-    if let value = defaultValue {
+    if let value = defaultValue
+    {
       return CreateShadowFalloffGammaAttr(Vt.Value(value), false)
     }
     return CreateShadowFalloffGammaAttr(Vt.Value(), false)
