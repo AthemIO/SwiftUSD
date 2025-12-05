@@ -12,6 +12,7 @@
 #include "Ar/api.h"
 #include "Ar/resolver.h"
 #include "Ar/writableAsset.h"
+#include "Arch/swiftInterop.h"
 
 #include "Tf/safeOutputFile.h"
 
@@ -23,10 +24,13 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// filesystem.
 ///
 /// This implementation uses TfSafeOutputFile; in the case where the asset
-/// has been opened for replacement, data will be written to a temporary 
+/// has been opened for replacement, data will be written to a temporary
 /// file which will be renamed over the destination file when this object
 /// is destroyed. See documentation for TfSafeOutputFile for more details.
-class ArFilesystemWritableAsset
+///
+/// @WABI: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - inherits from
+/// ArWritableAsset abstract class and has no copy constructor.
+class SWIFT_IMMORTAL_REFERENCE ArFilesystemWritableAsset
     : public ArWritableAsset
 {
 public:

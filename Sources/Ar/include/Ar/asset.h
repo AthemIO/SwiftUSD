@@ -11,6 +11,7 @@
 
 #include "pxr/pxrns.h"
 #include "Ar/api.h"
+#include "Arch/swiftInterop.h"
 
 #include <cstdio>
 #include <memory>
@@ -23,7 +24,10 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// Interface for accessing the contents of an asset.
 ///
 /// \see ArResolver::OpenAsset for how to retrieve instances of this object.
-class ArAsset {
+///
+/// @WABI: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this abstract
+/// class has deleted copy constructor which Swift can't import without annotation.
+class SWIFT_IMMORTAL_REFERENCE ArAsset {
 public:
     AR_API
     virtual ~ArAsset();

@@ -12,6 +12,7 @@
 #include "pxr/pxrns.h"
 #include "Ar/api.h"
 #include "Vt/value.h"
+#include "Arch/swiftInterop.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -21,12 +22,15 @@ PXR_NAMESPACE_OPEN_SCOPE
 ///
 /// A scoped resolution cache indicates to the resolver that results of
 /// calls to Resolve should be cached for a certain scope. This is
-/// important for performance and also for consistency -- it ensures 
+/// important for performance and also for consistency -- it ensures
 /// that repeated calls to Resolve with the same parameters will
 /// return the same result.
 ///
 /// \see \ref ArResolver_scopedCache "Scoped Resolution Cache"
-class ArResolverScopedCache
+///
+/// @WABI: Added SWIFT_NONCOPYABLE for Swift C++ interop - this RAII type
+/// manages cache scope lifetime and cannot be copied.
+class SWIFT_NONCOPYABLE ArResolverScopedCache
 {
 public:
 

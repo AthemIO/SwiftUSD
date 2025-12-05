@@ -47,4 +47,7 @@
 // Notifications
 #include <Ar/notice.h>
 
+// Swift bridge (must come after all other Ar headers)
+#include <Ar/swiftBridge.h>
+
 #endif  // __PXR_USD_AR_H__
