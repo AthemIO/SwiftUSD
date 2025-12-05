@@ -41,7 +41,6 @@ import PixarUSD
           super.viewDidMoveToWindow()
           // Ensure we become first responder when added to window
           window?.makeFirstResponder(self)
-          print("View added to window, became first responder: \(window?.firstResponder === self)")
         }
 
         override public func mouseDown(with event: NSEvent)
@@ -49,7 +48,6 @@ import PixarUSD
           super.mouseDown(with: event)
           lastMouseLocation = event.locationInWindow
           currentInteractionMode = determineInteractionMode(from: event)
-          NSLog("Mouse down - interaction mode: \(currentInteractionMode), modifiers: \(event.modifierFlags)")
         }
 
         override public func mouseDragged(with event: NSEvent)
@@ -108,24 +106,17 @@ import PixarUSD
           super.keyDown(with: event)
 
           guard let characters = event.charactersIgnoringModifiers?.lowercased()
-          else {
-            NSLog("KeyDown - no characters")
-            return
-          }
-
-          NSLog("KeyDown - key: \(characters)")
+          else { return }
 
           switch characters
           {
             case "f":
               // Focus on nearest object
-              NSLog("F key pressed - focusing on nearest object")
               focusOnNearestObject()
               setNeedsDisplay(bounds)
 
             case "r":
               // Reset camera
-              NSLog("R key pressed - resetting camera")
               cameraController?.reset()
               setNeedsDisplay(bounds)
 
@@ -151,10 +142,8 @@ import PixarUSD
           // Focus on the nearest object
           if sphereDistance < cubeDistance {
             camera.focus(on: spherePosition, distance: 5.0)
-            NSLog("Focused on sphere")
           } else {
             camera.focus(on: cubePosition, distance: 5.0)
-            NSLog("Focused on cube")
           }
         }
 
