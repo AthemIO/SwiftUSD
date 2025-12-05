@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-15]
-        swift: ["6.0.2"]
+        swift: ["6.1"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -19,4 +19,4 @@ jobs:
           sudo cp ./swift-bundler /usr/local/bin/
           rm ./swift-bundler
       - name: 📦 Build & Bundle
-        run: swift bundler bundle -c release --xcodebuild
+        run: swift bundler bundle -c release UsdView

@@ -8,30 +8,32 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        swift: ["6.0"]
+        swift: ["6.1"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v4
+      - name: 🔄 Update apt cache
+        run: sudo apt-get update
       - name: 👨‍💻 Install CxxStdlib
-        run: sudo apt install libstdc++-12-dev
+        run: sudo apt-get install -y libstdc++-12-dev
       - name: 🗜️ Install DEFLATE
-        run: sudo apt install libdeflate-dev
+        run: sudo apt-get install -y libdeflate-dev
       - name: 📙 Install BZ2
-        run: sudo apt install libbz2-dev
+        run: sudo apt-get install -y libbz2-dev
       - name: 📓 Install ZLib
-        run: sudo apt install zlib1g-dev
+        run: sudo apt-get install -y zlib1g-dev
       - name: 🐍 Install Python
-        run: sudo apt install python3-dev
+        run: sudo apt-get install -y python3-dev
       - name: 🖼 Install FreeGLUT
-        run: sudo apt install freeglut3-dev
+        run: sudo apt-get install -y freeglut3-dev
       - name: 🚀 Install Boost
-        run: sudo apt install libboost-all-dev
+        run: sudo apt-get install -y libboost-all-dev
       - name: 🖥️ Install X11
-        run: sudo apt install libxcursor-dev libxt-dev libxi-dev libxinerama-dev libxrandr-dev
+        run: sudo apt-get install -y libxcursor-dev libxt-dev libxi-dev libxinerama-dev libxrandr-dev
       - name: 💻 Install GTK
-        run: sudo apt install libgtk-4-dev clang
+        run: sudo apt-get install -y libgtk-4-dev clang
       - name: 📦 Build
         run: swift build -c release --target UsdView

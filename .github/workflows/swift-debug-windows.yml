@@ -8,13 +8,13 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        swift: ["6.0"]
+        swift: ["6.1"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: compnerd/gha-setup-swift@main
         with:
-          branch: swift-6.0-release
-          tag: 6.0-RELEASE
+          branch: swift-6.1-release
+          tag: 6.1-RELEASE
       - uses: actions/checkout@v4
       - name: 📦 Build
         run: swift build -c debug --target UsdView

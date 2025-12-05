@@ -10,32 +10,34 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        swift: ["5.10"]
+        swift: ["6.1"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - name: 🔄 Update apt cache
+        run: sudo apt-get update
       - name: 👨‍💻 Install CxxStdlib
-        run: sudo apt install libstdc++-12-dev
+        run: sudo apt-get install -y libstdc++-12-dev
       - name: 📙 Install BZ2
-        run: sudo apt install libbz2-dev
+        run: sudo apt-get install -y libbz2-dev
       - name: 📓 Install ZLib
-        run: sudo apt install zlib1g-dev
+        run: sudo apt-get install -y zlib1g-dev
       - name: 🐍 Install Python
-        run: sudo apt install python3-dev
+        run: sudo apt-get install -y python3-dev
       - name: 🖼 Install FreeGLUT
-        run: sudo apt install freeglut3-dev
+        run: sudo apt-get install -y freeglut3-dev
       - name: 🚀 Install Boost
-        run: sudo apt install libboost-all-dev
+        run: sudo apt-get install -y libboost-all-dev
       - name: 🖥️ Install X11
-        run: sudo apt install libxcursor-dev libxt-dev libxi-dev libxinerama-dev libxrandr-dev
+        run: sudo apt-get install -y libxcursor-dev libxt-dev libxi-dev libxinerama-dev libxrandr-dev
       - name: Compile Docs
         run: |
           set -eux
-          git config user.email "devs@wabi.foundation"
-          git config user.name "furby™"
+          git config user.email "devs@athem.io"
+          git config user.name "ATHEM Bot"
           git fetch
           git worktree add --checkout gh-pages origin/gh-pages
           export DOCC_JSON_PRETTYPRINT="YES"
