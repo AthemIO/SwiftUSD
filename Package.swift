@@ -334,9 +334,9 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/wabiverse/swift-cross-ui", revision: "1a887c2"),
+        .package(url: "https://github.com/stackotter/swift-cross-ui", branch: "main"),
         .package(url: "https://github.com/wabiverse/icu.git", from: "76.1.2"),
-        .package(url: "https://github.com/AthemIO/MetaverseKit.git", branch: "main"),
+        .package(url: "https://github.com/AthemIO/SwiftASWF.git", branch: "main"),
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.1"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
@@ -360,10 +360,10 @@ let package = Package(
         .target(
             name: "MaterialX",
             dependencies: [
-                .product(name: "OpenImageIO", package: "MetaverseKit"),
-                .product(name: "OpenImageIO_Util", package: "MetaverseKit"),
+                .product(name: "OpenImageIO", package: "SwiftASWF"),
+                .product(name: "OpenImageIO_Util", package: "SwiftASWF"),
                 .product(
-                    name: "Apple", package: "MetaverseKit",
+                    name: "Apple", package: "SwiftASWF",
                     condition: .when(platforms: Arch.OS.apple.platform)),
             ],
             exclude: [
@@ -411,20 +411,22 @@ let package = Package(
                 /* ------------ pxr Namespace. ---------- */
                 .target(name: "pxr"),
                 /* ------------ VFX Platform. ----------- */
-                .product(name: "MetaTBB", package: "MetaverseKit"),
+                // Use OneTBB directly instead of MetaTBB to avoid duplicate symbol issues
+                // from TBBMallocProxy (which includes TBB assert_impl.h)
+                .product(name: "OneTBB", package: "SwiftASWF"),
                 .target(name: "MaterialX"),
-                .product(name: "Alembic", package: "MetaverseKit"),
-                .product(name: "OpenColorIO", package: "MetaverseKit"),
-                .product(name: "OpenImageIO", package: "MetaverseKit"),
-                .product(name: "OpenEXR", package: "MetaverseKit"),
-                .product(name: "OpenSubdiv", package: "MetaverseKit"),
-                .product(name: "OpenVDB", package: "MetaverseKit"),
-                .product(name: "Ptex", package: "MetaverseKit"),
-                .product(name: "Draco", package: "MetaverseKit"),
-                .product(name: "Eigen", package: "MetaverseKit"),
+                .product(name: "Alembic", package: "SwiftASWF"),
+                .product(name: "OpenColorIO", package: "SwiftASWF"),
+                .product(name: "OpenImageIO", package: "SwiftASWF"),
+                .product(name: "OpenEXR", package: "SwiftASWF"),
+                .product(name: "OpenSubdiv", package: "SwiftASWF"),
+                .product(name: "OpenVDB", package: "SwiftASWF"),
+                .product(name: "Ptex", package: "SwiftASWF"),
+                .product(name: "Draco", package: "SwiftASWF"),
+                .product(name: "Eigen", package: "SwiftASWF"),
                 /* ---------- Apple only libs. ---------- */
                 .product(
-                    name: "Apple", package: "MetaverseKit",
+                    name: "Apple", package: "SwiftASWF",
                     condition: .when(platforms: Arch.OS.apple.platform)),
                 /* ---------- Console logging. ---------- */
                 .product(name: "Logging", package: "swift-log"),

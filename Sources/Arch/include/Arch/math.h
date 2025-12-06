@@ -19,7 +19,8 @@
 #include <intrin.h>
 #endif
 
-#include <cmath>
+// Note: We avoid #include <cmath> here due to Swift C++ interop header path
+// conflicts. M_PI is defined directly and math functions use __builtin_ intrinsics.
 #if !defined(M_PI)
 #define M_PI 3.14159265358979323846
 #endif
@@ -101,12 +102,12 @@ inline void ArchSinCos(double v, double *s, double *c) { sincos(v, s, c); }
       defined(ARCH_OS_WASM_VM)
 
 inline void ArchSinCosf(float v, float *s, float *c) {
-    *s = std::sin(v);
-    *c = std::cos(v);  
+    *s = __builtin_sinf(v);
+    *c = __builtin_cosf(v);
 }
 inline void ArchSinCos(double v, double *s, double *c) {
-    *s = std::sin(v);
-    *c = std::cos(v);  
+    *s = __builtin_sin(v);
+    *c = __builtin_cos(v);
 }
 
 #else

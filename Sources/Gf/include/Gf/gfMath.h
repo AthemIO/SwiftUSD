@@ -16,7 +16,8 @@
 #include "Gf/traits.h"
 #include "pxr/pxrns.h"
 
-#include <cmath>
+// Note: We avoid #include <cmath> here due to Swift C++ interop header path
+// conflicts. Math functions use __builtin_ intrinsics instead.
 #include <type_traits>
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -24,7 +25,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// Returns true if \p a and \p b are with \p epsilon of each other.
 /// \ingroup group_gf_BasicMath
 inline bool GfIsClose(double a, double b, double epsilon) {
-    return fabs(a-b) < epsilon;
+    return __builtin_fabs(a-b) < epsilon;
 }
 
 /// Converts an angle in radians to degrees.
@@ -185,72 +186,72 @@ GfSgn(T v) {
 
 /// Return sqrt(\p f).
 /// \ingroup group_gf_BasicMath
-inline double GfSqrt(double f) { return std::sqrt(f); }
+inline double GfSqrt(double f) { return __builtin_sqrt(f); }
 /// Return sqrt(\p f).
 /// \ingroup group_gf_BasicMath
-inline float GfSqrt(float f) { return std::sqrt(f); }
+inline float GfSqrt(float f) { return __builtin_sqrtf(f); }
 
 /// Return exp(\p f).
 /// \ingroup group_gf_BasicMath
-inline double GfExp(double f) { return std::exp(f); }
+inline double GfExp(double f) { return __builtin_exp(f); }
 /// Return exp(\p f).
 /// \ingroup group_gf_BasicMath
-inline float GfExp(float f) { return std::exp(f); }
+inline float GfExp(float f) { return __builtin_expf(f); }
 
 /// Return log(\p f).
 /// \ingroup group_gf_BasicMath
-inline double GfLog(double f) { return std::log(f); }
+inline double GfLog(double f) { return __builtin_log(f); }
 /// Return log(\p f).
 /// \ingroup group_gf_BasicMath
-inline float GfLog(float f) { return std::log(f); }
+inline float GfLog(float f) { return __builtin_logf(f); }
 
 /// Return floor(\p f).
 /// \ingroup group_gf_BasicMath
-inline double GfFloor(double f) { return std::floor(f); }
+inline double GfFloor(double f) { return __builtin_floor(f); }
 /// Return floor(\p f).
 /// \ingroup group_gf_BasicMath
-inline float GfFloor(float f) { return std::floor(f); }
+inline float GfFloor(float f) { return __builtin_floorf(f); }
 
 /// Return ceil(\p f).
 /// \ingroup group_gf_BasicMath
-inline double GfCeil(double f) { return std::ceil(f); }
+inline double GfCeil(double f) { return __builtin_ceil(f); }
 /// Return ceil(\p f).
 /// \ingroup group_gf_BasicMath
-inline float GfCeil(float f) { return std::ceil(f); }
+inline float GfCeil(float f) { return __builtin_ceilf(f); }
 
 /// Return abs(\p f).
 /// \ingroup group_gf_BasicMath
-inline double GfAbs(double f) { return std::fabs(f); }
+inline double GfAbs(double f) { return __builtin_fabs(f); }
 /// Return abs(\p f).
 /// \ingroup group_gf_BasicMath
-inline float GfAbs(float f) { return std::fabs(f); }
+inline float GfAbs(float f) { return __builtin_fabsf(f); }
 
 /// Return round(\p f).
 /// \ingroup group_gf_BasicMath
-inline double GfRound(double f) { return std::rint(f); }
+inline double GfRound(double f) { return __builtin_rint(f); }
 /// Return round(\p f).
 /// \ingroup group_gf_BasicMath
-inline float GfRound(float f) { return std::rint(f); }
+inline float GfRound(float f) { return __builtin_rintf(f); }
 
 /// Return pow(\p f, \p p).
 /// \ingroup group_gf_BasicMath
-inline double GfPow(double f, double p) { return std::pow(f, p); }
+inline double GfPow(double f, double p) { return __builtin_pow(f, p); }
 /// Return pow(\p f, \p p).
 /// \ingroup group_gf_BasicMath
-inline float GfPow(float f, float p) { return std::pow(f, p); }
+inline float GfPow(float f, float p) { return __builtin_powf(f, p); }
 
 /// Return sin(\p v).
 /// \ingroup group_gf_BasicMath
-inline double GfSin(double v) { return std::sin(v); }
+inline double GfSin(double v) { return __builtin_sin(v); }
 /// Return sin(\p v).
 /// \ingroup group_gf_BasicMath
-inline float GfSin(float v) { return std::sin(v); }
+inline float GfSin(float v) { return __builtin_sinf(v); }
 /// Return cos(\p v).
 /// \ingroup group_gf_BasicMath
-inline double GfCos(double v) { return std::cos(v); }
+inline double GfCos(double v) { return __builtin_cos(v); }
 /// Return cos(\p v).
 /// \ingroup group_gf_BasicMath
-inline float GfCos(float v) { return std::cos(v); }
+inline float GfCos(float v) { return __builtin_cosf(v); }
 /// Return sin(\p v) in \p s and cos(\p v) in \p c.
 /// \ingroup group_gf_BasicMath
 inline void GfSinCos(double v, double *s, double *c) { ArchSinCos(v, s, c); }
