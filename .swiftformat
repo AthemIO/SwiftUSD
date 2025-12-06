@@ -26,7 +26,7 @@
 --generictypes
 --groupedextension "MARK: %c"
 --guardelse auto
---header "/* ----------------------------------------------------------------\n * :: :  A  T  H  E  M  :                            ::\n * ----------------------------------------------------------------\n * Licensed under the terms set forth in the LICENSE.txt file, this\n * file is available at https://openusd.org/license.\n *\n *                                        Copyright (C) 2016 Pixar.\n *         Copyright (C) 2025 Afloat Technologies. All Rights Reserved.\n * ----------------------------------------------------------------\n *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .\n * ---------------------------------------------------------------- */"
+--header "/* ----------------------------------------------------------------\n *  A T H E M\n * ----------------------------------------------------------------\n *  Copyright (C) 2016 Pixar.\n *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.\n *  Licensed under https://openusd.org/license\n * ---------------------------------------------------------------- */"
 --hexgrouping 4,8
 --hexliteralcase uppercase
 --ifdef indent
