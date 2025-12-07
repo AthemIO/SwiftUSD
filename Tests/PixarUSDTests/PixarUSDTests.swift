@@ -692,3 +692,210 @@ final class UsdMtlxTests: XCTestCase
     Msg.logger.log(level: .info, "UsdMtlx.testString(nodeGraphsOnly: true) created stage successfully")
   }
 }
+
+/* ---- xxx ----
+ *  AR ENHANCED TESTS
+ * ---- xxx ---- */
+
+final class ArEnhancedTests: XCTestCase
+{
+  // MARK: - Resolver Tests
+
+  func testGetResolver()
+  {
+    let resolver = Ar.getResolver()
+    // ArResolver is a reference type - just verify we can access it
+    Msg.logger.log(level: .info, "Ar.getResolver() returned successfully")
+
+    // Verify we can access methods
+    let context = resolver.createDefaultContext()
+    Msg.logger.log(level: .info, "createDefaultContext() returned")
+    _ = context
+  }
+
+  func testResolverCreateIdentifier()
+  {
+    let resolver = Ar.getResolver()
+
+    // Test creating an identifier
+    let identifier = resolver.createIdentifier("test.usda")
+    XCTAssertFalse(identifier.isEmpty)
+    Msg.logger.log(level: .info, "createIdentifier('test.usda') -> \(identifier)")
+  }
+
+  func testResolverCreateIdentifierForNewAsset()
+  {
+    let resolver = Ar.getResolver()
+
+    let identifier = resolver.createIdentifierForNewAsset("newfile.usda")
+    XCTAssertFalse(identifier.isEmpty)
+    Msg.logger.log(level: .info, "createIdentifierForNewAsset('newfile.usda') -> \(identifier)")
+  }
+
+  func testResolverResolve()
+  {
+    let resolver = Ar.getResolver()
+
+    // Resolve a non-existent file - should return empty path
+    let resolvedPath = resolver.resolve("nonexistent_file_12345.usda")
+    XCTAssertTrue(resolvedPath.isEmpty)
+    Msg.logger.log(level: .info, "resolve('nonexistent') -> isEmpty: \(resolvedPath.isEmpty)")
+  }
+
+  func testResolverResolveForNewAsset()
+  {
+    let resolver = Ar.getResolver()
+
+    // resolveForNewAsset returns a path where an asset could be created
+    let newPath = resolver.resolveForNewAsset("/tmp/test_new_asset.usda")
+    Msg.logger.log(level: .info, "resolveForNewAsset -> path: \(newPath.path)")
+  }
+
+  func testResolverGetExtension()
+  {
+    let resolver = Ar.getResolver()
+
+    let ext = resolver.getExtension("myfile.usda")
+    XCTAssertEqual(ext, "usda")
+
+    let ext2 = resolver.getExtension("another.usd")
+    XCTAssertEqual(ext2, "usd")
+
+    Msg.logger.log(level: .info, "getExtension tests passed")
+  }
+
+  func testResolverIsContextDependentPath()
+  {
+    let resolver = Ar.getResolver()
+
+    let isDependent = resolver.isContextDependentPath("test.usda")
+    Msg.logger.log(level: .info, "isContextDependentPath('test.usda') -> \(isDependent)")
+    // Most simple paths are not context-dependent with the default resolver
+  }
+
+  // MARK: - ResolvedPath Tests
+
+  func testResolvedPathCreation()
+  {
+    // Test empty path
+    let emptyPath = ArResolvedPath.empty()
+    XCTAssertTrue(emptyPath.isEmpty)
+    XCTAssertFalse(emptyPath.isValid)
+
+    // Test path from string
+    let path = ArResolvedPath("/some/path/to/file.usda")
+    XCTAssertFalse(path.isEmpty)
+    XCTAssertTrue(path.isValid)
+    XCTAssertEqual(path.path, "/some/path/to/file.usda")
+
+    Msg.logger.log(level: .info, "ArResolvedPath creation tests passed")
+  }
+
+  func testResolvedPathProperties()
+  {
+    let path = ArResolvedPath("/test/path.usda")
+
+    // Test path accessors
+    XCTAssertEqual(path.path, "/test/path.usda")
+    XCTAssertEqual(path.pathString, "/test/path.usda")
+
+    // Test hash
+    let hashValue = path.hash
+    XCTAssert(hashValue != 0)
+    Msg.logger.log(level: .info, "ArResolvedPath.hash -> \(hashValue)")
+
+    // Test description
+    XCTAssertEqual(path.description, "/test/path.usda")
+  }
+
+  func testResolvedPathEquality()
+  {
+    let path = ArResolvedPath("/test/file.usda")
+
+    // Test equality with string
+    XCTAssertTrue(path == "/test/file.usda")
+    XCTAssertFalse(path != "/test/file.usda")
+    XCTAssertFalse(path == "/other/file.usda")
+    XCTAssertTrue(path != "/other/file.usda")
+
+    Msg.logger.log(level: .info, "ArResolvedPath equality tests passed")
+  }
+
+  // MARK: - ScopedCache Tests
+
+  func testScopedCacheCreation()
+  {
+    let cache = Ar.ScopedCache()
+    Msg.logger.log(level: .info, "Ar.ScopedCache created successfully")
+
+    // End the cache
+    cache.end()
+    Msg.logger.log(level: .info, "Ar.ScopedCache ended successfully")
+  }
+
+  func testScopedCacheWithScope()
+  {
+    var wasExecuted = false
+
+    Ar.withCacheScope {
+      wasExecuted = true
+      // Perform some resolver operations
+      let resolver = Ar.getResolver()
+      _ = resolver.createIdentifier("test.usda")
+    }
+
+    XCTAssertTrue(wasExecuted)
+    Msg.logger.log(level: .info, "Ar.withCacheScope executed successfully")
+  }
+
+  func testScopedCacheNested()
+  {
+    let parentCache = Ar.ScopedCache()
+    let childCache = Ar.ScopedCache(sharingWith: parentCache)
+
+    Msg.logger.log(level: .info, "Nested ScopedCache created successfully")
+
+    childCache.end()
+    parentCache.end()
+  }
+
+  // MARK: - DefaultResolver Tests
+
+  func testDefaultResolverSetSearchPath()
+  {
+    // Set a search path
+    Ar.setDefaultSearchPath(["/tmp", "/var/tmp"])
+    Msg.logger.log(level: .info, "Ar.setDefaultSearchPath() called successfully")
+
+    // Reset to empty
+    Ar.setDefaultSearchPath([])
+  }
+
+  // MARK: - Context Tests
+
+  func testResolverContextCreation()
+  {
+    let resolver = Ar.getResolver()
+
+    // Create default context
+    let context = resolver.createDefaultContext()
+    Msg.logger.log(level: .info, "Default context created")
+
+    // Create context for a specific asset
+    let assetContext = resolver.createDefaultContext(forAsset: "test.usda")
+    Msg.logger.log(level: .info, "Asset context created")
+
+    _ = context
+    _ = assetContext
+  }
+
+  func testResolverContextFromString()
+  {
+    let resolver = Ar.getResolver()
+
+    // Create context from string (format depends on resolver implementation)
+    let context = resolver.createContext(fromString: "")
+    Msg.logger.log(level: .info, "Context from string created")
+    _ = context
+  }
+}
