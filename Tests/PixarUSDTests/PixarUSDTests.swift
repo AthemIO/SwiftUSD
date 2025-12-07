@@ -326,3 +326,214 @@ final class UsdValidationTests: XCTestCase
     }
   }
 }
+
+/* ---- xxx ----
+ *  PXOSD TESTS
+ * ---- xxx ---- */
+
+final class PxOsdTests: XCTestCase
+{
+  // MARK: - Token Tests
+
+  func testPxOsdTokens()
+  {
+    let tokens = PxOsd.Tokens.allCases
+    Msg.logger.log(level: .info, "PxOsd.Tokens count: \(tokens.count)")
+
+    for (i, token) in tokens.enumerated()
+    {
+      let tfToken = token.getToken()
+      XCTAssertFalse(tfToken.string.isEmpty)
+      Msg.logger.log(level: .info, "PxOsd.Tokens[\(i)] -> \(tfToken.string)")
+    }
+
+    // Test specific token values
+    XCTAssertEqual(PxOsd.Tokens.catmullClark.getToken().string, "catmullClark")
+    XCTAssertEqual(PxOsd.Tokens.loop.getToken().string, "loop")
+    XCTAssertEqual(PxOsd.Tokens.bilinear.getToken().string, "bilinear")
+    XCTAssertEqual(PxOsd.Tokens.rightHanded.getToken().string, "rightHanded")
+    XCTAssertEqual(PxOsd.Tokens.leftHanded.getToken().string, "leftHanded")
+  }
+
+  // MARK: - SubdivisionScheme Tests
+
+  func testSubdivisionScheme()
+  {
+    // Test token conversion
+    XCTAssertEqual(PxOsd.SubdivisionScheme.catmullClark.token.string, "catmullClark")
+    XCTAssertEqual(PxOsd.SubdivisionScheme.loop.token.string, "loop")
+    XCTAssertEqual(PxOsd.SubdivisionScheme.bilinear.token.string, "bilinear")
+    XCTAssertEqual(PxOsd.SubdivisionScheme.none.token.string, "none")
+
+    // Test init from token
+    XCTAssertEqual(PxOsd.SubdivisionScheme(token: Tf.Token("catmullClark")), .catmullClark)
+    XCTAssertEqual(PxOsd.SubdivisionScheme(token: Tf.Token("loop")), .loop)
+    XCTAssertNil(PxOsd.SubdivisionScheme(token: Tf.Token("invalid")))
+  }
+
+  // MARK: - Orientation Tests
+
+  func testOrientation()
+  {
+    XCTAssertEqual(PxOsd.Orientation.leftHanded.token.string, "leftHanded")
+    XCTAssertEqual(PxOsd.Orientation.rightHanded.token.string, "rightHanded")
+
+    XCTAssertEqual(PxOsd.Orientation(token: Tf.Token("leftHanded")), .leftHanded)
+    XCTAssertEqual(PxOsd.Orientation(token: Tf.Token("rightHanded")), .rightHanded)
+    XCTAssertNil(PxOsd.Orientation(token: Tf.Token("invalid")))
+  }
+
+  // MARK: - BoundaryInterpolation Tests
+
+  func testBoundaryInterpolation()
+  {
+    XCTAssertEqual(PxOsd.BoundaryInterpolation.none.token.string, "none")
+    XCTAssertEqual(PxOsd.BoundaryInterpolation.cornersOnly.token.string, "cornersOnly")
+    XCTAssertEqual(PxOsd.BoundaryInterpolation.cornersPlus1.token.string, "cornersPlus1")
+    XCTAssertEqual(PxOsd.BoundaryInterpolation.cornersPlus2.token.string, "cornersPlus2")
+    XCTAssertEqual(PxOsd.BoundaryInterpolation.all.token.string, "all")
+
+    XCTAssertEqual(PxOsd.BoundaryInterpolation(token: Tf.Token("cornersPlus1")), .cornersPlus1)
+    XCTAssertNil(PxOsd.BoundaryInterpolation(token: Tf.Token("invalid")))
+  }
+
+  // MARK: - CreaseMethod Tests
+
+  func testCreaseMethod()
+  {
+    XCTAssertEqual(PxOsd.CreaseMethod.uniform.token.string, "uniform")
+    XCTAssertEqual(PxOsd.CreaseMethod.chaikin.token.string, "chaikin")
+
+    XCTAssertEqual(PxOsd.CreaseMethod(token: Tf.Token("uniform")), .uniform)
+    XCTAssertEqual(PxOsd.CreaseMethod(token: Tf.Token("chaikin")), .chaikin)
+    XCTAssertNil(PxOsd.CreaseMethod(token: Tf.Token("invalid")))
+  }
+
+  // MARK: - MeshTopology Tests
+
+  func testMeshTopologyCreate()
+  {
+    // Create a simple quad mesh topology
+    var faceVertexCounts = Vt.IntArray()
+    faceVertexCounts.push_back(4) // One quad
+
+    var faceVertexIndices = Vt.IntArray()
+    faceVertexIndices.push_back(0)
+    faceVertexIndices.push_back(1)
+    faceVertexIndices.push_back(2)
+    faceVertexIndices.push_back(3)
+
+    let topology = PxOsd.MeshTopology.create(
+      scheme: .catmullClark,
+      orientation: .rightHanded,
+      faceVertexCounts: faceVertexCounts,
+      faceVertexIndices: faceVertexIndices
+    )
+
+    // Verify topology is valid
+    XCTAssertTrue(PxOsd.isValid(topology))
+    Msg.logger.log(level: .info, "PxOsd.MeshTopology created and validated successfully")
+
+    // Verify accessors
+    let counts = PxOsd.getFaceVertexCounts(topology)
+    XCTAssertEqual(counts.size(), 1)
+
+    let indices = PxOsd.getFaceVertexIndices(topology)
+    XCTAssertEqual(indices.size(), 4)
+
+    let orientation = PxOsd.getOrientation(topology)
+    XCTAssertEqual(orientation.string, "rightHanded")
+  }
+
+  func testMeshTopologyWithHoles()
+  {
+    var faceVertexCounts = Vt.IntArray()
+    faceVertexCounts.push_back(4)
+    faceVertexCounts.push_back(4)
+
+    var faceVertexIndices = Vt.IntArray()
+    for i: Int32 in 0 ..< 8
+    {
+      faceVertexIndices.push_back(i)
+    }
+
+    var holeIndices = Vt.IntArray()
+    holeIndices.push_back(1) // Second face is a hole
+
+    let topology = PxOsd.MeshTopology.create(
+      scheme: .catmullClark,
+      orientation: .rightHanded,
+      faceVertexCounts: faceVertexCounts,
+      faceVertexIndices: faceVertexIndices,
+      holeIndices: holeIndices
+    )
+
+    let holes = PxOsd.getHoleIndices(topology)
+    XCTAssertEqual(holes.size(), 1)
+    Msg.logger.log(level: .info, "PxOsd.MeshTopology with holes created successfully")
+  }
+
+  // MARK: - SubdivTags Tests
+
+  func testSubdivTagsCreate()
+  {
+    let tags = PxOsd.SubdivTags.create(
+      vertexInterpolation: .cornersPlus1,
+      faceVaryingInterpolation: .cornersOnly,
+      creaseMethod: .uniform
+    )
+
+    // Verify empty crease data
+    let creaseIndices = PxOsd.getCreaseIndices(tags)
+    XCTAssertEqual(creaseIndices.size(), 0)
+
+    Msg.logger.log(level: .info, "PxOsd.SubdivTags created successfully")
+  }
+
+  func testSubdivTagsWithCreases()
+  {
+    var creaseIndices = Vt.IntArray()
+    creaseIndices.push_back(0)
+    creaseIndices.push_back(1)
+
+    var creaseLengths = Vt.IntArray()
+    creaseLengths.push_back(2)
+
+    var creaseWeights = Vt.FloatArray()
+    creaseWeights.push_back(2.0) // Sharp crease
+
+    let tags = PxOsd.SubdivTags.create(
+      vertexInterpolation: .cornersPlus1,
+      faceVaryingInterpolation: .cornersOnly,
+      creaseMethod: .uniform,
+      creaseIndices: creaseIndices,
+      creaseLengths: creaseLengths,
+      creaseWeights: creaseWeights
+    )
+
+    let indices = PxOsd.getCreaseIndices(tags)
+    XCTAssertEqual(indices.size(), 2)
+
+    let weights = PxOsd.getCreaseWeights(tags)
+    XCTAssertEqual(weights.size(), 1)
+
+    Msg.logger.log(level: .info, "PxOsd.SubdivTags with creases created successfully")
+  }
+
+  // MARK: - ValidationCode Tests
+
+  func testValidationCodeDescriptions()
+  {
+    let codes = PxOsd.ValidationCode.allCases
+    Msg.logger.log(level: .info, "PxOsd.ValidationCode count: \(codes.count)")
+
+    for code in codes
+    {
+      XCTAssertFalse(code.description.isEmpty)
+    }
+
+    // Test specific descriptions
+    XCTAssertEqual(PxOsd.ValidationCode.invalidScheme.description, "Invalid subdivision scheme")
+    XCTAssertEqual(PxOsd.ValidationCode.invalidOrientation.description, "Invalid orientation")
+  }
+}
