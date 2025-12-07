@@ -451,7 +451,7 @@ public enum Pxr: String, CaseIterable
      * any changes that are required for openusd to work with swift, will
      * survive future releases of openusd, while also making any potential
      * modifications to openusd source code easy to maintain, and clearly
-     * defined, all wabi openusd source code modifications will live here. */
+     * defined, all swiftusd openusd source code modifications will live here. */
     static func apply(to source: inout String, fileURL: URL, target: String)
     {
       // if a upstream source file matches a existing file in resources...
@@ -489,7 +489,7 @@ public enum Pxr: String, CaseIterable
 
       /* ----- tbb headers. --------------- */
 
-      // currently, metaversekit places tbb in a OneTBB parent directory, so add that here.
+      // currently, SwiftASWF places tbb in a OneTBB parent directory, so add that here.
       // the normal <tbb/xxx.h> include paths can only be utilized once Swift on Linux is
       // fixed, possibly as soon as Swift 6, refer to the following PR:
       // https://github.com/swiftlang/swift/pull/75662

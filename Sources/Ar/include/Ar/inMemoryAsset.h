@@ -22,7 +22,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// ArAsset implementation that stores asset content in a heap-allocated
 /// buffer managed by this object.
 ///
-/// @WABI: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - inherits from
+/// @ATHEM: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - inherits from
 /// ArAsset abstract class and has no copy constructor.
 class SWIFT_IMMORTAL_REFERENCE ArInMemoryAsset
     : public ArAsset

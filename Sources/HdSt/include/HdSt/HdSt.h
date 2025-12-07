@@ -67,7 +67,7 @@
 #include <HdSt/materialNetworkShader.h>
 #include <HdSt/materialParam.h>
 #include <HdSt/materialPrimvarTransferSceneIndexPlugin.h>
-/* MaterialX shader generators excluded - MetaverseKit excludes GLSL/MSL/Vulkan generators
+/* MaterialX shader generators excluded - SwiftASWF excludes GLSL/MSL/Vulkan generators
 #include <HdSt/materialXFilter.h>
 #include <HdSt/materialXShaderGen.h>
 */

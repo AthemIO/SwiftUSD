@@ -10,7 +10,7 @@
 #include "pxr/pxrns.h"
 
 // MaterialX shader generators - conditionally enabled based on build configuration.
-// MetaverseKit excludes GLSL/MSL/Vulkan MaterialX generators due to API mismatches.
+// SwiftASWF excludes GLSL/MSL/Vulkan MaterialX generators due to API mismatches.
 // Set these to 1 if the corresponding MaterialX generator modules are available.
 #ifndef HDST_MATERIALX_GLSL_ENABLED
 #define HDST_MATERIALX_GLSL_ENABLED 0

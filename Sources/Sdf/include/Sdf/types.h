@@ -639,7 +639,7 @@ std::ostream &operator<<(std::ostream &out, const SdfHumanReadableValue &hrval);
 SDF_API
 size_t hash_value(const SdfHumanReadableValue &hrval);
 
-/// @WABI: Swift compatibility
+/// @ATHEM: Swift compatibility
 /// An enum class for SdfValueTypeName types, because Swift hates the -> operator
 /// pointer lookup on SdfValueTypeNames.
 enum class SdfValueTypeNameType
@@ -755,7 +755,7 @@ enum class SdfValueTypeNameType
   SdfValueTypeNameTypeTexCoord3dArray
 };
 
-/// @WABI: Swift compatibility
+/// @ATHEM: Swift compatibility
 /// A way to look up a SdfValueTypeName from Swift.
 inline SdfValueTypeName SdfGetValueType(const SdfValueTypeNameType &type)
 {

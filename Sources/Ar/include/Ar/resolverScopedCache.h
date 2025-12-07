@@ -28,7 +28,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 ///
 /// \see \ref ArResolver_scopedCache "Scoped Resolution Cache"
 ///
-/// @WABI: Added SWIFT_NONCOPYABLE for Swift C++ interop - this RAII type
+/// @ATHEM: Added SWIFT_NONCOPYABLE for Swift C++ interop - this RAII type
 /// manages cache scope lifetime and cannot be copied.
 class SWIFT_NONCOPYABLE ArResolverScopedCache
 {

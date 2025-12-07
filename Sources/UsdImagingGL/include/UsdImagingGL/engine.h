@@ -83,7 +83,7 @@ namespace UsdImagingGLEngine_Impl
 ///
 /// The UsdImagingGLEngine is the main entry point API for rendering USD scenes.
 ///
-/// @WABI: FIX ME
+/// @ATHEM: FIX ME
 /// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this type
 /// has deleted copy constructor which Swift can't import without annotation.
 class SWIFT_IMMORTAL_REFERENCE UsdImagingGLEngine
@@ -160,7 +160,7 @@ public:
     USDIMAGINGGL_API
     ~UsdImagingGLEngine();
 
-    // @WABI: Swift-friendly static factory methods that return shared_ptr
+    // @ATHEM: Swift-friendly static factory methods that return shared_ptr
     USDIMAGINGGL_API
     static UsdImagingGLEngineSharedPtr CreateEngine();
 

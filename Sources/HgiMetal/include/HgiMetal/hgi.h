@@ -34,7 +34,7 @@ enum {
 ///
 /// Metal implementation of the Hydra Graphics Interface.
 ///
-/// @WABI: FIX ME
+/// @ATHEM: FIX ME
 /// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this type
 /// has deleted copy constructor which Swift can't import without annotation.
 class SWIFT_IMMORTAL_REFERENCE HgiMetal final : public Hgi
@@ -56,7 +56,7 @@ public:
     HGIMETAL_API
     static HgiMetalPtr CreateHgi();
 
-    /// @WABI: Helper to wrap HgiMetalPtr in VtValue for HdDriver
+    /// @ATHEM: Helper to wrap HgiMetalPtr in VtValue for HdDriver
     HGIMETAL_API
     VtValue GetValue(HgiMetalPtr ptr) const;
 

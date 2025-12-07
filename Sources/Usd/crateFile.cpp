@@ -99,7 +99,7 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<Usd_CrateFile::TimeSamples>();
 }
 
-// @WABI: These env settings are defined in Sdf/crateFile.cpp. Use extern here
+// @ATHEM: These env settings are defined in Sdf/crateFile.cpp. Use extern here
 // to avoid duplicate symbol errors in SwiftPM builds where each module is
 // compiled separately.
 #define DEFAULT_NEW_VERSION "0.9.0"

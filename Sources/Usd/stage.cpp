@@ -10330,7 +10330,7 @@ template USD_API bool UsdStage::_SetMetadataImpl(
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-/// @WABI: FIX ME
+/// @ATHEM: FIX ME
 /// Swift C++ interop retain/release functions for UsdStage
 void UsdStageRetain(PXR_NS::UsdStage *stage)
 {

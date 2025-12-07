@@ -2527,7 +2527,7 @@ UsdStage::_SetMetadata(const UsdObject &object, const TfToken& key,
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-/// @WABI: FIX ME
+/// @ATHEM: FIX ME
 /// Swift C++ interop retain/release functions for UsdStage
 void UsdStageRetain(PXR_NS::UsdStage *);
 void UsdStageRelease(PXR_NS::UsdStage *);

@@ -1,13 +1,9 @@
 /* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
+ *  A T H E M
  * ----------------------------------------------------------------
- * Licensed under the terms set forth in the LICENSE.txt file, this
- * file is available at https://openusd.org/license.
- *
- *                                        Copyright (C) 2016 Pixar.
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
- *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ *  Copyright (C) 2016 Pixar.
+ *  Copyright (C) 2025 Afloat Technologies. All Rights Reserved.
+ *  Licensed under https://openusd.org/license
  * ---------------------------------------------------------------- */
 #ifndef __PXRNS_H__
 #define __PXRNS_H__
@@ -55,7 +51,7 @@
   cannot "use" another enum to globally inject it into it's scope, so the longer form
   of the internal namespace `pxrInternal_v0_23__pxrReserved__` becomes the **pxr**
   namespace. Due to a Swift compiler bug when attempting to create a typealias to a
-  c++ namespace (swift enum), Wabi renamed this namespace to **Pixar** for developer
+  c++ namespace (swift enum), SwiftUSD renamed this namespace to **Pixar** for developer
   convenience, else users would have to use the longer form of the namespace in swift
   code.
  */

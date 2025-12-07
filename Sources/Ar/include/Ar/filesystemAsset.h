@@ -26,7 +26,7 @@ class ArResolvedPath;
 ///
 /// ArAsset implementation for asset represented by a file on a filesystem.
 ///
-/// @WABI: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - inherits from
+/// @ATHEM: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - inherits from
 /// ArAsset abstract class and has no copy constructor.
 class SWIFT_IMMORTAL_REFERENCE ArFilesystemAsset
     : public ArAsset

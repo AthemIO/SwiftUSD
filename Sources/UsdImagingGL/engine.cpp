@@ -456,7 +456,7 @@ UsdImagingGLEngine::~UsdImagingGLEngine()
 }
 
 //----------------------------------------------------------------------------
-// @WABI: Swift-friendly static factory methods
+// @ATHEM: Swift-friendly static factory methods
 //----------------------------------------------------------------------------
 
 UsdImagingGLEngineSharedPtr

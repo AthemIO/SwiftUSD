@@ -1,5 +1,5 @@
 //
-// Copyright 2024 Wabi Foundation
+// Copyright 2025 Afloat Technologies. All Rights Reserved.
 //
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.

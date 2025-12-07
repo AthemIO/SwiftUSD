@@ -92,7 +92,7 @@ using HgiUniquePtr = std::unique_ptr<class Hgi>;
 ///     for i to num_threads
 ///         hgi->SubmitCmds( cmds[i] )
 ///
-/// @WABI: FIX ME
+/// @ATHEM: FIX ME
 /// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this type
 /// has deleted copy constructor which Swift can't import without annotation.
 class SWIFT_IMMORTAL_REFERENCE Hgi

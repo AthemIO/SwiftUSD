@@ -28,7 +28,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// file which will be renamed over the destination file when this object
 /// is destroyed. See documentation for TfSafeOutputFile for more details.
 ///
-/// @WABI: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - inherits from
+/// @ATHEM: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - inherits from
 /// ArWritableAsset abstract class and has no copy constructor.
 class SWIFT_IMMORTAL_REFERENCE ArFilesystemWritableAsset
     : public ArWritableAsset

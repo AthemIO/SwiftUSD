@@ -55,7 +55,7 @@ using HgiGLPtr = std::shared_ptr<class HgiGL>;
 /// is used with the implied expectation that the same GL context is valid
 /// and current for the lifetime of the HgiGL instance.
 ///
-/// @WABI: FIX ME
+/// @ATHEM: FIX ME
 /// Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this type
 /// has deleted copy constructor which Swift can't import without annotation.
 class SWIFT_IMMORTAL_REFERENCE HgiGL final : public Hgi
@@ -71,7 +71,7 @@ public:
     HGIGL_API
     static HgiGLPtr CreateHgi();
 
-    /// @WABI: Helper to wrap HgiGLPtr in VtValue for HdDriver
+    /// @ATHEM: Helper to wrap HgiGLPtr in VtValue for HdDriver
     HGIGL_API
     VtValue GetValue(HgiGLPtr ptr) const;
 

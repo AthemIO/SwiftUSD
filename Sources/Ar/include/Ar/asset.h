@@ -25,7 +25,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 ///
 /// \see ArResolver::OpenAsset for how to retrieve instances of this object.
 ///
-/// @WABI: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this abstract
+/// @ATHEM: Added SWIFT_IMMORTAL_REFERENCE for Swift C++ interop - this abstract
 /// class has deleted copy constructor which Swift can't import without annotation.
 class SWIFT_IMMORTAL_REFERENCE ArAsset {
 public:

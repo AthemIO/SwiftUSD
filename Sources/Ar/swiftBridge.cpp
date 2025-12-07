@@ -4,7 +4,7 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
-// @WABI: Swift Bridge Implementation
+// @ATHEM: Swift Bridge Implementation
 
 #include "Ar/swiftBridge.h"
 #include "Ar/resolverScopedCache.h"

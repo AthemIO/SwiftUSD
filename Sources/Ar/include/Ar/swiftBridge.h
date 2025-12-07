@@ -4,7 +4,7 @@
 // Licensed under the terms set forth in the LICENSE.txt file available at
 // https://openusd.org/license.
 //
-// @WABI: Swift Bridge - Provides Swift-compatible wrappers for Ar types that
+// @ATHEM: Swift Bridge - Provides Swift-compatible wrappers for Ar types that
 // cannot be directly imported to Swift due to RAII or other C++ patterns.
 //
 

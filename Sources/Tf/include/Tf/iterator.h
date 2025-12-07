@@ -418,7 +418,7 @@ public:
     using pointer = typename ReverseIterator::pointer;
     using difference_type = typename ReverseIterator::difference_type;
 
-    /// @WABI: FIX ME
+    /// @ATHEM: FIX ME
     /// Note: Disabled for Swift module builds - OpenUSD uses Tf_ProxyReferenceReverseIterator
     /// with reference types in some containers (e.g., SdfMapEditProxy) which triggers this assertion.
     // static_assert(!std::is_reference<reference>::value,
@@ -426,7 +426,7 @@ public:
     //              "when the underlying iterator's reference type is a "
     //              "proxy (MyTypeRef) and not a true reference (MyType&)."
     //              "Use std::reverse_iterator instead.");
-    /// @WABI: FIX ME
+    /// @ATHEM: FIX ME
     /// Note: Disabled for Swift module builds - OpenUSD uses Tf_ProxyReferenceReverseIterator
     /// with forward/bidirectional iterators (e.g., SdfChildrenView::_FilterIterator) which
     /// triggers this assertion. The implementation works with bidirectional iterators.

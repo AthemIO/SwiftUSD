@@ -2098,7 +2098,7 @@ private:
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-/// @WABI: FIX ME
+/// @ATHEM: FIX ME
 /// Swift C++ interop retain/release functions for SdfLayer
 void SdfLayerRetain(PXR_NS::SdfLayer *);
 void SdfLayerRelease(PXR_NS::SdfLayer *);
