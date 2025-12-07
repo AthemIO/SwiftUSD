@@ -21,7 +21,7 @@ SwiftUSD brings [OpenUSD](https://openusd.org) to Swift through C++ interoperabi
 
 ### macOS
 
-Developed and tested with **Xcode 16.4**. Requires Swift C++ interop support.
+Requires **Swift 6.1** (Xcode 16.4 toolchain) with C++ interop support.
 
 ### Package.swift
 

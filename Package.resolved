@@ -1,13 +1,13 @@
 {
-  "originHash" : "778ba4812cefa753eb08a43b787229431b0ccfdbe688718a369208a31b2f061c",
+  "originHash" : "510d16775cbbaa1b8bcef0f90ba8284d86005a19d47f7082e3dc56207d4b8ce0",
   "pins" : [
     {
       "identity" : "icu",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wabiverse/icu.git",
+      "location" : "https://github.com/AthemIO/icu.git",
       "state" : {
-        "revision" : "07ddbe4cab45175e70b22ed05240bac5ec7e0421",
-        "version" : "76.1.2"
+        "branch" : "maint/maint-78",
+        "revision" : "64a0e9bd291ca297a7ad6490d1ae4f55426361ce"
       }
     },
     {
@@ -164,15 +164,6 @@
       "location" : "https://github.com/stackotter/swift-winui",
       "state" : {
         "revision" : "1695ee3ea2b7a249f6504c7f1759e7ec7a38eb86"
-      }
-    },
-    {
-      "identity" : "swiftaswf",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/AthemIO/SwiftASWF.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "46ae0696b717de26fb02e81214ac7c6ef09329f6"
       }
     },
     {
