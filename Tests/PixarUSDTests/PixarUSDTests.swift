@@ -899,3 +899,180 @@ final class ArEnhancedTests: XCTestCase
     _ = context
   }
 }
+
+/* ---- xxx ----
+ *  USDGEOM ENHANCED TESTS
+ * ---- xxx ---- */
+
+final class UsdGeomEnhancedTests: XCTestCase
+{
+  // MARK: - @Xformable Macro Tests
+
+  func testXformableAddTranslateOp()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestTranslate")
+
+    // Add a translate operation using the @Xformable macro-generated method
+    let translateOp = xform.addTranslateOp()
+
+    // Verify the op was created and can be used
+    XCTAssertTrue(translateOp.set(GfVec3d(10.0, 20.0, 30.0)))
+    Msg.logger.log(level: .info, "addTranslateOp() works correctly")
+  }
+
+  func testXformableAddScaleOp()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestScale")
+
+    let scaleOp = xform.addScaleOp()
+
+    XCTAssertTrue(scaleOp.set(GfVec3f(2.0, 2.0, 2.0)))
+    Msg.logger.log(level: .info, "addScaleOp() works correctly")
+  }
+
+  func testXformableAddRotateXOp()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestRotateX")
+
+    let rotateXOp = xform.addRotateXOp()
+
+    XCTAssertTrue(rotateXOp.set(Float(45.0)))
+    Msg.logger.log(level: .info, "addRotateXOp() works correctly")
+  }
+
+  func testXformableAddRotateYOp()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestRotateY")
+
+    let rotateYOp = xform.addRotateYOp()
+
+    XCTAssertTrue(rotateYOp.set(Float(90.0)))
+    Msg.logger.log(level: .info, "addRotateYOp() works correctly")
+  }
+
+  func testXformableAddRotateZOp()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestRotateZ")
+
+    let rotateZOp = xform.addRotateZOp()
+
+    XCTAssertTrue(rotateZOp.set(Float(180.0)))
+    Msg.logger.log(level: .info, "addRotateZOp() works correctly")
+  }
+
+  func testXformableAddRotateXYZOp()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestRotateXYZ")
+
+    let rotateXYZOp = xform.addRotateXYZOp()
+
+    XCTAssertTrue(rotateXYZOp.set(GfVec3f(45.0, 90.0, 180.0)))
+    Msg.logger.log(level: .info, "addRotateXYZOp() works correctly")
+  }
+
+  func testXformableMultipleOps()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestMultipleOps")
+
+    // Add multiple transform operations in sequence
+    let translateOp = xform.addTranslateOp()
+    let rotateOp = xform.addRotateXYZOp()
+    let scaleOp = xform.addScaleOp()
+
+    // Set values for each
+    XCTAssertTrue(translateOp.set(GfVec3d(5.0, 10.0, 15.0)))
+    XCTAssertTrue(rotateOp.set(GfVec3f(0.0, 45.0, 0.0)))
+    XCTAssertTrue(scaleOp.set(GfVec3f(1.5, 1.5, 1.5)))
+
+    Msg.logger.log(level: .info, "Multiple xform ops added successfully")
+  }
+
+  // MARK: - Sphere with @Xformable Tests
+
+  func testSphereXformable()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let sphere = UsdGeom.Sphere.define(stage, path: "/TestSphere")
+
+    // Sphere should also have xformable operations via the @Xformable macro
+    let translateOp = sphere.addTranslateOp()
+    let scaleOp = sphere.addScaleOp()
+
+    XCTAssertTrue(translateOp.set(GfVec3d(1.0, 2.0, 3.0)))
+    XCTAssertTrue(scaleOp.set(GfVec3f(2.0, 2.0, 2.0)))
+
+    Msg.logger.log(level: .info, "Sphere Xformable operations work correctly")
+  }
+
+  // MARK: - XformOp Set Methods Tests
+
+  func testXformOpSetFloat()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestSetFloat")
+
+    let rotateOp = xform.addRotateZOp()
+
+    // Test set with Float
+    XCTAssertTrue(rotateOp.set(Float(30.0)))
+    Msg.logger.log(level: .info, "XformOp.set(Float) works")
+  }
+
+  func testXformOpSetDouble()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestSetDouble")
+
+    let rotateOp = xform.addRotateXOp()
+
+    // Test set with Double
+    XCTAssertTrue(rotateOp.set(Double(60.0)))
+    Msg.logger.log(level: .info, "XformOp.set(Double) works")
+  }
+
+  func testXformOpSetVec3f()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestSetVec3f")
+
+    let scaleOp = xform.addScaleOp()
+
+    // Test set with GfVec3f
+    XCTAssertTrue(scaleOp.set(GfVec3f(1.0, 2.0, 3.0)))
+    Msg.logger.log(level: .info, "XformOp.set(GfVec3f) works")
+  }
+
+  func testXformOpSetVec3d()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestSetVec3d")
+
+    let translateOp = xform.addTranslateOp()
+
+    // Test set with GfVec3d
+    XCTAssertTrue(translateOp.set(GfVec3d(100.0, 200.0, 300.0)))
+    Msg.logger.log(level: .info, "XformOp.set(GfVec3d) works")
+  }
+
+  func testXformOpSetWithTime()
+  {
+    let stage = Usd.Stage.createInMemory()
+    let xform = UsdGeom.Xform.define(stage, path: "/TestSetWithTime")
+
+    let translateOp = xform.addTranslateOp()
+
+    // Test setting at different time codes
+    XCTAssertTrue(translateOp.set(GfVec3d(0.0, 0.0, 0.0), time: Usd.TimeCode(0.0)))
+    XCTAssertTrue(translateOp.set(GfVec3d(10.0, 10.0, 10.0), time: Usd.TimeCode(24.0)))
+    XCTAssertTrue(translateOp.set(GfVec3d(20.0, 20.0, 20.0), time: Usd.TimeCode(48.0)))
+
+    Msg.logger.log(level: .info, "XformOp.set() with time works correctly")
+  }
+}
