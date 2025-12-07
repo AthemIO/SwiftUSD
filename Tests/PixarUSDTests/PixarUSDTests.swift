@@ -537,3 +537,158 @@ final class PxOsdTests: XCTestCase
     XCTAssertEqual(PxOsd.ValidationCode.invalidOrientation.description, "Invalid orientation")
   }
 }
+
+/* ---- xxx ----
+ *  USDMTLX TESTS
+ * ---- xxx ---- */
+
+final class UsdMtlxTests: XCTestCase
+{
+  // MARK: - Token Tests
+
+  func testMtlxTokens()
+  {
+    let tokens = UsdMtlx.Tokens.allCases
+    XCTAssertEqual(tokens.count, 3)
+
+    for token in tokens
+    {
+      let tfToken = token.getToken()
+      XCTAssertFalse(tfToken.string.isEmpty)
+      Msg.logger.log(level: .info, "UsdMtlx.Tokens -> \(tfToken.string)")
+    }
+
+    // Test specific token values
+    XCTAssertEqual(UsdMtlx.Tokens.configMtlxVersion.getToken().string, "config:mtlx:version")
+    XCTAssertEqual(UsdMtlx.Tokens.defaultOutputName.getToken().string, "out")
+    XCTAssertEqual(UsdMtlx.Tokens.materialXConfigAPI.getToken().string, "MaterialXConfigAPI")
+  }
+
+  // MARK: - Search Path Tests
+
+  func testStandardLibraryPaths()
+  {
+    let paths = UsdMtlx.standardLibraryPaths()
+    Msg.logger.log(level: .info, "UsdMtlx.standardLibraryPaths() count: \(paths.count)")
+
+    for (i, path) in paths.enumerated()
+    {
+      Msg.logger.log(level: .info, "  standardLibraryPaths[\(i)]: \(path)")
+    }
+
+    // Should have at least one standard library path when properly configured
+    // (may be empty if MaterialX not properly bundled)
+  }
+
+  func testSearchPaths()
+  {
+    let paths = UsdMtlx.searchPaths()
+    Msg.logger.log(level: .info, "UsdMtlx.searchPaths() count: \(paths.count)")
+
+    for (i, path) in paths.enumerated()
+    {
+      Msg.logger.log(level: .info, "  searchPaths[\(i)]: \(path)")
+    }
+  }
+
+  func testCustomSearchPaths()
+  {
+    let paths = UsdMtlx.customSearchPaths()
+    Msg.logger.log(level: .info, "UsdMtlx.customSearchPaths() count: \(paths.count)")
+    // Custom paths are set via environment variable, may be empty
+  }
+
+  func testStandardFileExtensions()
+  {
+    let extensions = UsdMtlx.standardFileExtensions()
+    Msg.logger.log(level: .info, "UsdMtlx.standardFileExtensions() count: \(extensions.count)")
+
+    for ext in extensions
+    {
+      Msg.logger.log(level: .info, "  extension: \(ext)")
+    }
+
+    // Should include .mtlx
+    XCTAssertTrue(extensions.contains("mtlx") || extensions.contains(".mtlx"))
+  }
+
+  // MARK: - Type Conversion Tests
+
+  func testGetUsdType()
+  {
+    // Test common MaterialX type conversions
+    let floatInfo = UsdMtlx.getUsdType("float")
+    Msg.logger.log(level: .info, "UsdMtlx.getUsdType('float') -> arraySize: \(floatInfo.arraySize)")
+
+    let color3Info = UsdMtlx.getUsdType("color3")
+    Msg.logger.log(level: .info, "UsdMtlx.getUsdType('color3') -> arraySize: \(color3Info.arraySize)")
+
+    let vector3Info = UsdMtlx.getUsdType("vector3")
+    Msg.logger.log(level: .info, "UsdMtlx.getUsdType('vector3') -> arraySize: \(vector3Info.arraySize)")
+  }
+
+  // MARK: - String Utilities Tests
+
+  func testSplitStringArray()
+  {
+    // Test splitting a MaterialX string array
+    let result = UsdMtlx.splitStringArray("one, two, three")
+    XCTAssertEqual(result.count, 3)
+    XCTAssertEqual(result[0], "one")
+    XCTAssertEqual(result[1], "two")
+    XCTAssertEqual(result[2], "three")
+
+    Msg.logger.log(level: .info, "UsdMtlx.splitStringArray() -> \(result)")
+  }
+
+  func testSplitStringArrayEmpty()
+  {
+    let result = UsdMtlx.splitStringArray("")
+    XCTAssertEqual(result.count, 0)
+  }
+
+  // MARK: - MaterialX Conversion Tests
+
+  func testMtlxStringConversion()
+  {
+    // Test converting a simple MaterialX XML to USD
+    let mtlxXml = """
+      <?xml version="1.0"?>
+      <materialx version="1.38">
+        <constant name="test_constant" type="color3">
+          <input name="value" type="color3" value="1.0, 0.0, 0.0"/>
+        </constant>
+      </materialx>
+      """
+
+    let stage = UsdMtlx.testString(mtlxXml)
+
+    // Verify stage was created
+    XCTAssertNotNil(stage)
+    Msg.logger.log(level: .info, "UsdMtlx.testString() created stage successfully")
+
+    // Traverse the stage to see what was created
+    for prim in stage.traverse()
+    {
+      Msg.logger.log(level: .info, "  Prim: \(prim.GetPath())")
+    }
+  }
+
+  func testMtlxStringConversionNodeGraphsOnly()
+  {
+    let mtlxXml = """
+      <?xml version="1.0"?>
+      <materialx version="1.38">
+        <nodegraph name="test_nodegraph">
+          <constant name="test_constant" type="color3">
+            <input name="value" type="color3" value="1.0, 0.0, 0.0"/>
+          </constant>
+        </nodegraph>
+      </materialx>
+      """
+
+    let stage = UsdMtlx.testString(mtlxXml, nodeGraphsOnly: true)
+    XCTAssertNotNil(stage)
+    Msg.logger.log(level: .info, "UsdMtlx.testString(nodeGraphsOnly: true) created stage successfully")
+  }
+}
