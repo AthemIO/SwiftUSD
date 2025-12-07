@@ -1,7 +1,7 @@
 format_version = 2
 
 [apps.UsdView]
-identifier = 'foundation.wabi.UsdView'
+identifier = 'io.athem.UsdView'
 product = 'UsdView'
 version = '1.0.0'
 category = 'public.app-category.graphics-design'
@@ -12,13 +12,13 @@ commit = '$(COMMIT_HASH)'
 CFBundleDocumentTypes = [ { type = "dict", value = { CFBundleTypeExtensions = [ 'usd', 'usda', 'usdc', 'usdz' ], CFBundleTypeIconFile = 'AppIcon.icns', CFBundleTypeName = 'Universal Scene Description File', CFBundleTypeRole = 'Editor', LSIsAppleDefaultForType = true, LSItemContentTypes = [ 'com.pixar.universal-scene-description', 'com.pixar.universal-scene-description-mobile', 'com.pixar.usd.ascii', 'com.pixar.usd.crate' ], CFBundleTypeIconSystemGenerated = true } } ]
 
 [apps.OpenUSD]
-identifier = 'foundation.wabi.OpenUSD'
+identifier = 'io.athem.OpenUSD'
 product = 'OpenUSD'
 version = '1.0.0'
 category = 'public.app-category.developer-tools'
 
 [apps.Examples]
-identifier = 'foundation.wabi.Examples'
+identifier = 'io.athem.Examples'
 product = 'Examples'
 version = '1.0.0'
 category = 'public.app-category.developer-tools'

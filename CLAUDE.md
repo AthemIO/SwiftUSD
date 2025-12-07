@@ -8,10 +8,10 @@ When working on this codebase, use the following repositories as authoritative r
 
 | Repository | Purpose | URL |
 |------------|---------|-----|
-| **SwiftUSD** | Swift conventions, wrapper patterns, Package.swift structure | https://github.com/wabiverse/SwiftUSD |
+| **SwiftUSD** | Swift conventions, wrapper patterns, Package.swift structure | https://github.com/AthemIO/SwiftUSD |
 | **OpenUSD** | C++ source code alignment (OpenUSD 25.11) | https://github.com/PixarAnimationStudios/OpenUSD |
 
-- **For Swift wrapper conventions**: Follow patterns established in https://github.com/wabiverse/SwiftUSD
+- **For Swift wrapper conventions**: Follow patterns established in https://github.com/AthemIO/SwiftUSD
 - **For C++ source alignment**: Keep C++ code aligned with https://github.com/PixarAnimationStudios/OpenUSD (release v25.11)
 
 ---
@@ -146,18 +146,18 @@ The codebase contains **73 modules** in `Sources/`, organized as follows:
 
 ---
 
-## MetaverseKit Dependency
+## SwiftASWF Dependency
 
-SwiftUSD depends on **MetaverseKit** for VFX platform libraries. All MetaverseKit dependencies are imported through the `Arch` target.
+SwiftUSD depends on **SwiftASWF** for VFX platform libraries. All SwiftASWF dependencies are imported through the `Arch` target.
 
-**Local Development Path**: `~/dev/Athem/MetaverseKit`
+**Local Development Path**: `~/dev/Athem/SwiftASWF`
 
-When upgrading OpenUSD, you may need to make changes to MetaverseKit as well (e.g., updating VFX library versions). The MetaverseKit repository is available locally for coordinated changes.
+When upgrading OpenUSD, you may need to make changes to SwiftASWF as well (e.g., updating VFX library versions). The SwiftASWF repository is available locally for coordinated changes.
 
 ### Dependency Chain
 ```
 SwiftUSD
-└── MetaverseKit (LynrAI/MetaverseKit)
+└── SwiftASWF (AthemIO/SwiftASWF)
     ├── VFX Platform Libraries
     │   ├── MaterialX 1.38.8
     │   ├── OpenSubdiv 3.6.0
@@ -759,7 +759,7 @@ This section describes the generic process for upgrading to ANY future OpenUSD v
 
 ### Pre-Upgrade Checklist
 
-1. **Check VFX Reference Platform compatibility** - MetaverseKit versions should align
+1. **Check VFX Reference Platform compatibility** - SwiftASWF versions should align
 2. **Review OpenUSD release notes** for breaking changes
 3. **Backup current working state** with a git tag
 
@@ -818,21 +818,21 @@ For each module that fails to build:
    swift bundler run -c release UsdView
    ```
 
-### Step 4: Update MetaverseKit (if needed)
+### Step 4: Update SwiftASWF (if needed)
 
 If the new OpenUSD version requires updated VFX libraries:
 
-**MetaverseKit is available at**: `~/dev/Athem/MetaverseKit`
+**SwiftASWF is available at**: `~/dev/Athem/SwiftASWF`
 
 1. Check VFX Reference Platform requirements for the target OpenUSD version
-2. Update library versions in MetaverseKit's `Package.swift` and `VERSIONS.md`
-3. Rebuild MetaverseKit and verify all libraries compile
+2. Update library versions in SwiftASWF's `Package.swift` and `VERSIONS.md`
+3. Rebuild SwiftASWF and verify all libraries compile
 4. For local development, you can use a path dependency:
    ```swift
    // In SwiftUSD's Package.swift (temporary for testing)
-   .package(path: "../MetaverseKit"),
+   .package(path: "../SwiftASWF"),
    ```
-5. Once MetaverseKit changes are pushed, update SwiftUSD's Package.swift to use the new branch/tag
+5. Once SwiftASWF changes are pushed, update SwiftUSD's Package.swift to use the new branch/tag
 
 ### Step 5: Update Swift Wrappers
 
@@ -884,7 +884,7 @@ swift bundler test
 ### Linker Errors
 
 1. Check that all required modules are listed as dependencies in Package.swift
-2. Verify MetaverseKit is providing expected symbols
+2. Verify SwiftASWF is providing expected symbols
 3. Check platform-conditional compilation flags
 
 ---
@@ -912,7 +912,7 @@ SwiftUSD/
 ├── CLAUDE.md                  # This file
 ├── Sources/
 │   ├── pxr/                   # Root namespace header
-│   ├── Arch/                  # Architecture (imports MetaverseKit)
+│   ├── Arch/                  # Architecture (imports SwiftASWF)
 │   ├── Tf/, Gf/, Vt/, ...     # Base libraries
 │   ├── Sdf/, Pcp/, Usd/       # USD core
 │   ├── UsdGeom/, UsdShade/... # USD schemas
@@ -975,7 +975,7 @@ OpenExec is a new execution/computation framework introduced in OpenUSD 25.08. I
 | Run examples | `swift bundler run -c release Examples` |
 | Run tests | `swift bundler test` |
 | Version constants | `Sources/pxr/include/pxr/pxrns.h` |
-| MetaverseKit deps | `Arch` target in Package.swift |
+| SwiftASWF deps | `Arch` target in Package.swift |
 | Swift wrappers | `Sources/PixarUSD/` |
 | Resource init | `Pixar.Bundler.shared.setup(.resources)` |
 

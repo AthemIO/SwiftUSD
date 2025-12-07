@@ -1,0 +1,66 @@
+SwiftUSD Changelog
+==================
+
+v25.11.15  December 6th, 2025
+swift:
+    - fix Swift C++ interop: replace <cmath> with __builtin_ intrinsics
+    - fix Swift 6.1 compatibility for subscript syntax
+    - add Ar (Asset Resolution) Swift bridge and wrappers
+    - add UsdValidation Swift bridge and context wrappers
+    - add PxOsd Swift wrappers and dual-output material support
+    - add UsdMtlx Swift wrappers and Swift interop enhancements
+    - add UsdGeom Swift wrappers with enhanced scene animations
+    - add spline animation helpers
+openusd:
+    - align with OpenUSD 25.11
+    - add UsdValidation framework modules from OpenUSD 25.11
+    - remove deprecated APIs for OpenUSD 25.11 compatibility
+    - add Swift C++ interop annotations for OpenUSD 25.11
+    - sync file formats and update dependencies
+    - enable Ts module and sync with OpenUSD 25.11 spline API
+    - fix Python guard conditionals and add missing guards
+    - add Swift type aliases for OpenUSD 25.11 APIs
+openexec:
+    - add OpenExec execution framework (Vdf, Ef, Esf, EsfUsd, Exec, ExecUsd, ExecGeom)
+    - add OpenExec benchmark suite
+    - reorganize OpenExec headers and add Swift bridge layer
+materialx:
+    - add local MaterialX 1.39.3 target with GLSL/MSL shader generators
+    - add MaterialX MSL implementations and Swift API improvements
+    - fix MaterialX MSL shader generation type consistency
+    - align MaterialX MSL shader generation with OpenUSD 25.11
+storm:
+    - align Storm/HgiMetal shaders and cubemap textures with OpenUSD 25.11
+    - additional OpenUSD 25.11 alignment for Hgi backends
+    - add OpenSubdiv subdivision support to UsdView
+usdview:
+    - remove debug logging from Metal view
+    - implement CameraControllerV2 with eye/at/up vectors
+    - add interactive camera controls with orbit, pan, and zoom
+    - fix horizontal pan direction inversion
+    - reduce zoom speed for finer control
+ci:
+    - simplify workflows to macOS, Linux, Windows, iOS only
+    - use swift bundler run instead of bundle
+    - use stackotter/swift-bundler official repo
+    - build swift-bundler from source for Swift 6.1 compatibility
+docs:
+    - add platform workflow status badges
+    - simplify README with ATHEM rebranding
+    - add comprehensive SwiftUSD documentation
+
+v25.11.0  November 28th, 2025
+openusd:
+    - sync OpenUSD 25.11 sources
+    - fix Work module workTBB include paths
+    - add Python header guards and remove deprecated Usd file format includes
+swift:
+    - fix Swift 6 concurrency issues
+
+v0.1.0  November 11th, 2025
+    - initial commit with Swift 6 concurrency fixes
+    - Metal rendering improvements
+    - UsdView application with Storm renderer
+    - Swift wrapper library (PixarUSD) for USD C++ API
+    - support for macOS with Metal backend
+    - integration with SwiftASWF for VFX platform libraries

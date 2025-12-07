@@ -335,7 +335,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/stackotter/swift-cross-ui", branch: "main"),
-        .package(url: "https://github.com/wabiverse/icu.git", from: "76.1.2"),
+        .package(url: "https://github.com/AthemIO/icu.git", branch: "maint/maint-78"),
         .package(url: "https://github.com/AthemIO/SwiftASWF.git", branch: "main"),
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.1"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
