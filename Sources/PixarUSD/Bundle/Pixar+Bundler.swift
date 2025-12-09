@@ -32,33 +32,67 @@ public extension Pixar
 
     private func resourcesInit()
     {
-      /* 1. find all resource paths (ex. Usd/Contents/Resources) */
-      let resources = BundleFramework.allCases.compactMap(\.resourcePath)
-
-      /* 2. fill a std.vector of std.string plugin paths. */
-      var plugPaths = Pixar.PlugRegistry.PlugPathsVector()
-      _ = resources.map
-      { path in
-        #if DEBUG_PIXAR_BUNDLE
-          Msg.logger.log(level: .info, "Adding usd resource -> \(path)")
-        #endif /* DEBUG_PIXAR_BUNDLE */
-
-        plugPaths.push_back(std.string(path))
+      /* 1. Register core plugins first (sdf, ar, usd) to ensure SdfMetadata
+       *    like `apiSchemas` is available before other plugins are loaded.
+       *    This is critical because PlugRegistry processes plugins in parallel,
+       *    and without this ordering, metadata may not be registered in time. */
+      var corePlugPaths = Pixar.PlugRegistry.PlugPathsVector()
+      for framework in BundleFramework.corePlugins
+      {
+        if let path = framework.resourcePath
+        {
+          #if DEBUG_PIXAR_BUNDLE
+            Msg.logger.log(level: .info, "Adding core usd resource -> \(path)")
+          #endif /* DEBUG_PIXAR_BUNDLE */
+          corePlugPaths.push_back(std.string(path))
+        }
       }
+      Pixar.PlugRegistry.GetInstance().RegisterPlugins(corePlugPaths)
 
-      /* 3. registers all plugins discovered in any plugPaths. */
-      Pixar.PlugRegistry.GetInstance().RegisterPlugins(plugPaths)
+      /* 2. Register all other plugins after core plugins are loaded. */
+      let otherFrameworks = BundleFramework.allCases.filter
+      {
+        !BundleFramework.corePlugins.contains($0)
+      }
+      var otherPlugPaths = Pixar.PlugRegistry.PlugPathsVector()
+      for framework in otherFrameworks
+      {
+        if let path = framework.resourcePath
+        {
+          #if DEBUG_PIXAR_BUNDLE
+            Msg.logger.log(level: .info, "Adding usd resource -> \(path)")
+          #endif /* DEBUG_PIXAR_BUNDLE */
+          otherPlugPaths.push_back(std.string(path))
+        }
+      }
+      Pixar.PlugRegistry.GetInstance().RegisterPlugins(otherPlugPaths)
 
-      /* 4. Set up MaterialX standard library search path.
+      /* 3. Set up MaterialX standard library search paths.
        *    UsdMtlx and HdMtlx look for MaterialX libraries via the
-       *    PXR_MTLX_STDLIB_SEARCH_PATHS environment variable. */
+       *    PXR_MTLX_STDLIB_SEARCH_PATHS environment variable.
+       *
+       *    IMPORTANT: For shader source code includes (like lib/$fileTransformUv),
+       *    MaterialX needs the PARENT of the 'libraries' directory because:
+       *    - GenOptions.libraryPrefix prepends "libraries" to include paths
+       *    - So the full path becomes: {searchPath}/libraries/stdlib/genglsl/lib/mx_transform_uv.glsl
+       *    - If searchPath already points to 'libraries', resolution fails */
       if let materialXBundle = Bundle.materialX,
          let materialXLibraries = materialXBundle.path(forResource: "libraries", ofType: nil)
       {
+        // Get the parent directory of 'libraries' for source code resolution
+        let materialXRoot = (materialXLibraries as NSString).deletingLastPathComponent
+
         #if DEBUG_PIXAR_BUNDLE
           Msg.logger.log(level: .info, "Setting MaterialX stdlib path -> \(materialXLibraries)")
+          Msg.logger.log(level: .info, "Setting MaterialX root path -> \(materialXRoot)")
         #endif /* DEBUG_PIXAR_BUNDLE */
+
+        // For MTLX nodedefs and library loading - points to 'libraries' directory
         setenv("PXR_MTLX_STDLIB_SEARCH_PATHS", materialXLibraries, 1)
+
+        // For shader source code includes - points to parent of 'libraries'
+        // HdMtlx and HdSt use this for resolving shader includes like lib/mx_*.glsl
+        setenv("PXR_MTLX_PLUGIN_SEARCH_PATHS", materialXRoot, 1)
       }
     }
   }

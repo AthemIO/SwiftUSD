@@ -753,7 +753,7 @@ let package = Package(
             ],
             resources: [
                 .copy("codegenTemplates"),
-                .process("Resources"),
+                .copy("Resources"),
             ],
             cxxSettings: [
                 .define("MFB_PACKAGE_NAME", to: "Usd"),
@@ -1061,7 +1061,7 @@ let package = Package(
                 .target(name: "UsdUtils"),
             ],
             resources: [
-                .process("Resources")
+                .copy("Resources")
             ],
             cxxSettings: [
                 .define("MFB_PACKAGE_NAME", to: "UsdMtlx"),

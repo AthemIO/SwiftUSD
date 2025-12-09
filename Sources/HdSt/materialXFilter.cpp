@@ -181,9 +181,11 @@ _InitHdStMaterialXContext(
     HdSt_MxShaderGenInfo const& mxHdInfo,
     TfToken const& apiName)
 {
+#if HDST_MATERIALX_MSL_ENABLED
     if (apiName == HgiTokens->Metal) {
         return HdStMaterialXShaderGenMsl::create(mxHdInfo);
     }
+#endif // HDST_MATERIALX_MSL_ENABLED
 #if HDST_MATERIALX_VK_ENABLED
     if (apiName == HgiTokens->Vulkan) {
         return HdStMaterialXShaderGenVkGlsl::create(mxHdInfo);

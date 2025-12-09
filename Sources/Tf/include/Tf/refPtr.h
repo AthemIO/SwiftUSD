@@ -977,6 +977,7 @@ private:
     template <class U>
     friend inline size_t hash_value(const TfRefPtr<U>&);
 
+    SWIFT_RETURNS_UNRETAINED
     friend T *get_pointer(TfRefPtr const &p) {
         return static_cast<T *>(const_cast<TfRefBase *>(p._refBase));
     }

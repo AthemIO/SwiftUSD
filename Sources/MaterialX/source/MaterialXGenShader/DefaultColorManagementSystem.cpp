@@ -20,7 +20,9 @@ const StringMap COLOR_SPACE_REMAP =
     { "gamma18", "g18_rec709" },
     { "gamma22", "g22_rec709" },
     { "gamma24", "rec709_display" },
-    { "lin_ap1", "acescg" }
+    { "lin_ap1", "acescg" },
+    { "srgb_tx", "srgb_texture" },  // OpenPBR shorthand for srgb_texture
+    { "Raw", "lin_rec709" }         // Raw/linear passthrough
 };
 
 } // anonymous namespace

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum BundleFramework: CaseIterable
+public enum BundleFramework: CaseIterable, Sendable
 {
   case ar
   case sdf
@@ -45,44 +45,64 @@ public enum BundleFramework: CaseIterable
   case usdImaging
   case usdImagingGL
 
+  /// Core plugins that define SdfMetadata and must be loaded first.
+  /// These plugins must be registered before others to ensure metadata
+  /// like `apiSchemas` is available when other plugins are loaded.
+  public static let corePlugins: [BundleFramework] = [.sdf, .ar, .usd]
+
   public var resourcePath: String?
   {
-    switch self
+    let bundle: Bundle? = switch self
     {
-      case .ar: Bundle.ar?.resourcePath
-      case .sdf: Bundle.sdf?.resourcePath
-      case .usd: Bundle.usd?.resourcePath
-      case .ndr: Bundle.ndr?.resourcePath
-      case .usdGeom: Bundle.usdGeom?.resourcePath
-      case .usdShade: Bundle.usdShade?.resourcePath
-      case .usdShaders: Bundle.usdShaders?.resourcePath
-      case .usdLux: Bundle.usdLux?.resourcePath
-      case .usdHydra: Bundle.usdHydra?.resourcePath
-      case .sdrOsl: Bundle.sdrOsl?.resourcePath
-      case .sdrGlslfx: Bundle.sdrGlslfx?.resourcePath
-      case .usdAbc: Bundle.usdAbc?.resourcePath
-      case .usdDraco: Bundle.usdDraco?.resourcePath
-      case .usdMedia: Bundle.usdMedia?.resourcePath
-      case .usdMtlx: Bundle.usdMtlx?.resourcePath
-      case .usdPhysics: Bundle.usdPhysics?.resourcePath
-      case .usdProc: Bundle.usdProc?.resourcePath
-      case .usdRender: Bundle.usdRender?.resourcePath
-      case .usdRi: Bundle.usdRi?.resourcePath
-      case .usdSkel: Bundle.usdSkel?.resourcePath
-      case .usdUI: Bundle.usdUI?.resourcePath
-      case .usdVol: Bundle.usdVol?.resourcePath
-      case .hd: Bundle.hd?.resourcePath
-      case .hgiMetal: Bundle.hgiMetal?.resourcePath
-      case .hgiVulkan: Bundle.hgiVulkan?.resourcePath
-      case .hgiGL: Bundle.hgiGL?.resourcePath
-      case .hdSi: Bundle.hdSi?.resourcePath
-      case .hdSt: Bundle.hdSt?.resourcePath
-      case .hdStorm: Bundle.hdStorm?.resourcePath
-      case .hdx: Bundle.hdx?.resourcePath
-      case .hio: Bundle.hio?.resourcePath
-      case .glf: Bundle.glf?.resourcePath
-      case .usdImaging: Bundle.usdImaging?.resourcePath
-      case .usdImagingGL: Bundle.usdImagingGL?.resourcePath
+      case .ar: Bundle.ar
+      case .sdf: Bundle.sdf
+      case .usd: Bundle.usd
+      case .ndr: Bundle.ndr
+      case .usdGeom: Bundle.usdGeom
+      case .usdShade: Bundle.usdShade
+      case .usdShaders: Bundle.usdShaders
+      case .usdLux: Bundle.usdLux
+      case .usdHydra: Bundle.usdHydra
+      case .sdrOsl: Bundle.sdrOsl
+      case .sdrGlslfx: Bundle.sdrGlslfx
+      case .usdAbc: Bundle.usdAbc
+      case .usdDraco: Bundle.usdDraco
+      case .usdMedia: Bundle.usdMedia
+      case .usdMtlx: Bundle.usdMtlx
+      case .usdPhysics: Bundle.usdPhysics
+      case .usdProc: Bundle.usdProc
+      case .usdRender: Bundle.usdRender
+      case .usdRi: Bundle.usdRi
+      case .usdSkel: Bundle.usdSkel
+      case .usdUI: Bundle.usdUI
+      case .usdVol: Bundle.usdVol
+      case .hd: Bundle.hd
+      case .hgiMetal: Bundle.hgiMetal
+      case .hgiVulkan: Bundle.hgiVulkan
+      case .hgiGL: Bundle.hgiGL
+      case .hdSi: Bundle.hdSi
+      case .hdSt: Bundle.hdSt
+      case .hdStorm: Bundle.hdStorm
+      case .hdx: Bundle.hdx
+      case .hio: Bundle.hio
+      case .glf: Bundle.glf
+      case .usdImaging: Bundle.usdImaging
+      case .usdImagingGL: Bundle.usdImagingGL
     }
+
+    guard let basePath = bundle?.resourcePath else { return nil }
+
+    // When using .copy("Resources") in Package.swift, files are nested:
+    // Bundle.resourcePath returns .../Contents/Resources
+    // But plugInfo.json is at .../Contents/Resources/Resources/plugInfo.json
+    // Check for this nested structure and return the correct path.
+    let nestedPath = "\(basePath)/Resources"
+    if FileManager.default.fileExists(atPath: "\(nestedPath)/plugInfo.json")
+    {
+      return nestedPath
+    }
+
+    // Standard case: plugInfo.json at basePath (when using .process())
+    return basePath
   }
 }

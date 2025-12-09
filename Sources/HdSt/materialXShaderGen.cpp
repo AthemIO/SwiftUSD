@@ -836,22 +836,36 @@ HdStMaterialXShaderGen<Base>::_EmitDataStructsAndFunctionDefinitions(
 
     // Set the include file to use for uv transformations,
     // depending on the vertical flip flag.
+    //
+    // Note: MSL image implementations use GLSL source files (defined in
+    // stdlib_genmsl_impl.mtlx) which contain #include "lib/$fileTransformUv".
+    // The localPath for resolution is genglsl/ (parent of the GLSL file).
+    // After token substitution, lib/$token becomes lib/<value>, which is then
+    // searched relative to genglsl/ first. To reach genmsl/lib/ from genglsl/lib/,
+    // we need to go up 2 levels (lib/ -> genglsl/ -> stdlib/) then into genmsl/lib/.
+    // So the token value needs "../../genmsl/lib/..." which becomes:
+    //   lib/../../genmsl/lib/xxx.mtl -> ../genmsl/lib/xxx.mtl (normalized in lib/)
+    //   -> genglsl/../genmsl/lib/xxx.mtl -> stdlib/genmsl/lib/xxx.mtl
     const std::string& uvTarget = Base::getTarget();
-    std::string uvExt = (uvTarget == mx::MslShaderGenerator::TARGET) ? ".mtl" : ".glsl";
+    const bool isMsl = (uvTarget == mx::MslShaderGenerator::TARGET);
+    std::string uvFile;
     if (mxContext.getOptions().fileTextureVerticalFlip) {
-        (*tokenSubstitutions)[mx::ShaderGenerator::T_FILE_TRANSFORM_UV] =
-            "mx_transform_uv_vflip" + uvExt;
+        uvFile = isMsl ? "../../genmsl/lib/mx_transform_uv_vflip.mtl" : "mx_transform_uv_vflip.glsl";
     }
     else {
-        (*tokenSubstitutions)[mx::ShaderGenerator::T_FILE_TRANSFORM_UV] =
-            "mx_transform_uv" + uvExt;
+        uvFile = isMsl ? "../../genmsl/lib/mx_transform_uv.mtl" : "mx_transform_uv.glsl";
     }
+    (*tokenSubstitutions)[mx::ShaderGenerator::T_FILE_TRANSFORM_UV] = uvFile;
 
     // Emit uv transform code globally if needed.
     if (mxContext.getOptions().hwAmbientOcclusion) {
+        // Use the target-specific path directly (not the token value which may contain relative paths)
+        std::string ext = isMsl ? ".mtl" : ".glsl";
+        std::string uvLibFile = mxContext.getOptions().fileTextureVerticalFlip
+            ? "mx_transform_uv_vflip" + ext
+            : "mx_transform_uv" + ext;
         mx::ShaderGenerator::emitLibraryInclude(
-            "stdlib/" + Base::TARGET + "/lib/" +
-                (*tokenSubstitutions)[mx::ShaderGenerator::T_FILE_TRANSFORM_UV],
+            "stdlib/" + Base::TARGET + "/lib/" + uvLibFile,
             mxContext, mxStage);
     }
 
@@ -1174,6 +1188,7 @@ HdStMaterialXShaderGenVkGlsl::_EmitMxFunctions(
 }
 #endif // HDST_MATERIALX_VK_ENABLED
 
+#if HDST_MATERIALX_MSL_ENABLED
 // ----------------------------------------------------------------------------
 //                          HdSt MaterialX ShaderGen Metal
 // ----------------------------------------------------------------------------
@@ -1410,6 +1425,7 @@ HdStMaterialXShaderGenMsl::_EmitMxFunctions(
     _EmitDataStructsAndFunctionDefinitions(
         mxGraph, mxContext, mxStage, &_tokenSubstitutions);
 }
+#endif // HDST_MATERIALX_MSL_ENABLED
 
 
 // Helper functions to aid building both MaterialX 1.38.X and 1.39.X

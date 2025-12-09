@@ -120,7 +120,9 @@ private:
     void _GenerateInstancePrimvar();
     void _GenerateElementPrimvar();
     void _GenerateVertexAndFaceVaryingPrimvar();
-    void _GenerateShaderParameters(bool bindlessTextureEnabled);
+    void _GenerateShaderParameters(
+        bool bindlessTextureEnabled,
+        TfToken const &apiName);
     void _GenerateTopologyVisibilityParameters();
 
     void _GetShaderResourceLayouts(
