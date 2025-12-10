@@ -576,8 +576,10 @@ _GetOpenPBRSurfaceMaterialTag(HdMaterialNode2 const& terminal)
 {
     // See https://academysoftwarefoundation.github.io/OpenPBR/
     // and the provided implementation
+    // Note: geometry_opacity is type float in OpenPBR, not color3 like
+    // standard_surface's opacity. This fixes an upstream OpenUSD bug.
     if (_ParamDiffersFrom(terminal, _tokens->transmission_weight, 0.0f) ||
-        _ParamDiffersFrom(terminal, _tokens->geometry_opacity, GfVec3f(1.0f))) {
+        _ParamDiffersFrom(terminal, _tokens->geometry_opacity, 1.0f)) {
         return HdStMaterialTagTokens->translucent.GetString();
     }
 

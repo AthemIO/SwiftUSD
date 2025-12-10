@@ -794,7 +794,10 @@ SdrRegistry::GetShaderNodesByFamily(
         // to use scoped parallelism to ensure we don't pick up other tasks
         // during the call to WorkParallelForN that may reenter this function
         // and also deadlock.
+        // SwiftUSD: Python macro guarded for Swift C++ interop (PXR_PYTHON_SUPPORT_ENABLED=0)
+#if PXR_PYTHON_SUPPORT_ENABLED
         TF_PY_ALLOW_THREADS_IN_SCOPE();
+#endif
 
         WorkWithScopedParallelism([&]() {
             WorkParallelForEach(_discoveryResultsByIdentifier.begin(),
@@ -966,7 +969,10 @@ SdrRegistry::_RunDiscoveryPlugins(const DiscoveryPluginRefPtrVec& discoveryPlugi
     // to use scoped parallelism to ensure we don't pick up other tasks
     // during the call to WorkParallelForN that may reenter this function
     // and also deadlock.
+    // SwiftUSD: Python macro guarded for Swift C++ interop (PXR_PYTHON_SUPPORT_ENABLED=0)
+#if PXR_PYTHON_SUPPORT_ENABLED
     TF_PY_ALLOW_THREADS_IN_SCOPE();
+#endif
 
     WorkWithScopedParallelism([&]() {
         WorkParallelForN(

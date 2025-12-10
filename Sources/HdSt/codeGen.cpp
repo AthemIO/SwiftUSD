@@ -1306,43 +1306,6 @@ _GetGLSLSamplerType(
 
 static
 std::string
-_GetMSLTextureType(
-    const bool isCubemapTexture,
-    const int dim,
-    const bool isArrayTexture,
-    const bool isShadowTexture)
-{
-    // MSL uses texture types like texture2d<float>, texturecube<float>, etc.
-    std::string baseType;
-
-    if (isCubemapTexture) {
-        baseType = "texturecube<float>";
-    } else if (dim == 1) {
-        baseType = "texture1d<float>";
-    } else if (dim == 2) {
-        baseType = "texture2d<float>";
-    } else {
-        baseType = "texture3d<float>";
-    }
-
-    // Note: MSL uses different syntax for array textures
-    // e.g., texture2d_array<float> not texture2dArray<float>
-    if (isArrayTexture) {
-        // Insert "_array" before the template parameter
-        size_t templatePos = baseType.find('<');
-        baseType.insert(templatePos, "_array");
-    }
-
-    // MSL depth textures use depth2d<float> instead of texture2d
-    if (isShadowTexture && !isCubemapTexture) {
-        baseType = "depth" + baseType.substr(7); // Replace "texture" with "depth"
-    }
-
-    return baseType;
-}
-
-static
-std::string
 _GetSamplerSuffix(
     const bool isCubemapTexture,
     const int dim)
@@ -2457,7 +2420,7 @@ HdSt_CodeGen::Compile(HdStResourceRegistry*const registry)
     _GenerateTopologyVisibilityParameters();
 
     //generate shader parameters (is going last since it has primvar redirects)
-    _GenerateShaderParameters(bindlessTextureEnabled, registry->GetHgi()->GetAPIName());
+    _GenerateShaderParameters(bindlessTextureEnabled);
 
     // finalize buckets
     _procVS  << "}\n";
@@ -3831,7 +3794,6 @@ static void _EmitTextureAccessors(
     bool const hasTextureScaleAndBias,
     bool const isBindless,
     bool const bindlessTextureEnabled,
-    TfToken const &apiName,
     bool const isArray=false,
     bool const isShadowSampler=false,
     bool const isCubemapSampler=false)
@@ -3872,43 +3834,18 @@ static void _EmitTextureAccessors(
                     << "}\n";
             }
         } else {
-            // For HGI with MSL, generate proper texture accessor functions
-            // that return the correct MSL texture types
-            bool const isMetal = (apiName == HgiTokens->Metal);
-
-            if (isMetal) {
-                // Generate MSL texture accessor functions
-                std::string const textureType = _GetMSLTextureType(
-                    isCubemapSampler, dim, isArray, isShadowSampler);
-
-                if (isArray) {
-                    // Array texture accessor (not commonly used in MaterialX)
-                    accessors
-                        << textureType << " HdGetSampler_" << name << "(int index) {\n"
-                        << "  return " << name << "[index];\n"
-                        << "}\n";
-                } else {
-                    // Regular texture accessor - this is what MaterialX needs
-                    accessors
-                        << textureType << " HdGetSampler_" << name << "() {\n"
-                        << "  return " << name << ";\n"
-                        << "}\n";
-                }
+            if (isArray) {
+                accessors
+                    << "#define HdGetSampler_" << name << "(index) "
+                    << "  HgiGetSampler_" << name << "(index)\n"
+                    << "#define HdGetSize_" << name << "(index) "
+                    << "  HgiGetSize_" << name << "(index)\n";
             } else {
-                // For GLSL/Vulkan, use macros that forward to HgiGetSampler_*
-                if (isArray) {
-                    accessors
-                        << "#define HdGetSampler_" << name << "(index) "
-                        << "  HgiGetSampler_" << name << "(index)\n"
-                        << "#define HdGetSize_" << name << "(index) "
-                        << "  HgiGetSize_" << name << "(index)\n";
-                } else {
-                    accessors
-                        << "#define HdGetSampler_" << name << "() "
-                        << "  HgiGetSampler_" << name << "()\n"
-                        << "#define HdGetSize_" << name << "() "
-                        << "  HgiGetSize_" << name << "()\n";
-                }
+                accessors
+                    << "#define HdGetSampler_" << name << "() "
+                    << "  HgiGetSampler_" << name << "()\n"
+                    << "#define HdGetSize_" << name << "() "
+                    << "  HgiGetSize_" << name << "()\n";
             }
         }
     } else {
@@ -6280,9 +6217,7 @@ HdSt_CodeGen::_GenerateVertexAndFaceVaryingPrimvar()
 }
 
 void
-HdSt_CodeGen::_GenerateShaderParameters(
-    bool bindlessTextureEnabled,
-    TfToken const &apiName)
+HdSt_CodeGen::_GenerateShaderParameters(bool bindlessTextureEnabled)
 {
     /*
       ------------- Declarations -------------
@@ -6449,8 +6384,7 @@ HdSt_CodeGen::_GenerateShaderParameters(
                 /* hasTextureTransform = */ false,
                 /* hasTextureScaleAndBias = */ true,
                 /* isBindless = */ true,
-                bindlessTextureEnabled,
-                apiName);
+                bindlessTextureEnabled);
 
         } else if (bindingType == HdStBinding::BINDLESS_ARRAY_OF_TEXTURE_2D) {
 
@@ -6465,7 +6399,6 @@ HdSt_CodeGen::_GenerateShaderParameters(
                 /* hasTextureScaleAndBias = */ !isShadowTexture,
                 /* isBindless = */ true,
                 bindlessTextureEnabled,
-                apiName,
                 /* isArray = */ true,
                 /* isShadowSampler = */ isShadowTexture);
 
@@ -6481,13 +6414,12 @@ HdSt_CodeGen::_GenerateShaderParameters(
                 /* hasTextureTransform = */ false,
                 /* hasTextureScaleAndBias = */ true,
                 /* isBindless = */ false,
-                bindlessTextureEnabled,
-                apiName);
+                bindlessTextureEnabled);
 
         } else if (bindingType == HdStBinding::ARRAY_OF_TEXTURE_2D) {
 
             // Handle special case for shadow textures.
-            bool const isShadowTexture =
+            bool const isShadowTexture = 
                 (it->second.name == HdStTokens->shadowCompareTextures);
 
             _AddArrayOfTextureElement(&_resTextures,
@@ -6506,7 +6438,6 @@ HdSt_CodeGen::_GenerateShaderParameters(
                 /* hasTextureScaleAndBias = */ !isShadowTexture,
                 /* isBindless = */ false,
                 bindlessTextureEnabled,
-                apiName,
                 /* isArray = */ true,
                 /* isShadowSampler = */ isShadowTexture);
 
@@ -6518,8 +6449,7 @@ HdSt_CodeGen::_GenerateShaderParameters(
                 /* hasTextureTransform = */ true,
                 /* hasTextureScaleAndBias = */ false,
                 /* isBindless = */ true,
-                bindlessTextureEnabled,
-                apiName);
+                bindlessTextureEnabled);
 
         } else if (bindingType == HdStBinding::TEXTURE_FIELD) {
 
@@ -6533,8 +6463,7 @@ HdSt_CodeGen::_GenerateShaderParameters(
                 /* hasTextureTransform = */ true,
                 /* hasTextureScaleAndBias = */ false,
                 /* isBindless = */ false,
-                bindlessTextureEnabled,
-                apiName);
+                bindlessTextureEnabled);
 
         } else if (bindingType == HdStBinding::BINDLESS_TEXTURE_CUBEMAP) {
 
@@ -6545,7 +6474,6 @@ HdSt_CodeGen::_GenerateShaderParameters(
                 /* hasTextureScaleAndBias = */ false,
                 /* isBindless = */ true,
                 bindlessTextureEnabled,
-                apiName,
                 /* isArray = */ false,
                 /* isShadowSampler = */ false,
                 /* isCubemapSampler = */ true);
@@ -6565,7 +6493,6 @@ HdSt_CodeGen::_GenerateShaderParameters(
                 /* hasTextureScaleAndBias = */ false,
                 /* isBindless = */ false,
                 bindlessTextureEnabled,
-                apiName,
                 /* isArray = */ false,
                 /* isShadowSampler = */ false,
                 /* isCubemapSampler = */ true);
