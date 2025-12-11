@@ -409,4 +409,5 @@ PXR_NAMESPACE_CLOSE_SCOPE
 #include <Hgi/shaderSection.h>
 #include <Hgi/capabilities.h>
 #include <Hgi/indirectCommandEncoder.h>
+#include <Hgi/swiftBridge.h>
 #endif  // __PXR_IMAGING_HGI_H__
