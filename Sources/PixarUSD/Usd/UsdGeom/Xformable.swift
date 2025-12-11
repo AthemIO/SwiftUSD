@@ -20,6 +20,10 @@ public macro Xformable() = #externalMacro(module: "PixarMacros", type: "PixarXfo
 
 public protocol GeomXformable
 {
+  /// Returns the underlying UsdPrim for this xformable type.
+  /// Required to work around Swift C++ interop ambiguous method resolution.
+  func xformablePrim() -> Usd.Prim
+
   func addXformOp(type: UsdGeomXformOp.`Type`,
                   precision: UsdGeomXformOp.Precision,
                   suffix: Tf.Token,
@@ -52,4 +56,9 @@ public protocol GeomXformable
 
 @Xformable
 extension UsdGeomXformable: GeomXformable
-{}
+{
+  public func xformablePrim() -> Usd.Prim
+  {
+    Pixar.UsdGeomXformable_GetPrim(self)
+  }
+}

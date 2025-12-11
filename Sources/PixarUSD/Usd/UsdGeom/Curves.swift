@@ -18,6 +18,12 @@ public extension UsdGeom
 @Xformable
 extension UsdGeom.Curves: GeomXformable
 {
+  public func xformablePrim() -> Usd.Prim
+  {
+    let xformable = unsafeBitCast(self, to: UsdGeomXformable.self)
+    return Pixar.UsdGeomXformable_GetPrim(xformable)
+  }
+
   public static func get(_ stage: Usd.StageRefPtr, path: Sdf.Path) -> UsdGeom.Curves
   {
     UsdGeom.Curves.Get(stage.pointee.getPtr(), path)

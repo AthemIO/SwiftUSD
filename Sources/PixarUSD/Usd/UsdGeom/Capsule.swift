@@ -18,6 +18,12 @@ public extension UsdGeom
 @Xformable
 extension UsdGeom.Capsule: GeomXformable
 {
+  public func xformablePrim() -> Usd.Prim
+  {
+    let xformable = unsafeBitCast(self, to: UsdGeomXformable.self)
+    return Pixar.UsdGeomXformable_GetPrim(xformable)
+  }
+
   @discardableResult
   public static func define(_ stage: UsdStageRefPtr, path: Sdf.Path) -> UsdGeom.Capsule
   {

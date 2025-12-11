@@ -18,6 +18,14 @@ public extension UsdLux
 @Xformable
 extension UsdLux.SphereLight: GeomXformable
 {
+  public func xformablePrim() -> Usd.Prim
+  {
+    // Use unsafeBitCast to work around Swift C++ interop not recognizing
+    // that UsdLuxSphereLight inherits from UsdGeomXformable
+    let xformable = unsafeBitCast(self, to: UsdGeomXformable.self)
+    return Pixar.UsdGeomXformable_GetPrim(xformable)
+  }
+
   @discardableResult
   public static func define(_ stage: Usd.StageRefPtr, path: Sdf.Path) -> UsdLux.SphereLight
   {

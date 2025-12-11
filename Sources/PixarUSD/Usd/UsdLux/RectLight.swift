@@ -18,6 +18,12 @@ public extension UsdLux
 @Xformable
 extension UsdLux.RectLight: GeomXformable
 {
+  public func xformablePrim() -> Usd.Prim
+  {
+    let xformable = unsafeBitCast(self, to: UsdGeomXformable.self)
+    return Pixar.UsdGeomXformable_GetPrim(xformable)
+  }
+
   @discardableResult
   public static func define(_ stage: Usd.StageRefPtr, path: Sdf.Path) -> UsdLux.RectLight
   {

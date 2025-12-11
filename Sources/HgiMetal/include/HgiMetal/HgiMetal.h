@@ -22,5 +22,6 @@
 #include <HgiMetal/shaderSection.h>
 #include <HgiMetal/stepFunctions.h>
 #include <HgiMetal/texture.h>
+#include <HgiMetal/swiftBridge.h>
 
 #endif  // __PXR_IMAGING_HGIMETAL_H__

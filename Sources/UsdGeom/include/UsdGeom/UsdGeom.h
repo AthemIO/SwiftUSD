@@ -41,6 +41,7 @@
 #include <UsdGeom/xformCommonAPI.h>
 #include <UsdGeom/xformOp.h>
 #include <UsdGeom/xformable.h>
+#include <UsdGeom/xformableBridge.h>
 
 #include <UsdGeom/capsule_1.h>
 #include <UsdGeom/cylinder_1.h>

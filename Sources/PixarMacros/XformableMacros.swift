@@ -22,55 +22,88 @@ public struct PixarXformableMacro: MemberMacro
     // - PrecisionDouble = 0: Double precision
     // - PrecisionFloat = 1: Floating-point precision
     // - PrecisionHalf = 2: Half-float precision
+    //
+    // Note: xformablePrim() must be implemented by each conforming type to work
+    // around Swift C++ interop's ambiguous method resolution for GetPrim().
+    // The bridge functions in xformableBridge.h take UsdPrim directly.
     let decl: DeclSyntax = """
       public func addXformOp(type: UsdGeomXformOp.`Type`,
                              precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(0),
                              suffix: Tf.Token = Tf.Token(),
                              invert: Bool = false) -> UsdGeomXformOp
       {
-        AddXformOp(type, precision, suffix, invert)
+        let prim = xformablePrim()
+        let opType: UsdGeomXformOp.`Type` = type
+        let prec: UsdGeomXformOp.Precision = precision
+        let sfx: TfToken = suffix
+        let inv: Bool = invert
+        return Pixar.UsdGeomXformable_AddXformOp(prim, opType, prec, sfx, inv)
       }
 
       public func addTranslateOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(0),
                                  suffix: Tf.Token = Tf.Token(),
                                  invert: Bool = false) -> UsdGeomXformOp
       {
-        AddTranslateOp(precision, suffix, invert)
+        let prim = xformablePrim()
+        let prec: UsdGeomXformOp.Precision = precision
+        let sfx: TfToken = suffix
+        let inv: Bool = invert
+        return Pixar.UsdGeomXformable_AddTranslateOp(prim, prec, sfx, inv)
       }
 
       public func addScaleOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                              suffix: Tf.Token = Tf.Token(),
                              invert: Bool = false) -> UsdGeomXformOp
       {
-        AddScaleOp(precision, suffix, invert)
+        let prim = xformablePrim()
+        let prec: UsdGeomXformOp.Precision = precision
+        let sfx: TfToken = suffix
+        let inv: Bool = invert
+        return Pixar.UsdGeomXformable_AddScaleOp(prim, prec, sfx, inv)
       }
 
       public func addRotateXOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                                suffix: Tf.Token = Tf.Token(),
                                invert: Bool = false) -> UsdGeomXformOp
       {
-        AddRotateXOp(precision, suffix, invert)
+        let prim = xformablePrim()
+        let prec: UsdGeomXformOp.Precision = precision
+        let sfx: TfToken = suffix
+        let inv: Bool = invert
+        return Pixar.UsdGeomXformable_AddRotateXOp(prim, prec, sfx, inv)
       }
 
       public func addRotateYOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                                suffix: Tf.Token = Tf.Token(),
                                invert: Bool = false) -> UsdGeomXformOp
       {
-        AddRotateYOp(precision, suffix, invert)
+        let prim = xformablePrim()
+        let prec: UsdGeomXformOp.Precision = precision
+        let sfx: TfToken = suffix
+        let inv: Bool = invert
+        return Pixar.UsdGeomXformable_AddRotateYOp(prim, prec, sfx, inv)
       }
 
       public func addRotateZOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                                suffix: Tf.Token = Tf.Token(),
                                invert: Bool = false) -> UsdGeomXformOp
       {
-        AddRotateZOp(precision, suffix, invert)
+        let prim = xformablePrim()
+        let prec: UsdGeomXformOp.Precision = precision
+        let sfx: TfToken = suffix
+        let inv: Bool = invert
+        return Pixar.UsdGeomXformable_AddRotateZOp(prim, prec, sfx, inv)
       }
 
       public func addRotateXYZOp(precision: UsdGeomXformOp.Precision = UsdGeomXformOp.Precision(1),
                                  suffix: Tf.Token = Tf.Token(),
                                  invert: Bool = false) -> UsdGeomXformOp
       {
-        AddRotateXYZOp(precision, suffix, invert)
+        let prim = xformablePrim()
+        let prec: UsdGeomXformOp.Precision = precision
+        let sfx: TfToken = suffix
+        let inv: Bool = invert
+        return Pixar.UsdGeomXformable_AddRotateXYZOp(prim, prec, sfx, inv)
       }
       """
 
