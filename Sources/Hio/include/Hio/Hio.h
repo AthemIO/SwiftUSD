@@ -10,6 +10,7 @@
 #include <Hio/glslfxResourceLayout.h>
 #include <Hio/image.h>
 #include <Hio/imageRegistry.h>
+#include <Hio/imageUtils.h>
 #include <Hio/rankedTypeMap.h>
 #include <Hio/stb/stb_image.h>
 #include <Hio/stb/stb_image_resize2.h>
