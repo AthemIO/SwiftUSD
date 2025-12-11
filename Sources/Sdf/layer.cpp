@@ -5256,18 +5256,39 @@ SdfLayer::_Save(bool force) const
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-/// @ATHEM: FIX ME
-/// Swift C++ interop retain/release functions for SdfLayer
+/// Swift C++ interop retain/release functions for SdfLayer.
+/// These functions are used by Swift's ARC via the SWIFT_SHARED_REFERENCE
+/// annotation on SdfLayer. Swift calls SdfLayerRetain when it takes ownership
+/// of an SdfLayer* and SdfLayerRelease when it releases ownership.
+///
+/// SdfLayer inherits from TfRefBase, which provides intrusive reference
+/// counting. We use Tf_RefPtr_UniqueChangedCounter to properly manage
+/// the reference count, including support for unique changed listeners.
 void SdfLayerRetain(PXR_NS::SdfLayer *layer)
 {
+    if (layer) {
+        // Increment the reference count using the same mechanism as TfRefPtr.
+        // This handles the unique changed listener properly.
+        PXR_NS::Tf_RefPtr_UniqueChangedCounter::AddRef(layer);
 #if DEBUG_MEMORY_MANAGEMENT
-    printf("Called SdfLayerRetain()\n");
+        printf("SdfLayerRetain(%p): count now %zu\n",
+               static_cast<void*>(layer), layer->GetCurrentCount());
 #endif /* DEBUG_MEMORY_MANAGEMENT */
+    }
 }
 
 void SdfLayerRelease(PXR_NS::SdfLayer *layer)
 {
+    if (layer) {
 #if DEBUG_MEMORY_MANAGEMENT
-    printf("Called SdfLayerRelease()\n");
+        printf("SdfLayerRelease(%p): count was %zu\n",
+               static_cast<void*>(layer), layer->GetCurrentCount());
 #endif /* DEBUG_MEMORY_MANAGEMENT */
+        // Decrement the reference count. If it reaches zero, delete the layer.
+        // Tf_RefPtr_UniqueChangedCounter::RemoveRef returns true when the
+        // last reference is released and the object should be deleted.
+        if (PXR_NS::Tf_RefPtr_UniqueChangedCounter::RemoveRef(layer)) {
+            delete layer;
+        }
+    }
 }

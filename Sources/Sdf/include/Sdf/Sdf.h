@@ -144,4 +144,8 @@
 #include <Sdf/pyUtils.h>
 #endif // PXR_PYTHON_SUPPORT_ENABLED
 
+// Swift bridge functions for types that require special handling
+// (RAII scopes, factory functions returning unique_ptr, etc.)
+#include <Sdf/swiftBridge.h>
+
 #endif  // __PXR_USD_SDF_H__
