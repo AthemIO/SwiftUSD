@@ -9,8 +9,10 @@
 #include "Sdf/mapEditor.h"
 #include "Sdf/path.h"
 #include "Sdf/schema.h"
+#include "Sdf/types.h"
 
 #include "Vt/value.h"
+#include "Vt/dictionary.h"
 #include "Tf/diagnostic.h"
 #include "Tf/mallocTag.h"
 
@@ -178,8 +180,6 @@ Sdf_CreateMapEditor(const SdfSpecHandle& owner, const TfToken& field)
     template std::unique_ptr<Sdf_MapEditor<MapType> >                \
         Sdf_CreateMapEditor(const SdfSpecHandle&, const TfToken&);   \
 
-#include "Vt/dictionary.h"
-#include "Sdf/types.h"
 SDF_INSTANTIATE_MAP_EDITOR(VtDictionary); 
 SDF_INSTANTIATE_MAP_EDITOR(SdfVariantSelectionMap); 
 SDF_INSTANTIATE_MAP_EDITOR(SdfRelocatesMap); 
