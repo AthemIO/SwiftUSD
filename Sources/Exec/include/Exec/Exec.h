@@ -13,9 +13,14 @@
 //
 // MINIMAL UMBRELLA: This module contains types with std::unique_ptr members
 // that crash the Swift compiler. Only the absolute minimum is exposed here.
-// Use bridge functions in ExecUsd/swiftBridge.h for Swift access.
+// Use bridge functions for Swift access to complex types.
 
 #include <Exec/api.h>
+
+// Swift bridge functions for builtin computation tokens.
+// These provide access to computeTime and computeValue tokens without
+// requiring TfStaticData operator->() which Swift cannot handle.
+#include <Exec/swiftBridge.h>
 
 // Note: Most headers in this module are excluded because they contain
 // std::unique_ptr members or complex templates that crash Swift C++ interop.
