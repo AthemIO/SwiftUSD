@@ -40,7 +40,7 @@ public:
     /// Return true if this timestamp is valid, false otherwise.
     bool IsValid() const
     {
-        return !std::isnan(_time);
+        return !__builtin_isnan(_time);
     }
 
     /// Return the time represented by this timestamp as a double.

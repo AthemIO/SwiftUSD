@@ -16,7 +16,6 @@
 
 #include <limits>
 #include <iosfwd>
-#include <cmath>
 
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -143,7 +142,7 @@ public:
     /// Return true if this time represents the 'default' sentinel value, false
     /// otherwise.  This is equivalent to !IsNumeric().
     bool IsDefault() const {
-        return std::isnan(_value);
+        return __builtin_isnan(_value);
     }
 
     /// Return true if this time represents a numeric value, false otherwise.

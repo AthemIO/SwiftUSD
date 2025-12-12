@@ -1,5 +1,5 @@
 {
-  "originHash" : "510d16775cbbaa1b8bcef0f90ba8284d86005a19d47f7082e3dc56207d4b8ce0",
+  "originHash" : "f5a5414f1b34974eacd8e4acdd1dbd8a88eececb9f7d06b3b646681493667eb0",
   "pins" : [
     {
       "identity" : "icu",
@@ -164,6 +164,15 @@
       "location" : "https://github.com/stackotter/swift-winui",
       "state" : {
         "revision" : "1695ee3ea2b7a249f6504c7f1759e7ec7a38eb86"
+      }
+    },
+    {
+      "identity" : "swiftaswf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AthemIO/SwiftASWF",
+      "state" : {
+        "branch" : "main",
+        "revision" : "48e33da338bfe8dfe40ed96ea1ec9b210cc2ba5c"
       }
     },
     {

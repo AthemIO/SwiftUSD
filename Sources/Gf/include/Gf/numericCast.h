@@ -12,7 +12,6 @@
 #include "Gf/traits.h"
 #include "Arch/pragmas.h"
 
-#include <cmath>
 #include <limits>
 #include <optional>
 #include <type_traits>
@@ -120,13 +119,14 @@ GfNumericCast(From from, GfNumericCastFailureType *failType = nullptr)
     else if constexpr (GfIsFloatingPoint<From>::value &&
                        std::is_integral_v<To>) {
         // If the floating point value is NaN we cannot convert.
-        if (std::isnan(from)) {
+        // Cast to double to support GfHalf which __builtin_isnan doesn't handle directly.
+        if (__builtin_isnan(static_cast<double>(from))) {
             setFail(GfNumericCastNaN);
             return {};
         }
         // If the floating point value is an infinity we cannot convert.
-        if (std::isinf(from)) {
-            setFail(std::signbit(static_cast<double>(from))
+        if (__builtin_isinf(static_cast<double>(from))) {
+            setFail(__builtin_signbit(static_cast<double>(from))
                     ? GfNumericCastNegOverflow
                     : GfNumericCastPosOverflow);
             return {};
