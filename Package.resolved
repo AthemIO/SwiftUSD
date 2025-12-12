@@ -1,5 +1,5 @@
 {
-  "originHash" : "f5a5414f1b34974eacd8e4acdd1dbd8a88eececb9f7d06b3b646681493667eb0",
+  "originHash" : "d89235d56a559921c9befc0189c23b9359e29e8bb03d1f788830c0a3a7aba155",
   "pins" : [
     {
       "identity" : "icu",
@@ -172,7 +172,7 @@
       "location" : "https://github.com/AthemIO/SwiftASWF",
       "state" : {
         "branch" : "main",
-        "revision" : "48e33da338bfe8dfe40ed96ea1ec9b210cc2ba5c"
+        "revision" : "c427dc3a5f5d7fb75204f4ed1ca61f410dae0c3f"
       }
     },
     {
