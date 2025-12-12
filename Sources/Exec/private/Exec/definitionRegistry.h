@@ -124,6 +124,10 @@ public:
         friend class Exec_AttributeComputationBuilder;
         friend struct Exec_ComputationBuilderConstantValueSpecifier;
 
+        // Swift bridge function for custom computation registration
+        friend bool Exec_Swift_RegisterComputation(
+            const struct Exec_Swift_ComputationSpec* spec);
+
         static Exec_DefinitionRegistry& _GetInstanceForRegistration() {
             return Exec_DefinitionRegistry::_GetInstanceForRegistration();
         }
