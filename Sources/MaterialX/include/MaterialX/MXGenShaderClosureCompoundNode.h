@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/ClosureCompoundNode.h
+../../source/MaterialXGenShader/Nodes/ClosureCompoundNode.h

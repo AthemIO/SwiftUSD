@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/Types.h
+../../source/MaterialXRender/Types.h

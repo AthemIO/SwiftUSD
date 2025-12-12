@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/TextureBaker.inl
+../../source/MaterialXRender/TextureBaker.inl

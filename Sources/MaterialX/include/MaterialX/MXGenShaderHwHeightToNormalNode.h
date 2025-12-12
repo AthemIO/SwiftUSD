@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/HwHeightToNormalNode.h
+../../source/MaterialXGenShader/Nodes/HwHeightToNormalNode.h

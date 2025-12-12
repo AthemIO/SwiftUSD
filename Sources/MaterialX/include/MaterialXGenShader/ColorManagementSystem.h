@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/ColorManagementSystem.h
+../../source/MaterialXGenShader/ColorManagementSystem.h

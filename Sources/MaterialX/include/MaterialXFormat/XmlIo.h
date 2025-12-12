@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXFormat/XmlIo.h
+../../source/MaterialXFormat/XmlIo.h

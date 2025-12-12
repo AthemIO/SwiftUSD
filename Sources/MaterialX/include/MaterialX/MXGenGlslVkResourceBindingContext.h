@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenGlsl/VkResourceBindingContext.h
+../../source/MaterialXGenGlsl/VkResourceBindingContext.h

@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXCore/Value.h
+../../source/MaterialXCore/Value.h

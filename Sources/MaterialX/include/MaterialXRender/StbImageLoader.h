@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/StbImageLoader.h
+../../source/MaterialXRender/StbImageLoader.h

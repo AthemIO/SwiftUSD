@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXCore/Traversal.h
+../../source/MaterialXCore/Traversal.h

@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/UnitSystem.h
+../../source/MaterialXGenShader/UnitSystem.h

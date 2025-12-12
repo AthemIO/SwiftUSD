@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/Camera.h
+../../source/MaterialXRender/Camera.h

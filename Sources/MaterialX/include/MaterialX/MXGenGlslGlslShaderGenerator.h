@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenGlsl/GlslShaderGenerator.h
+../../source/MaterialXGenGlsl/GlslShaderGenerator.h

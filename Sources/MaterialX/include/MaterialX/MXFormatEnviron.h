@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXFormat/Environ.h
+../../source/MaterialXFormat/Environ.h

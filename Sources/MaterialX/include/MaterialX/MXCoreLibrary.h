@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXCore/Library.h
+../../source/MaterialXCore/Library.h

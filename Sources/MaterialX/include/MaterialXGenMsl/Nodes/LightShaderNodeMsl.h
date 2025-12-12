@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenMsl/Nodes/LightShaderNodeMsl.h
+../../../source/MaterialXGenMsl/Nodes/LightShaderNodeMsl.h

@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenOsl/OslSyntax.h
+../../source/MaterialXGenOsl/OslSyntax.h

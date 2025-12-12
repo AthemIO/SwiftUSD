@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/GeometryHandler.h
+../../source/MaterialXRender/GeometryHandler.h

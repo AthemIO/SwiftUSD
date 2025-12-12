@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenMsl/MslResourceBindingContext.h
+../../source/MaterialXGenMsl/MslResourceBindingContext.h

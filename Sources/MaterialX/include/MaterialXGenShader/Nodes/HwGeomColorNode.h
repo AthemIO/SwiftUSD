@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/HwGeomColorNode.h
+../../../source/MaterialXGenShader/Nodes/HwGeomColorNode.h

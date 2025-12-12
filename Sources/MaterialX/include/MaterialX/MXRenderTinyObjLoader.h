@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/TinyObjLoader.h
+../../source/MaterialXRender/TinyObjLoader.h

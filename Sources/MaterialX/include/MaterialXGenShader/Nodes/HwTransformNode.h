@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/HwTransformNode.h
+../../../source/MaterialXGenShader/Nodes/HwTransformNode.h

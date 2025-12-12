@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/HwPositionNode.h
+../../source/MaterialXGenShader/Nodes/HwPositionNode.h

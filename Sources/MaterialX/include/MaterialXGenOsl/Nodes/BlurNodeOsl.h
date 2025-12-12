@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenOsl/Nodes/BlurNodeOsl.h
+../../../source/MaterialXGenOsl/Nodes/BlurNodeOsl.h

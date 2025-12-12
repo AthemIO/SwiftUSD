@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/BlurNode.h
+../../../source/MaterialXGenShader/Nodes/BlurNode.h

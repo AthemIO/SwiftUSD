@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXFormat/Export.h
+../../source/MaterialXFormat/Export.h

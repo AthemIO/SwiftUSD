@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/TypeDesc.h
+../../source/MaterialXGenShader/TypeDesc.h

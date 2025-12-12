@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/HwTexCoordNode.h
+../../../source/MaterialXGenShader/Nodes/HwTexCoordNode.h

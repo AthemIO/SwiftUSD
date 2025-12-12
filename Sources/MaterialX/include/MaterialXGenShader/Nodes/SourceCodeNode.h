@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/SourceCodeNode.h
+../../../source/MaterialXGenShader/Nodes/SourceCodeNode.h

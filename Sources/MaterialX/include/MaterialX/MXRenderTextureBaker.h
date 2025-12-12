@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/TextureBaker.h
+../../source/MaterialXRender/TextureBaker.h

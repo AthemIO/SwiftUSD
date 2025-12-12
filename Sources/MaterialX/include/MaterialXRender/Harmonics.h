@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/Harmonics.h
+../../source/MaterialXRender/Harmonics.h

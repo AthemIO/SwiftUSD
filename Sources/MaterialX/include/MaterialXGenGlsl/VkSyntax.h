@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenGlsl/VkSyntax.h
+../../source/MaterialXGenGlsl/VkSyntax.h

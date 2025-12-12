@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenOsl/Export.h
+../../source/MaterialXGenOsl/Export.h

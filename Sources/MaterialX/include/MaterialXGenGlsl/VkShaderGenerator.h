@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenGlsl/VkShaderGenerator.h
+../../source/MaterialXGenGlsl/VkShaderGenerator.h

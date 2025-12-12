@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenGlsl/GlslSyntax.h
+../../source/MaterialXGenGlsl/GlslSyntax.h

@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/GenContext.h
+../../source/MaterialXGenShader/GenContext.h

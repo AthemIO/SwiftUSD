@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/OiioImageLoader.h
+../../source/MaterialXRender/OiioImageLoader.h

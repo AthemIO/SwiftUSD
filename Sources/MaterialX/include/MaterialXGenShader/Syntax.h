@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Syntax.h
+../../source/MaterialXGenShader/Syntax.h

@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenShader/Nodes/ConvolutionNode.h
+../../../source/MaterialXGenShader/Nodes/ConvolutionNode.h

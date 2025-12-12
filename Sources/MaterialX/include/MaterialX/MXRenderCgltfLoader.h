@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/CgltfLoader.h
+../../source/MaterialXRender/CgltfLoader.h

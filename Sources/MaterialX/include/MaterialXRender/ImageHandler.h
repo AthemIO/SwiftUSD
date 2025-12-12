@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/ImageHandler.h
+../../source/MaterialXRender/ImageHandler.h

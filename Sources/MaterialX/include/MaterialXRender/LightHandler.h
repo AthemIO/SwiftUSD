@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXRender/LightHandler.h
+../../source/MaterialXRender/LightHandler.h

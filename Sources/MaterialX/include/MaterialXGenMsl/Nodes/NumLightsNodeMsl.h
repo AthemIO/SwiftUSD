@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenMsl/Nodes/NumLightsNodeMsl.h
+../../../source/MaterialXGenMsl/Nodes/NumLightsNodeMsl.h

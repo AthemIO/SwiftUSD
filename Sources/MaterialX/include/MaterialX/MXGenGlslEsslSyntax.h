@@ -1,1 +1,1 @@
-/Users/jonathanpeterson/dev/SwiftUSD/Sources/MaterialX/source/MaterialXGenGlsl/EsslSyntax.h
+../../source/MaterialXGenGlsl/EsslSyntax.h
