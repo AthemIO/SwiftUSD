@@ -27,6 +27,14 @@
 #include "Hd/schema.h"
 
 // --(BEGIN CUSTOM CODE: Includes)--
+// Windows SDK (combaseapi.h) defines 'interface' as a macro expanding to 'struct'.
+// This conflicts with our use of 'interface' as a token and parameter name.
+// We undef it here and restore it at the end of this header.
+#ifdef interface
+#  pragma push_macro("interface")
+#  define HD_MATERIAL_NETWORK_SCHEMA_INTERFACE_WORKAROUND
+#  undef interface
+#endif
 // --(END CUSTOM CODE: Includes)--
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -149,5 +157,11 @@ public:
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE
+
+// Restore the Windows 'interface' macro if we undefined it earlier.
+#ifdef HD_MATERIAL_NETWORK_SCHEMA_INTERFACE_WORKAROUND
+#  pragma pop_macro("interface")
+#  undef HD_MATERIAL_NETWORK_SCHEMA_INTERFACE_WORKAROUND
+#endif
 
 #endif

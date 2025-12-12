@@ -13,6 +13,12 @@
 #include "Tf/staticTokens.h"
 #include "Vt/dictionary.h"
 
+// Windows SDK (combaseapi.h) defines 'interface' as a macro expanding to 'struct'.
+// This conflicts with our use of 'interface' as a parameter name below.
+#ifdef interface
+#  undef interface
+#endif
+
 PXR_NAMESPACE_OPEN_SCOPE
 
 TF_DEFINE_PRIVATE_TOKENS(
