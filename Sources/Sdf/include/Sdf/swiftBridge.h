@@ -37,9 +37,11 @@
 
 #include "pxr/pxr.h"
 #include "Sdf/api.h"
+#include "Sdf/assetPath.h"
 #include "Sdf/layer.h"
 #include "Sdf/path.h"
 #include "Tf/token.h"
+#include "Vt/value.h"
 
 #include <string>
 
@@ -132,6 +134,70 @@ SdfLayerOffset Sdf_Swift_IdentityLayerOffset();
 /// Creates a layer offset with the given offset and scale.
 SDF_API
 SdfLayerOffset Sdf_Swift_CreateLayerOffset(double offset, double scale);
+
+/// @}
+
+/// @{
+/// \name SdfAssetPath Swift Bridge Functions
+///
+/// Helper functions for SdfAssetPath that work around Swift interop limitations.
+/// These are essential for texture path manipulation in USD scenes.
+
+/// Creates an SdfAssetPath from an authored path string.
+/// This is used when updating texture references in a USD stage.
+SDF_API
+SdfAssetPath Sdf_Swift_CreateAssetPath(const std::string& assetPath);
+
+/// Creates an SdfAssetPath from authored and resolved paths.
+/// Use this when you have both the original path and the resolved filesystem path.
+SDF_API
+SdfAssetPath Sdf_Swift_CreateAssetPathWithResolved(
+    const std::string& authoredPath,
+    const std::string& resolvedPath);
+
+/// Gets the asset path string from an SdfAssetPath.
+/// Returns the evaluated path if available, otherwise the authored path.
+SDF_API
+std::string Sdf_Swift_GetAssetPathString(const SdfAssetPath& assetPath);
+
+/// Gets the authored path string from an SdfAssetPath.
+/// This is the path as written in the USD file.
+SDF_API
+std::string Sdf_Swift_GetAssetPathAuthoredString(const SdfAssetPath& assetPath);
+
+/// Gets the resolved path string from an SdfAssetPath.
+/// This is the fully resolved filesystem path, if available.
+SDF_API
+std::string Sdf_Swift_GetAssetPathResolvedString(const SdfAssetPath& assetPath);
+
+/// Checks if a VtValue holds an SdfAssetPath.
+SDF_API
+bool Sdf_Swift_VtValueHoldsAssetPath(const VtValue& value);
+
+/// Extracts an SdfAssetPath from a VtValue.
+/// Returns an empty SdfAssetPath if the value doesn't hold an SdfAssetPath.
+SDF_API
+SdfAssetPath Sdf_Swift_VtValueGetAssetPath(const VtValue& value);
+
+/// Creates a VtValue holding an SdfAssetPath.
+SDF_API
+VtValue Sdf_Swift_VtValueFromAssetPath(const SdfAssetPath& assetPath);
+
+/// @}
+
+/// @{
+/// \name SdfPath String Swift Bridge Functions
+///
+/// Helper functions for getting string representations of SdfPath.
+
+/// Gets the string representation of an SdfPath.
+/// This is equivalent to SdfPath::GetText() but works around Swift interop issues.
+SDF_API
+std::string Sdf_Swift_GetPathString(const SdfPath& path);
+
+/// Gets the name portion of an SdfPath (the last component).
+SDF_API
+std::string Sdf_Swift_GetPathName(const SdfPath& path);
 
 /// @}
 

@@ -76,6 +76,9 @@
 // #include <Usd/generatedSchema.module.h>
 #include <Usd/colorSpaceDefinitionAPI.h>
 
+// Swift interoperability bridge functions
+#include <Usd/swiftBridge.h>
+
 // Python-related headers - only include when Python support is enabled
 #if PXR_PYTHON_SUPPORT_ENABLED
 #include <Usd/pyConversions.h>
