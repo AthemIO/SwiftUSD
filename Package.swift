@@ -106,7 +106,7 @@ let interopLinkerSettings: [LinkerSetting] = {
 // MARK: - Package Definition
 
 let package = Package(
-    name: "SwiftOpenUSD",
+    name: "SwiftUSD",
     platforms: [
         .macOS(.v13),
         .iOS(.v16),
@@ -117,8 +117,8 @@ let package = Package(
     products: [
         // Main library product
         .library(
-            name: "OpenUSD",
-            targets: ["OpenUSD"]
+            name: "SwiftUSD",
+            targets: ["SwiftUSD"]
         ),
         // Low-level interop for advanced users
         .library(
@@ -133,7 +133,7 @@ let package = Package(
     targets: [
         // MARK: - Main Swift API
         .target(
-            name: "OpenUSD",
+            name: "SwiftUSD",
             dependencies: ["OpenUSDInterop"],
             path: "Sources/SwiftUSD",
             swiftSettings: [
@@ -154,19 +154,9 @@ let package = Package(
 
         // MARK: - Tests
         .testTarget(
-            name: "OpenUSDTests",
-            dependencies: ["OpenUSD"],
-            path: "Tests/OpenUSDTests",
-            resources: [
-                .copy("TestAssets")
-            ]
-        ),
-
-        // MARK: - Performance Tests
-        .testTarget(
-            name: "OpenUSDPerformanceTests",
-            dependencies: ["OpenUSD"],
-            path: "Tests/OpenUSDPerformanceTests"
+            name: "SwiftUSDTests",
+            dependencies: ["SwiftUSD"],
+            path: "Tests/SwiftUSDTests"
         ),
     ],
     cxxLanguageStandard: .cxx17
