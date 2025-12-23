@@ -1,1 +1,0 @@
-../../source/MaterialXGenOsl/OslSyntax.h

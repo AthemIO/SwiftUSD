@@ -1,1 +1,0 @@
-../../source/MaterialXRender/Harmonics.h

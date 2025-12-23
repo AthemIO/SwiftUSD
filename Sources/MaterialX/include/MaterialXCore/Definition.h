@@ -1,1 +1,0 @@
-../../source/MaterialXCore/Definition.h

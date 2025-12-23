@@ -1,1 +1,0 @@
-../../source/MaterialXGenShader/Syntax.h

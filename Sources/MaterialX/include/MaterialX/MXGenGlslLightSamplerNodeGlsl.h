@@ -1,1 +1,0 @@
-../../source/MaterialXGenGlsl/Nodes/LightSamplerNodeGlsl.h

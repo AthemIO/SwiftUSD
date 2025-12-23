@@ -1,1 +1,0 @@
-../../source/MaterialXFormat/Environ.h

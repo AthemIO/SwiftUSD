@@ -1,1 +1,0 @@
-../../source/MaterialXCore/Exception.h

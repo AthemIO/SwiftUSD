@@ -1,1 +1,0 @@
-../../source/MaterialXCore/Library.h

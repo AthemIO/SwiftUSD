@@ -1,1 +1,0 @@
-../../source/MaterialXGenOsl/Nodes/MaterialNodeOsl.h

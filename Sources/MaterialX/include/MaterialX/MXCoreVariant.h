@@ -1,1 +1,0 @@
-../../source/MaterialXCore/Variant.h

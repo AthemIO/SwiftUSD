@@ -1,11 +1,33 @@
-.p4*
+# Claude
+CLAUDE.md
+.claude/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# macOS
 .DS_Store
 .AppleDouble
-.build
-.vscode
-.swiftpm
-generated
-target
-.index-build
-.claude/
-CLAUDE.md
+.LSOverride
+._*
+
+# Build artifacts
+build/
+*.o
+*.a
+*.dylib

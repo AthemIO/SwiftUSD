@@ -1,1 +1,0 @@
-../../source/MaterialXCore/Document.h

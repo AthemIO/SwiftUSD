@@ -1,1 +1,0 @@
-../../source/MaterialXGenMsl/Nodes/LightCompoundNodeMsl.h
