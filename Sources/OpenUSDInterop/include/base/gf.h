@@ -39,11 +39,30 @@ extern "C" {
 #endif
 
 // ============================================================================
-// MARK: - GfVec3f (3D float vector)
+// MARK: - Forward Declarations
 // ============================================================================
 
 /// Opaque handle to a GfVec3f wrapper.
 typedef struct GfVec3fOpaque* GfVec3fRef;
+
+/// Opaque handle to a GfVec3d wrapper.
+typedef struct GfVec3dOpaque* GfVec3dRef;
+
+/// Opaque handle to a GfMatrix4d wrapper.
+typedef struct GfMatrix4dOpaque* GfMatrix4dRef;
+
+/// Opaque handle to a GfQuatd wrapper.
+typedef struct GfQuatdOpaque* GfQuatdRef;
+
+/// Opaque handle to a GfRange3d wrapper.
+typedef struct GfRange3dOpaque* GfRange3dRef;
+
+/// Opaque handle to a GfBBox3d wrapper.
+typedef struct GfBBox3dOpaque* GfBBox3dRef;
+
+// ============================================================================
+// MARK: - GfVec3f (3D float vector)
+// ============================================================================
 
 // MARK: Vec3f Lifecycle
 
@@ -155,9 +174,6 @@ USD_INTEROP_API GfVec3fRef GfVec3f_ZAxis(void);
 // MARK: - GfVec3d (3D double vector)
 // ============================================================================
 
-/// Opaque handle to a GfVec3d wrapper.
-typedef struct GfVec3dOpaque* GfVec3dRef;
-
 // MARK: Vec3d Lifecycle
 
 /// Creates a GfVec3d with the specified components.
@@ -267,9 +283,6 @@ USD_INTEROP_API GfVec3dRef GfVec3d_ZAxis(void);
 // ============================================================================
 // MARK: - GfMatrix4d (4x4 double matrix)
 // ============================================================================
-
-/// Opaque handle to a GfMatrix4d wrapper.
-typedef struct GfMatrix4dOpaque* GfMatrix4dRef;
 
 // MARK: Matrix4d Lifecycle
 
@@ -391,9 +404,6 @@ USD_INTEROP_API bool GfMatrix4d_IsClose(GfMatrix4dRef m1, GfMatrix4dRef m2, doub
 // MARK: - GfQuatd (double quaternion)
 // ============================================================================
 
-/// Opaque handle to a GfQuatd wrapper.
-typedef struct GfQuatdOpaque* GfQuatdRef;
-
 // MARK: Quatd Lifecycle
 
 /// Creates a GfQuatd with real and imaginary components.
@@ -485,9 +495,6 @@ USD_INTEROP_API bool GfQuatd_Equal(GfQuatdRef q1, GfQuatdRef q2);
 // MARK: - GfRange3d (3D double range/interval)
 // ============================================================================
 
-/// Opaque handle to a GfRange3d wrapper.
-typedef struct GfRange3dOpaque* GfRange3dRef;
-
 // MARK: Range3d Lifecycle
 
 /// Creates a GfRange3d with min and max points.
@@ -576,9 +583,6 @@ USD_INTEROP_API bool GfRange3d_Equal(GfRange3dRef r1, GfRange3dRef r2);
 // ============================================================================
 // MARK: - GfBBox3d (3D bounding box with transform)
 // ============================================================================
-
-/// Opaque handle to a GfBBox3d wrapper.
-typedef struct GfBBox3dOpaque* GfBBox3dRef;
 
 // MARK: BBox3d Lifecycle
 

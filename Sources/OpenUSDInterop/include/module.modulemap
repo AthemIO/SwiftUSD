@@ -7,8 +7,10 @@ module OpenUSDInterop {
     // Base modules - Tf (tokens, types)
     header "base/tf.h"
 
+    // Base modules - Gf (graphics foundations: vectors, matrices, quaternions)
+    header "base/gf.h"
+
     // TODO: Enable remaining headers as modules are implemented
-    // header "base/gf.h"
     // header "base/vt.h"
     // header "usd/stage.h"
     // header "usd/prim.h"
