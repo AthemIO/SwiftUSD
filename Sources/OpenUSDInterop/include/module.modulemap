@@ -10,8 +10,16 @@ module OpenUSDInterop {
     // Base modules - Gf (graphics foundations: vectors, matrices, quaternions)
     header "base/gf.h"
 
+    // Base modules - Vt (value types: arrays, values, dictionaries)
+    header "base/vt.h"
+
+    // USD modules - Sdf (scene description foundation: paths, layers, asset paths)
+    header "usd/sdf.h"
+
+    // USD modules - Kind (model hierarchy kinds)
+    header "usd/kind.h"
+
     // TODO: Enable remaining headers as modules are implemented
-    // header "base/vt.h"
     // header "usd/stage.h"
     // header "usd/prim.h"
     // header "usd/attribute.h"
