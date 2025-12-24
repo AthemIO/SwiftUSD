@@ -3,8 +3,12 @@ CLAUDE.md
 .claude/
 
 # Project-specific
-Scripts/
 IMPLEMENTATION_PROGRESS.md
+
+# Vendor - built USD libraries (keep .gitkeep)
+Vendor/USD/darwin/
+Vendor/USD/linux/
+Vendor/USD/windows/
 
 # Swift Package Manager
 .build/

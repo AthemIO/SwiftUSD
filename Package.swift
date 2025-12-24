@@ -2,6 +2,13 @@
 
 import PackageDescription
 
+// MARK: - USD Build Configuration
+//
+// Set to true after running ./Scripts/build_usd.sh to link against real OpenUSD.
+// When false, the interop layer uses standalone C++ fallback implementations.
+//
+let usePixarUSD = false
+
 // MARK: - Platform Configuration
 
 let platforms: [SupportedPlatform] = [
@@ -39,12 +46,30 @@ let usdCxxSettings: [CXXSetting] = [
     .unsafeFlags(["-Wno-sign-compare"]),
 ]
 
-let interopCxxSettings: [CXXSetting] = [
-    .unsafeFlags(["-std=c++17"]),
-    .headerSearchPath("../../OpenUSD"),
-    .headerSearchPath("../../OpenUSD/pxr"),
-    .define("PXR_PYTHON_SUPPORT_ENABLED", to: "0"),
-]
+var interopCxxSettings: [CXXSetting] {
+    var settings: [CXXSetting] = [
+        .unsafeFlags(["-std=c++17"]),
+        .headerSearchPath("../../OpenUSD"),
+        .headerSearchPath("../../OpenUSD/pxr"),
+        .define("PXR_PYTHON_SUPPORT_ENABLED", to: "0"),
+    ]
+
+    if usePixarUSD {
+        // Include headers from built USD library
+        #if os(macOS) || os(iOS) || os(tvOS) || os(visionOS)
+        settings.append(.headerSearchPath("../../Vendor/USD/darwin/include"))
+        #elseif os(Linux)
+        settings.append(.headerSearchPath("../../Vendor/USD/linux/include"))
+        #elseif os(Windows)
+        settings.append(.headerSearchPath("../../Vendor/USD/windows/include"))
+        #endif
+
+        // Enable real USD integration
+        settings.append(.define("USE_PIXAR_USD", to: "1"))
+    }
+
+    return settings
+}
 
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("StrictConcurrency")
@@ -62,6 +87,17 @@ var linkerSettings: [LinkerSetting] {
             .linkedLibrary("z"),
             .linkedLibrary("c++"),
         ]
+
+        if usePixarUSD {
+            // Link against built USD library
+            settings += [
+                .linkedFramework("Metal"),
+                .linkedFramework("MetalKit"),
+                .linkedLibrary("usd_ms"),
+                .unsafeFlags(["-L../../Vendor/USD/darwin/lib"]),
+                .unsafeFlags(["-Wl,-rpath,@loader_path/../lib"]),
+            ]
+        }
     #endif
 
     #if os(Linux)
@@ -71,6 +107,22 @@ var linkerSettings: [LinkerSetting] {
             .linkedLibrary("z"),
             .linkedLibrary("stdc++"),
         ]
+
+        if usePixarUSD {
+            settings += [
+                .linkedLibrary("usd_ms"),
+                .unsafeFlags(["-L../../Vendor/USD/linux/lib"]),
+                .unsafeFlags(["-Wl,-rpath,$ORIGIN/../lib"]),
+            ]
+        }
+    #endif
+
+    #if os(Windows)
+        if usePixarUSD {
+            settings += [
+                .linkedLibrary("usd_ms"),
+            ]
+        }
     #endif
 
     return settings
@@ -139,13 +191,16 @@ let package = Package(
         // =====================================================================
         // MARK: - OpenUSDInterop (C wrapper)
         // =====================================================================
+        // When usePixarUSD = true, this links against the built libusd_ms library.
+        // When usePixarUSD = false, it uses standalone C++ fallback implementations.
         .target(
             name: "OpenUSDInterop",
-            dependencies: [],  // Standalone mode: no PixarUSD dependency
+            dependencies: [],
             path: "Sources/OpenUSDInterop",
             sources: ["src"],
             publicHeadersPath: "include",
-            cxxSettings: interopCxxSettings
+            cxxSettings: interopCxxSettings,
+            linkerSettings: linkerSettings
         ),
 
         // =====================================================================
