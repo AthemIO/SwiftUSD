@@ -61,5 +61,11 @@ module OpenUSDInterop {
     // Imaging modules - CameraUtil (Camera framing, conformance, screen window)
     header "imaging/cameraUtil.h"
 
+    // Imaging modules - GeomUtil (Mesh generation utilities: sphere, cube, cone, etc.)
+    header "imaging/geomUtil.h"
+
+    // Imaging modules - PxOsd (OpenSubdiv integration: subdivision surfaces, mesh topology)
+    header "imaging/pxOsd.h"
+
     export *
 }
