@@ -53,6 +53,8 @@ typedef struct UsdLuxRectLightOpaque* UsdLuxRectLightRef;
 typedef struct UsdLuxSphereLightOpaque* UsdLuxSphereLightRef;
 typedef struct UsdLuxCylinderLightOpaque* UsdLuxCylinderLightRef;
 typedef struct UsdLuxDiskLightOpaque* UsdLuxDiskLightRef;
+typedef struct UsdLuxLightFilterOpaque* UsdLuxLightFilterRef;
+typedef struct UsdLuxShadowAPIOpaque* UsdLuxShadowAPIRef;
 
 // ============================================================================
 // MARK: - UsdLuxDistantLight (Directional Light)
@@ -434,6 +436,93 @@ USD_INTEROP_API bool UsdLuxDiskLight_GetNormalize(UsdLuxDiskLightRef light, UsdT
 
 /// Sets the normalize flag.
 USD_INTEROP_API UsdResult UsdLuxDiskLight_SetNormalize(UsdLuxDiskLightRef light, UsdTimeCode time, bool normalize);
+
+// ============================================================================
+// MARK: - UsdLuxLightFilter (Light Filter)
+// ============================================================================
+
+/// Defines a new LightFilter prim at the given path.
+/// Caller must release with UsdLuxLightFilter_Release.
+USD_INTEROP_API UsdLuxLightFilterRef UsdLuxLightFilter_Define(UsdStageRef stage, SdfPathRef path);
+
+/// Creates from a prim.
+/// Caller must release with UsdLuxLightFilter_Release.
+USD_INTEROP_API UsdLuxLightFilterRef UsdLuxLightFilter_FromPrim(UsdPrimRef prim);
+
+/// Increments reference count.
+USD_INTEROP_API UsdLuxLightFilterRef UsdLuxLightFilter_Retain(UsdLuxLightFilterRef filter);
+
+/// Decrements reference count and releases if zero.
+USD_INTEROP_API void UsdLuxLightFilter_Release(UsdLuxLightFilterRef filter);
+
+/// Returns true if the light filter is valid.
+USD_INTEROP_API bool UsdLuxLightFilter_IsValid(UsdLuxLightFilterRef filter);
+
+/// Gets the underlying prim.
+/// Caller must release with UsdPrim_Release.
+USD_INTEROP_API UsdPrimRef UsdLuxLightFilter_GetPrim(UsdLuxLightFilterRef filter);
+
+/// Gets the shader ID.
+/// Returns a newly allocated string that must be freed with free().
+USD_INTEROP_API char* UsdLuxLightFilter_GetShaderId(UsdLuxLightFilterRef filter);
+
+/// Sets the shader ID.
+USD_INTEROP_API UsdResult UsdLuxLightFilter_SetShaderId(UsdLuxLightFilterRef filter, const char* shaderId);
+
+// ============================================================================
+// MARK: - UsdLuxShadowAPI (Shadow Controls)
+// ============================================================================
+
+/// Applies ShadowAPI to the given prim.
+/// Caller must release with UsdLuxShadowAPI_Release.
+USD_INTEROP_API UsdLuxShadowAPIRef UsdLuxShadowAPI_Apply(UsdPrimRef prim);
+
+/// Creates ShadowAPI wrapper from a prim (if already applied).
+/// Caller must release with UsdLuxShadowAPI_Release.
+USD_INTEROP_API UsdLuxShadowAPIRef UsdLuxShadowAPI_Get(UsdPrimRef prim);
+
+/// Increments reference count.
+USD_INTEROP_API UsdLuxShadowAPIRef UsdLuxShadowAPI_Retain(UsdLuxShadowAPIRef shadow);
+
+/// Decrements reference count and releases if zero.
+USD_INTEROP_API void UsdLuxShadowAPI_Release(UsdLuxShadowAPIRef shadow);
+
+/// Returns true if the shadow API is valid.
+USD_INTEROP_API bool UsdLuxShadowAPI_IsValid(UsdLuxShadowAPIRef shadow);
+
+/// Gets the underlying prim.
+/// Caller must release with UsdPrim_Release.
+USD_INTEROP_API UsdPrimRef UsdLuxShadowAPI_GetPrim(UsdLuxShadowAPIRef shadow);
+
+/// Gets whether shadows are enabled.
+USD_INTEROP_API bool UsdLuxShadowAPI_GetShadowEnable(UsdLuxShadowAPIRef shadow, UsdTimeCode time);
+
+/// Sets whether shadows are enabled.
+USD_INTEROP_API UsdResult UsdLuxShadowAPI_SetShadowEnable(UsdLuxShadowAPIRef shadow, UsdTimeCode time, bool enable);
+
+/// Gets the shadow color (3 floats: r, g, b).
+USD_INTEROP_API UsdResult UsdLuxShadowAPI_GetShadowColor(UsdLuxShadowAPIRef shadow, UsdTimeCode time, float* outColor);
+
+/// Sets the shadow color (3 floats: r, g, b).
+USD_INTEROP_API UsdResult UsdLuxShadowAPI_SetShadowColor(UsdLuxShadowAPIRef shadow, UsdTimeCode time, const float* color);
+
+/// Gets the maximum shadow distance (-1 for no limit).
+USD_INTEROP_API float UsdLuxShadowAPI_GetShadowDistance(UsdLuxShadowAPIRef shadow, UsdTimeCode time);
+
+/// Sets the maximum shadow distance (-1 for no limit).
+USD_INTEROP_API UsdResult UsdLuxShadowAPI_SetShadowDistance(UsdLuxShadowAPIRef shadow, UsdTimeCode time, float distance);
+
+/// Gets the shadow falloff (-1 for no falloff).
+USD_INTEROP_API float UsdLuxShadowAPI_GetShadowFalloff(UsdLuxShadowAPIRef shadow, UsdTimeCode time);
+
+/// Sets the shadow falloff (-1 for no falloff).
+USD_INTEROP_API UsdResult UsdLuxShadowAPI_SetShadowFalloff(UsdLuxShadowAPIRef shadow, UsdTimeCode time, float falloff);
+
+/// Gets the shadow falloff gamma.
+USD_INTEROP_API float UsdLuxShadowAPI_GetShadowFalloffGamma(UsdLuxShadowAPIRef shadow, UsdTimeCode time);
+
+/// Sets the shadow falloff gamma.
+USD_INTEROP_API UsdResult UsdLuxShadowAPI_SetShadowFalloffGamma(UsdLuxShadowAPIRef shadow, UsdTimeCode time, float gamma);
 
 #ifdef __cplusplus
 }

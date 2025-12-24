@@ -175,6 +175,126 @@ final class StitchUtilsTests: XCTestCase {
     }
 }
 
+// MARK: - DependencyUtils Tests
+
+final class DependencyUtilsTests: XCTestCase {
+
+    func testExtractExternalReferencesFromNonExistentFile() {
+        // In stub mode, this returns empty arrays
+        // In full mode, it would fail for a non-existent file
+        do {
+            let refs = try DependencyUtils.extractExternalReferences(from: "nonexistent.usda")
+            // Stub mode returns empty
+            XCTAssertTrue(refs.subLayers.isEmpty)
+            XCTAssertTrue(refs.references.isEmpty)
+            XCTAssertTrue(refs.payloads.isEmpty)
+        } catch {
+            // Full mode may throw an error
+            XCTAssertTrue(error is UsdUtilsError)
+        }
+    }
+
+    func testComputeAllDependenciesFromNonExistentFile() {
+        // In stub mode, this returns empty arrays
+        do {
+            let deps = try DependencyUtils.computeAllDependencies(of: "nonexistent.usda")
+            // Stub mode returns empty
+            XCTAssertTrue(deps.layers.isEmpty)
+            XCTAssertTrue(deps.assets.isEmpty)
+            XCTAssertTrue(deps.unresolvedPaths.isEmpty)
+        } catch {
+            // Full mode may throw an error
+            XCTAssertTrue(error is UsdUtilsError)
+        }
+    }
+
+    func testExternalReferencesStructure() {
+        // Test that ExternalReferences can be created
+        let refs = ExternalReferences(
+            subLayers: ["layer1.usda", "layer2.usda"],
+            references: ["ref1.usda"],
+            payloads: ["payload1.usda"]
+        )
+
+        XCTAssertEqual(refs.subLayers.count, 2)
+        XCTAssertEqual(refs.references.count, 1)
+        XCTAssertEqual(refs.payloads.count, 1)
+    }
+
+    func testAssetDependenciesStructure() {
+        // Test that AssetDependencies can be created
+        let deps = AssetDependencies(
+            layers: ["layer1.usda"],
+            assets: ["texture.png", "mesh.obj"],
+            unresolvedPaths: ["missing.usda"]
+        )
+
+        XCTAssertEqual(deps.layers.count, 1)
+        XCTAssertEqual(deps.assets.count, 2)
+        XCTAssertEqual(deps.unresolvedPaths.count, 1)
+    }
+}
+
+// MARK: - PipelineUtils Tests
+
+final class PipelineUtilsTests: XCTestCase {
+
+    func testMaterialsScopeName() {
+        let scopeName = PipelineUtils.materialsScopeName()
+        XCTAssertFalse(scopeName.isEmpty)
+        // Default is "Looks" in stub mode
+        XCTAssertEqual(scopeName, "Looks")
+    }
+
+    func testMaterialsScopeNameForceDefault() {
+        let scopeName = PipelineUtils.materialsScopeName(forceDefault: true)
+        XCTAssertFalse(scopeName.isEmpty)
+        XCTAssertEqual(scopeName, "Looks")
+    }
+
+    func testPrimaryUVSetName() {
+        let uvSetName = PipelineUtils.primaryUVSetName
+        XCTAssertFalse(uvSetName.isEmpty)
+        // Default is "st"
+        XCTAssertEqual(uvSetName, "st")
+    }
+
+    func testPrefName() {
+        let prefName = PipelineUtils.prefName
+        XCTAssertFalse(prefName.isEmpty)
+        // Default is "pref"
+        XCTAssertEqual(prefName, "pref")
+    }
+
+    func testPrimaryCameraName() {
+        let cameraName = PipelineUtils.primaryCameraName()
+        XCTAssertFalse(cameraName.isEmpty)
+        // Default is "main_cam"
+        XCTAssertEqual(cameraName, "main_cam")
+    }
+
+    func testPrimaryCameraNameForceDefault() {
+        let cameraName = PipelineUtils.primaryCameraName(forceDefault: true)
+        XCTAssertFalse(cameraName.isEmpty)
+        XCTAssertEqual(cameraName, "main_cam")
+    }
+
+    func testAlphaAttributeNameForColor() {
+        let alphaName = PipelineUtils.alphaAttributeName(for: "diffuseColor")
+        XCTAssertFalse(alphaName.isEmpty)
+        // In stub mode, it appends "_opacity"
+        XCTAssertTrue(alphaName.contains("diffuseColor"))
+    }
+
+    func testModelNameFromRootLayer() throws {
+        let layer = try Layer.createAnonymous()
+        // In stub mode, this returns nil since no model name is available
+        let modelName = PipelineUtils.modelName(from: layer)
+        // Could be nil in stub mode
+        XCTAssertTrue(modelName == nil || !modelName!.isEmpty)
+    }
+}
+
 // MARK: - UsdUtilsError Tests
 
 final class UsdUtilsErrorTests: XCTestCase {
@@ -188,6 +308,12 @@ final class UsdUtilsErrorTests: XCTestCase {
     func testStitchFailedDescription() {
         let error = UsdUtilsError.stitchFailed("Test failure")
         XCTAssertTrue(error.description.contains("stitch"))
+        XCTAssertTrue(error.description.contains("Test failure"))
+    }
+
+    func testDependencyAnalysisFailedDescription() {
+        let error = UsdUtilsError.dependencyAnalysisFailed("Test failure")
+        XCTAssertTrue(error.description.contains("Dependency"))
         XCTAssertTrue(error.description.contains("Test failure"))
     }
 }

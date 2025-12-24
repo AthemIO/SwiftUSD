@@ -327,6 +327,207 @@ final class UsdLuxTests: XCTestCase {
         XCTAssertTrue(diskLight.description.contains("DiskLight") || diskLight.description.contains("invalid"))
     }
 
+    // MARK: - LightFilter Tests
+
+    func testLightFilterDefine() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Filter")
+
+        let filter = try LuxLightFilter.define(on: stage, at: path)
+
+        XCTAssertTrue(filter.isValid)
+    }
+
+    func testLightFilterShaderId() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Filter")
+
+        let filter = try LuxLightFilter.define(on: stage, at: path)
+
+        // Set a shader ID
+        try filter.setShaderId("PxrBarnLightFilter")
+        let shaderId = filter.shaderId
+        XCTAssertEqual(shaderId, "PxrBarnLightFilter")
+    }
+
+    func testLightFilterDescription() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Filter")
+
+        let filter = try LuxLightFilter.define(on: stage, at: path)
+
+        XCTAssertTrue(filter.description.contains("Filter") || filter.description.contains("invalid"))
+    }
+
+    // MARK: - ShadowAPI Tests
+
+    func testShadowAPIApply() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Light")
+
+        // Create a light first to apply ShadowAPI to
+        let light = try LuxSphereLight.define(on: stage, at: path)
+
+        // In stub mode, prim may not be available
+        if let prim = light.prim {
+            // Apply ShadowAPI
+            let shadowAPI = try LuxShadowAPI.apply(to: prim)
+            XCTAssertTrue(shadowAPI.isValid)
+        } else {
+            // Stub mode - just verify light is valid
+            XCTAssertTrue(light.isValid)
+        }
+    }
+
+    func testShadowAPIEnable() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Light")
+
+        let light = try LuxSphereLight.define(on: stage, at: path)
+
+        // In stub mode, prim may not be available
+        guard let prim = light.prim else {
+            // Stub mode - just verify light is valid
+            XCTAssertTrue(light.isValid)
+            return
+        }
+
+        let shadowAPI = try LuxShadowAPI.apply(to: prim)
+
+        // Default is enabled
+        let defaultEnable = shadowAPI.shadowEnable()
+        XCTAssertTrue(defaultEnable)
+
+        // Disable shadows
+        try shadowAPI.setShadowEnable(false)
+        let newEnable = shadowAPI.shadowEnable()
+        XCTAssertFalse(newEnable)
+    }
+
+    func testShadowAPIColor() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Light")
+
+        let light = try LuxSphereLight.define(on: stage, at: path)
+
+        // In stub mode, prim may not be available
+        guard let prim = light.prim else {
+            // Stub mode - just verify light is valid
+            XCTAssertTrue(light.isValid)
+            return
+        }
+
+        let shadowAPI = try LuxShadowAPI.apply(to: prim)
+
+        // Default shadow color is black (0, 0, 0)
+        if let color = shadowAPI.shadowColor() {
+            XCTAssertEqual(color.r, 0.0, accuracy: 0.01)
+            XCTAssertEqual(color.g, 0.0, accuracy: 0.01)
+            XCTAssertEqual(color.b, 0.0, accuracy: 0.01)
+        }
+
+        // Set a new shadow color
+        try shadowAPI.setShadowColor(r: 0.1, g: 0.1, b: 0.2)
+        if let newColor = shadowAPI.shadowColor() {
+            XCTAssertEqual(newColor.r, 0.1, accuracy: 0.01)
+            XCTAssertEqual(newColor.g, 0.1, accuracy: 0.01)
+            XCTAssertEqual(newColor.b, 0.2, accuracy: 0.01)
+        }
+    }
+
+    func testShadowAPIDistance() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Light")
+
+        let light = try LuxSphereLight.define(on: stage, at: path)
+
+        // In stub mode, prim may not be available
+        guard let prim = light.prim else {
+            // Stub mode - just verify light is valid
+            XCTAssertTrue(light.isValid)
+            return
+        }
+
+        let shadowAPI = try LuxShadowAPI.apply(to: prim)
+
+        // Default is -1 (no limit)
+        let defaultDistance = shadowAPI.shadowDistance()
+        XCTAssertEqual(defaultDistance, -1.0, accuracy: 0.01)
+
+        // Set a distance limit
+        try shadowAPI.setShadowDistance(100.0)
+        let newDistance = shadowAPI.shadowDistance()
+        XCTAssertEqual(newDistance, 100.0, accuracy: 0.01)
+    }
+
+    func testShadowAPIFalloff() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Light")
+
+        let light = try LuxSphereLight.define(on: stage, at: path)
+
+        // In stub mode, prim may not be available
+        guard let prim = light.prim else {
+            // Stub mode - just verify light is valid
+            XCTAssertTrue(light.isValid)
+            return
+        }
+
+        let shadowAPI = try LuxShadowAPI.apply(to: prim)
+
+        // Default falloff is -1 (no falloff)
+        let defaultFalloff = shadowAPI.shadowFalloff()
+        XCTAssertEqual(defaultFalloff, -1.0, accuracy: 0.01)
+
+        // Set a falloff
+        try shadowAPI.setShadowFalloff(50.0)
+        let newFalloff = shadowAPI.shadowFalloff()
+        XCTAssertEqual(newFalloff, 50.0, accuracy: 0.01)
+    }
+
+    func testShadowAPIFalloffGamma() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Light")
+
+        let light = try LuxSphereLight.define(on: stage, at: path)
+
+        // In stub mode, prim may not be available
+        guard let prim = light.prim else {
+            // Stub mode - just verify light is valid
+            XCTAssertTrue(light.isValid)
+            return
+        }
+
+        let shadowAPI = try LuxShadowAPI.apply(to: prim)
+
+        // Default gamma is 1.0
+        let defaultGamma = shadowAPI.shadowFalloffGamma()
+        XCTAssertEqual(defaultGamma, 1.0, accuracy: 0.01)
+
+        // Set a new gamma
+        try shadowAPI.setShadowFalloffGamma(2.2)
+        let newGamma = shadowAPI.shadowFalloffGamma()
+        XCTAssertEqual(newGamma, 2.2, accuracy: 0.01)
+    }
+
+    func testShadowAPIDescription() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World/Light")
+
+        let light = try LuxSphereLight.define(on: stage, at: path)
+
+        // In stub mode, prim may not be available
+        guard let prim = light.prim else {
+            // Stub mode - just verify light is valid
+            XCTAssertTrue(light.isValid)
+            return
+        }
+
+        let shadowAPI = try LuxShadowAPI.apply(to: prim)
+
+        XCTAssertTrue(shadowAPI.description.contains("Light") || shadowAPI.description.contains("invalid"))
+    }
+
     // MARK: - Type Alias Tests
 
     func testTypeAliases() throws {
@@ -337,5 +538,7 @@ final class UsdLuxTests: XCTestCase {
         let _: UsdLuxSphereLight.Type = LuxSphereLight.self
         let _: UsdLuxCylinderLight.Type = LuxCylinderLight.self
         let _: UsdLuxDiskLight.Type = LuxDiskLight.self
+        let _: UsdLuxLightFilter.Type = LuxLightFilter.self
+        let _: UsdLuxShadowAPI.Type = LuxShadowAPI.self
     }
 }

@@ -14,9 +14,13 @@
 ///
 /// - ``Resolver``: The global asset resolver interface
 /// - ``ResolverContext``: Context data that influences resolution
+/// - ``ResolverContextBinder``: Scoped context binding
+/// - ``ResolverScopedCache``: Scoped resolver caching
 /// - ``DefaultResolverContext``: Search path context for the default resolver
 /// - ``ResolvedPath``: A resolved asset path
 /// - ``Timestamp``: Asset modification timestamp
+/// - ``Asset``: Read-only access to asset contents
+/// - ``WritableAsset``: Write access to asset contents
 ///
 /// ## Basic Usage
 ///
@@ -50,6 +54,33 @@
 ///
 /// // Convert to a generic context for binding
 /// let resolverContext = try context.toResolverContext()
+///
+/// // Bind the context for a scope
+/// try ResolverContextBinder.withBoundContext(resolverContext) {
+///     // Resolution uses the bound context here
+///     let resolved = Resolver.resolve("model.usd")
+/// }
+/// ```
+///
+/// ## Reading and Writing Assets
+///
+/// Assets can be read and written using the Asset and WritableAsset types:
+///
+/// ```swift
+/// // Read an asset
+/// if let resolved = Resolver.resolve("data.txt"),
+///    let asset = Asset.open(resolved) {
+///     if let contents = asset.string {
+///         print(contents)
+///     }
+/// }
+///
+/// // Write an asset
+/// if let resolved = Resolver.resolveForNewAsset("output.txt"),
+///    let asset = WritableAsset.open(resolved, mode: .replace) {
+///     asset.write("Hello, World!")
+///     asset.close()
+/// }
 /// ```
 ///
 /// ## Thread Safety
@@ -57,6 +88,8 @@
 /// Most resolver operations are thread-safe. However, some operations
 /// like `Resolver.setDefaultSearchPath(_:)` are not thread-safe and
 /// should not be called concurrently with other resolver operations.
+///
+/// Context binding via ``ResolverContextBinder`` is thread-local.
 ///
 /// Mirrors `pxr/usd/ar/` from the USD C++ library.
 public enum Ar {

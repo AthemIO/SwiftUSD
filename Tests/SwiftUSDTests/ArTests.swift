@@ -348,4 +348,281 @@ final class ArTests: XCTestCase {
         let contextCopy = try defaultContext.copy()
         XCTAssertEqual(defaultContext, contextCopy)
     }
+
+    // MARK: - ResolverContextBinder Tests
+
+    func testResolverContextBinderCreation() throws {
+        let context = try ResolverContext()
+        let binder = try ResolverContextBinder(context: context)
+        XCTAssertNotNil(binder)
+    }
+
+    func testResolverContextBinderGetContext() throws {
+        let defaultContext = try DefaultResolverContext(searchPaths: ["/test/path"])
+        let context = try defaultContext.toResolverContext()
+        let binder = try ResolverContextBinder(context: context)
+
+        let boundContext = binder.boundContext
+        XCTAssertNotNil(boundContext)
+    }
+
+    func testResolverContextBinderWithBoundContext() throws {
+        let defaultContext = try DefaultResolverContext(searchPaths: ["/test/path"])
+        let context = try defaultContext.toResolverContext()
+
+        var wasExecuted = false
+        try ResolverContextBinder.withBoundContext(context) {
+            wasExecuted = true
+            // Verify we can still do resolution operations
+            _ = Resolver.currentContext
+        }
+        XCTAssertTrue(wasExecuted)
+    }
+
+    func testResolverContextBinderWithBoundContextReturnsValue() throws {
+        let context = try ResolverContext()
+
+        let result = try ResolverContextBinder.withBoundContext(context) {
+            return 42
+        }
+        XCTAssertEqual(result, 42)
+    }
+
+    // MARK: - ResolverScopedCache Tests
+
+    func testResolverScopedCacheCreation() throws {
+        let cache = try ResolverScopedCache()
+        XCTAssertNotNil(cache)
+    }
+
+    func testResolverScopedCacheWithCaching() throws {
+        var wasExecuted = false
+        try ResolverScopedCache.withCaching {
+            wasExecuted = true
+            // Perform some resolution operations that might benefit from caching
+            _ = Resolver.getExtension(for: "test.usd")
+            _ = Resolver.getExtension(for: "test.usd")
+        }
+        XCTAssertTrue(wasExecuted)
+    }
+
+    func testResolverScopedCacheWithCachingReturnsValue() throws {
+        let result = try ResolverScopedCache.withCaching {
+            return "cached result"
+        }
+        XCTAssertEqual(result, "cached result")
+    }
+
+    // MARK: - Asset Tests
+
+    func testAssetOpenNonexistent() {
+        // Opening a nonexistent asset should return nil
+        let path = try! ResolvedPath("/nonexistent/file/that/does/not/exist.usd")
+        let asset = Asset.open(path)
+        XCTAssertNil(asset)
+    }
+
+    func testAssetWithTempFile() throws {
+        // Create a temporary file to test asset reading
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempFile = tempDir.appendingPathComponent("ar_test_\(UUID().uuidString).txt")
+        let testContent = "Hello, Asset Test!"
+
+        // Write test content
+        try testContent.write(to: tempFile, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        // Create resolved path and open asset
+        let resolvedPath = try ResolvedPath(tempFile.path)
+        guard let asset = Asset.open(resolvedPath) else {
+            XCTFail("Failed to open asset")
+            return
+        }
+
+        // Test size
+        XCTAssertEqual(asset.size, testContent.utf8.count)
+        XCTAssertFalse(asset.isEmpty)
+
+        // Test string content
+        XCTAssertEqual(asset.string, testContent)
+
+        // Test data content
+        let data = asset.data
+        XCTAssertNotNil(data)
+        XCTAssertEqual(String(data: data!, encoding: .utf8), testContent)
+    }
+
+    func testAssetRead() throws {
+        // Create a temporary file
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempFile = tempDir.appendingPathComponent("ar_read_test_\(UUID().uuidString).txt")
+        let testContent = "0123456789ABCDEF"
+
+        try testContent.write(to: tempFile, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        let resolvedPath = try ResolvedPath(tempFile.path)
+        guard let asset = Asset.open(resolvedPath) else {
+            XCTFail("Failed to open asset")
+            return
+        }
+
+        // Test reading a range
+        var buffer = [UInt8](repeating: 0, count: 4)
+        let bytesRead = asset.read(into: &buffer, count: 4, offset: 0)
+        XCTAssertEqual(bytesRead, 4)
+        XCTAssertEqual(String(bytes: buffer, encoding: .utf8), "0123")
+
+        // Test reading with offset
+        let bytesRead2 = asset.read(into: &buffer, count: 4, offset: 10)
+        XCTAssertEqual(bytesRead2, 4)
+        XCTAssertEqual(String(bytes: buffer, encoding: .utf8), "ABCD")
+
+        // Test read range
+        let rangeData = asset.read(range: 4..<8)
+        XCTAssertNotNil(rangeData)
+        XCTAssertEqual(String(data: rangeData!, encoding: .utf8), "4567")
+    }
+
+    func testAssetDescription() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempFile = tempDir.appendingPathComponent("ar_desc_test_\(UUID().uuidString).txt")
+        try "test".write(to: tempFile, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        let resolvedPath = try ResolvedPath(tempFile.path)
+        guard let asset = Asset.open(resolvedPath) else {
+            XCTFail("Failed to open asset")
+            return
+        }
+
+        XCTAssertTrue(asset.description.contains("Asset"))
+        XCTAssertTrue(asset.debugDescription.contains("bytes"))
+    }
+
+    // MARK: - WritableAsset Tests
+
+    func testWritableAssetWrite() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempFile = tempDir.appendingPathComponent("ar_write_test_\(UUID().uuidString).txt")
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        let resolvedPath = try ResolvedPath(tempFile.path)
+        guard let asset = WritableAsset.open(resolvedPath, mode: .replace) else {
+            XCTFail("Failed to open writable asset")
+            return
+        }
+
+        // Write content
+        let testContent = "Hello, WritableAsset!"
+        let bytesWritten = asset.write(testContent)
+        XCTAssertEqual(bytesWritten, testContent.utf8.count)
+
+        // Close and finalize
+        let success = asset.close()
+        XCTAssertTrue(success)
+
+        // Verify content was written
+        let written = try String(contentsOf: tempFile, encoding: .utf8)
+        XCTAssertEqual(written, testContent)
+    }
+
+    func testWritableAssetWriteData() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempFile = tempDir.appendingPathComponent("ar_write_data_test_\(UUID().uuidString).bin")
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        let resolvedPath = try ResolvedPath(tempFile.path)
+        guard let asset = WritableAsset.open(resolvedPath, mode: .replace) else {
+            XCTFail("Failed to open writable asset")
+            return
+        }
+
+        // Write binary data
+        let testData = Data([0x00, 0x01, 0x02, 0x03, 0xFF, 0xFE, 0xFD])
+        let bytesWritten = asset.write(testData)
+        XCTAssertEqual(bytesWritten, testData.count)
+
+        asset.close()
+
+        // Verify
+        let written = try Data(contentsOf: tempFile)
+        XCTAssertEqual(written, testData)
+    }
+
+    func testWritableAssetWriteBytes() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempFile = tempDir.appendingPathComponent("ar_write_bytes_test_\(UUID().uuidString).bin")
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        let resolvedPath = try ResolvedPath(tempFile.path)
+        guard let asset = WritableAsset.open(resolvedPath, mode: .replace) else {
+            XCTFail("Failed to open writable asset")
+            return
+        }
+
+        // Write byte array
+        let bytes: [UInt8] = [65, 66, 67, 68]  // "ABCD"
+        let bytesWritten = asset.write(bytes)
+        XCTAssertEqual(bytesWritten, 4)
+
+        asset.close()
+
+        // Verify
+        let written = try String(contentsOf: tempFile, encoding: .utf8)
+        XCTAssertEqual(written, "ABCD")
+    }
+
+    func testWritableAssetUpdateMode() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempFile = tempDir.appendingPathComponent("ar_update_test_\(UUID().uuidString).txt")
+
+        // Create initial file
+        try "AAAAAAAAAA".write(to: tempFile, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        let resolvedPath = try ResolvedPath(tempFile.path)
+        guard let asset = WritableAsset.open(resolvedPath, mode: .update) else {
+            XCTFail("Failed to open writable asset in update mode")
+            return
+        }
+
+        // Update part of the file
+        let bytesWritten = asset.write("BBB", offset: 3)
+        XCTAssertEqual(bytesWritten, 3)
+
+        asset.close()
+
+        // Verify partial update
+        let written = try String(contentsOf: tempFile, encoding: .utf8)
+        XCTAssertEqual(written, "AAABBBAAAA")
+    }
+
+    func testWritableAssetDescription() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempFile = tempDir.appendingPathComponent("ar_desc_write_test_\(UUID().uuidString).txt")
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        let resolvedPath = try ResolvedPath(tempFile.path)
+        guard let asset = WritableAsset.open(resolvedPath, mode: .replace) else {
+            XCTFail("Failed to open writable asset")
+            return
+        }
+
+        XCTAssertTrue(asset.description.contains("WritableAsset"))
+        XCTAssertTrue(asset.description.contains("closed: false"))
+
+        asset.close()
+        XCTAssertTrue(asset.description.contains("closed: true"))
+    }
+
+    func testWriteModeEnum() {
+        // Test WriteMode enum values exist and are distinct
+        let updateMode = WriteMode.update
+        let replaceMode = WriteMode.replace
+
+        // Just verify they are different modes
+        XCTAssertNotNil(updateMode)
+        XCTAssertNotNil(replaceMode)
+    }
 }

@@ -151,11 +151,155 @@ USD_INTEROP_API UsdResult UsdUtilsStitchLayers(
 );
 
 // ============================================================================
+// MARK: - UsdUtilsDependencies
+// ============================================================================
+
+/// Extract external references from a USD file.
+/// Parses the file at filePath, identifying external references, and
+/// sorting them into separate type-based buckets.
+///
+/// - Parameters:
+///   - filePath: Path to the USD file to analyze.
+///   - outSubLayers: Buffer to receive sublayer paths.
+///   - subLayersMaxCount: Size of the outSubLayers buffer.
+///   - outReferences: Buffer to receive reference paths.
+///   - referencesMaxCount: Size of the outReferences buffer.
+///   - outPayloads: Buffer to receive payload paths.
+///   - payloadsMaxCount: Size of the outPayloads buffer.
+///   - outSubLayersCount: Receives the number of sublayers found.
+///   - outReferencesCount: Receives the number of references found.
+///   - outPayloadsCount: Receives the number of payloads found.
+/// - Returns: USD_RESULT_SUCCESS on success.
+/// Note: Each string in the output buffers must be freed with UsdUtils_FreeString.
+USD_INTEROP_API UsdResult UsdUtilsExtractExternalReferences(
+    const char* filePath,
+    char** outSubLayers,
+    size_t subLayersMaxCount,
+    char** outReferences,
+    size_t referencesMaxCount,
+    char** outPayloads,
+    size_t payloadsMaxCount,
+    size_t* outSubLayersCount,
+    size_t* outReferencesCount,
+    size_t* outPayloadsCount
+);
+
+/// Gets the count of external references from a USD file.
+/// Use this to determine buffer sizes before calling UsdUtilsExtractExternalReferences.
+///
+/// - Parameters:
+///   - filePath: Path to the USD file to analyze.
+///   - outSubLayersCount: Receives the number of sublayers.
+///   - outReferencesCount: Receives the number of references.
+///   - outPayloadsCount: Receives the number of payloads.
+/// - Returns: USD_RESULT_SUCCESS on success.
+USD_INTEROP_API UsdResult UsdUtilsGetExternalReferenceCounts(
+    const char* filePath,
+    size_t* outSubLayersCount,
+    size_t* outReferencesCount,
+    size_t* outPayloadsCount
+);
+
+/// Recursively computes all dependencies of the given asset.
+///
+/// - Parameters:
+///   - assetPath: Path to the USD asset.
+///   - outLayerPaths: Buffer to receive dependent layer paths.
+///   - layerPathsMaxCount: Size of the outLayerPaths buffer.
+///   - outAssetPaths: Buffer to receive dependent asset paths (non-layer).
+///   - assetPathsMaxCount: Size of the outAssetPaths buffer.
+///   - outUnresolvedPaths: Buffer to receive unresolved paths.
+///   - unresolvedMaxCount: Size of the outUnresolvedPaths buffer.
+///   - outLayerCount: Receives the number of dependent layers found.
+///   - outAssetCount: Receives the number of dependent assets found.
+///   - outUnresolvedCount: Receives the number of unresolved paths.
+/// - Returns: true if the asset was resolved correctly.
+/// Note: Each string in the output buffers must be freed with UsdUtils_FreeString.
+USD_INTEROP_API bool UsdUtilsComputeAllDependencies(
+    const char* assetPath,
+    char** outLayerPaths,
+    size_t layerPathsMaxCount,
+    char** outAssetPaths,
+    size_t assetPathsMaxCount,
+    char** outUnresolvedPaths,
+    size_t unresolvedMaxCount,
+    size_t* outLayerCount,
+    size_t* outAssetCount,
+    size_t* outUnresolvedCount
+);
+
+/// Gets the count of all dependencies for an asset.
+/// Use this to determine buffer sizes before calling UsdUtilsComputeAllDependencies.
+///
+/// - Parameters:
+///   - assetPath: Path to the USD asset.
+///   - outLayerCount: Receives the number of dependent layers.
+///   - outAssetCount: Receives the number of dependent assets.
+///   - outUnresolvedCount: Receives the number of unresolved paths.
+/// - Returns: true if the asset was resolved correctly.
+USD_INTEROP_API bool UsdUtilsGetAllDependencyCounts(
+    const char* assetPath,
+    size_t* outLayerCount,
+    size_t* outAssetCount,
+    size_t* outUnresolvedCount
+);
+
+// ============================================================================
+// MARK: - UsdUtilsPipeline
+// ============================================================================
+
+/// Gets the name of the USD prim under which materials are expected to be authored.
+/// By default, this is "Looks". Can be configured via plugInfo.json.
+///
+/// - Parameter forceDefault: If true, ignores any plugInfo.json configuration.
+/// - Returns: The materials scope name. Caller must free with UsdUtils_FreeString.
+USD_INTEROP_API char* UsdUtilsGetMaterialsScopeName(bool forceDefault);
+
+/// Gets the name of the primary UV set used on meshes and nurbs.
+/// By default, this is "st".
+///
+/// - Returns: The primary UV set name. Caller must free with UsdUtils_FreeString.
+USD_INTEROP_API char* UsdUtilsGetPrimaryUVSetName(void);
+
+/// Gets the name of the reference position used on meshes and nurbs.
+/// By default, this is "pref".
+///
+/// - Returns: The pref name. Caller must free with UsdUtils_FreeString.
+USD_INTEROP_API char* UsdUtilsGetPrefName(void);
+
+/// Gets the name of the primary camera.
+/// By default, this is "main_cam". Can be configured via plugInfo.json.
+///
+/// - Parameter forceDefault: If true, ignores any plugInfo.json configuration.
+/// - Returns: The primary camera name. Caller must free with UsdUtils_FreeString.
+USD_INTEROP_API char* UsdUtilsGetPrimaryCameraName(bool forceDefault);
+
+/// Gets the alpha attribute name for a given color attribute.
+/// Follows the shading pipeline's convention for naming a companion
+/// alpha/opacity attribute given a color-valued attribute name.
+///
+/// - Parameter colorAttrName: The name of the color attribute.
+/// - Returns: The alpha attribute name. Caller must free with UsdUtils_FreeString.
+USD_INTEROP_API char* UsdUtilsGetAlphaAttributeNameForColor(const char* colorAttrName);
+
+/// Gets the model name associated with a given root layer.
+/// In order, it looks for: defaultPrim metadata, a prim matching the filename,
+/// and then the first concrete root prim.
+///
+/// - Parameter rootLayer: The root layer.
+/// - Returns: The model name. Caller must free with UsdUtils_FreeString.
+///            Returns NULL if no model name can be determined.
+USD_INTEROP_API char* UsdUtilsGetModelNameFromRootLayer(SdfLayerRef rootLayer);
+
+// ============================================================================
 // MARK: - Utility Functions
 // ============================================================================
 
 /// Frees a string allocated by UsdUtils functions.
 USD_INTEROP_API void UsdUtils_FreeString(char* str);
+
+/// Frees an array of strings allocated by UsdUtils functions.
+USD_INTEROP_API void UsdUtils_FreeStringArray(char** strings, size_t count);
 
 #ifdef __cplusplus
 }

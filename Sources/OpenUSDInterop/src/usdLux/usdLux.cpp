@@ -12,6 +12,8 @@
     #include <pxr/usd/usdLux/sphereLight.h>
     #include <pxr/usd/usdLux/cylinderLight.h>
     #include <pxr/usd/usdLux/diskLight.h>
+    #include <pxr/usd/usdLux/lightFilter.h>
+    #include <pxr/usd/usdLux/shadowAPI.h>
     #include <pxr/usd/usdLux/lightAPI.h>
     #include <pxr/usd/usdLux/tokens.h>
     #include <pxr/base/gf/vec3f.h>
@@ -190,6 +192,48 @@ struct UsdLuxDiskLightOpaque {
         : light(l), refCount(1), valid(true), radius(0.5f),
           intensity(1.0f), exposure(0.0f), normalize(false) {
         color[0] = color[1] = color[2] = 1.0f;
+    }
+#endif
+};
+
+struct UsdLuxLightFilterOpaque {
+#if USD_USE_FULL
+    UsdLuxLightFilter filter;
+#endif
+    std::atomic<int> refCount;
+    bool valid;
+    std::string shaderId;
+
+    UsdLuxLightFilterOpaque() : refCount(1), valid(false) {}
+
+#if USD_USE_FULL
+    explicit UsdLuxLightFilterOpaque(const UsdLuxLightFilter& f)
+        : filter(f), refCount(1), valid(true) {}
+#endif
+};
+
+struct UsdLuxShadowAPIOpaque {
+#if USD_USE_FULL
+    UsdLuxShadowAPI shadowAPI;
+#endif
+    std::atomic<int> refCount;
+    bool valid;
+    bool shadowEnable;
+    float shadowColor[3];
+    float shadowDistance;
+    float shadowFalloff;
+    float shadowFalloffGamma;
+
+    UsdLuxShadowAPIOpaque() : refCount(1), valid(false), shadowEnable(true),
+        shadowDistance(-1.0f), shadowFalloff(-1.0f), shadowFalloffGamma(1.0f) {
+        shadowColor[0] = shadowColor[1] = shadowColor[2] = 0.0f;
+    }
+
+#if USD_USE_FULL
+    explicit UsdLuxShadowAPIOpaque(const UsdLuxShadowAPI& s)
+        : shadowAPI(s), refCount(1), valid(true), shadowEnable(true),
+          shadowDistance(-1.0f), shadowFalloff(-1.0f), shadowFalloffGamma(1.0f) {
+        shadowColor[0] = shadowColor[1] = shadowColor[2] = 0.0f;
     }
 #endif
 };
@@ -1783,6 +1827,332 @@ UsdResult UsdLuxDiskLight_SetNormalize(UsdLuxDiskLightRef light, UsdTimeCode tim
     } CATCH_AND_RETURN_RESULT
 #else
     light->normalize = normalize;
+    return USD_RESULT_SUCCESS;
+#endif
+}
+
+// ============================================================================
+// MARK: - UsdLuxLightFilter Implementation
+// ============================================================================
+
+UsdLuxLightFilterRef UsdLuxLightFilter_Define(UsdStageRef stage, SdfPathRef path) {
+    if (!stage || !path) return nullptr;
+    try {
+#if USD_USE_FULL
+        UsdLuxLightFilter filter = UsdLuxLightFilter::Define(stage->stage, path->path);
+        if (filter) {
+            return new UsdLuxLightFilterOpaque(filter);
+        }
+        return nullptr;
+#else
+        auto* wrapper = new UsdLuxLightFilterOpaque();
+        wrapper->valid = true;
+        return wrapper;
+#endif
+    } CATCH_AND_RETURN(nullptr)
+}
+
+UsdLuxLightFilterRef UsdLuxLightFilter_FromPrim(UsdPrimRef prim) {
+    if (!prim) return nullptr;
+    try {
+#if USD_USE_FULL
+        UsdLuxLightFilter filter(prim->prim);
+        if (filter) {
+            return new UsdLuxLightFilterOpaque(filter);
+        }
+        return nullptr;
+#else
+        auto* wrapper = new UsdLuxLightFilterOpaque();
+        wrapper->valid = true;
+        return wrapper;
+#endif
+    } CATCH_AND_RETURN(nullptr)
+}
+
+UsdLuxLightFilterRef UsdLuxLightFilter_Retain(UsdLuxLightFilterRef filter) {
+    if (!filter) return nullptr;
+    filter->refCount.fetch_add(1, std::memory_order_relaxed);
+    return filter;
+}
+
+void UsdLuxLightFilter_Release(UsdLuxLightFilterRef filter) {
+    if (!filter) return;
+    if (filter->refCount.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+        delete filter;
+    }
+}
+
+bool UsdLuxLightFilter_IsValid(UsdLuxLightFilterRef filter) {
+    if (!filter) return false;
+#if USD_USE_FULL
+    return filter->filter;
+#else
+    return filter->valid;
+#endif
+}
+
+UsdPrimRef UsdLuxLightFilter_GetPrim(UsdLuxLightFilterRef filter) {
+    if (!filter) return nullptr;
+#if USD_USE_FULL
+    try {
+        UsdPrim prim = filter->filter.GetPrim();
+        if (prim) {
+            return new UsdPrimOpaque(prim);
+        }
+        return nullptr;
+    } CATCH_AND_RETURN(nullptr)
+#else
+    return nullptr;
+#endif
+}
+
+char* UsdLuxLightFilter_GetShaderId(UsdLuxLightFilterRef filter) {
+    if (!filter) return nullptr;
+#if USD_USE_FULL
+    try {
+        TfToken shaderId;
+        filter->filter.GetShaderIdAttr().Get(&shaderId);
+        std::string idStr = shaderId.GetString();
+        char* result = static_cast<char*>(malloc(idStr.size() + 1));
+        if (result) {
+            strcpy(result, idStr.c_str());
+        }
+        return result;
+    } CATCH_AND_RETURN(nullptr)
+#else
+    char* result = static_cast<char*>(malloc(filter->shaderId.size() + 1));
+    if (result) {
+        strcpy(result, filter->shaderId.c_str());
+    }
+    return result;
+#endif
+}
+
+UsdResult UsdLuxLightFilter_SetShaderId(UsdLuxLightFilterRef filter, const char* shaderId) {
+    if (!filter || !shaderId) return USD_RESULT_INVALID_ARGUMENT;
+#if USD_USE_FULL
+    try {
+        filter->filter.GetShaderIdAttr().Set(TfToken(shaderId));
+        return USD_RESULT_SUCCESS;
+    } CATCH_AND_RETURN_RESULT
+#else
+    filter->shaderId = shaderId;
+    return USD_RESULT_SUCCESS;
+#endif
+}
+
+// ============================================================================
+// MARK: - UsdLuxShadowAPI Implementation
+// ============================================================================
+
+UsdLuxShadowAPIRef UsdLuxShadowAPI_Apply(UsdPrimRef prim) {
+    if (!prim) return nullptr;
+    try {
+#if USD_USE_FULL
+        UsdLuxShadowAPI shadowAPI = UsdLuxShadowAPI::Apply(prim->prim);
+        if (shadowAPI) {
+            return new UsdLuxShadowAPIOpaque(shadowAPI);
+        }
+        return nullptr;
+#else
+        auto* wrapper = new UsdLuxShadowAPIOpaque();
+        wrapper->valid = true;
+        return wrapper;
+#endif
+    } CATCH_AND_RETURN(nullptr)
+}
+
+UsdLuxShadowAPIRef UsdLuxShadowAPI_Get(UsdPrimRef prim) {
+    if (!prim) return nullptr;
+    try {
+#if USD_USE_FULL
+        UsdLuxShadowAPI shadowAPI(prim->prim);
+        if (shadowAPI) {
+            return new UsdLuxShadowAPIOpaque(shadowAPI);
+        }
+        return nullptr;
+#else
+        auto* wrapper = new UsdLuxShadowAPIOpaque();
+        wrapper->valid = true;
+        return wrapper;
+#endif
+    } CATCH_AND_RETURN(nullptr)
+}
+
+UsdLuxShadowAPIRef UsdLuxShadowAPI_Retain(UsdLuxShadowAPIRef shadow) {
+    if (!shadow) return nullptr;
+    shadow->refCount.fetch_add(1, std::memory_order_relaxed);
+    return shadow;
+}
+
+void UsdLuxShadowAPI_Release(UsdLuxShadowAPIRef shadow) {
+    if (!shadow) return;
+    if (shadow->refCount.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+        delete shadow;
+    }
+}
+
+bool UsdLuxShadowAPI_IsValid(UsdLuxShadowAPIRef shadow) {
+    if (!shadow) return false;
+#if USD_USE_FULL
+    return shadow->shadowAPI;
+#else
+    return shadow->valid;
+#endif
+}
+
+UsdPrimRef UsdLuxShadowAPI_GetPrim(UsdLuxShadowAPIRef shadow) {
+    if (!shadow) return nullptr;
+#if USD_USE_FULL
+    try {
+        UsdPrim prim = shadow->shadowAPI.GetPrim();
+        if (prim) {
+            return new UsdPrimOpaque(prim);
+        }
+        return nullptr;
+    } CATCH_AND_RETURN(nullptr)
+#else
+    return nullptr;
+#endif
+}
+
+bool UsdLuxShadowAPI_GetShadowEnable(UsdLuxShadowAPIRef shadow, UsdTimeCode time) {
+    if (!shadow) return true;
+#if USD_USE_FULL
+    bool enable = true;
+    shadow->shadowAPI.GetShadowEnableAttr().Get(&enable,
+        time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+    return enable;
+#else
+    return shadow->shadowEnable;
+#endif
+}
+
+UsdResult UsdLuxShadowAPI_SetShadowEnable(UsdLuxShadowAPIRef shadow, UsdTimeCode time, bool enable) {
+    if (!shadow) return USD_RESULT_INVALID_ARGUMENT;
+#if USD_USE_FULL
+    try {
+        shadow->shadowAPI.GetShadowEnableAttr().Set(enable,
+            time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+        return USD_RESULT_SUCCESS;
+    } CATCH_AND_RETURN_RESULT
+#else
+    shadow->shadowEnable = enable;
+    return USD_RESULT_SUCCESS;
+#endif
+}
+
+UsdResult UsdLuxShadowAPI_GetShadowColor(UsdLuxShadowAPIRef shadow, UsdTimeCode time, float* outColor) {
+    if (!shadow || !outColor) return USD_RESULT_INVALID_ARGUMENT;
+#if USD_USE_FULL
+    try {
+        GfVec3f color(0.0f, 0.0f, 0.0f);
+        shadow->shadowAPI.GetShadowColorAttr().Get(&color,
+            time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+        outColor[0] = color[0];
+        outColor[1] = color[1];
+        outColor[2] = color[2];
+        return USD_RESULT_SUCCESS;
+    } CATCH_AND_RETURN_RESULT
+#else
+    outColor[0] = shadow->shadowColor[0];
+    outColor[1] = shadow->shadowColor[1];
+    outColor[2] = shadow->shadowColor[2];
+    return USD_RESULT_SUCCESS;
+#endif
+}
+
+UsdResult UsdLuxShadowAPI_SetShadowColor(UsdLuxShadowAPIRef shadow, UsdTimeCode time, const float* color) {
+    if (!shadow || !color) return USD_RESULT_INVALID_ARGUMENT;
+#if USD_USE_FULL
+    try {
+        GfVec3f c(color[0], color[1], color[2]);
+        shadow->shadowAPI.GetShadowColorAttr().Set(c,
+            time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+        return USD_RESULT_SUCCESS;
+    } CATCH_AND_RETURN_RESULT
+#else
+    shadow->shadowColor[0] = color[0];
+    shadow->shadowColor[1] = color[1];
+    shadow->shadowColor[2] = color[2];
+    return USD_RESULT_SUCCESS;
+#endif
+}
+
+float UsdLuxShadowAPI_GetShadowDistance(UsdLuxShadowAPIRef shadow, UsdTimeCode time) {
+    if (!shadow) return -1.0f;
+#if USD_USE_FULL
+    float distance = -1.0f;
+    shadow->shadowAPI.GetShadowDistanceAttr().Get(&distance,
+        time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+    return distance;
+#else
+    return shadow->shadowDistance;
+#endif
+}
+
+UsdResult UsdLuxShadowAPI_SetShadowDistance(UsdLuxShadowAPIRef shadow, UsdTimeCode time, float distance) {
+    if (!shadow) return USD_RESULT_INVALID_ARGUMENT;
+#if USD_USE_FULL
+    try {
+        shadow->shadowAPI.GetShadowDistanceAttr().Set(distance,
+            time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+        return USD_RESULT_SUCCESS;
+    } CATCH_AND_RETURN_RESULT
+#else
+    shadow->shadowDistance = distance;
+    return USD_RESULT_SUCCESS;
+#endif
+}
+
+float UsdLuxShadowAPI_GetShadowFalloff(UsdLuxShadowAPIRef shadow, UsdTimeCode time) {
+    if (!shadow) return -1.0f;
+#if USD_USE_FULL
+    float falloff = -1.0f;
+    shadow->shadowAPI.GetShadowFalloffAttr().Get(&falloff,
+        time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+    return falloff;
+#else
+    return shadow->shadowFalloff;
+#endif
+}
+
+UsdResult UsdLuxShadowAPI_SetShadowFalloff(UsdLuxShadowAPIRef shadow, UsdTimeCode time, float falloff) {
+    if (!shadow) return USD_RESULT_INVALID_ARGUMENT;
+#if USD_USE_FULL
+    try {
+        shadow->shadowAPI.GetShadowFalloffAttr().Set(falloff,
+            time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+        return USD_RESULT_SUCCESS;
+    } CATCH_AND_RETURN_RESULT
+#else
+    shadow->shadowFalloff = falloff;
+    return USD_RESULT_SUCCESS;
+#endif
+}
+
+float UsdLuxShadowAPI_GetShadowFalloffGamma(UsdLuxShadowAPIRef shadow, UsdTimeCode time) {
+    if (!shadow) return 1.0f;
+#if USD_USE_FULL
+    float gamma = 1.0f;
+    shadow->shadowAPI.GetShadowFalloffGammaAttr().Get(&gamma,
+        time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+    return gamma;
+#else
+    return shadow->shadowFalloffGamma;
+#endif
+}
+
+UsdResult UsdLuxShadowAPI_SetShadowFalloffGamma(UsdLuxShadowAPIRef shadow, UsdTimeCode time, float gamma) {
+    if (!shadow) return USD_RESULT_INVALID_ARGUMENT;
+#if USD_USE_FULL
+    try {
+        shadow->shadowAPI.GetShadowFalloffGammaAttr().Set(gamma,
+            time.isDefault ? UsdTimeCode::Default() : UsdTimeCode(time.time));
+        return USD_RESULT_SUCCESS;
+    } CATCH_AND_RETURN_RESULT
+#else
+    shadow->shadowFalloffGamma = gamma;
     return USD_RESULT_SUCCESS;
 #endif
 }

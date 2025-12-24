@@ -1308,6 +1308,298 @@ extension LuxDiskLight: CustomStringConvertible {
     }
 }
 
+// MARK: - LuxLightFilter
+
+/// A UsdLuxLightFilter is a light filter that can modify light effects.
+///
+/// Light filters are applied to lights to shape, restrict, or otherwise
+/// modify the lighting contribution from a light.
+///
+/// Mirrors `pxr::UsdLuxLightFilter` from the USD C++ API.
+public final class LuxLightFilter: @unchecked Sendable {
+
+    // MARK: - Properties
+
+    /// The underlying opaque pointer to the C wrapper.
+    internal let handle: UsdLuxLightFilterRef
+
+    // MARK: - Initialization
+
+    /// Internal initializer from an existing handle.
+    /// Takes ownership of the handle (does not retain).
+    internal init(handle: UsdLuxLightFilterRef) {
+        self.handle = handle
+    }
+
+    deinit {
+        UsdLuxLightFilter_Release(handle)
+    }
+
+    // MARK: - Factory Methods
+
+    /// Defines a new LightFilter prim at the given path.
+    ///
+    /// - Parameters:
+    ///   - stage: The stage to define the prim on.
+    ///   - path: The path for the new LightFilter prim.
+    /// - Returns: The newly defined LightFilter.
+    /// - Throws: `LuxError.definitionFailed` if the prim cannot be defined.
+    public static func define(on stage: Stage, at path: Path) throws -> LuxLightFilter {
+        guard let ref = UsdLuxLightFilter_Define(stage.handle, path.handle) else {
+            throw LuxError.definitionFailed("Failed to define LightFilter at '\(path)'")
+        }
+        return LuxLightFilter(handle: ref)
+    }
+
+    /// Creates a LuxLightFilter schema wrapper from an existing prim.
+    ///
+    /// - Parameter prim: The prim to wrap.
+    /// - Returns: A LuxLightFilter wrapper, or `nil` if the prim is not a valid LightFilter.
+    public static func from(prim: Prim) -> LuxLightFilter? {
+        guard let ref = UsdLuxLightFilter_FromPrim(prim.handle) else {
+            return nil
+        }
+        let filter = LuxLightFilter(handle: ref)
+        return filter.isValid ? filter : nil
+    }
+
+    // MARK: - Validity
+
+    /// Returns `true` if the light filter is valid.
+    public var isValid: Bool {
+        UsdLuxLightFilter_IsValid(handle)
+    }
+
+    /// Gets the underlying prim.
+    public var prim: Prim? {
+        guard let ref = UsdLuxLightFilter_GetPrim(handle) else {
+            return nil
+        }
+        return Prim(handle: ref)
+    }
+
+    // MARK: - Light Filter Properties
+
+    /// Gets the shader ID for this light filter.
+    public var shaderId: String? {
+        guard let cStr = UsdLuxLightFilter_GetShaderId(handle) else {
+            return nil
+        }
+        let result = String(cString: cStr)
+        free(cStr)
+        return result.isEmpty ? nil : result
+    }
+
+    /// Sets the shader ID for this light filter.
+    ///
+    /// - Parameter shaderId: The shader ID to use.
+    /// - Throws: `LuxError.operationFailed` if the operation fails.
+    public func setShaderId(_ shaderId: String) throws {
+        let result = UsdLuxLightFilter_SetShaderId(handle, shaderId)
+        guard result == USD_RESULT_SUCCESS else {
+            throw LuxError.operationFailed("Failed to set light filter shader ID")
+        }
+    }
+}
+
+// MARK: - CustomStringConvertible
+
+extension LuxLightFilter: CustomStringConvertible {
+
+    public var description: String {
+        prim?.path.description ?? "<invalid light filter>"
+    }
+}
+
+// MARK: - LuxShadowAPI
+
+/// A UsdLuxShadowAPI is an API schema for controlling shadow behavior.
+///
+/// The ShadowAPI controls shadow-related properties like shadow color,
+/// distance, and falloff. It can be applied to any light prim.
+///
+/// Mirrors `pxr::UsdLuxShadowAPI` from the USD C++ API.
+public final class LuxShadowAPI: @unchecked Sendable {
+
+    // MARK: - Properties
+
+    /// The underlying opaque pointer to the C wrapper.
+    internal let handle: UsdLuxShadowAPIRef
+
+    // MARK: - Initialization
+
+    /// Internal initializer from an existing handle.
+    /// Takes ownership of the handle (does not retain).
+    internal init(handle: UsdLuxShadowAPIRef) {
+        self.handle = handle
+    }
+
+    deinit {
+        UsdLuxShadowAPI_Release(handle)
+    }
+
+    // MARK: - Factory Methods
+
+    /// Applies ShadowAPI to the given prim.
+    ///
+    /// - Parameter prim: The prim to apply ShadowAPI to.
+    /// - Returns: The ShadowAPI wrapper.
+    /// - Throws: `LuxError.operationFailed` if the API cannot be applied.
+    public static func apply(to prim: Prim) throws -> LuxShadowAPI {
+        guard let ref = UsdLuxShadowAPI_Apply(prim.handle) else {
+            throw LuxError.operationFailed("Failed to apply ShadowAPI to prim")
+        }
+        return LuxShadowAPI(handle: ref)
+    }
+
+    /// Gets the ShadowAPI wrapper from a prim (if already applied).
+    ///
+    /// - Parameter prim: The prim to get ShadowAPI from.
+    /// - Returns: A ShadowAPI wrapper, or `nil` if ShadowAPI is not valid on the prim.
+    public static func get(from prim: Prim) -> LuxShadowAPI? {
+        guard let ref = UsdLuxShadowAPI_Get(prim.handle) else {
+            return nil
+        }
+        let shadow = LuxShadowAPI(handle: ref)
+        return shadow.isValid ? shadow : nil
+    }
+
+    // MARK: - Validity
+
+    /// Returns `true` if the shadow API is valid.
+    public var isValid: Bool {
+        UsdLuxShadowAPI_IsValid(handle)
+    }
+
+    /// Gets the underlying prim.
+    public var prim: Prim? {
+        guard let ref = UsdLuxShadowAPI_GetPrim(handle) else {
+            return nil
+        }
+        return Prim(handle: ref)
+    }
+
+    // MARK: - Shadow Properties
+
+    /// Gets whether shadows are enabled at the given time.
+    public func shadowEnable(at time: TimeCode = .default) -> Bool {
+        UsdLuxShadowAPI_GetShadowEnable(handle, time.cTimeCode)
+    }
+
+    /// Sets whether shadows are enabled at the given time.
+    ///
+    /// - Parameters:
+    ///   - enable: Whether shadows are enabled.
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `LuxError.operationFailed` if the operation fails.
+    public func setShadowEnable(_ enable: Bool, at time: TimeCode = .default) throws {
+        let result = UsdLuxShadowAPI_SetShadowEnable(handle, time.cTimeCode, enable)
+        guard result == USD_RESULT_SUCCESS else {
+            throw LuxError.operationFailed("Failed to set shadow enable")
+        }
+    }
+
+    /// Gets the shadow color at the given time.
+    ///
+    /// - Parameter time: The time code at which to evaluate.
+    /// - Returns: A tuple of (r, g, b) color values, or `nil` on failure.
+    public func shadowColor(at time: TimeCode = .default) -> (r: Float, g: Float, b: Float)? {
+        var color: [Float] = [0, 0, 0]
+        let result = color.withUnsafeMutableBufferPointer { buffer in
+            UsdLuxShadowAPI_GetShadowColor(handle, time.cTimeCode, buffer.baseAddress)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            return nil
+        }
+        return (color[0], color[1], color[2])
+    }
+
+    /// Sets the shadow color at the given time.
+    ///
+    /// - Parameters:
+    ///   - r: Red component (0-1).
+    ///   - g: Green component (0-1).
+    ///   - b: Blue component (0-1).
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `LuxError.operationFailed` if the operation fails.
+    public func setShadowColor(r: Float, g: Float, b: Float, at time: TimeCode = .default) throws {
+        let color: [Float] = [r, g, b]
+        let result = color.withUnsafeBufferPointer { buffer in
+            UsdLuxShadowAPI_SetShadowColor(handle, time.cTimeCode, buffer.baseAddress)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw LuxError.operationFailed("Failed to set shadow color")
+        }
+    }
+
+    /// Gets the maximum shadow distance at the given time.
+    /// Returns -1 for no distance limit.
+    public func shadowDistance(at time: TimeCode = .default) -> Float {
+        UsdLuxShadowAPI_GetShadowDistance(handle, time.cTimeCode)
+    }
+
+    /// Sets the maximum shadow distance at the given time.
+    /// Use -1 for no distance limit.
+    ///
+    /// - Parameters:
+    ///   - distance: The maximum shadow distance (-1 for no limit).
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `LuxError.operationFailed` if the operation fails.
+    public func setShadowDistance(_ distance: Float, at time: TimeCode = .default) throws {
+        let result = UsdLuxShadowAPI_SetShadowDistance(handle, time.cTimeCode, distance)
+        guard result == USD_RESULT_SUCCESS else {
+            throw LuxError.operationFailed("Failed to set shadow distance")
+        }
+    }
+
+    /// Gets the shadow falloff at the given time.
+    /// Returns -1 for no falloff.
+    public func shadowFalloff(at time: TimeCode = .default) -> Float {
+        UsdLuxShadowAPI_GetShadowFalloff(handle, time.cTimeCode)
+    }
+
+    /// Sets the shadow falloff at the given time.
+    /// Use -1 for no falloff.
+    ///
+    /// - Parameters:
+    ///   - falloff: The shadow falloff (-1 for no falloff).
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `LuxError.operationFailed` if the operation fails.
+    public func setShadowFalloff(_ falloff: Float, at time: TimeCode = .default) throws {
+        let result = UsdLuxShadowAPI_SetShadowFalloff(handle, time.cTimeCode, falloff)
+        guard result == USD_RESULT_SUCCESS else {
+            throw LuxError.operationFailed("Failed to set shadow falloff")
+        }
+    }
+
+    /// Gets the shadow falloff gamma at the given time.
+    public func shadowFalloffGamma(at time: TimeCode = .default) -> Float {
+        UsdLuxShadowAPI_GetShadowFalloffGamma(handle, time.cTimeCode)
+    }
+
+    /// Sets the shadow falloff gamma at the given time.
+    ///
+    /// - Parameters:
+    ///   - gamma: The shadow falloff gamma value.
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `LuxError.operationFailed` if the operation fails.
+    public func setShadowFalloffGamma(_ gamma: Float, at time: TimeCode = .default) throws {
+        let result = UsdLuxShadowAPI_SetShadowFalloffGamma(handle, time.cTimeCode, gamma)
+        guard result == USD_RESULT_SUCCESS else {
+            throw LuxError.operationFailed("Failed to set shadow falloff gamma")
+        }
+    }
+}
+
+// MARK: - CustomStringConvertible
+
+extension LuxShadowAPI: CustomStringConvertible {
+
+    public var description: String {
+        prim?.path.description ?? "<invalid shadow API>"
+    }
+}
+
 // MARK: - Type Aliases
 
 /// Type alias for UsdLuxDistantLight
@@ -1327,3 +1619,9 @@ public typealias UsdLuxCylinderLight = LuxCylinderLight
 
 /// Type alias for UsdLuxDiskLight
 public typealias UsdLuxDiskLight = LuxDiskLight
+
+/// Type alias for UsdLuxLightFilter
+public typealias UsdLuxLightFilter = LuxLightFilter
+
+/// Type alias for UsdLuxShadowAPI
+public typealias UsdLuxShadowAPI = LuxShadowAPI

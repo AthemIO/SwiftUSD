@@ -1256,6 +1256,1065 @@ public enum GeomError: Error, CustomStringConvertible {
     }
 }
 
+// MARK: - CurveType
+
+/// Curve type for basis curves.
+public enum CurveType: Int, Sendable {
+    /// Linear curve segments.
+    case linear = 0
+    /// Cubic curve segments.
+    case cubic = 1
+
+    internal var cValue: UsdGeomCurveType {
+        UsdGeomCurveType(rawValue: UInt32(rawValue))
+    }
+
+    internal init(cValue: UsdGeomCurveType) {
+        self = CurveType(rawValue: Int(cValue.rawValue)) ?? .linear
+    }
+}
+
+// MARK: - CurveBasis
+
+/// Basis for cubic curves.
+public enum CurveBasis: Int, Sendable {
+    /// Bezier basis.
+    case bezier = 0
+    /// B-spline basis.
+    case bspline = 1
+    /// Catmull-Rom basis.
+    case catmullRom = 2
+
+    internal var cValue: UsdGeomBasis {
+        UsdGeomBasis(rawValue: UInt32(rawValue))
+    }
+
+    internal init(cValue: UsdGeomBasis) {
+        self = CurveBasis(rawValue: Int(cValue.rawValue)) ?? .bezier
+    }
+}
+
+// MARK: - CurveWrap
+
+/// Wrap mode for curves.
+public enum CurveWrap: Int, Sendable {
+    /// Non-periodic curves.
+    case nonperiodic = 0
+    /// Periodic (closed) curves.
+    case periodic = 1
+    /// Pinned curves (endpoints match control points).
+    case pinned = 2
+
+    internal var cValue: UsdGeomWrap {
+        UsdGeomWrap(rawValue: UInt32(rawValue))
+    }
+
+    internal init(cValue: UsdGeomWrap) {
+        self = CurveWrap(rawValue: Int(cValue.rawValue)) ?? .nonperiodic
+    }
+}
+
+// MARK: - GeomPoints
+
+/// A UsdGeomPoints is a point cloud primitive.
+///
+/// Points prims are defined by a set of point positions, optional widths,
+/// and optional IDs for tracking points across time.
+///
+/// Mirrors `pxr::UsdGeomPoints` from the USD C++ API.
+public final class GeomPoints: @unchecked Sendable {
+
+    // MARK: - Properties
+
+    /// The underlying opaque pointer to the C wrapper.
+    internal let handle: UsdGeomPointsRef
+
+    // MARK: - Initialization
+
+    /// Internal initializer from an existing handle.
+    /// Takes ownership of the handle (does not retain).
+    internal init(handle: UsdGeomPointsRef) {
+        self.handle = handle
+    }
+
+    deinit {
+        UsdGeomPoints_Release(handle)
+    }
+
+    // MARK: - Factory Methods
+
+    /// Defines a new Points prim at the given path.
+    ///
+    /// - Parameters:
+    ///   - stage: The stage to define the prim on.
+    ///   - path: The path for the new Points prim.
+    /// - Returns: The newly defined Points.
+    /// - Throws: `GeomError.definitionFailed` if the prim cannot be defined.
+    public static func define(on stage: Stage, at path: Path) throws -> GeomPoints {
+        guard let ref = UsdGeomPoints_Define(stage.handle, path.handle) else {
+            throw GeomError.definitionFailed("Failed to define Points at '\(path)'")
+        }
+        return GeomPoints(handle: ref)
+    }
+
+    /// Creates a GeomPoints schema wrapper from an existing prim.
+    ///
+    /// - Parameter prim: The prim to wrap.
+    /// - Returns: A GeomPoints wrapper, or `nil` if the prim is not a valid Points.
+    public static func from(prim: Prim) -> GeomPoints? {
+        guard let ref = UsdGeomPoints_FromPrim(prim.handle) else {
+            return nil
+        }
+        let points = GeomPoints(handle: ref)
+        return points.isValid ? points : nil
+    }
+
+    // MARK: - Validity
+
+    /// Returns `true` if the Points is valid.
+    public var isValid: Bool {
+        UsdGeomPoints_IsValid(handle)
+    }
+
+    /// Gets the underlying prim.
+    public var prim: Prim? {
+        guard let ref = UsdGeomPoints_GetPrim(handle) else {
+            return nil
+        }
+        return Prim(handle: ref)
+    }
+
+    // MARK: - Points
+
+    /// The number of points at the given time.
+    public func pointCount(at time: TimeCode = .default) -> Int {
+        Int(UsdGeomPoints_GetPointCount(handle, time.cTimeCode))
+    }
+
+    /// Gets the points array at the given time.
+    ///
+    /// - Parameter time: The time code at which to evaluate.
+    /// - Returns: An array of floats (x, y, z interleaved).
+    public func points(at time: TimeCode = .default) -> [Float] {
+        let count = pointCount(at: time)
+        guard count > 0 else { return [] }
+
+        var points = [Float](repeating: 0, count: count * 3)
+        let actualCount = points.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomPoints_GetPoints(handle, time.cTimeCode, buffer.baseAddress, count)
+        }
+        if actualCount < count {
+            points.removeLast((count - Int(actualCount)) * 3)
+        }
+        return points
+    }
+
+    /// Sets the points array at the given time.
+    ///
+    /// - Parameters:
+    ///   - points: Array of floats (x, y, z interleaved).
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setPoints(_ points: [Float], at time: TimeCode = .default) throws {
+        let count = points.count / 3
+        let result = points.withUnsafeBufferPointer { buffer in
+            UsdGeomPoints_SetPoints(handle, time.cTimeCode, buffer.baseAddress, count)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set points")
+        }
+    }
+
+    // MARK: - Widths
+
+    /// The number of widths at the given time.
+    public func widthsCount(at time: TimeCode = .default) -> Int {
+        Int(UsdGeomPoints_GetWidthsCount(handle, time.cTimeCode))
+    }
+
+    /// Gets the widths array at the given time.
+    ///
+    /// - Parameter time: The time code at which to evaluate.
+    /// - Returns: An array of float widths.
+    public func widths(at time: TimeCode = .default) -> [Float] {
+        let count = widthsCount(at: time)
+        guard count > 0 else { return [] }
+
+        var widths = [Float](repeating: 0, count: count)
+        let actualCount = widths.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomPoints_GetWidths(handle, time.cTimeCode, buffer.baseAddress, count)
+        }
+        if actualCount < count {
+            widths.removeLast(count - Int(actualCount))
+        }
+        return widths
+    }
+
+    /// Sets the widths array at the given time.
+    ///
+    /// - Parameters:
+    ///   - widths: Array of float widths.
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setWidths(_ widths: [Float], at time: TimeCode = .default) throws {
+        let result = widths.withUnsafeBufferPointer { buffer in
+            UsdGeomPoints_SetWidths(handle, time.cTimeCode, buffer.baseAddress, widths.count)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set widths")
+        }
+    }
+
+    // MARK: - IDs
+
+    /// The number of IDs at the given time.
+    public func idsCount(at time: TimeCode = .default) -> Int {
+        Int(UsdGeomPoints_GetIdsCount(handle, time.cTimeCode))
+    }
+
+    /// Gets the IDs array at the given time.
+    ///
+    /// - Parameter time: The time code at which to evaluate.
+    /// - Returns: An array of Int64 IDs.
+    public func ids(at time: TimeCode = .default) -> [Int64] {
+        let count = idsCount(at: time)
+        guard count > 0 else { return [] }
+
+        var ids = [Int64](repeating: 0, count: count)
+        let actualCount = ids.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomPoints_GetIds(handle, time.cTimeCode, buffer.baseAddress, count)
+        }
+        if actualCount < count {
+            ids.removeLast(count - Int(actualCount))
+        }
+        return ids
+    }
+
+    /// Sets the IDs array at the given time.
+    ///
+    /// - Parameters:
+    ///   - ids: Array of Int64 IDs.
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setIds(_ ids: [Int64], at time: TimeCode = .default) throws {
+        let result = ids.withUnsafeBufferPointer { buffer in
+            UsdGeomPoints_SetIds(handle, time.cTimeCode, buffer.baseAddress, ids.count)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set IDs")
+        }
+    }
+}
+
+// MARK: - CustomStringConvertible
+
+extension GeomPoints: CustomStringConvertible {
+
+    public var description: String {
+        prim?.path.description ?? "<invalid points>"
+    }
+}
+
+// MARK: - GeomBasisCurves
+
+/// A UsdGeomBasisCurves is a collection of parametric curves.
+///
+/// Basis curves can be linear or cubic, with various basis types
+/// (Bezier, B-spline, Catmull-Rom) and wrap modes.
+///
+/// Mirrors `pxr::UsdGeomBasisCurves` from the USD C++ API.
+public final class GeomBasisCurves: @unchecked Sendable {
+
+    // MARK: - Properties
+
+    /// The underlying opaque pointer to the C wrapper.
+    internal let handle: UsdGeomBasisCurvesRef
+
+    // MARK: - Initialization
+
+    /// Internal initializer from an existing handle.
+    /// Takes ownership of the handle (does not retain).
+    internal init(handle: UsdGeomBasisCurvesRef) {
+        self.handle = handle
+    }
+
+    deinit {
+        UsdGeomBasisCurves_Release(handle)
+    }
+
+    // MARK: - Factory Methods
+
+    /// Defines a new BasisCurves prim at the given path.
+    ///
+    /// - Parameters:
+    ///   - stage: The stage to define the prim on.
+    ///   - path: The path for the new BasisCurves prim.
+    /// - Returns: The newly defined BasisCurves.
+    /// - Throws: `GeomError.definitionFailed` if the prim cannot be defined.
+    public static func define(on stage: Stage, at path: Path) throws -> GeomBasisCurves {
+        guard let ref = UsdGeomBasisCurves_Define(stage.handle, path.handle) else {
+            throw GeomError.definitionFailed("Failed to define BasisCurves at '\(path)'")
+        }
+        return GeomBasisCurves(handle: ref)
+    }
+
+    /// Creates a GeomBasisCurves schema wrapper from an existing prim.
+    ///
+    /// - Parameter prim: The prim to wrap.
+    /// - Returns: A GeomBasisCurves wrapper, or `nil` if the prim is not a valid BasisCurves.
+    public static func from(prim: Prim) -> GeomBasisCurves? {
+        guard let ref = UsdGeomBasisCurves_FromPrim(prim.handle) else {
+            return nil
+        }
+        let curves = GeomBasisCurves(handle: ref)
+        return curves.isValid ? curves : nil
+    }
+
+    // MARK: - Validity
+
+    /// Returns `true` if the BasisCurves is valid.
+    public var isValid: Bool {
+        UsdGeomBasisCurves_IsValid(handle)
+    }
+
+    /// Gets the underlying prim.
+    public var prim: Prim? {
+        guard let ref = UsdGeomBasisCurves_GetPrim(handle) else {
+            return nil
+        }
+        return Prim(handle: ref)
+    }
+
+    // MARK: - Curve Type
+
+    /// The curve type (linear or cubic).
+    public var curveType: CurveType {
+        get { CurveType(cValue: UsdGeomBasisCurves_GetType(handle)) }
+    }
+
+    /// Sets the curve type.
+    ///
+    /// - Parameter type: The curve type.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setCurveType(_ type: CurveType) throws {
+        let result = UsdGeomBasisCurves_SetType(handle, type.cValue)
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set curve type")
+        }
+    }
+
+    // MARK: - Basis
+
+    /// The basis for cubic curves.
+    public var basis: CurveBasis {
+        get { CurveBasis(cValue: UsdGeomBasisCurves_GetBasis(handle)) }
+    }
+
+    /// Sets the curve basis.
+    ///
+    /// - Parameter basis: The curve basis.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setBasis(_ basis: CurveBasis) throws {
+        let result = UsdGeomBasisCurves_SetBasis(handle, basis.cValue)
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set curve basis")
+        }
+    }
+
+    // MARK: - Wrap
+
+    /// The wrap mode for curves.
+    public var wrap: CurveWrap {
+        get { CurveWrap(cValue: UsdGeomBasisCurves_GetWrap(handle)) }
+    }
+
+    /// Sets the wrap mode.
+    ///
+    /// - Parameter wrap: The wrap mode.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setWrap(_ wrap: CurveWrap) throws {
+        let result = UsdGeomBasisCurves_SetWrap(handle, wrap.cValue)
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set wrap mode")
+        }
+    }
+
+    // MARK: - Curve Vertex Counts
+
+    /// The number of curve vertex counts at the given time.
+    public func curveVertexCountsCount(at time: TimeCode = .default) -> Int {
+        Int(UsdGeomBasisCurves_GetCurveVertexCountsCount(handle, time.cTimeCode))
+    }
+
+    /// Gets the curve vertex counts array at the given time.
+    ///
+    /// - Parameter time: The time code at which to evaluate.
+    /// - Returns: An array of integers representing vertices per curve.
+    public func curveVertexCounts(at time: TimeCode = .default) -> [Int32] {
+        let count = curveVertexCountsCount(at: time)
+        guard count > 0 else { return [] }
+
+        var counts = [Int32](repeating: 0, count: count)
+        let actualCount = counts.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomBasisCurves_GetCurveVertexCounts(handle, time.cTimeCode, buffer.baseAddress, count)
+        }
+        if actualCount < count {
+            counts.removeLast(count - Int(actualCount))
+        }
+        return counts
+    }
+
+    /// Sets the curve vertex counts array at the given time.
+    ///
+    /// - Parameters:
+    ///   - counts: Array of integers representing vertices per curve.
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setCurveVertexCounts(_ counts: [Int32], at time: TimeCode = .default) throws {
+        let result = counts.withUnsafeBufferPointer { buffer in
+            UsdGeomBasisCurves_SetCurveVertexCounts(handle, time.cTimeCode, buffer.baseAddress, counts.count)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set curve vertex counts")
+        }
+    }
+
+    // MARK: - Points
+
+    /// The number of points at the given time.
+    public func pointCount(at time: TimeCode = .default) -> Int {
+        Int(UsdGeomBasisCurves_GetPointCount(handle, time.cTimeCode))
+    }
+
+    /// Gets the points array at the given time.
+    ///
+    /// - Parameter time: The time code at which to evaluate.
+    /// - Returns: An array of floats (x, y, z interleaved).
+    public func points(at time: TimeCode = .default) -> [Float] {
+        let count = pointCount(at: time)
+        guard count > 0 else { return [] }
+
+        var points = [Float](repeating: 0, count: count * 3)
+        let actualCount = points.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomBasisCurves_GetPoints(handle, time.cTimeCode, buffer.baseAddress, count)
+        }
+        if actualCount < count {
+            points.removeLast((count - Int(actualCount)) * 3)
+        }
+        return points
+    }
+
+    /// Sets the points array at the given time.
+    ///
+    /// - Parameters:
+    ///   - points: Array of floats (x, y, z interleaved).
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setPoints(_ points: [Float], at time: TimeCode = .default) throws {
+        let count = points.count / 3
+        let result = points.withUnsafeBufferPointer { buffer in
+            UsdGeomBasisCurves_SetPoints(handle, time.cTimeCode, buffer.baseAddress, count)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set points")
+        }
+    }
+
+    // MARK: - Widths
+
+    /// The number of widths at the given time.
+    public func widthsCount(at time: TimeCode = .default) -> Int {
+        Int(UsdGeomBasisCurves_GetWidthsCount(handle, time.cTimeCode))
+    }
+
+    /// Gets the widths array at the given time.
+    ///
+    /// - Parameter time: The time code at which to evaluate.
+    /// - Returns: An array of float widths.
+    public func widths(at time: TimeCode = .default) -> [Float] {
+        let count = widthsCount(at: time)
+        guard count > 0 else { return [] }
+
+        var widths = [Float](repeating: 0, count: count)
+        let actualCount = widths.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomBasisCurves_GetWidths(handle, time.cTimeCode, buffer.baseAddress, count)
+        }
+        if actualCount < count {
+            widths.removeLast(count - Int(actualCount))
+        }
+        return widths
+    }
+
+    /// Sets the widths array at the given time.
+    ///
+    /// - Parameters:
+    ///   - widths: Array of float widths.
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setWidths(_ widths: [Float], at time: TimeCode = .default) throws {
+        let result = widths.withUnsafeBufferPointer { buffer in
+            UsdGeomBasisCurves_SetWidths(handle, time.cTimeCode, buffer.baseAddress, widths.count)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set widths")
+        }
+    }
+}
+
+// MARK: - CustomStringConvertible
+
+extension GeomBasisCurves: CustomStringConvertible {
+
+    public var description: String {
+        prim?.path.description ?? "<invalid basis curves>"
+    }
+}
+
+// MARK: - GeomPrimvar
+
+/// A primvar is a special kind of attribute that can have interpolation metadata.
+///
+/// Primvars are used to specify data that varies across the surface of a geometric
+/// primitive (like colors, UVs, normals).
+///
+/// Mirrors `pxr::UsdGeomPrimvar` from the USD C++ API.
+public final class GeomPrimvar: @unchecked Sendable {
+
+    // MARK: - Properties
+
+    /// The underlying opaque pointer to the C wrapper.
+    internal let handle: UsdGeomPrimvarRef
+
+    // MARK: - Initialization
+
+    /// Internal initializer from an existing handle.
+    /// Takes ownership of the handle (does not retain).
+    internal init(handle: UsdGeomPrimvarRef) {
+        self.handle = handle
+    }
+
+    deinit {
+        UsdGeomPrimvar_Release(handle)
+    }
+
+    // MARK: - Factory Methods
+
+    /// Creates a GeomPrimvar from an attribute.
+    ///
+    /// - Parameter attribute: The attribute to wrap.
+    /// - Returns: A GeomPrimvar wrapper, or `nil` if the attribute is not a valid primvar.
+    public static func from(attribute: Attribute) -> GeomPrimvar? {
+        guard let ref = UsdGeomPrimvar_FromAttribute(attribute.handle) else {
+            return nil
+        }
+        let primvar = GeomPrimvar(handle: ref)
+        return primvar.isValid ? primvar : nil
+    }
+
+    // MARK: - Validity
+
+    /// Returns `true` if the Primvar is valid.
+    public var isValid: Bool {
+        UsdGeomPrimvar_IsValid(handle)
+    }
+
+    /// Returns `true` if the primvar has a value.
+    public var hasValue: Bool {
+        UsdGeomPrimvar_HasValue(handle)
+    }
+
+    /// Returns `true` if the primvar has an authored value.
+    public var hasAuthoredValue: Bool {
+        UsdGeomPrimvar_HasAuthoredValue(handle)
+    }
+
+    // MARK: - Properties
+
+    /// The full name of the primvar (including namespace prefix).
+    public var name: Token? {
+        guard let ref = UsdGeomPrimvar_GetName(handle) else {
+            return nil
+        }
+        return Token(handle: ref)
+    }
+
+    /// The base name of the primvar (without namespace prefix).
+    public var baseName: Token? {
+        guard let ref = UsdGeomPrimvar_GetBaseName(handle) else {
+            return nil
+        }
+        return Token(handle: ref)
+    }
+
+    /// The interpolation mode.
+    public var interpolation: GeomInterpolation {
+        get { GeomInterpolation(cValue: UsdGeomPrimvar_GetInterpolation(handle)) }
+    }
+
+    /// Sets the interpolation mode.
+    ///
+    /// - Parameter interpolation: The interpolation mode.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setInterpolation(_ interpolation: GeomInterpolation) throws {
+        let result = UsdGeomPrimvar_SetInterpolation(handle, interpolation.cValue)
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set interpolation")
+        }
+    }
+
+    /// The element size (for array-valued primvars).
+    public var elementSize: Int {
+        get { Int(UsdGeomPrimvar_GetElementSize(handle)) }
+    }
+
+    /// Sets the element size.
+    ///
+    /// - Parameter size: The element size.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setElementSize(_ size: Int) throws {
+        let result = UsdGeomPrimvar_SetElementSize(handle, Int32(size))
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set element size")
+        }
+    }
+
+    /// Returns `true` if the primvar is indexed.
+    public var isIndexed: Bool {
+        UsdGeomPrimvar_IsIndexed(handle)
+    }
+
+    /// Gets the underlying attribute.
+    public var attribute: Attribute? {
+        guard let ref = UsdGeomPrimvar_GetAttr(handle) else {
+            return nil
+        }
+        return Attribute(handle: ref)
+    }
+}
+
+// MARK: - CustomStringConvertible
+
+extension GeomPrimvar: CustomStringConvertible {
+
+    public var description: String {
+        name?.text ?? "<invalid primvar>"
+    }
+}
+
+// MARK: - GeomPrimvarsAPI
+
+/// API schema for accessing and creating primvars on a prim.
+///
+/// Mirrors `pxr::UsdGeomPrimvarsAPI` from the USD C++ API.
+public final class GeomPrimvarsAPI: @unchecked Sendable {
+
+    // MARK: - Properties
+
+    /// The underlying opaque pointer to the C wrapper.
+    internal let handle: UsdGeomPrimvarsAPIRef
+
+    // MARK: - Initialization
+
+    /// Internal initializer from an existing handle.
+    /// Takes ownership of the handle (does not retain).
+    internal init(handle: UsdGeomPrimvarsAPIRef) {
+        self.handle = handle
+    }
+
+    deinit {
+        UsdGeomPrimvarsAPI_Release(handle)
+    }
+
+    // MARK: - Factory Methods
+
+    /// Gets the PrimvarsAPI for a prim.
+    ///
+    /// - Parameter prim: The prim to get the API for.
+    /// - Returns: The PrimvarsAPI, or `nil` if it cannot be created.
+    public static func get(prim: Prim) -> GeomPrimvarsAPI? {
+        guard let ref = UsdGeomPrimvarsAPI_Get(prim.handle) else {
+            return nil
+        }
+        let api = GeomPrimvarsAPI(handle: ref)
+        return api.isValid ? api : nil
+    }
+
+    // MARK: - Validity
+
+    /// Returns `true` if the API is valid.
+    public var isValid: Bool {
+        UsdGeomPrimvarsAPI_IsValid(handle)
+    }
+
+    // MARK: - Primvar Operations
+
+    /// Creates a primvar on the prim.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the primvar.
+    ///   - typeName: The type name (e.g., "float3", "color3f").
+    ///   - interpolation: The interpolation mode.
+    /// - Returns: The created primvar, or `nil` on failure.
+    public func createPrimvar(
+        name: Token,
+        typeName: Token,
+        interpolation: GeomInterpolation
+    ) -> GeomPrimvar? {
+        guard let ref = UsdGeomPrimvarsAPI_CreatePrimvar(
+            handle, name.handle, typeName.handle, interpolation.cValue
+        ) else {
+            return nil
+        }
+        return GeomPrimvar(handle: ref)
+    }
+
+    /// Creates a primvar with element size.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the primvar.
+    ///   - typeName: The type name (e.g., "float3", "color3f").
+    ///   - interpolation: The interpolation mode.
+    ///   - elementSize: The element size for array values.
+    /// - Returns: The created primvar, or `nil` on failure.
+    public func createPrimvar(
+        name: Token,
+        typeName: Token,
+        interpolation: GeomInterpolation,
+        elementSize: Int
+    ) -> GeomPrimvar? {
+        guard let ref = UsdGeomPrimvarsAPI_CreatePrimvarWithElementSize(
+            handle, name.handle, typeName.handle, interpolation.cValue, Int32(elementSize)
+        ) else {
+            return nil
+        }
+        return GeomPrimvar(handle: ref)
+    }
+
+    /// Gets a primvar by name.
+    ///
+    /// - Parameter name: The name of the primvar.
+    /// - Returns: The primvar, or `nil` if not found.
+    public func getPrimvar(named name: Token) -> GeomPrimvar? {
+        guard let ref = UsdGeomPrimvarsAPI_GetPrimvar(handle, name.handle) else {
+            return nil
+        }
+        return GeomPrimvar(handle: ref)
+    }
+
+    /// Returns `true` if the prim has a primvar with the given name.
+    public func hasPrimvar(named name: Token) -> Bool {
+        UsdGeomPrimvarsAPI_HasPrimvar(handle, name.handle)
+    }
+
+    /// Removes a primvar.
+    ///
+    /// - Parameter name: The name of the primvar to remove.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func removePrimvar(named name: Token) throws {
+        let result = UsdGeomPrimvarsAPI_RemovePrimvar(handle, name.handle)
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to remove primvar '\(name)'")
+        }
+    }
+
+    /// The number of primvars on the prim.
+    public var primvarCount: Int {
+        Int(UsdGeomPrimvarsAPI_GetPrimvarCount(handle))
+    }
+
+    /// Gets all primvars on the prim.
+    ///
+    /// - Returns: An array of all primvars.
+    public var primvars: [GeomPrimvar] {
+        let count = primvarCount
+        guard count > 0 else { return [] }
+
+        var refs = [UsdGeomPrimvarRef?](repeating: nil, count: count)
+        let actualCount = refs.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomPrimvarsAPI_GetPrimvars(handle, buffer.baseAddress, count)
+        }
+        return refs.prefix(Int(actualCount)).compactMap { ref in
+            ref.map { GeomPrimvar(handle: $0) }
+        }
+    }
+}
+
+// MARK: - GeomXformCache
+
+/// A cache for xform transforms to avoid repeated computation.
+///
+/// XformCache provides efficient access to transform matrices by caching
+/// computed results.
+///
+/// Mirrors `pxr::UsdGeomXformCache` from the USD C++ API.
+public final class GeomXformCache: @unchecked Sendable {
+
+    // MARK: - Properties
+
+    /// The underlying opaque pointer to the C wrapper.
+    internal let handle: UsdGeomXformCacheRef
+
+    // MARK: - Initialization
+
+    /// Creates an xform cache for the given time.
+    ///
+    /// - Parameter time: The time code for transform evaluation.
+    public init(at time: TimeCode = .default) {
+        self.handle = UsdGeomXformCache_Create(time.cTimeCode)
+    }
+
+    deinit {
+        UsdGeomXformCache_Release(handle)
+    }
+
+    // MARK: - Transform Queries
+
+    /// Computes the local-to-world transform for a prim.
+    ///
+    /// - Parameter prim: The prim to compute the transform for.
+    /// - Returns: A 4x4 matrix as 16 doubles in row-major order.
+    /// - Throws: `GeomError.operationFailed` if the transform cannot be computed.
+    public func localToWorldTransform(for prim: Prim) throws -> [Double] {
+        var matrix = [Double](repeating: 0, count: 16)
+        let result = matrix.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomXformCache_GetLocalToWorldTransform(handle, prim.handle, buffer.baseAddress)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to compute local-to-world transform")
+        }
+        return matrix
+    }
+
+    /// Computes the parent-to-world transform for a prim.
+    ///
+    /// - Parameter prim: The prim to compute the transform for.
+    /// - Returns: A 4x4 matrix as 16 doubles in row-major order.
+    /// - Throws: `GeomError.operationFailed` if the transform cannot be computed.
+    public func parentToWorldTransform(for prim: Prim) throws -> [Double] {
+        var matrix = [Double](repeating: 0, count: 16)
+        let result = matrix.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomXformCache_GetParentToWorldTransform(handle, prim.handle, buffer.baseAddress)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to compute parent-to-world transform")
+        }
+        return matrix
+    }
+
+    /// Computes the local transformation for a prim.
+    ///
+    /// - Parameter prim: The prim to compute the transform for.
+    /// - Returns: A tuple of the transform matrix and whether the xform stack is reset.
+    /// - Throws: `GeomError.operationFailed` if the transform cannot be computed.
+    public func localTransformation(for prim: Prim) throws -> (matrix: [Double], resetsXformStack: Bool) {
+        var matrix = [Double](repeating: 0, count: 16)
+        var resetsStack = false
+        let result = matrix.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomXformCache_GetLocalTransformation(handle, prim.handle, buffer.baseAddress, &resetsStack)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to compute local transformation")
+        }
+        return (matrix, resetsStack)
+    }
+
+    /// Computes the relative transform from one prim to an ancestor.
+    ///
+    /// - Parameters:
+    ///   - prim: The prim to compute the transform for.
+    ///   - ancestor: The ancestor prim.
+    /// - Returns: A 4x4 matrix as 16 doubles in row-major order.
+    /// - Throws: `GeomError.operationFailed` if the transform cannot be computed.
+    public func relativeTransform(from prim: Prim, to ancestor: Prim) throws -> [Double] {
+        var matrix = [Double](repeating: 0, count: 16)
+        let result = matrix.withUnsafeMutableBufferPointer { buffer in
+            UsdGeomXformCache_ComputeRelativeTransform(handle, prim.handle, ancestor.handle, buffer.baseAddress)
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to compute relative transform")
+        }
+        return matrix
+    }
+
+    // MARK: - Cache Control
+
+    /// Sets the time for this cache, invalidating cached values.
+    public func setTime(_ time: TimeCode) {
+        UsdGeomXformCache_SetTime(handle, time.cTimeCode)
+    }
+
+    /// Gets the current time of the cache.
+    public var time: TimeCode {
+        let cTime = UsdGeomXformCache_GetTime(handle)
+        return cTime.isDefault ? .default : TimeCode(cTime.time)
+    }
+
+    /// Clears all cached data.
+    public func clear() {
+        UsdGeomXformCache_Clear(handle)
+    }
+}
+
+// MARK: - GeomBBoxCache
+
+/// A cache for bounding box computations.
+///
+/// BBoxCache provides efficient access to bounding boxes by caching
+/// computed results.
+///
+/// Mirrors `pxr::UsdGeomBBoxCache` from the USD C++ API.
+public final class GeomBBoxCache: @unchecked Sendable {
+
+    // MARK: - Properties
+
+    /// The underlying opaque pointer to the C wrapper.
+    internal let handle: UsdGeomBBoxCacheRef
+
+    // MARK: - Initialization
+
+    /// Creates a bounding box cache.
+    ///
+    /// - Parameters:
+    ///   - time: The time code for bounds evaluation.
+    ///   - purposes: The purposes to include in bounds computation.
+    ///   - useExtentsHint: Whether to use extents hints if available.
+    ///   - ignoreVisibility: Whether to ignore visibility when computing bounds.
+    public init(
+        at time: TimeCode = .default,
+        purposes: [GeomPurpose] = [.default, .render],
+        useExtentsHint: Bool = true,
+        ignoreVisibility: Bool = false
+    ) {
+        let cPurposes = purposes.map { $0.cValue }
+        self.handle = cPurposes.withUnsafeBufferPointer { buffer in
+            UsdGeomBBoxCache_Create(time.cTimeCode, buffer.baseAddress, buffer.count, useExtentsHint, ignoreVisibility)
+        }
+    }
+
+    deinit {
+        UsdGeomBBoxCache_Release(handle)
+    }
+
+    // MARK: - Bounds Queries
+
+    /// Computes the world-space bounding box for a prim.
+    ///
+    /// - Parameter prim: The prim to compute bounds for.
+    /// - Returns: A tuple of (min, max) points, each as [x, y, z].
+    /// - Throws: `GeomError.operationFailed` if bounds cannot be computed.
+    public func computeWorldBound(for prim: Prim) throws -> (min: [Double], max: [Double]) {
+        var minPoint = [Double](repeating: 0, count: 3)
+        var maxPoint = [Double](repeating: 0, count: 3)
+        let result = minPoint.withUnsafeMutableBufferPointer { minBuffer in
+            maxPoint.withUnsafeMutableBufferPointer { maxBuffer in
+                UsdGeomBBoxCache_ComputeWorldBound(handle, prim.handle, minBuffer.baseAddress, maxBuffer.baseAddress)
+            }
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to compute world bounds")
+        }
+        return (minPoint, maxPoint)
+    }
+
+    /// Computes the local-space bounding box for a prim.
+    ///
+    /// - Parameter prim: The prim to compute bounds for.
+    /// - Returns: A tuple of (min, max) points, each as [x, y, z].
+    /// - Throws: `GeomError.operationFailed` if bounds cannot be computed.
+    public func computeLocalBound(for prim: Prim) throws -> (min: [Double], max: [Double]) {
+        var minPoint = [Double](repeating: 0, count: 3)
+        var maxPoint = [Double](repeating: 0, count: 3)
+        let result = minPoint.withUnsafeMutableBufferPointer { minBuffer in
+            maxPoint.withUnsafeMutableBufferPointer { maxBuffer in
+                UsdGeomBBoxCache_ComputeLocalBound(handle, prim.handle, minBuffer.baseAddress, maxBuffer.baseAddress)
+            }
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to compute local bounds")
+        }
+        return (minPoint, maxPoint)
+    }
+
+    /// Computes the untransformed bounding box for a prim.
+    ///
+    /// - Parameter prim: The prim to compute bounds for.
+    /// - Returns: A tuple of (min, max) points, each as [x, y, z].
+    /// - Throws: `GeomError.operationFailed` if bounds cannot be computed.
+    public func computeUntransformedBound(for prim: Prim) throws -> (min: [Double], max: [Double]) {
+        var minPoint = [Double](repeating: 0, count: 3)
+        var maxPoint = [Double](repeating: 0, count: 3)
+        let result = minPoint.withUnsafeMutableBufferPointer { minBuffer in
+            maxPoint.withUnsafeMutableBufferPointer { maxBuffer in
+                UsdGeomBBoxCache_ComputeUntransformedBound(handle, prim.handle, minBuffer.baseAddress, maxBuffer.baseAddress)
+            }
+        }
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to compute untransformed bounds")
+        }
+        return (minPoint, maxPoint)
+    }
+
+    // MARK: - Cache Control
+
+    /// Sets the time for this cache, invalidating cached values.
+    public func setTime(_ time: TimeCode) {
+        UsdGeomBBoxCache_SetTime(handle, time.cTimeCode)
+    }
+
+    /// Gets the current time of the cache.
+    public var time: TimeCode {
+        let cTime = UsdGeomBBoxCache_GetTime(handle)
+        return cTime.isDefault ? .default : TimeCode(cTime.time)
+    }
+
+    /// Clears all cached data.
+    public func clear() {
+        UsdGeomBBoxCache_Clear(handle)
+    }
+}
+
+// MARK: - Visibility and Purpose Helpers
+
+extension Prim {
+
+    /// Gets the visibility of this prim at the given time.
+    ///
+    /// - Parameter time: The time code at which to evaluate.
+    /// - Returns: `true` if visible, `false` if invisible.
+    public func isVisible(at time: TimeCode = .default) -> Bool {
+        UsdGeom_GetVisibility(handle, time.cTimeCode)
+    }
+
+    /// Sets the visibility of this prim at the given time.
+    ///
+    /// - Parameters:
+    ///   - visible: Whether the prim should be visible.
+    ///   - time: The time code at which to set the value.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setVisibility(_ visible: Bool, at time: TimeCode = .default) throws {
+        let result = UsdGeom_SetVisibility(handle, time.cTimeCode, visible)
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set visibility")
+        }
+    }
+
+    /// Gets the purpose of this prim.
+    public var purpose: GeomPurpose {
+        GeomPurpose(cValue: UsdGeom_GetPurpose(handle))
+    }
+
+    /// Sets the purpose of this prim.
+    ///
+    /// - Parameter purpose: The purpose to set.
+    /// - Throws: `GeomError.operationFailed` if the operation fails.
+    public func setPurpose(_ purpose: GeomPurpose) throws {
+        let result = UsdGeom_SetPurpose(handle, purpose.cValue)
+        guard result == USD_RESULT_SUCCESS else {
+            throw GeomError.operationFailed("Failed to set purpose")
+        }
+    }
+}
+
 // MARK: - Type Aliases
 
 /// Type alias for UsdGeomXform
@@ -1263,6 +2322,12 @@ public typealias UsdGeomXform = GeomXform
 
 /// Type alias for UsdGeomMesh
 public typealias UsdGeomMesh = GeomMesh
+
+/// Type alias for UsdGeomPoints
+public typealias UsdGeomPoints = GeomPoints
+
+/// Type alias for UsdGeomBasisCurves
+public typealias UsdGeomBasisCurves = GeomBasisCurves
 
 /// Type alias for UsdGeomSphere
 public typealias UsdGeomSphere = GeomSphere
@@ -1281,3 +2346,15 @@ public typealias UsdGeomCapsule = GeomCapsule
 
 /// Type alias for UsdGeomCamera
 public typealias UsdGeomCamera = GeomCamera
+
+/// Type alias for UsdGeomPrimvar
+public typealias UsdGeomPrimvar = GeomPrimvar
+
+/// Type alias for UsdGeomPrimvarsAPI
+public typealias UsdGeomPrimvarsAPI = GeomPrimvarsAPI
+
+/// Type alias for UsdGeomXformCache
+public typealias UsdGeomXformCache = GeomXformCache
+
+/// Type alias for UsdGeomBBoxCache
+public typealias UsdGeomBBoxCache = GeomBBoxCache

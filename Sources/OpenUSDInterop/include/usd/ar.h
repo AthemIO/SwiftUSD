@@ -358,6 +358,145 @@ USD_INTEROP_API void Ar_FreeString(char* str);
 /// Frees a string array allocated by Ar functions.
 USD_INTEROP_API void Ar_FreeStringArray(char** strings, size_t count);
 
+// ============================================================================
+// MARK: - ArResolverContextBinder
+// ============================================================================
+
+/// Opaque handle to an ArResolverContextBinder wrapper.
+/// A context binder binds a resolver context in a scoped manner.
+typedef struct ArResolverContextBinderOpaque* ArResolverContextBinderRef;
+
+// MARK: - ArResolverContextBinder Lifecycle
+
+/// Creates and binds a resolver context binder.
+/// The context will remain bound until the binder is released.
+/// Returns NULL on failure. Caller must release with ArResolverContextBinder_Release.
+USD_INTEROP_API ArResolverContextBinderRef ArResolverContextBinder_Create(ArResolverContextRef context);
+
+/// Releases the context binder and unbinds the context.
+USD_INTEROP_API void ArResolverContextBinder_Release(ArResolverContextBinderRef binder);
+
+/// Returns the context bound by this binder.
+USD_INTEROP_API ArResolverContextRef ArResolverContextBinder_GetContext(ArResolverContextBinderRef binder);
+
+// ============================================================================
+// MARK: - ArResolverScopedCache
+// ============================================================================
+
+/// Opaque handle to an ArResolverScopedCache wrapper.
+/// A scoped cache enables caching of resolver queries within a scope.
+typedef struct ArResolverScopedCacheOpaque* ArResolverScopedCacheRef;
+
+// MARK: - ArResolverScopedCache Lifecycle
+
+/// Creates a scoped cache and begins caching.
+/// Returns NULL on failure. Caller must release with ArResolverScopedCache_Release.
+USD_INTEROP_API ArResolverScopedCacheRef ArResolverScopedCache_Create(void);
+
+/// Releases the scoped cache and ends caching for this scope.
+USD_INTEROP_API void ArResolverScopedCache_Release(ArResolverScopedCacheRef cache);
+
+// ============================================================================
+// MARK: - ArAsset
+// ============================================================================
+
+/// Opaque handle to an ArAsset wrapper.
+/// Provides read-only access to asset contents.
+typedef struct ArAssetOpaque* ArAssetRef;
+
+// MARK: - ArAsset Lifecycle
+
+/// Opens an asset at the given resolved path.
+/// Returns NULL if the asset cannot be opened.
+/// Caller must release with ArAsset_Release.
+USD_INTEROP_API ArAssetRef ArAsset_Open(ArResolvedPathRef resolvedPath);
+
+/// Increments the reference count of an asset.
+USD_INTEROP_API ArAssetRef ArAsset_Retain(ArAssetRef asset);
+
+/// Decrements the reference count and frees if count reaches zero.
+USD_INTEROP_API void ArAsset_Release(ArAssetRef asset);
+
+// MARK: - ArAsset Properties
+
+/// Returns the size of the asset in bytes.
+/// Returns 0 if the asset is invalid.
+USD_INTEROP_API size_t ArAsset_GetSize(ArAssetRef asset);
+
+/// Reads bytes from the asset.
+/// Returns the number of bytes actually read.
+/// - Parameters:
+///   - asset: The asset to read from.
+///   - buffer: Buffer to read into.
+///   - count: Number of bytes to read.
+///   - offset: Byte offset to start reading from.
+USD_INTEROP_API size_t ArAsset_Read(
+    ArAssetRef asset,
+    void* buffer,
+    size_t count,
+    size_t offset
+);
+
+/// Returns the entire asset contents as a buffer.
+/// Returns NULL on failure.
+/// Caller must free the result with ArAsset_FreeBuffer.
+/// outSize will be set to the buffer size.
+USD_INTEROP_API void* ArAsset_GetBuffer(ArAssetRef asset, size_t* outSize);
+
+/// Frees a buffer allocated by ArAsset_GetBuffer.
+USD_INTEROP_API void ArAsset_FreeBuffer(void* buffer);
+
+// ============================================================================
+// MARK: - ArWritableAsset
+// ============================================================================
+
+/// Write mode for writable assets.
+typedef enum {
+    /// Open for in-place updates to an existing file.
+    AR_WRITE_MODE_UPDATE = 0,
+    /// Open for replacement (writes to temp file, then renames on close).
+    AR_WRITE_MODE_REPLACE = 1
+} ArWriteMode;
+
+/// Opaque handle to an ArWritableAsset wrapper.
+/// Provides write access to asset contents.
+typedef struct ArWritableAssetOpaque* ArWritableAssetRef;
+
+// MARK: - ArWritableAsset Lifecycle
+
+/// Opens a writable asset at the given resolved path.
+/// Returns NULL if the asset cannot be opened for writing.
+/// Caller must release with ArWritableAsset_Release.
+USD_INTEROP_API ArWritableAssetRef ArWritableAsset_Open(
+    ArResolvedPathRef resolvedPath,
+    ArWriteMode writeMode
+);
+
+/// Releases the writable asset. Does NOT close the asset.
+/// Call ArWritableAsset_Close first to properly finalize writes.
+USD_INTEROP_API void ArWritableAsset_Release(ArWritableAssetRef asset);
+
+// MARK: - ArWritableAsset Operations
+
+/// Writes bytes to the asset.
+/// Returns the number of bytes actually written.
+/// - Parameters:
+///   - asset: The asset to write to.
+///   - buffer: Buffer containing data to write.
+///   - count: Number of bytes to write.
+///   - offset: Byte offset to start writing at.
+USD_INTEROP_API size_t ArWritableAsset_Write(
+    ArWritableAssetRef asset,
+    const void* buffer,
+    size_t count,
+    size_t offset
+);
+
+/// Closes the writable asset and finalizes writes.
+/// For AR_WRITE_MODE_REPLACE, this performs the atomic rename.
+/// Returns true on success, false on failure.
+USD_INTEROP_API bool ArWritableAsset_Close(ArWritableAssetRef asset);
+
 #ifdef __cplusplus
 }
 #endif

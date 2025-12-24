@@ -1,5 +1,5 @@
 // usdUtils.cpp - UsdUtils module C wrapper implementation
-// Mirrors: pxr/usd/usdUtils/stageCache.h, flattenLayerStack.h, stitch.h
+// Mirrors: pxr/usd/usdUtils/stageCache.h, flattenLayerStack.h, stitch.h, dependencies.h, pipeline.h
 
 #include "../../include/usdUtils/usdUtils.h"
 
@@ -9,9 +9,12 @@
     #include <pxr/usd/usdUtils/stageCache.h>
     #include <pxr/usd/usdUtils/flattenLayerStack.h>
     #include <pxr/usd/usdUtils/stitch.h>
+    #include <pxr/usd/usdUtils/dependencies.h>
+    #include <pxr/usd/usdUtils/pipeline.h>
     #include <pxr/usd/usd/stage.h>
     #include <pxr/usd/usd/stageCache.h>
     #include <pxr/usd/sdf/layer.h>
+    #include <pxr/usd/sdf/assetPath.h>
     PXR_NAMESPACE_USING_DIRECTIVE
 #else
     #define USD_USE_FULL 0
@@ -439,6 +442,340 @@ void UsdUtils_FreeString(char* str) {
     if (str) {
         free(str);
     }
+}
+
+void UsdUtils_FreeStringArray(char** strings, size_t count) {
+    if (!strings) return;
+    for (size_t i = 0; i < count; ++i) {
+        if (strings[i]) {
+            free(strings[i]);
+        }
+    }
+}
+
+// ============================================================================
+// MARK: - UsdUtilsDependencies Implementation
+// ============================================================================
+
+// Helper function to copy a string
+static char* CopyString(const std::string& str) {
+    char* result = static_cast<char*>(malloc(str.size() + 1));
+    if (result) {
+        strcpy(result, str.c_str());
+    }
+    return result;
+}
+
+UsdResult UsdUtilsGetExternalReferenceCounts(
+    const char* filePath,
+    size_t* outSubLayersCount,
+    size_t* outReferencesCount,
+    size_t* outPayloadsCount
+) {
+    if (!filePath) return USD_RESULT_INVALID_ARGUMENT;
+    if (!outSubLayersCount || !outReferencesCount || !outPayloadsCount) {
+        return USD_RESULT_INVALID_ARGUMENT;
+    }
+
+    try {
+#if USD_USE_FULL
+        std::vector<std::string> subLayers;
+        std::vector<std::string> references;
+        std::vector<std::string> payloads;
+
+        UsdUtilsExtractExternalReferences(
+            std::string(filePath),
+            &subLayers,
+            &references,
+            &payloads
+        );
+
+        *outSubLayersCount = subLayers.size();
+        *outReferencesCount = references.size();
+        *outPayloadsCount = payloads.size();
+        return USD_RESULT_SUCCESS;
+#else
+        // Stub mode: return empty counts
+        *outSubLayersCount = 0;
+        *outReferencesCount = 0;
+        *outPayloadsCount = 0;
+        return USD_RESULT_SUCCESS;
+#endif
+    }
+    CATCH_AND_RETURN_RESULT
+}
+
+UsdResult UsdUtilsExtractExternalReferences(
+    const char* filePath,
+    char** outSubLayers,
+    size_t subLayersMaxCount,
+    char** outReferences,
+    size_t referencesMaxCount,
+    char** outPayloads,
+    size_t payloadsMaxCount,
+    size_t* outSubLayersCount,
+    size_t* outReferencesCount,
+    size_t* outPayloadsCount
+) {
+    if (!filePath) return USD_RESULT_INVALID_ARGUMENT;
+    if (!outSubLayersCount || !outReferencesCount || !outPayloadsCount) {
+        return USD_RESULT_INVALID_ARGUMENT;
+    }
+
+    try {
+#if USD_USE_FULL
+        std::vector<std::string> subLayers;
+        std::vector<std::string> references;
+        std::vector<std::string> payloads;
+
+        UsdUtilsExtractExternalReferences(
+            std::string(filePath),
+            &subLayers,
+            &references,
+            &payloads
+        );
+
+        // Copy sublayers
+        size_t subLayerCount = std::min(subLayers.size(), subLayersMaxCount);
+        if (outSubLayers) {
+            for (size_t i = 0; i < subLayerCount; ++i) {
+                outSubLayers[i] = CopyString(subLayers[i]);
+            }
+        }
+        *outSubLayersCount = subLayerCount;
+
+        // Copy references
+        size_t refCount = std::min(references.size(), referencesMaxCount);
+        if (outReferences) {
+            for (size_t i = 0; i < refCount; ++i) {
+                outReferences[i] = CopyString(references[i]);
+            }
+        }
+        *outReferencesCount = refCount;
+
+        // Copy payloads
+        size_t payloadCount = std::min(payloads.size(), payloadsMaxCount);
+        if (outPayloads) {
+            for (size_t i = 0; i < payloadCount; ++i) {
+                outPayloads[i] = CopyString(payloads[i]);
+            }
+        }
+        *outPayloadsCount = payloadCount;
+
+        return USD_RESULT_SUCCESS;
+#else
+        // Stub mode: return empty
+        *outSubLayersCount = 0;
+        *outReferencesCount = 0;
+        *outPayloadsCount = 0;
+        return USD_RESULT_SUCCESS;
+#endif
+    }
+    CATCH_AND_RETURN_RESULT
+}
+
+bool UsdUtilsGetAllDependencyCounts(
+    const char* assetPath,
+    size_t* outLayerCount,
+    size_t* outAssetCount,
+    size_t* outUnresolvedCount
+) {
+    if (!assetPath) return false;
+    if (!outLayerCount || !outAssetCount || !outUnresolvedCount) {
+        return false;
+    }
+
+    try {
+#if USD_USE_FULL
+        std::vector<SdfLayerRefPtr> layers;
+        std::vector<std::string> assets;
+        std::vector<std::string> unresolvedPaths;
+
+        SdfAssetPath sdfAssetPath(assetPath);
+        bool success = UsdUtilsComputeAllDependencies(
+            sdfAssetPath,
+            &layers,
+            &assets,
+            &unresolvedPaths
+        );
+
+        *outLayerCount = layers.size();
+        *outAssetCount = assets.size();
+        *outUnresolvedCount = unresolvedPaths.size();
+        return success;
+#else
+        // Stub mode: return empty counts
+        *outLayerCount = 0;
+        *outAssetCount = 0;
+        *outUnresolvedCount = 0;
+        return true;
+#endif
+    }
+    CATCH_AND_RETURN(false)
+}
+
+bool UsdUtilsComputeAllDependencies(
+    const char* assetPath,
+    char** outLayerPaths,
+    size_t layerPathsMaxCount,
+    char** outAssetPaths,
+    size_t assetPathsMaxCount,
+    char** outUnresolvedPaths,
+    size_t unresolvedMaxCount,
+    size_t* outLayerCount,
+    size_t* outAssetCount,
+    size_t* outUnresolvedCount
+) {
+    if (!assetPath) return false;
+    if (!outLayerCount || !outAssetCount || !outUnresolvedCount) {
+        return false;
+    }
+
+    try {
+#if USD_USE_FULL
+        std::vector<SdfLayerRefPtr> layers;
+        std::vector<std::string> assets;
+        std::vector<std::string> unresolvedPaths;
+
+        SdfAssetPath sdfAssetPath(assetPath);
+        bool success = UsdUtilsComputeAllDependencies(
+            sdfAssetPath,
+            &layers,
+            &assets,
+            &unresolvedPaths
+        );
+
+        // Copy layer paths
+        size_t layerCount = std::min(layers.size(), layerPathsMaxCount);
+        if (outLayerPaths) {
+            for (size_t i = 0; i < layerCount; ++i) {
+                if (layers[i]) {
+                    outLayerPaths[i] = CopyString(layers[i]->GetIdentifier());
+                } else {
+                    outLayerPaths[i] = nullptr;
+                }
+            }
+        }
+        *outLayerCount = layerCount;
+
+        // Copy asset paths
+        size_t assetCount = std::min(assets.size(), assetPathsMaxCount);
+        if (outAssetPaths) {
+            for (size_t i = 0; i < assetCount; ++i) {
+                outAssetPaths[i] = CopyString(assets[i]);
+            }
+        }
+        *outAssetCount = assetCount;
+
+        // Copy unresolved paths
+        size_t unresolvedCount = std::min(unresolvedPaths.size(), unresolvedMaxCount);
+        if (outUnresolvedPaths) {
+            for (size_t i = 0; i < unresolvedCount; ++i) {
+                outUnresolvedPaths[i] = CopyString(unresolvedPaths[i]);
+            }
+        }
+        *outUnresolvedCount = unresolvedCount;
+
+        return success;
+#else
+        // Stub mode: return empty
+        *outLayerCount = 0;
+        *outAssetCount = 0;
+        *outUnresolvedCount = 0;
+        return true;
+#endif
+    }
+    CATCH_AND_RETURN(false)
+}
+
+// ============================================================================
+// MARK: - UsdUtilsPipeline Implementation
+// ============================================================================
+
+char* UsdUtilsGetMaterialsScopeName(bool forceDefault) {
+    try {
+#if USD_USE_FULL
+        TfToken scopeName = UsdUtilsGetMaterialsScopeName(forceDefault);
+        return CopyString(scopeName.GetString());
+#else
+        // Stub mode: return default "Looks"
+        return CopyString("Looks");
+#endif
+    }
+    CATCH_AND_RETURN(nullptr)
+}
+
+char* UsdUtilsGetPrimaryUVSetName(void) {
+    try {
+#if USD_USE_FULL
+        const TfToken& uvSetName = UsdUtilsGetPrimaryUVSetName();
+        return CopyString(uvSetName.GetString());
+#else
+        // Stub mode: return default "st"
+        return CopyString("st");
+#endif
+    }
+    CATCH_AND_RETURN(nullptr)
+}
+
+char* UsdUtilsGetPrefName(void) {
+    try {
+#if USD_USE_FULL
+        const TfToken& prefName = UsdUtilsGetPrefName();
+        return CopyString(prefName.GetString());
+#else
+        // Stub mode: return default "pref"
+        return CopyString("pref");
+#endif
+    }
+    CATCH_AND_RETURN(nullptr)
+}
+
+char* UsdUtilsGetPrimaryCameraName(bool forceDefault) {
+    try {
+#if USD_USE_FULL
+        TfToken cameraName = UsdUtilsGetPrimaryCameraName(forceDefault);
+        return CopyString(cameraName.GetString());
+#else
+        // Stub mode: return default "main_cam"
+        return CopyString("main_cam");
+#endif
+    }
+    CATCH_AND_RETURN(nullptr)
+}
+
+char* UsdUtilsGetAlphaAttributeNameForColor(const char* colorAttrName) {
+    if (!colorAttrName) return nullptr;
+    try {
+#if USD_USE_FULL
+        TfToken colorToken(colorAttrName);
+        TfToken alphaToken = UsdUtilsGetAlphaAttributeNameForColor(colorToken);
+        return CopyString(alphaToken.GetString());
+#else
+        // Stub mode: append "_opacity" to color attribute name
+        std::string result = std::string(colorAttrName) + "_opacity";
+        return CopyString(result);
+#endif
+    }
+    CATCH_AND_RETURN(nullptr)
+}
+
+char* UsdUtilsGetModelNameFromRootLayer(SdfLayerRef rootLayer) {
+    if (!rootLayer) return nullptr;
+    try {
+#if USD_USE_FULL
+        SdfLayerOpaque* wrapper = static_cast<SdfLayerOpaque*>(rootLayer);
+        if (!wrapper->layer) return nullptr;
+
+        TfToken modelName = UsdUtilsGetModelNameFromRootLayer(wrapper->layer);
+        if (modelName.IsEmpty()) return nullptr;
+        return CopyString(modelName.GetString());
+#else
+        // Stub mode: return null (no model name available)
+        return nullptr;
+#endif
+    }
+    CATCH_AND_RETURN(nullptr)
 }
 
 } // extern "C"

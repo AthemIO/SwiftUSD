@@ -31,7 +31,7 @@ module OpenUSDInterop {
     // USD modules - UsdShade (shading: Material, Shader, NodeGraph, Input, Output, MaterialBindingAPI)
     header "usdShade/usdShade.h"
 
-    // USD modules - UsdLux (lighting: DistantLight, DomeLight, RectLight, SphereLight, CylinderLight, DiskLight)
+    // USD modules - UsdLux (lighting: DistantLight, DomeLight, RectLight, SphereLight, CylinderLight, DiskLight, LightFilter, ShadowAPI)
     header "usdLux/usdLux.h"
 
     // USD modules - UsdSkel (skeleton: SkelRoot, Skeleton, Animation, BlendShape, BindingAPI)
@@ -45,6 +45,21 @@ module OpenUSDInterop {
 
     // USD modules - UsdUtils (utilities: StageCache, FlattenLayerStack, StitchLayers)
     header "usdUtils/usdUtils.h"
+
+    // Imaging modules - Garch (Graphics Architecture: GL context, platform detection)
+    header "imaging/garch.h"
+
+    // Imaging modules - Hio (Image loading, OpenEXR, texture formats)
+    header "imaging/hio.h"
+
+    // Imaging modules - Hgi (Hydra Graphics Interface: GPU abstraction, buffers, textures, pipelines)
+    header "imaging/hgi.h"
+
+    // Imaging modules - HgiMetal (Metal implementation of Hgi)
+    header "imaging/hgiMetal.h"
+
+    // Imaging modules - CameraUtil (Camera framing, conformance, screen window)
+    header "imaging/cameraUtil.h"
 
     export *
 }

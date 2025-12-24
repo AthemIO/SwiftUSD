@@ -620,3 +620,361 @@ final class UsdGeomTypeAliasTests: XCTestCase {
         XCTAssertTrue(camera.isValid)
     }
 }
+
+// MARK: - Points Tests
+
+final class UsdGeomPointsTests: XCTestCase {
+
+    func testDefinePoints() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Points")
+        let points = try GeomPoints.define(on: stage, at: path)
+
+        XCTAssertTrue(points.isValid)
+        XCTAssertNotNil(points.prim)
+    }
+
+    func testPointsFromPrim() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Points")
+        let points = try GeomPoints.define(on: stage, at: path)
+
+        guard let prim = points.prim else {
+            XCTFail("Points prim should not be nil")
+            return
+        }
+
+        let pointsFromPrim = GeomPoints.from(prim: prim)
+        XCTAssertNotNil(pointsFromPrim)
+    }
+
+    func testPointsSetAndGetPoints() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Points")
+        let points = try GeomPoints.define(on: stage, at: path)
+
+        // Point cloud with 3 points
+        let pointData: [Float] = [
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0
+        ]
+
+        try points.setPoints(pointData)
+
+        let retrievedPoints = points.points()
+        XCTAssertEqual(retrievedPoints.count, 9)
+        XCTAssertEqual(points.pointCount(), 3)
+    }
+
+    func testPointsSetAndGetWidths() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Points")
+        let points = try GeomPoints.define(on: stage, at: path)
+
+        let widths: [Float] = [0.1, 0.2, 0.3]
+        try points.setWidths(widths)
+
+        let retrievedWidths = points.widths()
+        XCTAssertEqual(retrievedWidths.count, 3)
+        XCTAssertEqual(points.widthsCount(), 3)
+    }
+
+    func testPointsSetAndGetIds() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Points")
+        let points = try GeomPoints.define(on: stage, at: path)
+
+        let ids: [Int64] = [100, 101, 102]
+        try points.setIds(ids)
+
+        let retrievedIds = points.ids()
+        XCTAssertEqual(retrievedIds.count, 3)
+        XCTAssertEqual(points.idsCount(), 3)
+    }
+
+    func testPointsTypeAlias() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Points")
+        let points: UsdGeomPoints = try UsdGeomPoints.define(on: stage, at: path)
+        XCTAssertTrue(points.isValid)
+    }
+}
+
+// MARK: - BasisCurves Tests
+
+final class UsdGeomBasisCurvesTests: XCTestCase {
+
+    func testDefineBasisCurves() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves = try GeomBasisCurves.define(on: stage, at: path)
+
+        XCTAssertTrue(curves.isValid)
+        XCTAssertNotNil(curves.prim)
+    }
+
+    func testBasisCurvesFromPrim() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves = try GeomBasisCurves.define(on: stage, at: path)
+
+        guard let prim = curves.prim else {
+            XCTFail("Curves prim should not be nil")
+            return
+        }
+
+        let curvesFromPrim = GeomBasisCurves.from(prim: prim)
+        XCTAssertNotNil(curvesFromPrim)
+    }
+
+    func testBasisCurvesCurveType() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves = try GeomBasisCurves.define(on: stage, at: path)
+
+        // Default type is linear
+        let defaultType = curves.curveType
+        XCTAssertEqual(defaultType, .linear)
+
+        // Set to cubic
+        try curves.setCurveType(.cubic)
+        let newType = curves.curveType
+        XCTAssertEqual(newType, .cubic)
+    }
+
+    func testBasisCurvesBasis() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves = try GeomBasisCurves.define(on: stage, at: path)
+
+        // Set to bspline
+        try curves.setBasis(.bspline)
+        let basis = curves.basis
+        XCTAssertEqual(basis, .bspline)
+    }
+
+    func testBasisCurvesWrap() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves = try GeomBasisCurves.define(on: stage, at: path)
+
+        // Default wrap is nonperiodic
+        let defaultWrap = curves.wrap
+        XCTAssertEqual(defaultWrap, .nonperiodic)
+
+        // Set to periodic
+        try curves.setWrap(.periodic)
+        let newWrap = curves.wrap
+        XCTAssertEqual(newWrap, .periodic)
+    }
+
+    func testBasisCurvesSetAndGetPoints() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves = try GeomBasisCurves.define(on: stage, at: path)
+
+        // Simple curve with 4 points
+        let pointData: [Float] = [
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0
+        ]
+
+        try curves.setPoints(pointData)
+
+        let retrievedPoints = curves.points()
+        XCTAssertEqual(retrievedPoints.count, 12)
+        XCTAssertEqual(curves.pointCount(), 4)
+    }
+
+    func testBasisCurvesSetAndGetCurveVertexCounts() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves = try GeomBasisCurves.define(on: stage, at: path)
+
+        // Two curves with 4 and 3 vertices respectively
+        let counts: [Int32] = [4, 3]
+        try curves.setCurveVertexCounts(counts)
+
+        let retrievedCounts = curves.curveVertexCounts()
+        XCTAssertEqual(retrievedCounts.count, 2)
+        XCTAssertEqual(curves.curveVertexCountsCount(), 2)
+    }
+
+    func testBasisCurvesSetAndGetWidths() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves = try GeomBasisCurves.define(on: stage, at: path)
+
+        let widths: [Float] = [0.1, 0.15, 0.2, 0.1]
+        try curves.setWidths(widths)
+
+        let retrievedWidths = curves.widths()
+        XCTAssertEqual(retrievedWidths.count, 4)
+        XCTAssertEqual(curves.widthsCount(), 4)
+    }
+
+    func testBasisCurvesTypeAlias() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Curves")
+        let curves: UsdGeomBasisCurves = try UsdGeomBasisCurves.define(on: stage, at: path)
+        XCTAssertTrue(curves.isValid)
+    }
+}
+
+// MARK: - Curve Enums Tests
+
+final class UsdGeomCurveEnumTests: XCTestCase {
+
+    func testCurveTypeEnum() {
+        XCTAssertEqual(CurveType.linear.rawValue, 0)
+        XCTAssertEqual(CurveType.cubic.rawValue, 1)
+    }
+
+    func testCurveBasisEnum() {
+        XCTAssertEqual(CurveBasis.bezier.rawValue, 0)
+        XCTAssertEqual(CurveBasis.bspline.rawValue, 1)
+        XCTAssertEqual(CurveBasis.catmullRom.rawValue, 2)
+    }
+
+    func testCurveWrapEnum() {
+        XCTAssertEqual(CurveWrap.nonperiodic.rawValue, 0)
+        XCTAssertEqual(CurveWrap.periodic.rawValue, 1)
+        XCTAssertEqual(CurveWrap.pinned.rawValue, 2)
+    }
+}
+
+// MARK: - XformCache Tests
+
+final class UsdGeomXformCacheTests: XCTestCase {
+
+    func testCreateXformCache() throws {
+        let cache = GeomXformCache()
+        // Just verify it doesn't crash - actual transforms depend on USD integration
+        XCTAssertNotNil(cache)
+    }
+
+    func testXformCacheWithTime() throws {
+        let cache = GeomXformCache(at: TimeCode(10.0))
+        XCTAssertNotNil(cache)
+    }
+
+    func testXformCacheLocalToWorld() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/World")
+        let xform = try GeomXform.define(on: stage, at: path)
+
+        // In stub mode, prim may be nil - that's expected
+        guard let prim = xform.prim else {
+            // In stub mode, GetPrim returns nullptr
+            return
+        }
+
+        let cache = GeomXformCache()
+        let matrix = try cache.localToWorldTransform(for: prim)
+
+        XCTAssertEqual(matrix.count, 16)
+        // Should be identity matrix for an untransformed prim
+        XCTAssertEqual(matrix[0], 1.0, accuracy: 0.0001)
+        XCTAssertEqual(matrix[5], 1.0, accuracy: 0.0001)
+        XCTAssertEqual(matrix[10], 1.0, accuracy: 0.0001)
+        XCTAssertEqual(matrix[15], 1.0, accuracy: 0.0001)
+    }
+
+    func testXformCacheSetAndGetTime() throws {
+        let cache = GeomXformCache()
+
+        cache.setTime(TimeCode(5.0))
+        let time = cache.time
+        // Time should be 5.0 after setting
+        XCTAssertEqual(time.time, 5.0, accuracy: 0.0001)
+    }
+
+    func testXformCacheClear() throws {
+        let cache = GeomXformCache()
+        cache.clear()
+        // Just verify it doesn't crash
+    }
+
+    func testXformCacheTypeAlias() throws {
+        let cache: UsdGeomXformCache = UsdGeomXformCache()
+        XCTAssertNotNil(cache)
+    }
+}
+
+// MARK: - BBoxCache Tests
+
+final class UsdGeomBBoxCacheTests: XCTestCase {
+
+    func testCreateBBoxCache() throws {
+        let cache = GeomBBoxCache()
+        // Just verify it doesn't crash - actual bounds depend on USD integration
+        XCTAssertNotNil(cache)
+    }
+
+    func testBBoxCacheWithPurposes() throws {
+        let cache = GeomBBoxCache(
+            at: .default,
+            purposes: [.default, .render, .proxy]
+        )
+        XCTAssertNotNil(cache)
+    }
+
+    func testBBoxCacheComputeWorldBound() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Sphere")
+        let sphere = try GeomSphere.define(on: stage, at: path)
+
+        // In stub mode, prim may be nil - that's expected
+        guard let prim = sphere.prim else {
+            // In stub mode, GetPrim returns nullptr
+            return
+        }
+
+        let cache = GeomBBoxCache()
+        let bounds = try cache.computeWorldBound(for: prim)
+
+        XCTAssertEqual(bounds.min.count, 3)
+        XCTAssertEqual(bounds.max.count, 3)
+    }
+
+    func testBBoxCacheComputeLocalBound() throws {
+        let stage = try Stage.createInMemory()
+        let path = try Path("/Cube")
+        let cube = try GeomCube.define(on: stage, at: path)
+
+        // In stub mode, prim may be nil - that's expected
+        guard let prim = cube.prim else {
+            // In stub mode, GetPrim returns nullptr
+            return
+        }
+
+        let cache = GeomBBoxCache()
+        let bounds = try cache.computeLocalBound(for: prim)
+
+        XCTAssertEqual(bounds.min.count, 3)
+        XCTAssertEqual(bounds.max.count, 3)
+    }
+
+    func testBBoxCacheSetAndGetTime() throws {
+        let cache = GeomBBoxCache()
+
+        cache.setTime(TimeCode(15.0))
+        let time = cache.time
+        // Time should be 15.0 after setting
+        XCTAssertEqual(time.time, 15.0, accuracy: 0.0001)
+    }
+
+    func testBBoxCacheClear() throws {
+        let cache = GeomBBoxCache()
+        cache.clear()
+        // Just verify it doesn't crash
+    }
+
+    func testBBoxCacheTypeAlias() throws {
+        let cache: UsdGeomBBoxCache = UsdGeomBBoxCache()
+        XCTAssertNotNil(cache)
+    }
+}

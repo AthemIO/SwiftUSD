@@ -8,8 +8,12 @@
     #define AR_USE_USD 1
     #include <pxr/usd/ar/resolver.h>
     #include <pxr/usd/ar/resolverContext.h>
+    #include <pxr/usd/ar/resolverContextBinder.h>
+    #include <pxr/usd/ar/resolverScopedCache.h>
     #include <pxr/usd/ar/resolvedPath.h>
     #include <pxr/usd/ar/timestamp.h>
+    #include <pxr/usd/ar/asset.h>
+    #include <pxr/usd/ar/writableAsset.h>
     #include <pxr/usd/ar/defaultResolver.h>
     #include <pxr/usd/ar/defaultResolverContext.h>
     PXR_NAMESPACE_USING_DIRECTIVE
@@ -1018,6 +1022,454 @@ void Ar_FreeStringArray(char** strings, size_t count) {
     if (!strings) return;
     for (size_t i = 0; i < count; i++) {
         free(strings[i]);
+    }
+}
+
+// ============================================================================
+// MARK: - ArResolverContextBinder Wrapper Structure
+// ============================================================================
+
+struct ArResolverContextBinderOpaque {
+#if AR_USE_USD
+    std::unique_ptr<ArResolverContextBinder> binder;
+    ArResolverContext boundContext;
+#else
+    ArResolverContextRef contextRef;
+#endif
+
+    ArResolverContextBinderOpaque()
+#if !AR_USE_USD
+        : contextRef(nullptr)
+#endif
+    {
+    }
+
+#if AR_USE_USD
+    explicit ArResolverContextBinderOpaque(const ArResolverContext& ctx)
+        : boundContext(ctx)
+    {
+        try {
+            binder = std::make_unique<ArResolverContextBinder>(ctx);
+        } catch (...) {
+            // Leave binder null
+        }
+    }
+#else
+    explicit ArResolverContextBinderOpaque(ArResolverContextRef ctx)
+        : contextRef(ctx)
+    {
+        if (ctx) {
+            ArResolverContext_Retain(ctx);
+        }
+    }
+#endif
+
+    ~ArResolverContextBinderOpaque() {
+#if !AR_USE_USD
+        if (contextRef) {
+            ArResolverContext_Release(contextRef);
+        }
+#endif
+    }
+};
+
+// ============================================================================
+// MARK: - ArResolverContextBinder Implementation
+// ============================================================================
+
+ArResolverContextBinderRef ArResolverContextBinder_Create(ArResolverContextRef context) {
+    if (!context) return nullptr;
+    try {
+#if AR_USE_USD
+        return new ArResolverContextBinderOpaque(context->context);
+#else
+        return new ArResolverContextBinderOpaque(context);
+#endif
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+void ArResolverContextBinder_Release(ArResolverContextBinderRef binder) {
+    if (binder) {
+        delete binder;
+    }
+}
+
+ArResolverContextRef ArResolverContextBinder_GetContext(ArResolverContextBinderRef binder) {
+    if (!binder) return nullptr;
+    try {
+#if AR_USE_USD
+        return new ArResolverContextOpaque(binder->boundContext);
+#else
+        if (binder->contextRef) {
+            return ArResolverContext_Retain(binder->contextRef);
+        }
+        return nullptr;
+#endif
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+// ============================================================================
+// MARK: - ArResolverScopedCache Wrapper Structure
+// ============================================================================
+
+struct ArResolverScopedCacheOpaque {
+#if AR_USE_USD
+    std::unique_ptr<ArResolverScopedCache> cache;
+#endif
+
+    ArResolverScopedCacheOpaque() {
+#if AR_USE_USD
+        try {
+            cache = std::make_unique<ArResolverScopedCache>();
+        } catch (...) {
+            // Leave cache null
+        }
+#endif
+    }
+};
+
+// ============================================================================
+// MARK: - ArResolverScopedCache Implementation
+// ============================================================================
+
+ArResolverScopedCacheRef ArResolverScopedCache_Create(void) {
+    try {
+        return new ArResolverScopedCacheOpaque();
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+void ArResolverScopedCache_Release(ArResolverScopedCacheRef cache) {
+    if (cache) {
+        delete cache;
+    }
+}
+
+// ============================================================================
+// MARK: - ArAsset Wrapper Structure
+// ============================================================================
+
+struct ArAssetOpaque {
+#if AR_USE_USD
+    std::shared_ptr<ArAsset> asset;
+#else
+    std::vector<char> buffer;
+    std::string pathString;
+#endif
+    std::atomic<int> refCount;
+
+    ArAssetOpaque()
+        : refCount(1)
+    {
+    }
+
+#if AR_USE_USD
+    explicit ArAssetOpaque(std::shared_ptr<ArAsset> a)
+        : asset(std::move(a))
+        , refCount(1)
+    {
+    }
+#else
+    explicit ArAssetOpaque(const std::string& path)
+        : pathString(path)
+        , refCount(1)
+    {
+        // Fallback: try to read from filesystem
+        FILE* f = fopen(path.c_str(), "rb");
+        if (f) {
+            fseek(f, 0, SEEK_END);
+            long size = ftell(f);
+            fseek(f, 0, SEEK_SET);
+            if (size > 0) {
+                buffer.resize(size);
+                size_t bytesRead = fread(buffer.data(), 1, size, f);
+                buffer.resize(bytesRead);
+            }
+            fclose(f);
+        }
+    }
+#endif
+
+    size_t getSize() const {
+#if AR_USE_USD
+        if (asset) {
+            return asset->GetSize();
+        }
+        return 0;
+#else
+        return buffer.size();
+#endif
+    }
+
+    size_t read(void* buf, size_t count, size_t offset) const {
+#if AR_USE_USD
+        if (asset) {
+            return asset->Read(buf, count, offset);
+        }
+        return 0;
+#else
+        if (offset >= buffer.size()) {
+            return 0;
+        }
+        size_t available = buffer.size() - offset;
+        size_t toRead = std::min(count, available);
+        memcpy(buf, buffer.data() + offset, toRead);
+        return toRead;
+#endif
+    }
+};
+
+// ============================================================================
+// MARK: - ArAsset Implementation
+// ============================================================================
+
+ArAssetRef ArAsset_Open(ArResolvedPathRef resolvedPath) {
+    if (!resolvedPath) return nullptr;
+    try {
+#if AR_USE_USD
+        std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(resolvedPath->path);
+        if (!asset) {
+            return nullptr;
+        }
+        return new ArAssetOpaque(asset);
+#else
+        // Fallback: open from filesystem
+        if (resolvedPath->pathString.empty()) {
+            return nullptr;
+        }
+        auto* opaque = new ArAssetOpaque(resolvedPath->pathString);
+        if (opaque->buffer.empty() && !resolvedPath->pathString.empty()) {
+            // File couldn't be read
+            delete opaque;
+            return nullptr;
+        }
+        return opaque;
+#endif
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+ArAssetRef ArAsset_Retain(ArAssetRef asset) {
+    if (!asset) return nullptr;
+    asset->refCount.fetch_add(1, std::memory_order_relaxed);
+    return asset;
+}
+
+void ArAsset_Release(ArAssetRef asset) {
+    if (!asset) return;
+    if (asset->refCount.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+        delete asset;
+    }
+}
+
+size_t ArAsset_GetSize(ArAssetRef asset) {
+    if (!asset) return 0;
+    try {
+        return asset->getSize();
+    } catch (...) {
+        return 0;
+    }
+}
+
+size_t ArAsset_Read(
+    ArAssetRef asset,
+    void* buffer,
+    size_t count,
+    size_t offset
+) {
+    if (!asset || !buffer || count == 0) return 0;
+    try {
+        return asset->read(buffer, count, offset);
+    } catch (...) {
+        return 0;
+    }
+}
+
+void* ArAsset_GetBuffer(ArAssetRef asset, size_t* outSize) {
+    if (!asset) {
+        if (outSize) *outSize = 0;
+        return nullptr;
+    }
+    try {
+        size_t size = asset->getSize();
+        if (size == 0) {
+            if (outSize) *outSize = 0;
+            return nullptr;
+        }
+
+        void* buffer = malloc(size);
+        if (!buffer) {
+            if (outSize) *outSize = 0;
+            return nullptr;
+        }
+
+        size_t bytesRead = asset->read(buffer, size, 0);
+        if (outSize) *outSize = bytesRead;
+        return buffer;
+    } catch (...) {
+        if (outSize) *outSize = 0;
+        return nullptr;
+    }
+}
+
+void ArAsset_FreeBuffer(void* buffer) {
+    free(buffer);
+}
+
+// ============================================================================
+// MARK: - ArWritableAsset Wrapper Structure
+// ============================================================================
+
+struct ArWritableAssetOpaque {
+#if AR_USE_USD
+    std::shared_ptr<ArWritableAsset> asset;
+#else
+    FILE* file;
+    std::string pathString;
+    ArWriteMode mode;
+    bool closed;
+#endif
+
+    ArWritableAssetOpaque()
+#if AR_USE_USD
+    {
+    }
+#else
+        : file(nullptr)
+        , mode(AR_WRITE_MODE_UPDATE)
+        , closed(false)
+    {
+    }
+#endif
+
+#if AR_USE_USD
+    explicit ArWritableAssetOpaque(std::shared_ptr<ArWritableAsset> a)
+        : asset(std::move(a))
+    {
+    }
+#else
+    explicit ArWritableAssetOpaque(const std::string& path, ArWriteMode m)
+        : pathString(path)
+        , mode(m)
+        , closed(false)
+    {
+        // Fallback: open file for writing
+        const char* openMode = (mode == AR_WRITE_MODE_UPDATE) ? "r+b" : "wb";
+        file = fopen(path.c_str(), openMode);
+        if (!file && mode == AR_WRITE_MODE_UPDATE) {
+            // File doesn't exist, try creating it
+            file = fopen(path.c_str(), "wb");
+        }
+    }
+#endif
+
+    ~ArWritableAssetOpaque() {
+#if !AR_USE_USD
+        if (file && !closed) {
+            fclose(file);
+        }
+#endif
+    }
+
+    size_t write(const void* buf, size_t count, size_t offset) {
+#if AR_USE_USD
+        if (asset) {
+            return asset->Write(buf, count, offset);
+        }
+        return 0;
+#else
+        if (!file || closed) return 0;
+        if (fseek(file, static_cast<long>(offset), SEEK_SET) != 0) {
+            return 0;
+        }
+        return fwrite(buf, 1, count, file);
+#endif
+    }
+
+    bool close() {
+#if AR_USE_USD
+        if (asset) {
+            return asset->Close();
+        }
+        return false;
+#else
+        if (!file || closed) return false;
+        closed = true;
+        int result = fclose(file);
+        file = nullptr;
+        return result == 0;
+#endif
+    }
+};
+
+// ============================================================================
+// MARK: - ArWritableAsset Implementation
+// ============================================================================
+
+ArWritableAssetRef ArWritableAsset_Open(
+    ArResolvedPathRef resolvedPath,
+    ArWriteMode writeMode
+) {
+    if (!resolvedPath) return nullptr;
+    try {
+#if AR_USE_USD
+        pxr::ArResolver::WriteMode mode = (writeMode == AR_WRITE_MODE_REPLACE)
+            ? pxr::ArResolver::WriteMode::Replace
+            : pxr::ArResolver::WriteMode::Update;
+        std::shared_ptr<ArWritableAsset> asset = ArGetResolver().OpenAssetForWrite(resolvedPath->path, mode);
+        if (!asset) {
+            return nullptr;
+        }
+        return new ArWritableAssetOpaque(asset);
+#else
+        // Fallback: open file for writing
+        if (resolvedPath->pathString.empty()) {
+            return nullptr;
+        }
+        auto* opaque = new ArWritableAssetOpaque(resolvedPath->pathString, writeMode);
+        if (!opaque->file) {
+            delete opaque;
+            return nullptr;
+        }
+        return opaque;
+#endif
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+void ArWritableAsset_Release(ArWritableAssetRef asset) {
+    if (asset) {
+        delete asset;
+    }
+}
+
+size_t ArWritableAsset_Write(
+    ArWritableAssetRef asset,
+    const void* buffer,
+    size_t count,
+    size_t offset
+) {
+    if (!asset || !buffer || count == 0) return 0;
+    try {
+        return asset->write(buffer, count, offset);
+    } catch (...) {
+        return 0;
+    }
+}
+
+bool ArWritableAsset_Close(ArWritableAssetRef asset) {
+    if (!asset) return false;
+    try {
+        return asset->close();
+    } catch (...) {
+        return false;
     }
 }
 
