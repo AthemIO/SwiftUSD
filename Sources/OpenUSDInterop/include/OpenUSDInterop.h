@@ -52,13 +52,22 @@ typedef struct UsdSdfPath_s* UsdSdfPathRef;
 typedef struct UsdSdfLayer_s* UsdSdfLayerRef;
 
 /// Opaque handle to a UsdStage
+#ifndef USD_STAGE_REF_DEFINED
+#define USD_STAGE_REF_DEFINED
 typedef struct UsdStage_s* UsdStageRef;
+#endif
 
 /// Opaque handle to a UsdPrim
+#ifndef USD_PRIM_REF_DEFINED
+#define USD_PRIM_REF_DEFINED
 typedef struct UsdPrim_s* UsdPrimRef;
+#endif
 
 /// Opaque handle to a UsdAttribute
+#ifndef USD_ATTRIBUTE_REF_DEFINED
+#define USD_ATTRIBUTE_REF_DEFINED
 typedef struct UsdAttribute_s* UsdAttributeRef;
+#endif
 
 /// Opaque handle to a VtArray
 #ifndef USD_VT_ARRAY_REF_DEFINED
@@ -68,10 +77,14 @@ typedef struct UsdVtArray_s* UsdVtArrayRef;
 
 // MARK: - Time Code
 
+#ifndef USD_TIME_CODE_DEFINED
+#define USD_TIME_CODE_DEFINED
 /// Represents a USD time code value
 typedef struct {
-    double value;
+    double time;
+    bool isDefault;
 } UsdTimeCode;
+#endif
 
 /// Returns the default time code
 USD_INTEROP_API UsdTimeCode UsdTimeCode_Default(void);

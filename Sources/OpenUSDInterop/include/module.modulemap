@@ -19,13 +19,17 @@ module OpenUSDInterop {
     // USD modules - Kind (model hierarchy kinds)
     header "usd/kind.h"
 
-    // TODO: Enable remaining headers as modules are implemented
-    // header "usd/stage.h"
-    // header "usd/prim.h"
-    // header "usd/attribute.h"
-    // header "usdGeom/mesh.h"
-    // header "usdGeom/xform.h"
-    // header "usdShade/material.h"
+    // USD modules - Usd (core USD: stage, prim, attribute, relationship, property)
+    header "usd/usd.h"
+
+    // USD modules - UsdGeom (geometry schemas: Xform, Mesh, primitives, camera)
+    header "usdGeom/usdGeom.h"
+
+    // USD modules - UsdShade (shading: Material, Shader, NodeGraph, Input, Output, MaterialBindingAPI)
+    header "usdShade/usdShade.h"
+
+    // USD modules - UsdLux (lighting: DistantLight, DomeLight, RectLight, SphereLight, CylinderLight, DiskLight)
+    header "usdLux/usdLux.h"
 
     export *
 }
