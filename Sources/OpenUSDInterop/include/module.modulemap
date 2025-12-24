@@ -13,6 +13,9 @@ module OpenUSDInterop {
     // Base modules - Vt (value types: arrays, values, dictionaries)
     header "base/vt.h"
 
+    // USD modules - Ar (asset resolution: resolver, context, resolved path)
+    header "usd/ar.h"
+
     // USD modules - Sdf (scene description foundation: paths, layers, asset paths)
     header "usd/sdf.h"
 
@@ -30,6 +33,18 @@ module OpenUSDInterop {
 
     // USD modules - UsdLux (lighting: DistantLight, DomeLight, RectLight, SphereLight, CylinderLight, DiskLight)
     header "usdLux/usdLux.h"
+
+    // USD modules - UsdSkel (skeleton: SkelRoot, Skeleton, Animation, BlendShape, BindingAPI)
+    header "usdSkel/usdSkel.h"
+
+    // USD modules - UsdVol (volumes: Volume, Field3DAsset, OpenVDBAsset)
+    header "usdVol/usdVol.h"
+
+    // USD modules - UsdProc (procedurals: GenerativeProcedural)
+    header "usdProc/usdProc.h"
+
+    // USD modules - UsdUtils (utilities: StageCache, FlattenLayerStack, StitchLayers)
+    header "usdUtils/usdUtils.h"
 
     export *
 }
