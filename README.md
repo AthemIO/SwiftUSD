@@ -1,4 +1,4 @@
-# SwiftOpenUSD
+# SwiftUSD
 
 A high-performance Swift interface to Pixar's [OpenUSD](https://openusd.org), designed for cross-platform 3D content workflows.
 
@@ -31,19 +31,9 @@ for prim in stage.traverse() {
 - OpenUSD 25.11+ (prebuilt or from source)
 - macOS 14+ / Ubuntu 22.04+ / Windows 10+
 
-## Installation
-
-### Swift Package Manager
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/AthemIO/SwiftOpenUSD.git", from: "1.0.0")
-]
-```
-
 ### Building OpenUSD
 
-SwiftOpenUSD requires OpenUSD libraries. Build them with the included script:
+SwiftUSD requires OpenUSD libraries. Build them with the included script:
 
 ```bash
 # macOS
@@ -62,12 +52,12 @@ This installs USD to `./OpenUSD/`.
 
 ## Architecture
 
-SwiftOpenUSD uses a three-layer architecture that provides performance and safety:
+SwiftUSD uses a three-layer architecture that provides performance and safety:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         Your Application                             │
-│                      import SwiftOpenUSD                                  │
+│                      import SwiftUSD                                  │
 └───────────────────────────────┬─────────────────────────────────────┘
                                 │
 ┌───────────────────────────────▼─────────────────────────────────────┐
@@ -90,17 +80,6 @@ SwiftOpenUSD uses a three-layer architecture that provides performance and safet
 │   Prebuilt OpenUSD library (libusd_ms).                             │
 └─────────────────────────────────────────────────────────────────────┘
 ```
-
-### Why Not Direct C++ Interop?
-
-| Direct C++ Interop | Our Approach |
-|--------------------|--------------|
-| Swift parses ~500K lines of USD headers | Swift parses ~2K lines of C headers |
-| 3-5 minute clean builds | 10-20 second clean builds |
-| Potential deep copies on iteration | Controlled batch copies |
-| C++ exceptions crash Swift | Error codes → Swift errors |
-
----
 
 ## Project Structure
 
@@ -296,24 +275,6 @@ if let path = Arch.Environment["PATH"] {
 
 ---
 
-## Performance
-
-### Batch Operations
-
-The key to performance is minimizing Swift↔C++ boundary crossings:
-
-```swift
-// ❌ Slow: N boundary crossings
-for i in 0..<mesh.pointCount {
-    let point = mesh.point(at: i)  // Crosses boundary each time!
-}
-
-// ✅ Fast: 1 boundary crossing
-let points = mesh.points()  // Single batch call
-for point in points {
-    // Process in Swift
-}
-```
 
 ## Implementation Process
 
@@ -369,30 +330,6 @@ public enum Arch {
     }
 }
 ```
-
-### 5. Write Tests
-
-```swift
-// Tests/OpenUSDTests/ArchTests.swift
-
-func testPhysicalCoreCount() {
-    XCTAssertGreaterThan(Arch.physicalCoreCount, 0)
-}
-```
-
-See [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) for detailed guidelines.
-
-## Comparison with Other Approaches
-
-### vs. [SwiftUSD](https://github.com/AthemIO/SwiftUSD) (Direct C++ Interop)
-
-| Aspect | SwiftUSD | SwiftOpenUSD |
-|--------|----------|--------------|
-| API Style | C++ style | Swift idiomatic |
-| Build Time | 3-5 min | 10-20 sec |
-| Iteration Safety | Risk of deep copies | Controlled batches |
-| Exception Safety | C++ exceptions possible | All caught |
-| Maintenance | Tracks USD API 1:1 | Curated Swift API |
 
 ## Contributing
 

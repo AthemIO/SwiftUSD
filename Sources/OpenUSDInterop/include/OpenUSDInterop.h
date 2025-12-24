@@ -27,6 +27,8 @@ extern "C" {
 // MARK: - Result Type
 
 /// Result codes for USD interop operations.
+#ifndef USD_RESULT_DEFINED
+#define USD_RESULT_DEFINED
 typedef enum {
     USD_RESULT_SUCCESS = 0,
     USD_RESULT_ERROR = 1,
@@ -36,6 +38,7 @@ typedef enum {
     USD_RESULT_OUT_OF_MEMORY = 5,
     USD_RESULT_IO_ERROR = 6
 } UsdResult;
+#endif
 
 // MARK: - Opaque Handle Types
 
@@ -58,7 +61,10 @@ typedef struct UsdPrim_s* UsdPrimRef;
 typedef struct UsdAttribute_s* UsdAttributeRef;
 
 /// Opaque handle to a VtArray
+#ifndef USD_VT_ARRAY_REF_DEFINED
+#define USD_VT_ARRAY_REF_DEFINED
 typedef struct UsdVtArray_s* UsdVtArrayRef;
+#endif
 
 // MARK: - Time Code
 
@@ -75,15 +81,19 @@ USD_INTEROP_API UsdTimeCode UsdTimeCode_EarliestTime(void);
 
 // MARK: - Include Component Headers
 
+// Base modules
+#include "base/arch.h"
 #include "base/tf.h"
-#include "base/gf.h"
-#include "base/vt.h"
-#include "usd/stage.h"
-#include "usd/prim.h"
-#include "usd/attribute.h"
-#include "usdGeom/mesh.h"
-#include "usdGeom/xform.h"
-#include "usdShade/material.h"
+
+// TODO: Enable remaining headers as modules are implemented
+// #include "base/gf.h"
+// #include "base/vt.h"
+// #include "usd/stage.h"
+// #include "usd/prim.h"
+// #include "usd/attribute.h"
+// #include "usdGeom/mesh.h"
+// #include "usdGeom/xform.h"
+// #include "usdShade/material.h"
 
 #ifdef __cplusplus
 }

@@ -2,6 +2,10 @@
 CLAUDE.md
 .claude/
 
+# Project-specific
+Scripts/
+IMPLEMENTATION_PROGRESS.md
+
 # Swift Package Manager
 .build/
 .swiftpm/

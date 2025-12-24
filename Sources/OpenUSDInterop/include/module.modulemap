@@ -1,22 +1,21 @@
 module OpenUSDInterop {
     header "OpenUSDInterop.h"
 
-    // Base modules (Tf, Gf, Vt)
+    // Base modules - Arch (platform, timing, filesystem, environment)
+    header "base/arch.h"
+
+    // Base modules - Tf (tokens, types)
     header "base/tf.h"
-    header "base/gf.h"
-    header "base/vt.h"
 
-    // USD core (Sdf, Usd)
-    header "usd/stage.h"
-    header "usd/prim.h"
-    header "usd/attribute.h"
-
-    // UsdGeom
-    header "usdGeom/mesh.h"
-    header "usdGeom/xform.h"
-
-    // UsdShade
-    header "usdShade/material.h"
+    // TODO: Enable remaining headers as modules are implemented
+    // header "base/gf.h"
+    // header "base/vt.h"
+    // header "usd/stage.h"
+    // header "usd/prim.h"
+    // header "usd/attribute.h"
+    // header "usdGeom/mesh.h"
+    // header "usdGeom/xform.h"
+    // header "usdShade/material.h"
 
     export *
 }

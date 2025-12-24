@@ -1,158 +1,166 @@
-import Foundation
 // swift-tools-version: 6.1
+
 import PackageDescription
 
-// MARK: - Platform Detection & Configuration
+// MARK: - Platform Configuration
 
-let isDarwin =
-    ProcessInfo.processInfo.environment["SDKROOT"]?.contains("MacOSX") ?? false
-    || ProcessInfo.processInfo.environment["DEVELOPER_DIR"] != nil
+let platforms: [SupportedPlatform] = [
+    .macOS(.v14),
+    .iOS(.v17),
+    .tvOS(.v17),
+    .visionOS(.v1),
+]
 
-#if os(Windows)
-    let platform: Platform = .windows
-#elseif os(Linux)
-    let platform: Platform = .linux
-#else
-    let platform: Platform = .darwin
-#endif
+// MARK: - USD Build Settings
 
-enum Platform {
-    case darwin, linux, windows
-
-    var usdLibPath: String {
-        switch self {
-        case .darwin: return "Vendor/OpenUSD/lib"
-        case .linux: return "Vendor/OpenUSD/lib"
-        case .windows: return "Vendor/OpenUSD/lib"
-        }
-    }
-
-    var usdIncludePath: String {
-        return "Vendor/OpenUSD/include"
-    }
-}
-
-// MARK: - Build Settings
-
-let commonCxxSettings: [CXXSetting] = [
-    .define("PXR_PYTHON_ENABLED", to: "0"),  // Disable Python for minimal builds
-    .define("BOOST_ALL_NO_LIB"),  // Prevent auto-linking on Windows
-    .headerSearchPath("include"),
-    .headerSearchPath("../../../Vendor/OpenUSD/include"),
+let usdCxxSettings: [CXXSetting] = [
+    // C++17 required
     .unsafeFlags(["-std=c++17"]),
+
+    // USD source paths
+    .headerSearchPath("../../OpenUSD"),
+    .headerSearchPath("../../OpenUSD/pxr"),
+
+    // USD defines
+    .define("PXR_PYTHON_SUPPORT_ENABLED", to: "0"),
+    .define("PXR_PREFER_SAFETY_OVER_SPEED", to: "1"),
+    .define("PXR_BUILD_MONOLITHIC", to: "1"),
+
+    // Platform defines
+    .define(
+        "PXR_METAL_SUPPORT_ENABLED", to: "1", .when(platforms: [.macOS, .iOS, .tvOS, .visionOS])),
+
+    // Suppress warnings (USD has many)
+    .unsafeFlags(["-Wno-deprecated"]),
+    .unsafeFlags(["-Wno-deprecated-declarations"]),
+    .unsafeFlags(["-Wno-unused-parameter"]),
+    .unsafeFlags(["-Wno-unused-variable"]),
+    .unsafeFlags(["-Wno-missing-field-initializers"]),
+    .unsafeFlags(["-Wno-sign-compare"]),
 ]
 
-let darwinCxxSettings: [CXXSetting] =
-    commonCxxSettings + [
-        .define("PXR_BUILD_LOCATION", to: "\"pxr\""),
-        .define("PXR_PLUGINPATH_NAME", to: "\"PXR_PLUGINPATH_NAME\""),
-    ]
+let interopCxxSettings: [CXXSetting] = [
+    .unsafeFlags(["-std=c++17"]),
+    .headerSearchPath("../../OpenUSD"),
+    .headerSearchPath("../../OpenUSD/pxr"),
+    .define("PXR_PYTHON_SUPPORT_ENABLED", to: "0"),
+]
 
-let linuxCxxSettings: [CXXSetting] =
-    commonCxxSettings + [
-        .define("PXR_BUILD_LOCATION", to: "\"pxr\""),
-        .define("LINUX"),
-    ]
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("StrictConcurrency")
+]
 
-let windowsCxxSettings: [CXXSetting] =
-    commonCxxSettings + [
-        .define("NOMINMAX"),
-        .define("WIN32_LEAN_AND_MEAN"),
-        .define("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH"),
-        .define("_ALLOW_KEYWORD_MACROS", to: "1"),
-    ]
+// MARK: - Platform Linker Settings
 
-let interopCxxSettings: [CXXSetting] = {
-    #if os(Windows)
-        return windowsCxxSettings
-    #elseif os(Linux)
-        return linuxCxxSettings
-    #else
-        return darwinCxxSettings
+var linkerSettings: [LinkerSetting] {
+    var settings: [LinkerSetting] = []
+
+    #if os(macOS) || os(iOS) || os(tvOS) || os(visionOS)
+        settings += [
+            .linkedFramework("Foundation"),
+            .linkedFramework("CoreFoundation"),
+            .linkedLibrary("z"),
+            .linkedLibrary("c++"),
+        ]
     #endif
-}()
 
-// MARK: - Linker Settings
-
-let darwinLinkerSettings: [LinkerSetting] = [
-    .linkedLibrary("usd_ms"),  // Monolithic USD library
-    .unsafeFlags(["-L", "Vendor/OpenUSD/lib"]),
-    .unsafeFlags(["-Wl,-rpath,@loader_path/../lib"]),
-]
-
-let linuxLinkerSettings: [LinkerSetting] = [
-    .linkedLibrary("usd_ms"),
-    .linkedLibrary("pthread"),
-    .linkedLibrary("dl"),
-    .unsafeFlags(["-L", "Vendor/OpenUSD/lib"]),
-    .unsafeFlags(["-Wl,-rpath,$ORIGIN/../lib"]),
-]
-
-let windowsLinkerSettings: [LinkerSetting] = [
-    .linkedLibrary("usd_ms"),
-    .unsafeFlags(["-L", "Vendor/OpenUSD/lib"]),
-]
-
-let interopLinkerSettings: [LinkerSetting] = {
-    #if os(Windows)
-        return windowsLinkerSettings
-    #elseif os(Linux)
-        return linuxLinkerSettings
-    #else
-        return darwinLinkerSettings
+    #if os(Linux)
+        settings += [
+            .linkedLibrary("pthread"),
+            .linkedLibrary("dl"),
+            .linkedLibrary("z"),
+            .linkedLibrary("stdc++"),
+        ]
     #endif
-}()
+
+    return settings
+}
 
 // MARK: - Package Definition
 
 let package = Package(
     name: "SwiftUSD",
-    platforms: [
-        .macOS(.v13),
-        .iOS(.v16),
-        .visionOS(.v1),
-        .tvOS(.v16),
-        .watchOS(.v9),
-    ],
+    platforms: platforms,
     products: [
-        // Main library product
-        .library(
-            name: "SwiftUSD",
-            targets: ["SwiftUSD"]
-        ),
-        // Low-level interop for advanced users
-        .library(
-            name: "OpenUSDInterop",
-            targets: ["OpenUSDInterop"]
-        ),
-    ],
-    dependencies: [
-        // Optional: for async utilities
-        // .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0"),
+        .library(name: "SwiftUSD", targets: ["SwiftUSD"])
     ],
     targets: [
-        // MARK: - Main Swift API
+        // =====================================================================
+        // MARK: - PixarUSD (C++ USD built from source)
+        // =====================================================================
+        // NOTE: PixarUSD target is disabled until OpenUSD is properly configured.
+        // The OpenUSDInterop layer currently uses standalone implementations.
+        // To enable full USD integration:
+        // 1. Run cmake to configure OpenUSD and generate pxr/pxr.h
+        // 2. Uncomment this target
+        // 3. Add "PixarUSD" to OpenUSDInterop dependencies
+        /*
+        .target(
+            name: "PixarUSD",
+            path: "OpenUSD/pxr",
+            sources: [
+                // Base libraries
+                "base/arch",
+                "base/tf",
+                "base/gf",
+                "base/vt",
+                "base/work",
+                "base/plug",
+                "base/trace",
+                "base/js",
+                "base/ts",
+
+                // USD core
+                "usd/ar",
+                "usd/kind",
+                "usd/sdf",
+                "usd/pcp",
+                "usd/usd",
+
+                // USD schemas
+                "usd/usdGeom",
+                "usd/usdShade",
+                "usd/usdLux",
+                "usd/usdSkel",
+                "usd/usdVol",
+                "usd/usdMedia",
+                "usd/usdPhysics",
+                "usd/usdProc",
+                "usd/usdRender",
+                "usd/usdUI",
+                "usd/usdUtils",
+            ],
+            publicHeadersPath: ".",
+            cxxSettings: usdCxxSettings,
+            linkerSettings: linkerSettings
+        ),
+        */
+
+        // =====================================================================
+        // MARK: - OpenUSDInterop (C wrapper)
+        // =====================================================================
+        .target(
+            name: "OpenUSDInterop",
+            dependencies: [],  // Standalone mode: no PixarUSD dependency
+            path: "Sources/OpenUSDInterop",
+            sources: ["src"],
+            publicHeadersPath: "include",
+            cxxSettings: interopCxxSettings
+        ),
+
+        // =====================================================================
+        // MARK: - SwiftUSD (Swift API)
+        // =====================================================================
         .target(
             name: "SwiftUSD",
             dependencies: ["OpenUSDInterop"],
             path: "Sources/SwiftUSD",
-            swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency"),
-                .define("DEBUG", .when(configuration: .debug)),
-            ]
+            swiftSettings: swiftSettings
         ),
 
-        // MARK: - C/C++ Interop Layer
-        .target(
-            name: "OpenUSDInterop",
-            path: "Sources/OpenUSDInterop",
-            sources: ["src"],
-            publicHeadersPath: "include",
-            cxxSettings: interopCxxSettings,
-            linkerSettings: interopLinkerSettings
-        ),
-
+        // =====================================================================
         // MARK: - Tests
+        // =====================================================================
         .testTarget(
             name: "SwiftUSDTests",
             dependencies: ["SwiftUSD"],
