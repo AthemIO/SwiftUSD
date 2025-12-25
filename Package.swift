@@ -196,7 +196,11 @@ let package = Package(
         // Thin C++ wrapper layer using SWIFT_SHARED_REFERENCE and
         // SWIFT_SELF_CONTAINED annotations for direct Swift/C++ interop.
         // Namespace: swiftusd::
-        // Note: Standalone mode - no PixarUSD dependency for simpler build
+        //
+        // USE_PIXAR_USD mode: To enable real USD, uncomment the settings below.
+        // Note: Some ToGf() methods need updates for real USD type compatibility.
+        //
+        // OpenUSD libraries are available at: Vendor/USD/darwin/
         .target(
             name: "USDCxx",
             path: "Sources/USDCxx",
@@ -204,6 +208,23 @@ let package = Package(
             publicHeadersPath: "include",
             cxxSettings: [
                 .unsafeFlags(["-std=c++17"]),
+                .define("USE_PIXAR_USD", to: "1"),
+                .headerSearchPath("../../Vendor/USD/darwin/include"),
+            ],
+            linkerSettings: [
+                .unsafeFlags(["-L/Users/jonathanpeterson/dev/SwiftUSD/Vendor/USD/darwin/lib"]),
+                .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "/Users/jonathanpeterson/dev/SwiftUSD/Vendor/USD/darwin/lib"]),
+                .linkedLibrary("usd_tf"),
+                .linkedLibrary("usd_gf"),
+                .linkedLibrary("usd_vt"),
+                .linkedLibrary("usd_sdf"),
+                .linkedLibrary("usd_usd"),
+                .linkedLibrary("usd_usdGeom"),
+                .linkedLibrary("usd_usdShade"),
+                .linkedLibrary("usd_hd"),
+                .linkedLibrary("usd_hdSt"),
+                .linkedLibrary("usd_usdImaging"),
+                .linkedLibrary("tbb"),
             ]
         ),
 
