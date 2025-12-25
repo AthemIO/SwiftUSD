@@ -6,9 +6,9 @@ Last updated: 2025-12-25
 
 **Goal**: Complete USD pipeline with Hydra/Storm rendering via Metal/Vulkan
 
-**Progress**: 11/28 modules completed
+**Progress**: 12/28 modules completed
 
-**Current Focus**: Phase 5 - IMAGING_FOUNDATION (PxOsd)
+**Current Focus**: Phase 6 - HYDRA_CORE (Hd)
 
 ---
 
@@ -55,7 +55,7 @@ Scene description schemas
 | UsdSkel | ⏸️ | SHARED_REFERENCE | All | Skeleton, SkelRoot, SkelAnimation, BlendShape, SkelBindingAPI |
 | UsdVol | ⏸️ | SHARED_REFERENCE | All | Volume, OpenVDBAsset, Field3DAsset |
 
-## Phase 5: IMAGING_FOUNDATION (3/5)
+## Phase 5: IMAGING_FOUNDATION (4/5)
 Graphics abstraction layer
 
 | Module | Status | Type | Platform | Description |
@@ -64,14 +64,14 @@ Graphics abstraction layer
 | HgiMetal | ✅ | SHARED_REFERENCE | Apple | Metal implementation of Hgi interfaces |
 | HgiVulkan | ⏭️ | SHARED_REFERENCE | Linux/Win | Vulkan implementation of Hgi interfaces |
 | Hio | ✅ | SHARED_REFERENCE | All | Image/texture loading (OpenEXR, PNG, JPEG) |
-| PxOsd | 🔶 | SHARED_REFERENCE | All | OpenSubdiv integration, subdivision surfaces |
+| PxOsd | ✅ | SHARED_REFERENCE | All | OpenSubdiv integration, subdivision surfaces |
 
 ## Phase 6: HYDRA_CORE (0/4)
 Render framework
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
-| Hd | ⬜ | SHARED_REFERENCE | All | HdRenderIndex, HdRprim, HdSprim, HdBprim, HdSceneDelegate, HdRenderDelegate |
+| Hd | 🔶 | SHARED_REFERENCE | All | HdRenderIndex, HdRprim, HdSprim, HdBprim, HdSceneDelegate, HdRenderDelegate |
 | HdSt | ⬜ | SHARED_REFERENCE | All | Storm renderer (HdStRenderDelegate, HdStMesh, HdStMaterial) |
 | Hdx | ⬜ | SHARED_REFERENCE | All | HdxTaskController, HdxRenderTask, HdxSelectionTask, HdxPickTask |
 | HdEngine | ⬜ | SHARED_REFERENCE | All | HdEngine for executing render tasks |

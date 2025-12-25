@@ -91,6 +91,18 @@ module USDCxx {
         export *
     }
 
+    module PxOsd {
+        header "imaging/PxOsd.h"
+        requires cplusplus
+        export *
+    }
+
+    module Hd {
+        header "imaging/Hd.h"
+        requires cplusplus
+        export *
+    }
+
     requires cplusplus
     export *
 }
