@@ -1,0 +1,12 @@
+module USDCxx {
+    header "Swift.h"
+
+    module Arch {
+        header "base/Arch.h"
+        requires cplusplus
+        export *
+    }
+
+    requires cplusplus
+    export *
+}

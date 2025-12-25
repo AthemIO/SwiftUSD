@@ -122,7 +122,7 @@ final class ArchTests: XCTestCase {
 
         // Should be recent (within the last minute)
         let now = Date().timeIntervalSince1970
-        XCTAssertLessThan(abs(now - mtime), 60)
+        XCTAssertLessThan(Swift.abs(now - mtime), 60)
 
         // Clean up
         try? FileManager.default.removeItem(atPath: path)

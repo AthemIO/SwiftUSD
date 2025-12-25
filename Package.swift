@@ -46,31 +46,6 @@ let usdCxxSettings: [CXXSetting] = [
     .unsafeFlags(["-Wno-sign-compare"]),
 ]
 
-var interopCxxSettings: [CXXSetting] {
-    var settings: [CXXSetting] = [
-        .unsafeFlags(["-std=c++17"]),
-        .headerSearchPath("../../OpenUSD"),
-        .headerSearchPath("../../OpenUSD/pxr"),
-        .define("PXR_PYTHON_SUPPORT_ENABLED", to: "0"),
-    ]
-
-    if usePixarUSD {
-        // Include headers from built USD library
-        #if os(macOS) || os(iOS) || os(tvOS) || os(visionOS)
-        settings.append(.headerSearchPath("../../Vendor/USD/darwin/include"))
-        #elseif os(Linux)
-        settings.append(.headerSearchPath("../../Vendor/USD/linux/include"))
-        #elseif os(Windows)
-        settings.append(.headerSearchPath("../../Vendor/USD/windows/include"))
-        #endif
-
-        // Enable real USD integration
-        settings.append(.define("USE_PIXAR_USD", to: "1"))
-    }
-
-    return settings
-}
-
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("StrictConcurrency")
 ]
@@ -128,6 +103,33 @@ var linkerSettings: [LinkerSetting] {
     return settings
 }
 
+// MARK: - USDCxx Build Settings
+
+var usdCxxInteropSettings: [CXXSetting] {
+    var settings: [CXXSetting] = [
+        .unsafeFlags(["-std=c++17"]),
+    ]
+
+    if usePixarUSD {
+        // Include headers from built USD library
+        #if os(macOS) || os(iOS) || os(tvOS) || os(visionOS)
+        settings.append(.headerSearchPath("../../Vendor/USD/darwin/include"))
+        settings.append(.headerSearchPath("../../OpenUSD"))
+        #elseif os(Linux)
+        settings.append(.headerSearchPath("../../Vendor/USD/linux/include"))
+        settings.append(.headerSearchPath("../../OpenUSD"))
+        #elseif os(Windows)
+        settings.append(.headerSearchPath("../../Vendor/USD/windows/include"))
+        settings.append(.headerSearchPath("../../OpenUSD"))
+        #endif
+
+        // Enable real USD integration
+        settings.append(.define("USE_PIXAR_USD", to: "1"))
+    }
+
+    return settings
+}
+
 // MARK: - Package Definition
 
 let package = Package(
@@ -138,79 +140,34 @@ let package = Package(
     ],
     targets: [
         // =====================================================================
-        // MARK: - PixarUSD (C++ USD built from source)
+        // MARK: - USDCxx (C++ interop with Swift annotations)
         // =====================================================================
-        // NOTE: PixarUSD target is disabled until OpenUSD is properly configured.
-        // The OpenUSDInterop layer currently uses standalone implementations.
-        // To enable full USD integration:
-        // 1. Run cmake to configure OpenUSD and generate pxr/pxr.h
-        // 2. Uncomment this target
-        // 3. Add "PixarUSD" to OpenUSDInterop dependencies
-        /*
+        // Modern C++ interop layer using SWIFT_* annotations for direct Swift/C++ interop.
+        // When usePixarUSD = true, wraps real OpenUSD.
+        // When usePixarUSD = false, uses standalone implementations.
         .target(
-            name: "PixarUSD",
-            path: "OpenUSD/pxr",
-            sources: [
-                // Base libraries
-                "base/arch",
-                "base/tf",
-                "base/gf",
-                "base/vt",
-                "base/work",
-                "base/plug",
-                "base/trace",
-                "base/js",
-                "base/ts",
-
-                // USD core
-                "usd/ar",
-                "usd/kind",
-                "usd/sdf",
-                "usd/pcp",
-                "usd/usd",
-
-                // USD schemas
-                "usd/usdGeom",
-                "usd/usdShade",
-                "usd/usdLux",
-                "usd/usdSkel",
-                "usd/usdVol",
-                "usd/usdMedia",
-                "usd/usdPhysics",
-                "usd/usdProc",
-                "usd/usdRender",
-                "usd/usdUI",
-                "usd/usdUtils",
-            ],
-            publicHeadersPath: ".",
-            cxxSettings: usdCxxSettings,
-            linkerSettings: linkerSettings
-        ),
-        */
-
-        // =====================================================================
-        // MARK: - OpenUSDInterop (C wrapper)
-        // =====================================================================
-        // When usePixarUSD = true, this links against the built libusd_ms library.
-        // When usePixarUSD = false, it uses standalone C++ fallback implementations.
-        .target(
-            name: "OpenUSDInterop",
+            name: "USDCxx",
             dependencies: [],
-            path: "Sources/OpenUSDInterop",
+            path: "Sources/USDCxx",
             sources: ["src"],
             publicHeadersPath: "include",
-            cxxSettings: interopCxxSettings,
+            cxxSettings: usdCxxInteropSettings,
             linkerSettings: linkerSettings
         ),
 
         // =====================================================================
         // MARK: - SwiftUSD (Swift API)
         // =====================================================================
+        // Currently only includes Arch module during migration to USDCxx.
+        // Other modules will be added as they are migrated from OpenUSDInterop.
         .target(
             name: "SwiftUSD",
-            dependencies: ["OpenUSDInterop"],
+            dependencies: ["USDCxx"],
             path: "Sources/SwiftUSD",
-            swiftSettings: swiftSettings
+            sources: ["Arch"],
+            swiftSettings: swiftSettings + [
+                .interoperabilityMode(.Cxx)
+            ]
         ),
 
         // =====================================================================
@@ -219,7 +176,11 @@ let package = Package(
         .testTarget(
             name: "SwiftUSDTests",
             dependencies: ["SwiftUSD"],
-            path: "Tests/SwiftUSDTests"
+            path: "Tests/SwiftUSDTests",
+            sources: ["ArchTests.swift"],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ]
         ),
     ],
     cxxLanguageStandard: .cxx17
