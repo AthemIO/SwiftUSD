@@ -574,7 +574,7 @@ struct Matrix4d {
         for (int i = 0; i < 16; ++i) m[i] = data[i];
     }
     PXR_NS::GfMatrix4d ToGf() const SWIFTUSD_NOEXCEPT {
-        return PXR_NS::GfMatrix4d(m);
+        return PXR_NS::GfMatrix4d(reinterpret_cast<const double(*)[4]>(m));
     }
 #endif
 
@@ -835,7 +835,7 @@ struct Matrix4f {
         for (int i = 0; i < 16; ++i) m[i] = data[i];
     }
     PXR_NS::GfMatrix4f ToGf() const SWIFTUSD_NOEXCEPT {
-        return PXR_NS::GfMatrix4f(m);
+        return PXR_NS::GfMatrix4f(reinterpret_cast<const float(*)[4]>(m));
     }
 #endif
 
