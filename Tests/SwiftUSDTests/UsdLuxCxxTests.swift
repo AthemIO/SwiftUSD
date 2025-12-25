@@ -9,7 +9,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - DistantLight Tests
 
     func testDistantLightCreate() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -26,7 +26,7 @@ final class UsdLuxCxxTests: XCTestCase {
     }
 
     func testDistantLightAngle() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -47,7 +47,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - DomeLight Tests
 
     func testDomeLightCreate() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -64,7 +64,7 @@ final class UsdLuxCxxTests: XCTestCase {
     }
 
     func testDomeLightProperties() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -85,7 +85,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - RectLight Tests
 
     func testRectLightCreate() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -102,7 +102,7 @@ final class UsdLuxCxxTests: XCTestCase {
     }
 
     func testRectLightDimensions() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -125,7 +125,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - SphereLight Tests
 
     func testSphereLightCreate() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -142,7 +142,7 @@ final class UsdLuxCxxTests: XCTestCase {
     }
 
     func testSphereLightProperties() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -166,7 +166,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - CylinderLight Tests
 
     func testCylinderLightCreate() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -183,7 +183,7 @@ final class UsdLuxCxxTests: XCTestCase {
     }
 
     func testCylinderLightProperties() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -209,7 +209,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - DiskLight Tests
 
     func testDiskLightCreate() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -226,7 +226,7 @@ final class UsdLuxCxxTests: XCTestCase {
     }
 
     func testDiskLightProperties() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -247,7 +247,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - LightFilter Tests
 
     func testLightFilterCreate() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -264,7 +264,7 @@ final class UsdLuxCxxTests: XCTestCase {
     }
 
     func testLightFilterProperties() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -285,7 +285,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - Reference Counting Tests
 
     func testReferenceCountingLight() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }
@@ -311,7 +311,7 @@ final class UsdLuxCxxTests: XCTestCase {
     // MARK: - Integration Tests
 
     func testMultipleLightsOnStage() throws {
-        guard let stage = swiftusd.StageRef.CreateInMemory() else {
+        guard let stage = swiftusd.StageRef.createInMemory() else {
             XCTFail("Failed to create stage")
             return
         }

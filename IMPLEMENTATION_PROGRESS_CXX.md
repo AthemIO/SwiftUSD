@@ -6,9 +6,9 @@ Last updated: 2025-12-25
 
 **Goal**: Complete USD pipeline with Hydra/Storm rendering via Metal/Vulkan
 
-**Progress**: 8/28 modules completed
+**Progress**: 11/28 modules completed
 
-**Current Focus**: Phase 4 - USD_SCHEMAS (UsdSkel)
+**Current Focus**: Phase 5 - IMAGING_FOUNDATION (PxOsd)
 
 ---
 
@@ -52,19 +52,19 @@ Scene description schemas
 | UsdGeom | ⏸️ | SHARED_REFERENCE | All | Mesh, Xform, Points, BasisCurves, Camera, Primvars, BoundingBox |
 | UsdShade | ⏸️ | SHARED_REFERENCE | All | Material, Shader, MaterialBindingAPI, Input, Output, NodeGraph |
 | UsdLux | ⏸️ | SHARED_REFERENCE | All | DistantLight, DomeLight, RectLight, SphereLight, LightFilter |
-| UsdSkel | 🔶 | SHARED_REFERENCE | All | Skeleton, SkelRoot, SkelAnimation, BlendShape, SkelBindingAPI |
-| UsdVol | ⬜ | SHARED_REFERENCE | All | Volume, OpenVDBAsset, Field3DAsset |
+| UsdSkel | ⏸️ | SHARED_REFERENCE | All | Skeleton, SkelRoot, SkelAnimation, BlendShape, SkelBindingAPI |
+| UsdVol | ⏸️ | SHARED_REFERENCE | All | Volume, OpenVDBAsset, Field3DAsset |
 
-## Phase 5: IMAGING_FOUNDATION (0/5)
+## Phase 5: IMAGING_FOUNDATION (3/5)
 Graphics abstraction layer
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
-| Hgi | ⬜ | SHARED_REFERENCE | All | GPU abstraction interface (HgiCmds, HgiBuffer, HgiTexture, HgiPipeline) |
-| HgiMetal | ⬜ | SHARED_REFERENCE | Apple | Metal implementation of Hgi interfaces |
-| HgiVulkan | ⬜ | SHARED_REFERENCE | Linux/Win | Vulkan implementation of Hgi interfaces |
-| Hio | ⬜ | SHARED_REFERENCE | All | Image/texture loading (OpenEXR, PNG, JPEG) |
-| PxOsd | ⬜ | SHARED_REFERENCE | All | OpenSubdiv integration, subdivision surfaces |
+| Hgi | ✅ | SHARED_REFERENCE | All | GPU abstraction interface (HgiCmds, HgiBuffer, HgiTexture, HgiPipeline) |
+| HgiMetal | ✅ | SHARED_REFERENCE | Apple | Metal implementation of Hgi interfaces |
+| HgiVulkan | ⏭️ | SHARED_REFERENCE | Linux/Win | Vulkan implementation of Hgi interfaces |
+| Hio | ✅ | SHARED_REFERENCE | All | Image/texture loading (OpenEXR, PNG, JPEG) |
+| PxOsd | 🔶 | SHARED_REFERENCE | All | OpenSubdiv integration, subdivision surfaces |
 
 ## Phase 6: HYDRA_CORE (0/4)
 Render framework

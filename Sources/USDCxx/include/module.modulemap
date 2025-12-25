@@ -61,6 +61,36 @@ module USDCxx {
         export *
     }
 
+    module UsdSkel {
+        header "usd/UsdSkel.h"
+        requires cplusplus
+        export *
+    }
+
+    module UsdVol {
+        header "usd/UsdVol.h"
+        requires cplusplus
+        export *
+    }
+
+    module Hgi {
+        header "imaging/Hgi.h"
+        requires cplusplus
+        export *
+    }
+
+    module HgiMetal {
+        header "imaging/HgiMetal.h"
+        requires cplusplus
+        export *
+    }
+
+    module Hio {
+        header "imaging/Hio.h"
+        requires cplusplus
+        export *
+    }
+
     requires cplusplus
     export *
 }
