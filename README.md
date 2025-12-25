@@ -33,20 +33,55 @@ for prim in stage.traverse() {
 
 ### Building OpenUSD
 
-SwiftUSD requires OpenUSD libraries. Build them with the included script:
+SwiftUSD can operate in **standalone mode** (no USD library needed) or link against a built OpenUSD library. To build OpenUSD:
 
+#### Option A: Minimal Build (Fastest, ~30-45 min)
+Core USD only, no Hydra rendering:
 ```bash
-# macOS
-./Scripts/build_usd.py --platform darwin --version 25.11
-
-# Linux
-./Scripts/build_usd.py --platform linux --version 25.11
-
-# Windows
-python Scripts\build_usd.py --platform windows --version 25.11
+python3 OpenUSD/build_scripts/build_usd.py \
+    --no-python --no-imaging --no-tests \
+    --no-examples --no-tutorials --no-docs \
+    Vendor/USD/darwin
 ```
 
-This installs USD to `./OpenUSD/`.
+#### Option B: Hydra + Metal (~1.5-2 hours)
+Includes Hydra imaging with Metal/Vulkan:
+```bash
+python3 OpenUSD/build_scripts/build_usd.py \
+    --no-python --no-tests \
+    --no-examples --no-tutorials --no-docs \
+    -j 8 \
+    Vendor/USD/darwin
+```
+
+#### Option C: Full Build with Optional Features (Recommended, ~2-2.5 hours)
+Production-ready with OpenColorIO, OpenImageIO, and Embree:
+```bash
+python3 OpenUSD/build_scripts/build_usd.py \
+    --no-python --no-tests \
+    --opencolorio --openimageio --embree \
+    -j 8 \
+    Vendor/USD/darwin
+```
+
+**Includes:**
+- **OpenColorIO** - Color management (ACES, sRGB transforms)
+- **OpenImageIO** - Extended texture formats (EXR, TIFF, PNG, etc.)
+- **Embree** - Intel CPU ray tracing for HdEmbree renderer
+- **Hydra + Metal** - GPU rendering (default on macOS)
+- **MaterialX** - Shader authoring
+
+#### Universal Binary (ARM64 + x86_64)
+```bash
+python3 OpenUSD/build_scripts/build_usd.py \
+    --build-target universal \
+    --no-python --no-tests \
+    --opencolorio --openimageio --embree \
+    -j 8 \
+    Vendor/USD/darwin
+```
+
+Libraries are installed to `Vendor/USD/darwin/`.
 
 ---
 

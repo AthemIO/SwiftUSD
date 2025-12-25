@@ -375,7 +375,7 @@ private:
 
     std::atomic<int> _refCount;
 
-} SWIFT_SHARED_REFERENCE(retain, release);
+} SWIFT_UNSAFE_REFERENCE;
 
 // ============================================================================
 // MARK: - UsdSkelImagingSkelRootAdapterRef (SkelRoot adapter wrapper)
@@ -470,7 +470,7 @@ private:
 
     std::atomic<int> _refCount;
 
-} SWIFT_SHARED_REFERENCE(retain, release);
+} SWIFT_UNSAFE_REFERENCE;
 
 // ============================================================================
 // MARK: - Utility Functions

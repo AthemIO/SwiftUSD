@@ -6,9 +6,8 @@ Last updated: 2025-12-25
 
 **Goal**: Complete USD pipeline with Hydra/Storm rendering via Metal/Vulkan
 
-**Progress**: 17/28 modules completed
+**Progress**: 22/28 modules completed
 
-**Current Focus**: Phase 7 - USD_IMAGING (UsdSkelImaging)
 
 ---
 
@@ -76,23 +75,23 @@ Render framework
 | Hdx | ✅ | SHARED_REFERENCE | All | HdxTaskController, HdxRenderTask, HdxSelectionTask, HdxPickTask |
 | HdEngine | ✅ | SHARED_REFERENCE | All | HdEngine for executing render tasks |
 
-## Phase 7: USD_IMAGING (1/4)
+## Phase 7: USD_IMAGING (4/4)
 USD to Hydra bridge
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
 | UsdImaging | ✅ | SHARED_REFERENCE | All | UsdImagingDelegate, adapters for USD schema types |
-| UsdSkelImaging | 🔶 | SHARED_REFERENCE | All | Skeleton visualization, skinning adapters |
-| UsdVolImaging | ⬜ | SHARED_REFERENCE | All | Volume rendering adapters |
-| UsdAppUtils | ⬜ | SHARED_REFERENCE | All | FrameRecorder, ColorCorrection, camera utilities |
+| UsdSkelImaging | ✅ | SHARED_REFERENCE | All | Skeleton visualization, skinning adapters |
+| UsdVolImaging | ✅ | SHARED_REFERENCE | All | Volume rendering adapters |
+| UsdAppUtils | ✅ | SHARED_REFERENCE | All | FrameRecorder, ColorCorrection, camera utilities |
 
-## Phase 8: SWIFT_INTEGRATION (0/2)
+## Phase 8: SWIFT_INTEGRATION (2/2)
 Platform-native Swift layer
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
-| SwiftRendering | ⬜ | SHARED_REFERENCE | All | HydraRenderer facade, Metal/Vulkan platform views |
-| SwiftMath | ⬜ | SELF_CONTAINED | All | SIMD <-> Gf extensions, simd_float3 <-> Vec3f conversions |
+| SwiftRendering | ✅ | SHARED_REFERENCE | All | HydraRenderer facade, Metal/Vulkan platform views |
+| SwiftMath | ✅ | SELF_CONTAINED | All | SIMD <-> Gf extensions, simd_float3 <-> Vec3f conversions |
 
 ---
 
