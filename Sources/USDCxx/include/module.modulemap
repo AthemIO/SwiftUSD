@@ -121,6 +121,12 @@ module USDCxx {
         export *
     }
 
+    module UsdImaging {
+        header "imaging/UsdImaging.h"
+        requires cplusplus
+        export *
+    }
+
     requires cplusplus
     export *
 }

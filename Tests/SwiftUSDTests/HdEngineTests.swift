@@ -140,8 +140,7 @@ final class HdEngineTests: XCTestCase {
             return
         }
 
-        // Execute with empty task paths
-        let emptyPaths: [swiftusd.Path] = []
+        // Execute with empty task paths (nil index and paths)
         engine.ExecuteTaskPaths(nil, nil, 0)
 
         XCTAssertEqual(engine.lastExecutedTaskCount, 0)
@@ -154,8 +153,8 @@ final class HdEngineTests: XCTestCase {
         }
 
         // Empty task list should be considered converged
-        let emptyPaths: [swiftusd.Path] = []
-        let converged = engine.areTasksConverged(renderIndex: nil!, taskPaths: emptyPaths)
+        // Note: With nil/empty inputs, the C++ implementation returns true
+        let converged = engine.AreTasksConverged(nil, nil, 0)
 
         // With nil index, should return true (default)
         XCTAssertTrue(converged)

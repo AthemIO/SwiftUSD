@@ -6,9 +6,9 @@ Last updated: 2025-12-25
 
 **Goal**: Complete USD pipeline with Hydra/Storm rendering via Metal/Vulkan
 
-**Progress**: 15/28 modules completed
+**Progress**: 17/28 modules completed
 
-**Current Focus**: Phase 6 - HYDRA_CORE (HdEngine)
+**Current Focus**: Phase 7 - USD_IMAGING (UsdSkelImaging)
 
 ---
 
@@ -66,7 +66,7 @@ Graphics abstraction layer
 | Hio | ✅ | SHARED_REFERENCE | All | Image/texture loading (OpenEXR, PNG, JPEG) |
 | PxOsd | ✅ | SHARED_REFERENCE | All | OpenSubdiv integration, subdivision surfaces |
 
-## Phase 6: HYDRA_CORE (3/4)
+## Phase 6: HYDRA_CORE (4/4)
 Render framework
 
 | Module | Status | Type | Platform | Description |
@@ -74,15 +74,15 @@ Render framework
 | Hd | ✅ | SHARED_REFERENCE | All | HdRenderIndex, HdRprim, HdSprim, HdBprim, HdSceneDelegate, HdRenderDelegate |
 | HdSt | ✅ | SHARED_REFERENCE | All | Storm renderer (HdStRenderDelegate, HdStMesh, HdStMaterial) |
 | Hdx | ✅ | SHARED_REFERENCE | All | HdxTaskController, HdxRenderTask, HdxSelectionTask, HdxPickTask |
-| HdEngine | 🔶 | SHARED_REFERENCE | All | HdEngine for executing render tasks |
+| HdEngine | ✅ | SHARED_REFERENCE | All | HdEngine for executing render tasks |
 
-## Phase 7: USD_IMAGING (0/4)
+## Phase 7: USD_IMAGING (1/4)
 USD to Hydra bridge
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
-| UsdImaging | ⬜ | SHARED_REFERENCE | All | UsdImagingDelegate, adapters for USD schema types |
-| UsdSkelImaging | ⬜ | SHARED_REFERENCE | All | Skeleton visualization, skinning adapters |
+| UsdImaging | ✅ | SHARED_REFERENCE | All | UsdImagingDelegate, adapters for USD schema types |
+| UsdSkelImaging | 🔶 | SHARED_REFERENCE | All | Skeleton visualization, skinning adapters |
 | UsdVolImaging | ⬜ | SHARED_REFERENCE | All | Volume rendering adapters |
 | UsdAppUtils | ⬜ | SHARED_REFERENCE | All | FrameRecorder, ColorCorrection, camera utilities |
 

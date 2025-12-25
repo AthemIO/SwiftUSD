@@ -1,0 +1,75 @@
+
+============================================================
+Module: UsdGeom
+Timestamp: 2025-12-25 13:55:59
+============================================================
+
+MISSING FILES:
+  - Sources/USDCxx/include/usd/Schemas.h
+
+BUILD OUTPUT:
+Skipped (files missing)
+
+TEST OUTPUT:
+Skipped (files missing)
+
+
+============================================================
+Module: UsdShade
+Timestamp: 2025-12-25 14:19:18
+============================================================
+
+MISSING FILES:
+  - Sources/USDCxx/include/usd/Schemas.h
+
+BUILD OUTPUT:
+Skipped (files missing)
+
+TEST OUTPUT:
+Skipped (files missing)
+
+
+============================================================
+Module: UsdLux
+Timestamp: 2025-12-25 14:33:41
+============================================================
+
+MISSING FILES:
+  - Sources/USDCxx/include/usd/Schemas.h
+
+BUILD OUTPUT:
+Skipped (files missing)
+
+TEST OUTPUT:
+Skipped (files missing)
+
+
+============================================================
+Module: UsdSkel
+Timestamp: 2025-12-25 15:11:50
+============================================================
+
+MISSING FILES:
+  - Sources/USDCxx/include/usd/Schemas.h
+
+BUILD OUTPUT:
+Skipped (files missing)
+
+TEST OUTPUT:
+Skipped (files missing)
+
+
+============================================================
+Module: UsdVol
+Timestamp: 2025-12-25 15:26:28
+============================================================
+
+MISSING FILES:
+  - Sources/USDCxx/include/usd/Schemas.h
+
+BUILD OUTPUT:
+Skipped (files missing)
+
+TEST OUTPUT:
+Skipped (files missing)
+
