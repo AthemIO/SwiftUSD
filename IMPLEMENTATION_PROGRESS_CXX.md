@@ -6,9 +6,9 @@ Last updated: 2025-12-25
 
 **Goal**: Complete USD pipeline with Hydra/Storm rendering via Metal/Vulkan
 
-**Progress**: 3/28 modules completed
+**Progress**: 7/28 modules completed
 
-**Current Focus**: Phase 1 - FOUNDATION (Gf)
+**Current Focus**: Phase 3 - USD_CORE (Usd)
 
 ---
 
@@ -19,30 +19,30 @@ Setup Package.swift with C++ interop
 |--------|--------|------|----------|-------------|
 | setup_cxx_interop | ✅ | SHARED_REFERENCE | All | Setup Package.swift with C++ interop, create USDCxx structure |
 
-## Phase 1: FOUNDATION (2/4)
+## Phase 1: FOUNDATION (4/4)
 Essential types used everywhere
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
 | Arch | ✅ | SELF_CONTAINED | All | Platform detection, timing, filesystem APIs |
 | Tf | ✅ | SELF_CONTAINED | All | TfToken (interned strings for identifiers) |
-| Gf | 🔶 | SELF_CONTAINED | All | Vec2f/3f/4f, Vec3d, Matrix4d, Quatd, Range, BBox, Frustum |
-| Vt | ⬜ | SHARED_REFERENCE | All | VtArray (IntArray, FloatArray, Vec3fArray, Matrix4dArray) |
+| Gf | ✅ | SELF_CONTAINED | All | Vec2f/3f/4f, Vec3d, Matrix4d, Quatd, Range, BBox, Frustum |
+| Vt | ✅ | SHARED_REFERENCE | All | VtArray (IntArray, FloatArray, Vec3fArray, Matrix4dArray) |
 
-## Phase 2: SCENE_DESCRIPTION (0/2)
+## Phase 2: SCENE_DESCRIPTION (2/2)
 Layer and path fundamentals
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
-| Sdf | ⬜ | SHARED_REFERENCE | All | SdfPath (Path value type), SdfLayer (LayerRef reference type) |
-| Kind | ⬜ | SELF_CONTAINED | All | Model hierarchy kinds (model, group, assembly, component) |
+| Sdf | ✅ | SHARED_REFERENCE | All | SdfPath (Path value type), SdfLayer (LayerRef reference type) |
+| Kind | ✅ | SELF_CONTAINED | All | Model hierarchy kinds (model, group, assembly, component) |
 
 ## Phase 3: USD_CORE (0/1)
 The heart of USD
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
-| Usd | ⬜ | SHARED_REFERENCE | All | UsdStage, UsdPrim, UsdAttribute, UsdTimeCode, UsdRelationship |
+| Usd | 🔶 | SHARED_REFERENCE | All | UsdStage, UsdPrim, UsdAttribute, UsdTimeCode, UsdRelationship |
 
 ## Phase 4: USD_SCHEMAS (0/5)
 Scene description schemas

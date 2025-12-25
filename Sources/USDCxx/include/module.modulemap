@@ -7,6 +7,36 @@ module USDCxx {
         export *
     }
 
+    module Tf {
+        header "base/Tf.h"
+        requires cplusplus
+        export *
+    }
+
+    module Gf {
+        header "base/Gf.h"
+        requires cplusplus
+        export *
+    }
+
+    module Vt {
+        header "base/Vt.h"
+        requires cplusplus
+        export *
+    }
+
+    module Sdf {
+        header "usd/Sdf.h"
+        requires cplusplus
+        export *
+    }
+
+    module Kind {
+        header "usd/Kind.h"
+        requires cplusplus
+        export *
+    }
+
     requires cplusplus
     export *
 }
