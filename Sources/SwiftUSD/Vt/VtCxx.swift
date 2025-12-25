@@ -20,7 +20,7 @@ extension swiftusd.IntArray: @unchecked Sendable {}
 extension swiftusd.IntArray {
     /// Creates an IntArray from a Swift array of Int32.
     public static func from(_ elements: [Int32]) -> swiftusd.IntArray {
-        var result = swiftusd.IntArray()
+        let result = swiftusd.IntArray()
         result.reserve(elements.count)
         for element in elements {
             result.append(element)
@@ -86,7 +86,7 @@ extension swiftusd.FloatArray: @unchecked Sendable {}
 extension swiftusd.FloatArray {
     /// Creates a FloatArray from a Swift array of Float.
     public static func from(_ elements: [Float]) -> swiftusd.FloatArray {
-        var result = swiftusd.FloatArray()
+        let result = swiftusd.FloatArray()
         result.reserve(elements.count)
         for element in elements {
             result.append(element)
@@ -152,7 +152,7 @@ extension swiftusd.DoubleArray: @unchecked Sendable {}
 extension swiftusd.DoubleArray {
     /// Creates a DoubleArray from a Swift array of Double.
     public static func from(_ elements: [Double]) -> swiftusd.DoubleArray {
-        var result = swiftusd.DoubleArray()
+        let result = swiftusd.DoubleArray()
         result.reserve(elements.count)
         for element in elements {
             result.append(element)
@@ -218,7 +218,7 @@ extension swiftusd.Vec3fArray: @unchecked Sendable {}
 extension swiftusd.Vec3fArray {
     /// Creates a Vec3fArray from a Swift array of Vec3f.
     public static func from(_ elements: [swiftusd.Vec3f]) -> swiftusd.Vec3fArray {
-        var result = swiftusd.Vec3fArray()
+        let result = swiftusd.Vec3fArray()
         result.reserve(elements.count)
         for element in elements {
             result.append(element)
@@ -288,7 +288,7 @@ extension swiftusd.Vec3dArray: @unchecked Sendable {}
 extension swiftusd.Vec3dArray {
     /// Creates a Vec3dArray from a Swift array of Vec3d.
     public static func from(_ elements: [swiftusd.Vec3d]) -> swiftusd.Vec3dArray {
-        var result = swiftusd.Vec3dArray()
+        let result = swiftusd.Vec3dArray()
         result.reserve(elements.count)
         for element in elements {
             result.append(element)
@@ -358,7 +358,7 @@ extension swiftusd.Matrix4dArray: @unchecked Sendable {}
 extension swiftusd.Matrix4dArray {
     /// Creates a Matrix4dArray from a Swift array of Matrix4d.
     public static func from(_ elements: [swiftusd.Matrix4d]) -> swiftusd.Matrix4dArray {
-        var result = swiftusd.Matrix4dArray()
+        let result = swiftusd.Matrix4dArray()
         result.reserve(elements.count)
         for element in elements {
             result.append(element)
