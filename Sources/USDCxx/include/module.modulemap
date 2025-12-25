@@ -37,6 +37,30 @@ module USDCxx {
         export *
     }
 
+    module Usd {
+        header "usd/Usd.h"
+        requires cplusplus
+        export *
+    }
+
+    module UsdGeom {
+        header "usd/UsdGeom.h"
+        requires cplusplus
+        export *
+    }
+
+    module UsdShade {
+        header "usd/UsdShade.h"
+        requires cplusplus
+        export *
+    }
+
+    module UsdLux {
+        header "usd/UsdLux.h"
+        requires cplusplus
+        export *
+    }
+
     requires cplusplus
     export *
 }
