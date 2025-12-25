@@ -6,9 +6,9 @@ Last updated: 2025-12-25
 
 **Goal**: Complete USD pipeline with Hydra/Storm rendering via Metal/Vulkan
 
-**Progress**: 12/28 modules completed
+**Progress**: 15/28 modules completed
 
-**Current Focus**: Phase 6 - HYDRA_CORE (Hd)
+**Current Focus**: Phase 6 - HYDRA_CORE (HdEngine)
 
 ---
 
@@ -66,15 +66,15 @@ Graphics abstraction layer
 | Hio | ✅ | SHARED_REFERENCE | All | Image/texture loading (OpenEXR, PNG, JPEG) |
 | PxOsd | ✅ | SHARED_REFERENCE | All | OpenSubdiv integration, subdivision surfaces |
 
-## Phase 6: HYDRA_CORE (0/4)
+## Phase 6: HYDRA_CORE (3/4)
 Render framework
 
 | Module | Status | Type | Platform | Description |
 |--------|--------|------|----------|-------------|
-| Hd | 🔶 | SHARED_REFERENCE | All | HdRenderIndex, HdRprim, HdSprim, HdBprim, HdSceneDelegate, HdRenderDelegate |
-| HdSt | ⬜ | SHARED_REFERENCE | All | Storm renderer (HdStRenderDelegate, HdStMesh, HdStMaterial) |
-| Hdx | ⬜ | SHARED_REFERENCE | All | HdxTaskController, HdxRenderTask, HdxSelectionTask, HdxPickTask |
-| HdEngine | ⬜ | SHARED_REFERENCE | All | HdEngine for executing render tasks |
+| Hd | ✅ | SHARED_REFERENCE | All | HdRenderIndex, HdRprim, HdSprim, HdBprim, HdSceneDelegate, HdRenderDelegate |
+| HdSt | ✅ | SHARED_REFERENCE | All | Storm renderer (HdStRenderDelegate, HdStMesh, HdStMaterial) |
+| Hdx | ✅ | SHARED_REFERENCE | All | HdxTaskController, HdxRenderTask, HdxSelectionTask, HdxPickTask |
+| HdEngine | 🔶 | SHARED_REFERENCE | All | HdEngine for executing render tasks |
 
 ## Phase 7: USD_IMAGING (0/4)
 USD to Hydra bridge

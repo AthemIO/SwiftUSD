@@ -126,17 +126,17 @@ extension swiftusd.HdEngineRef {
 
 extension swiftusd.HdChangeTrackerRef {
     /// Mark an rprim dirty.
-    public func markRprimDirty(_ id: swiftusd.Path, bits: UInt32 = swiftusd.HdDirtyBitsAllDirty) {
+    public func markRprimDirty(_ id: swiftusd.Path, bits: UInt32 = 0xffffffff) {
         MarkRprimDirty(id, bits)
     }
 
     /// Mark an sprim dirty.
-    public func markSprimDirty(_ id: swiftusd.Path, bits: UInt32 = swiftusd.HdDirtyBitsAllDirty) {
+    public func markSprimDirty(_ id: swiftusd.Path, bits: UInt32 = 0xffffffff) {
         MarkSprimDirty(id, bits)
     }
 
     /// Mark a bprim dirty.
-    public func markBprimDirty(_ id: swiftusd.Path, bits: UInt32 = swiftusd.HdDirtyBitsAllDirty) {
+    public func markBprimDirty(_ id: swiftusd.Path, bits: UInt32 = 0xffffffff) {
         MarkBprimDirty(id, bits)
     }
 
@@ -151,17 +151,32 @@ extension swiftusd.HdChangeTrackerRef {
 extension swiftusd.HdRenderDelegateRef {
     /// Get supported rprim types as an array of Tokens.
     public var supportedRprimTypes: [swiftusd.Token] {
-        return GetSupportedRprimTypes()
+        let vec = GetSupportedRprimTypes()
+        var result: [swiftusd.Token] = []
+        for i in 0..<vec.size() {
+            result.append(vec[i])
+        }
+        return result
     }
 
     /// Get supported sprim types as an array of Tokens.
     public var supportedSprimTypes: [swiftusd.Token] {
-        return GetSupportedSprimTypes()
+        let vec = GetSupportedSprimTypes()
+        var result: [swiftusd.Token] = []
+        for i in 0..<vec.size() {
+            result.append(vec[i])
+        }
+        return result
     }
 
     /// Get supported bprim types as an array of Tokens.
     public var supportedBprimTypes: [swiftusd.Token] {
-        return GetSupportedBprimTypes()
+        let vec = GetSupportedBprimTypes()
+        var result: [swiftusd.Token] = []
+        for i in 0..<vec.size() {
+            result.append(vec[i])
+        }
+        return result
     }
 
     /// Check if the delegate supports pausing.

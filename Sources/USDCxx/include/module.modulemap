@@ -103,6 +103,24 @@ module USDCxx {
         export *
     }
 
+    module HdSt {
+        header "imaging/HdSt.h"
+        requires cplusplus
+        export *
+    }
+
+    module Hdx {
+        header "imaging/Hdx.h"
+        requires cplusplus
+        export *
+    }
+
+    module HdEngine {
+        header "imaging/HdEngine.h"
+        requires cplusplus
+        export *
+    }
+
     requires cplusplus
     export *
 }
