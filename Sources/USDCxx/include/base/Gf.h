@@ -6,10 +6,6 @@
 
 #include "../Swift.h"
 
-#include <cmath>
-#include <algorithm>
-#include <cstddef>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/base/gf/vec2f.h"

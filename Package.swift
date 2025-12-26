@@ -132,6 +132,12 @@ let usdCxxWrapperSettings: [CXXSetting] = [
 let swiftSettings: [SwiftSetting] = [
     .interoperabilityMode(.Cxx),
     .enableUpcomingFeature("StrictConcurrency"),
+    // Note: USE_PIXAR_USD cannot be enabled via Swift because USD headers
+    // have #include statements inside namespace blocks which break Clang modules.
+    // The system header prelude in Swift.h helps with some issues, but USD headers
+    // like pxr/base/arch/fileSystem.h include <limits.h> inside PXR_NAMESPACE_OPEN_SCOPE
+    // which causes "redundant #include of module within namespace" errors.
+    // Real USD rendering requires a C++ rendering backend with a simpler Swift API.
 ]
 
 // MARK: - Platform Linker Settings
@@ -171,6 +177,7 @@ let package = Package(
     products: [
         .library(name: "SwiftUSD", targets: ["SwiftUSD"]),
         .library(name: "USDCxx", targets: ["USDCxx"]),
+        .library(name: "PixarUSD", targets: ["PixarUSD"]),
     ],
     targets: [
         // =====================================================================
@@ -225,6 +232,56 @@ let package = Package(
                 .linkedLibrary("usd_hdSt"),
                 .linkedLibrary("usd_usdImaging"),
                 .linkedLibrary("tbb"),
+            ]
+        ),
+
+        // =====================================================================
+        // MARK: - PixarUSD (Clean C++ Facade for Swift)
+        // =====================================================================
+        // Clean C++ wrapper that hides USD headers from Swift.
+        // Public headers (include/) have NO USD includes - Swift-visible.
+        // Implementation files (src/) include real USD - NOT parsed by Swift.
+        // Uses pimpl pattern with SWIFT_SHARED_REFERENCE for memory management.
+        // Namespace: pixarusd::
+        .target(
+            name: "PixarUSD",
+            path: "Sources/PixarUSD",
+            sources: ["src"],
+            publicHeadersPath: "include",
+            cxxSettings: [
+                .unsafeFlags(["-std=c++17"]),
+                .headerSearchPath("../../Vendor/USD/darwin/include"),
+                // Suppress warnings from USD headers in implementation files
+                .unsafeFlags([
+                    "-Wno-deprecated",
+                    "-Wno-deprecated-declarations",
+                    "-Wno-unused-parameter",
+                    "-Wno-unused-variable",
+                ]),
+            ],
+            linkerSettings: [
+                .unsafeFlags(["-L/Users/jonathanpeterson/dev/SwiftUSD/Vendor/USD/darwin/lib"]),
+                .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "/Users/jonathanpeterson/dev/SwiftUSD/Vendor/USD/darwin/lib"]),
+                .linkedLibrary("usd_arch"),
+                .linkedLibrary("usd_work"),
+                .linkedLibrary("usd_tf"),
+                .linkedLibrary("usd_gf"),
+                .linkedLibrary("usd_vt"),
+                .linkedLibrary("usd_sdf"),
+                .linkedLibrary("usd_usd"),
+                .linkedLibrary("usd_usdGeom"),
+                .linkedLibrary("usd_usdShade"),
+                .linkedLibrary("usd_hd"),
+                .linkedLibrary("usd_hdSt"),
+                .linkedLibrary("usd_hdx"),
+                .linkedLibrary("usd_hgi"),
+                .linkedLibrary("usd_hgiMetal"),
+                .linkedLibrary("usd_glf"),
+                .linkedLibrary("usd_usdImaging"),
+                .linkedLibrary("usd_usdImagingGL"),
+                .linkedLibrary("tbb"),
+                .linkedFramework("Metal"),
+                .linkedFramework("OpenGL"),
             ]
         ),
 

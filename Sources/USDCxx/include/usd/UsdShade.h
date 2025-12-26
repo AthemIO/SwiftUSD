@@ -11,12 +11,6 @@
 #include "Sdf.h"
 #include "Usd.h"
 
-#include <atomic>
-#include <cstring>
-#include <string>
-#include <vector>
-#include <memory>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/usd/usdShade/shader.h"

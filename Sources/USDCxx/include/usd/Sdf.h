@@ -7,11 +7,6 @@
 #include "../Swift.h"
 #include "../base/Tf.h"
 
-#include <atomic>
-#include <cstring>
-#include <string>
-#include <vector>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/usd/sdf/path.h"

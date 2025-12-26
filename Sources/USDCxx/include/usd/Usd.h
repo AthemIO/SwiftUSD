@@ -10,14 +10,6 @@
 #include "../base/Vt.h"
 #include "Sdf.h"
 
-#include <atomic>
-#include <cstring>
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-#include <limits>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/usd/usd/stage.h"

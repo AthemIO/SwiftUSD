@@ -7,10 +7,6 @@
 #include "../Swift.h"
 #include "../base/Tf.h"
 
-#include <string>
-#include <unordered_map>
-#include <vector>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/usd/kind/registry.h"

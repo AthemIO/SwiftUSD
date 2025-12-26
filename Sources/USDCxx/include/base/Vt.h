@@ -7,10 +7,6 @@
 #include "../Swift.h"
 #include "Gf.h"
 
-#include <atomic>
-#include <cstring>
-#include <vector>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/base/vt/array.h"

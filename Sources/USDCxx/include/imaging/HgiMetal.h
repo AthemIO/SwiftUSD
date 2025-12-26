@@ -12,11 +12,6 @@
 
 #if SWIFTUSD_PLATFORM_APPLE
 
-#include <atomic>
-#include <cstdint>
-#include <memory>
-#include <string>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/imaging/hgiMetal/hgi.h"

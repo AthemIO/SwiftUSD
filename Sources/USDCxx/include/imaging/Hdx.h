@@ -21,13 +21,6 @@
 #include "Hd.h"
 #include "HdSt.h"
 
-#include <atomic>
-#include <cstdint>
-#include <memory>
-#include <string>
-#include <vector>
-#include <functional>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/imaging/hdx/taskController.h"

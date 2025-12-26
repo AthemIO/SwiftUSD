@@ -17,13 +17,6 @@
 #include "../usd/Usd.h"
 #include "Hd.h"
 
-#include <atomic>
-#include <cstdint>
-#include <memory>
-#include <string>
-#include <vector>
-#include <unordered_map>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/usdImaging/usdImaging/delegate.h"

@@ -12,13 +12,6 @@
 #include "Usd.h"
 #include "UsdGeom.h"
 
-#include <atomic>
-#include <cstring>
-#include <string>
-#include <vector>
-#include <memory>
-#include <map>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/usd/usdVol/volume.h"

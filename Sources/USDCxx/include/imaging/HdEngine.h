@@ -13,12 +13,6 @@
 #include "../usd/Sdf.h"
 #include "Hd.h"
 
-#include <atomic>
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/imaging/hd/engine.h"

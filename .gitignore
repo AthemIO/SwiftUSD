@@ -5,10 +5,13 @@ CLAUDE.md
 # Project-specific
 IMPLEMENTATION_PROGRESS.md
 
-# Vendor - built USD libraries (keep .gitkeep)
+# Vendor - built USD libraries (downloaded via Scripts/setup.sh)
 Vendor/USD/darwin/
 Vendor/USD/linux/
 Vendor/USD/windows/
+
+# Release assets (uploaded to GitHub Releases)
+Releases/
 
 # Swift Package Manager
 .build/

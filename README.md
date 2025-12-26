@@ -31,9 +31,49 @@ for prim in stage.traverse() {
 - OpenUSD 25.11+ (prebuilt or from source)
 - macOS 14+ / Ubuntu 22.04+ / Windows 10+
 
-### Building OpenUSD
+## Quick Start
 
-SwiftUSD can operate in **standalone mode** (no USD library needed) or link against a built OpenUSD library. To build OpenUSD:
+### Option 1: Pre-built Binaries (Recommended)
+
+Download pre-built USD libraries automatically:
+
+```bash
+git clone https://github.com/user/SwiftUSD.git
+cd SwiftUSD
+git submodule update --init
+
+# Download pre-built USD libraries (~224MB)
+./Scripts/setup.sh
+
+# Build
+swift build
+```
+
+### Option 2: Build from Source
+
+If you need custom build options or a different platform:
+
+```bash
+git clone https://github.com/user/SwiftUSD.git
+cd SwiftUSD
+git submodule update --init
+
+# Build USD (see options below)
+python3 OpenUSD/build_scripts/build_usd.py \
+    --no-python --no-tests -j 8 \
+    Vendor/USD/darwin
+
+# Build SwiftUSD
+swift build
+```
+
+---
+
+## Building OpenUSD from Source
+
+SwiftUSD can operate in **standalone mode** (no USD library needed) or link against a built OpenUSD library.
+
+### Build Options
 
 #### Option A: Minimal Build (Fastest, ~30-45 min)
 Core USD only, no Hydra rendering:

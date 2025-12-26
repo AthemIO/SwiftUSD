@@ -20,14 +20,6 @@
 #include "../usd/Sdf.h"
 #include "Hgi.h"
 
-#include <atomic>
-#include <cstdint>
-#include <memory>
-#include <string>
-#include <vector>
-#include <functional>
-#include <unordered_map>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/imaging/hd/engine.h"

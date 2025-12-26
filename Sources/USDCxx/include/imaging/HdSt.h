@@ -22,12 +22,6 @@
 #include "PxOsd.h"
 #include "Hd.h"
 
-#include <atomic>
-#include <cstdint>
-#include <memory>
-#include <string>
-#include <vector>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/imaging/hdSt/renderDelegate.h"

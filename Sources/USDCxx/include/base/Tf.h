@@ -6,10 +6,6 @@
 
 #include "../Swift.h"
 
-#include <cstring>
-#include <string>
-#include <functional>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/base/tf/token.h"

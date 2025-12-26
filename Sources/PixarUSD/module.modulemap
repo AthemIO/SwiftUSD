@@ -1,0 +1,8 @@
+module PixarUSD {
+    umbrella header "include/PixarUSD.h"
+
+    requires cplusplus
+    requires cplusplus17
+
+    export *
+}

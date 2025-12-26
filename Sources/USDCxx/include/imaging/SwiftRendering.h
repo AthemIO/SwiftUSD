@@ -26,17 +26,27 @@
 #include "HgiMetal.h"
 #endif
 
-#include <atomic>
-#include <cstdint>
-#include <memory>
-#include <string>
-#include <vector>
-#include <functional>
+// Debug logging helper
+inline void _SwiftRenderingDebugLog(const char* msg) {
+    static std::ofstream logFile("/tmp/hydra_debug.log", std::ios::app);
+    logFile << msg << std::endl;
+    logFile.flush();
+}
 
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
+#include "pxr/base/gf/frustum.h"
+#include "pxr/base/gf/camera.h"
 #include "pxr/imaging/hd/engine.h"
+#include "pxr/imaging/hd/renderIndex.h"
+#include "pxr/imaging/hd/rendererPlugin.h"
+#include "pxr/imaging/hd/rendererPluginRegistry.h"
+#include "pxr/imaging/hd/pluginRenderDelegateUniqueHandle.h"
 #include "pxr/imaging/hdx/taskController.h"
+#include "pxr/imaging/hdx/tokens.h"
+#include "pxr/imaging/hd/aov.h"
+#include "pxr/imaging/hd/renderBuffer.h"
+#include "pxr/imaging/hgi/hgi.h"
 #include "pxr/usdImaging/usdImaging/delegate.h"
 #if SWIFTUSD_PLATFORM_APPLE
 #include "pxr/imaging/hgiMetal/hgi.h"
@@ -709,7 +719,7 @@ private:
         , _currentTime(0.0)
         , _stageNeedsPopulate(true)
         , _needsRestart(false)
-        , _valid(true)
+        , _valid(false)
         , _refCount(1) {
 #if SWIFTUSD_PLATFORM_APPLE
         _graphicsAPI = Token("Metal");
@@ -720,36 +730,188 @@ private:
 #endif
 
 #if defined(USE_PIXAR_USD)
-        // Initialize real Hydra rendering pipeline
-        // 1. Create HGI
-        // 2. Create render delegate
-        // 3. Create render index
-        // 4. Create task controller
+        _SwiftRenderingDebugLog("[HYDRA] USE_PIXAR_USD is defined - using real Hydra");
+
+        // 1. Create HGI (Hardware Graphics Interface)
+#if SWIFTUSD_PLATFORM_APPLE
+        _SwiftRenderingDebugLog("[HYDRA] Creating HgiMetal...");
+        _hgi = PXR_NS::HgiMetal::CreateHgi();
+#else
+        _SwiftRenderingDebugLog("[HYDRA] Creating platform default HGI...");
+        _hgi = PXR_NS::Hgi::CreatePlatformDefaultHgi();
+#endif
+        if (!_hgi) {
+            _SwiftRenderingDebugLog("[HYDRA] ERROR: HGI creation failed!");
+            return;
+        }
+        _SwiftRenderingDebugLog("[HYDRA] HGI created successfully");
+
+        // 2. Get the render delegate from the plugin registry
+        _SwiftRenderingDebugLog("[HYDRA] Getting renderer plugin registry...");
+        PXR_NS::HdRendererPluginRegistry& registry =
+            PXR_NS::HdRendererPluginRegistry::GetInstance();
+
+        // Use Storm (HdSt) as the default renderer
+        PXR_NS::TfToken pluginId = PXR_NS::TfToken("HdStormRendererPlugin");
+        _SwiftRenderingDebugLog("[HYDRA] Creating render delegate for HdStormRendererPlugin...");
+        _renderDelegate = registry.CreateRenderDelegate(pluginId);
+
+        if (!_renderDelegate) {
+            _SwiftRenderingDebugLog("[HYDRA] ERROR: Render delegate creation failed!");
+            return;
+        }
+        _SwiftRenderingDebugLog("[HYDRA] Render delegate created successfully");
+
+        // 3. Create the render index
+        _SwiftRenderingDebugLog("[HYDRA] Creating render index...");
+        _renderIndex.reset(PXR_NS::HdRenderIndex::New(
+            _renderDelegate.Get(),
+            PXR_NS::HdDriverVector()
+        ));
+
+        if (!_renderIndex) {
+            _SwiftRenderingDebugLog("[HYDRA] ERROR: Render index creation failed!");
+            return;
+        }
+        _SwiftRenderingDebugLog("[HYDRA] Render index created successfully");
+
+        // 4. Create the task controller for managing render tasks
+        _SwiftRenderingDebugLog("[HYDRA] Creating task controller...");
+        _taskControllerId = PXR_NS::SdfPath("/SwiftUSD/TaskController");
+        _taskController.reset(new PXR_NS::HdxTaskController(
+            _renderIndex.get(),
+            _taskControllerId
+        ));
+
+        // Set default render parameters
+        _taskController->SetEnablePresentation(false);
+
+        _SwiftRenderingDebugLog("[HYDRA] Task controller created successfully");
+        _SwiftRenderingDebugLog("[HYDRA] Hydra renderer fully initialized!");
+        _valid = true;
+#else
+        _SwiftRenderingDebugLog("[HYDRA] USE_PIXAR_USD NOT defined - using standalone mode");
+        _valid = true;
 #endif
     }
 
     ~HydraRendererRef() {
         if (_stage) _stage->release();
+#if defined(USE_PIXAR_USD)
+        // Clean up in reverse order of creation
+        _imagingDelegate.reset();
+        _taskController.reset();
+        _renderIndex.reset();
+        _renderDelegate = PXR_NS::HdPluginRenderDelegateUniqueHandle();
+        _hgi.reset();
+#endif
     }
 
     void _PrepareInternal() SWIFTUSD_NOEXCEPT {
         if (!_stage) return;
 
-        if (_stageNeedsPopulate) {
 #if defined(USE_PIXAR_USD)
-            // Populate the imaging delegate from the stage
-#endif
+        if (!_renderIndex || !_taskController) return;
+
+        PXR_NS::UsdStageRefPtr usdStage = _stage->GetUsdStage();
+        if (!usdStage) return;
+
+        if (_stageNeedsPopulate) {
+            // Create or recreate the imaging delegate
+            PXR_NS::SdfPath delegateId = PXR_NS::SdfPath("/SwiftUSD/ImagingDelegate");
+
+            _imagingDelegate.reset(new PXR_NS::UsdImagingDelegate(
+                _renderIndex.get(),
+                delegateId
+            ));
+
+            // Populate the scene from the USD stage
+            _imagingDelegate->Populate(
+                usdStage->GetPseudoRoot()
+            );
+
             _stageNeedsPopulate = false;
         }
 
-#if defined(USE_PIXAR_USD)
-        // Update time
-        // Sync changes
-        // Update selection
+        if (_imagingDelegate) {
+            // Update time
+            PXR_NS::UsdTimeCode timeCode(_currentTime);
+            _imagingDelegate->SetTime(timeCode);
+
+            // Apply pending changes
+            _imagingDelegate->ApplyPendingUpdates();
+        }
+
+        // Update viewport
+        int width = GetViewportWidth();
+        int height = GetViewportHeight();
+        if (width > 0 && height > 0) {
+            _taskController->SetRenderViewport(PXR_NS::GfVec4d(0, 0, width, height));
+        }
+
+        // Update camera
+        _UpdateCamera();
+
+        // Update render params
+        _UpdateRenderParams();
+#else
+        _stageNeedsPopulate = false;
 #endif
     }
 
+#if defined(USE_PIXAR_USD)
+    void _UpdateCamera() SWIFTUSD_NOEXCEPT {
+        if (!_taskController) return;
+
+        int width = GetViewportWidth();
+        int height = GetViewportHeight();
+        if (width <= 0 || height <= 0) return;
+
+        // Create a GfCamera from the camera params
+        PXR_NS::GfCamera gfCamera;
+
+        // Set the frustum from view and projection matrices
+        PXR_NS::GfMatrix4d viewMatrix(
+            _cameraParams.viewMatrix.m00, _cameraParams.viewMatrix.m01,
+            _cameraParams.viewMatrix.m02, _cameraParams.viewMatrix.m03,
+            _cameraParams.viewMatrix.m10, _cameraParams.viewMatrix.m11,
+            _cameraParams.viewMatrix.m12, _cameraParams.viewMatrix.m13,
+            _cameraParams.viewMatrix.m20, _cameraParams.viewMatrix.m21,
+            _cameraParams.viewMatrix.m22, _cameraParams.viewMatrix.m23,
+            _cameraParams.viewMatrix.m30, _cameraParams.viewMatrix.m31,
+            _cameraParams.viewMatrix.m32, _cameraParams.viewMatrix.m33
+        );
+
+        PXR_NS::GfMatrix4d projMatrix(
+            _cameraParams.projectionMatrix.m00, _cameraParams.projectionMatrix.m01,
+            _cameraParams.projectionMatrix.m02, _cameraParams.projectionMatrix.m03,
+            _cameraParams.projectionMatrix.m10, _cameraParams.projectionMatrix.m11,
+            _cameraParams.projectionMatrix.m12, _cameraParams.projectionMatrix.m13,
+            _cameraParams.projectionMatrix.m20, _cameraParams.projectionMatrix.m21,
+            _cameraParams.projectionMatrix.m22, _cameraParams.projectionMatrix.m23,
+            _cameraParams.projectionMatrix.m30, _cameraParams.projectionMatrix.m31,
+            _cameraParams.projectionMatrix.m32, _cameraParams.projectionMatrix.m33
+        );
+
+        // Set camera matrices on task controller
+        _taskController->SetFreeCameraMatrices(viewMatrix, projMatrix);
+    }
+
+    void _UpdateRenderParams() SWIFTUSD_NOEXCEPT {
+        if (!_taskController) return;
+
+        // Set lighting
+        _taskController->SetEnableShadows(_params.enableShadows);
+
+        // Set render tags based on draw mode
+        // Note: More complex setups would configure HdRenderPassState here
+    }
+#endif
+
     RenderFrameRef* _RenderInternal() SWIFTUSD_NOEXCEPT {
+        static int frameNum = 0;
+        frameNum++;
+
         _PrepareInternal();
 
         int width = GetViewportWidth();
@@ -762,10 +924,135 @@ private:
         RenderFrameRef* frame = new RenderFrameRef(width, height);
 
 #if defined(USE_PIXAR_USD)
-        // Execute Hydra render tasks
-        // Read back color and depth buffers
+        if (frameNum == 1) {
+            _SwiftRenderingDebugLog("[RENDER] Using USE_PIXAR_USD rendering path");
+        }
+
+        if (!_taskController || !_renderIndex) {
+            if (frameNum == 1) {
+                char buf[256];
+                snprintf(buf, sizeof(buf), "[RENDER] ERROR: taskController=%p, renderIndex=%p",
+                    (void*)_taskController.get(), (void*)_renderIndex.get());
+                _SwiftRenderingDebugLog(buf);
+            }
+            // Fallback to clear color
+            for (int i = 0; i < width * height; ++i) {
+                frame->_colorData[i * 4 + 0] = _params.clearColor.x;
+                frame->_colorData[i * 4 + 1] = _params.clearColor.y;
+                frame->_colorData[i * 4 + 2] = _params.clearColor.z;
+                frame->_colorData[i * 4 + 3] = _params.clearColor.w;
+            }
+            return frame;
+        }
+
+        if (frameNum == 1) {
+            _SwiftRenderingDebugLog("[RENDER] Getting render tasks...");
+        }
+
+        // Get render tasks from the task controller
+        PXR_NS::HdTaskSharedPtrVector tasks = _taskController->GetRenderingTasks();
+
+        if (frameNum == 1) {
+            char buf[256];
+            snprintf(buf, sizeof(buf), "[RENDER] Got %zu tasks, executing...", tasks.size());
+            _SwiftRenderingDebugLog(buf);
+        }
+
+        // Execute the render tasks
+        _engine.Execute(_renderIndex.get(), &tasks);
+
+        if (frameNum == 1) {
+            _SwiftRenderingDebugLog("[RENDER] Tasks executed, reading AOV color buffer...");
+        }
+
+        // Read back the rendered image from the AOV buffers
+        PXR_NS::HdRenderBuffer* colorBuffer = _taskController->GetRenderOutput(
+            PXR_NS::HdAovTokens->color
+        );
+
+        if (colorBuffer) {
+            if (frameNum == 1) {
+                char buf[256];
+                snprintf(buf, sizeof(buf), "[RENDER] Color buffer: %dx%d, format=%d",
+                    colorBuffer->GetWidth(), colorBuffer->GetHeight(), (int)colorBuffer->GetFormat());
+                _SwiftRenderingDebugLog(buf);
+            }
+
+            // Map the buffer to read data
+            void* data = colorBuffer->Map();
+            if (data) {
+                // Get buffer info
+                int bufWidth = colorBuffer->GetWidth();
+                int bufHeight = colorBuffer->GetHeight();
+                PXR_NS::HdFormat format = colorBuffer->GetFormat();
+
+                if (frameNum == 1) {
+                    _SwiftRenderingDebugLog("[RENDER] Color buffer mapped successfully");
+                }
+
+                // Copy data based on format
+                if (format == PXR_NS::HdFormatFloat32Vec4 ||
+                    format == PXR_NS::HdFormatFloat16Vec4) {
+                    // Direct float copy
+                    size_t dataSize = std::min(
+                        frame->GetColorDataSize(),
+                        static_cast<size_t>(bufWidth * bufHeight * 4 * sizeof(float))
+                    );
+                    memcpy(frame->_colorData.data(), data, dataSize);
+                } else if (format == PXR_NS::HdFormatUNorm8Vec4) {
+                    // Convert uint8 to float
+                    const uint8_t* src = static_cast<const uint8_t*>(data);
+                    for (int i = 0; i < width * height * 4; ++i) {
+                        frame->_colorData[i] = static_cast<float>(src[i]) / 255.0f;
+                    }
+                }
+
+                colorBuffer->Unmap();
+            } else {
+                if (frameNum == 1) {
+                    _SwiftRenderingDebugLog("[RENDER] ERROR: Color buffer Map() returned null!");
+                }
+            }
+        } else {
+            if (frameNum == 1) {
+                _SwiftRenderingDebugLog("[RENDER] ERROR: No color buffer from task controller!");
+            }
+        }
+
+        // Try to get depth buffer
+        PXR_NS::HdRenderBuffer* depthBuffer = _taskController->GetRenderOutput(
+            PXR_NS::HdAovTokens->depth
+        );
+
+        if (depthBuffer) {
+            void* data = depthBuffer->Map();
+            if (data) {
+                size_t dataSize = std::min(
+                    frame->GetDepthDataSize(),
+                    static_cast<size_t>(depthBuffer->GetWidth() * depthBuffer->GetHeight() * sizeof(float))
+                );
+                memcpy(frame->_depthData.data(), data, dataSize);
+                depthBuffer->Unmap();
+            }
+        }
+
+        // Update stats from render index
+        frame->_stats.primCount = _renderIndex->GetRprimIds().size();
+        frame->_stats.visiblePrimCount = frame->_stats.primCount;
+        frame->_stats.isConverged = _taskController->IsConverged();
+        frame->_stats.iteration = 1;
+
+        if (frameNum == 1) {
+            char buf[256];
+            snprintf(buf, sizeof(buf), "[RENDER] Frame complete: primCount=%zu", frame->_stats.primCount);
+            _SwiftRenderingDebugLog(buf);
+        }
 #else
         // Standalone mode: fill with a test pattern
+        if (frameNum == 1) {
+            _SwiftRenderingDebugLog("[RENDER] WARNING: Using STANDALONE mode (gradient test pattern)!");
+            _SwiftRenderingDebugLog("[RENDER] USE_PIXAR_USD was NOT defined at compile time");
+        }
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 int idx = (y * width + x) * 4;
@@ -820,6 +1107,17 @@ private:
     SwiftRenderingStats _lastStats;
 
     std::atomic<int> _refCount;
+
+#if defined(USE_PIXAR_USD)
+    // Hydra rendering pipeline objects
+    PXR_NS::HgiUniquePtr _hgi;
+    PXR_NS::HdPluginRenderDelegateUniqueHandle _renderDelegate;
+    std::unique_ptr<PXR_NS::HdRenderIndex> _renderIndex;
+    std::unique_ptr<PXR_NS::HdxTaskController> _taskController;
+    std::unique_ptr<PXR_NS::UsdImagingDelegate> _imagingDelegate;
+    PXR_NS::HdEngine _engine;
+    PXR_NS::SdfPath _taskControllerId;
+#endif
 
 } SWIFT_UNSAFE_REFERENCE;
 

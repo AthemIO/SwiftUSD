@@ -6,14 +6,6 @@
 
 #include "../Swift.h"
 
-#include <cstdint>
-#include <cstring>
-#include <cstdlib>
-#include <cerrno>
-#include <cctype>
-#include <string>
-#include <vector>
-
 #if defined(USE_PIXAR_USD)
 #include "pxr/pxr.h"
 #include "pxr/base/arch/systemInfo.h"
