@@ -1,275 +1,241 @@
-// Kind.swift - Model hierarchy kinds
-// Mirrors: pxr/usd/kind/registry.h
+// Kind.swift - Model Hierarchy Kinds - Idiomatic Swift API
+//
+// This module provides Swift wrappers around CxxFacade's Kind types,
+// which are used to classify prims in a scene hierarchy. Kinds are
+// organized in a hierarchy with "model" at the root.
+//
+// Kind Hierarchy:
+//   model
+//   ├── component (leaf models with geometry)
+//   └── group (container models)
+//       └── assembly (publishable group)
+//   subcomponent (below component level)
 
-import OpenUSDInterop
+import CxxFacade
 
-// MARK: - KindRegistry
+// MARK: - Kind Token Constants
 
-/// Registry for model hierarchy kinds.
+/// Standard kind tokens used in USD for model hierarchy classification.
 ///
-/// The KindRegistry manages the set of known kinds used in USD to classify
-/// models and their components. Kinds form a hierarchy where:
-/// - `model` is the root kind for models
-/// - `component` and `group` are sub-kinds of `model`
-/// - `assembly` is a sub-kind of `group`
-/// - `subcomponent` is a standalone kind for parts below component level
-///
-/// The registry is a singleton and provides query-only access to the kind
-/// hierarchy. Custom kinds can be registered through plugInfo.json files.
-///
-/// Mirrors `pxr::KindRegistry` from the USD C++ API.
-public enum KindRegistry {
-
-    // MARK: - Kind Queries
-
-    /// Returns `true` if the given kind is known to the registry.
+/// The kind hierarchy is:
+/// - `model`: Base kind for all models
+/// - `component`: Leaf models containing geometry (derived from model)
+/// - `group`: Container models (derived from model)
+/// - `assembly`: Publishable group models (derived from group)
+/// - `subcomponent`: Parts below the component level (not a model)
+public enum KindTokens {
+    /// The "model" kind - base kind for all models.
     ///
-    /// Unknown kinds return `false` but do not produce errors.
-    ///
-    /// - Parameter kind: The kind token to check.
-    /// - Returns: `true` if the kind is registered.
-    public static func hasKind(_ kind: Token) -> Bool {
-        KindRegistry_HasKind(kind.handle)
+    /// A model is a meaningful grouping of scene description that
+    /// can be referenced, overridden, and organized in a hierarchy.
+    public static var model: TfToken {
+        return cxxfacade.kind.Tokens.Model()
     }
 
-    /// Returns `true` if the given kind string is known to the registry.
+    /// The "component" kind - leaf model containing geometry.
     ///
-    /// - Parameter kind: The kind string to check.
-    /// - Returns: `true` if the kind is registered.
-    public static func hasKind(_ kind: String) -> Bool {
-        KindRegistry_HasKindString(kind)
+    /// Components are the smallest publishable models. They typically
+    /// contain the actual geometric data and cannot be further
+    /// subdivided into meaningful models.
+    public static var component: TfToken {
+        return cxxfacade.kind.Tokens.Component()
     }
 
-    /// Gets the base (parent) kind of a derived kind.
+    /// The "group" kind - container model.
     ///
-    /// For example, `component` has base kind `model`, and `assembly` has
-    /// base kind `group`.
-    ///
-    /// - Parameter kind: The kind to get the base kind for.
-    /// - Returns: The base kind, or `nil` if the kind has no base or is unknown.
-    public static func getBaseKind(_ kind: Token) -> Token? {
-        guard let ref = KindRegistry_GetBaseKind(kind.handle) else {
-            return nil
-        }
-        return Token(handle: ref)
+    /// Groups are models that organize other models. They don't
+    /// directly contain geometry but serve as organizational units
+    /// in the scene hierarchy.
+    public static var group: TfToken {
+        return cxxfacade.kind.Tokens.Group()
     }
 
-    /// Gets the base (parent) kind of a derived kind string.
+    /// The "assembly" kind - publishable group.
     ///
-    /// - Parameter kind: The kind string to get the base kind for.
-    /// - Returns: The base kind, or `nil` if the kind has no base or is unknown.
-    public static func getBaseKind(_ kind: String) -> Token? {
-        guard let ref = KindRegistry_GetBaseKindString(kind) else {
-            return nil
-        }
-        return Token(handle: ref)
+    /// Assemblies are groups that represent a complete, publishable
+    /// collection of models. They're often used as the top-level
+    /// container for a complete asset or set.
+    public static var assembly: TfToken {
+        return cxxfacade.kind.Tokens.Assembly()
     }
 
-    /// Returns `true` if `derivedKind` is or derives from `baseKind`.
+    /// The "subcomponent" kind - below component level.
     ///
-    /// This walks up the kind hierarchy checking if the derived kind
-    /// eventually inherits from the base kind.
-    ///
-    /// - Parameters:
-    ///   - derivedKind: The potentially derived kind.
-    ///   - baseKind: The base kind to check against.
-    /// - Returns: `true` if `derivedKind` equals or inherits from `baseKind`.
-    public static func isA(_ derivedKind: Token, _ baseKind: Token) -> Bool {
-        KindRegistry_IsA(derivedKind.handle, baseKind.handle)
-    }
-
-    /// Returns `true` if `derivedKind` string is or derives from `baseKind` string.
-    ///
-    /// - Parameters:
-    ///   - derivedKind: The potentially derived kind string.
-    ///   - baseKind: The base kind string to check against.
-    /// - Returns: `true` if `derivedKind` equals or inherits from `baseKind`.
-    public static func isA(_ derivedKind: String, _ baseKind: String) -> Bool {
-        KindRegistry_IsAString(derivedKind, baseKind)
-    }
-
-    // MARK: - Built-in Kind Tests
-
-    /// Returns `true` if the kind is a model or derives from model.
-    ///
-    /// This includes `model`, `component`, `group`, and `assembly`.
-    ///
-    /// - Parameter kind: The kind to check.
-    /// - Returns: `true` if the kind is a model kind.
-    public static func isModel(_ kind: Token) -> Bool {
-        KindRegistry_IsModel(kind.handle)
-    }
-
-    /// Returns `true` if the kind string is a model or derives from model.
-    ///
-    /// - Parameter kind: The kind string to check.
-    /// - Returns: `true` if the kind is a model kind.
-    public static func isModel(_ kind: String) -> Bool {
-        KindRegistry_IsModelString(kind)
-    }
-
-    /// Returns `true` if the kind is a group or derives from group.
-    ///
-    /// This includes `group` and `assembly`.
-    ///
-    /// - Parameter kind: The kind to check.
-    /// - Returns: `true` if the kind is a group kind.
-    public static func isGroup(_ kind: Token) -> Bool {
-        KindRegistry_IsGroup(kind.handle)
-    }
-
-    /// Returns `true` if the kind string is a group or derives from group.
-    ///
-    /// - Parameter kind: The kind string to check.
-    /// - Returns: `true` if the kind is a group kind.
-    public static func isGroup(_ kind: String) -> Bool {
-        KindRegistry_IsGroupString(kind)
-    }
-
-    /// Returns `true` if the kind is an assembly or derives from assembly.
-    ///
-    /// - Parameter kind: The kind to check.
-    /// - Returns: `true` if the kind is an assembly kind.
-    public static func isAssembly(_ kind: Token) -> Bool {
-        KindRegistry_IsAssembly(kind.handle)
-    }
-
-    /// Returns `true` if the kind string is an assembly or derives from assembly.
-    ///
-    /// - Parameter kind: The kind string to check.
-    /// - Returns: `true` if the kind is an assembly kind.
-    public static func isAssembly(_ kind: String) -> Bool {
-        KindRegistry_IsAssemblyString(kind)
-    }
-
-    /// Returns `true` if the kind is a component or derives from component.
-    ///
-    /// - Parameter kind: The kind to check.
-    /// - Returns: `true` if the kind is a component kind.
-    public static func isComponent(_ kind: Token) -> Bool {
-        KindRegistry_IsComponent(kind.handle)
-    }
-
-    /// Returns `true` if the kind string is a component or derives from component.
-    ///
-    /// - Parameter kind: The kind string to check.
-    /// - Returns: `true` if the kind is a component kind.
-    public static func isComponent(_ kind: String) -> Bool {
-        KindRegistry_IsComponentString(kind)
-    }
-
-    /// Returns `true` if the kind is a subcomponent or derives from subcomponent.
-    ///
-    /// - Parameter kind: The kind to check.
-    /// - Returns: `true` if the kind is a subcomponent kind.
-    public static func isSubComponent(_ kind: Token) -> Bool {
-        KindRegistry_IsSubComponent(kind.handle)
-    }
-
-    /// Returns `true` if the kind string is a subcomponent or derives from subcomponent.
-    ///
-    /// - Parameter kind: The kind string to check.
-    /// - Returns: `true` if the kind is a subcomponent kind.
-    public static func isSubComponent(_ kind: String) -> Bool {
-        KindRegistry_IsSubComponentString(kind)
-    }
-
-    // MARK: - All Kinds Enumeration
-
-    /// Returns all registered kinds.
-    ///
-    /// This includes both built-in kinds and any custom kinds registered
-    /// through plugInfo.json files.
-    ///
-    /// - Returns: An array of all registered kind tokens.
-    public static func getAllKinds() -> [Token] {
-        let count = KindRegistry_GetAllKindsCount()
-        guard count > 0 else { return [] }
-
-        var refs = [TfTokenRef?](repeating: nil, count: count)
-        let written = refs.withUnsafeMutableBufferPointer { buffer in
-            KindRegistry_GetAllKinds(buffer.baseAddress, count)
-        }
-
-        var tokens = [Token]()
-        tokens.reserveCapacity(written)
-
-        for i in 0..<written {
-            if let ref = refs[i] {
-                tokens.append(Token(handle: ref))
-            }
-        }
-
-        return tokens
+    /// Subcomponents are organizational units within a component.
+    /// They are not considered models themselves and are below
+    /// the component level in the hierarchy.
+    public static var subcomponent: TfToken {
+        return cxxfacade.kind.Tokens.SubComponent()
     }
 }
 
-// MARK: - KindTokens
+// MARK: - KindRegistry
 
-/// Standard kind tokens for model hierarchy classification.
+/// KindRegistry provides access to the singleton that holds known kinds
+/// and information about their relationships.
 ///
-/// These are the built-in kinds defined by USD:
-/// - `model`: Base kind for all model types
-/// - `component`: A leaf model that doesn't contain other models
-/// - `group`: A model that can contain other models
-/// - `assembly`: A published group that can be referenced
-/// - `subcomponent`: A part below the component level
+/// The registry is initialized at startup with the core kinds (model,
+/// component, group, assembly, subcomponent) and can be extended via
+/// plugInfo.json files.
 ///
-/// Mirrors `pxr::KindTokens` from the USD C++ API.
-public enum KindTokens {
-
-    /// The "model" kind token.
+/// ## Usage
+/// ```swift
+/// // Check if a kind is registered
+/// if KindRegistry.hasKind(myKind) {
+///     // ...
+/// }
+///
+/// // Check kind relationships
+/// if KindRegistry.isA(derivedKind, baseKind: baseKind) {
+///     // derivedKind is same as or derived from baseKind
+/// }
+///
+/// // Check for specific kind types
+/// if KindRegistry.isModel(primKind) {
+///     // prim is some kind of model
+/// }
+/// ```
+public enum KindRegistry {
+    /// Test whether a kind is known to the registry.
     ///
-    /// Models are prims that represent meaningful assets in a scene.
-    /// This is the root kind from which `component` and `group` derive.
-    public static var model: Token {
-        guard let ref = KindTokens_Model() else {
-            fatalError("Failed to create model kind token")
-        }
-        return Token(handle: ref)
+    /// - Parameter kind: The kind token to check.
+    /// - Returns: True if the kind is registered.
+    public static func hasKind(_ kind: TfToken) -> Bool {
+        return cxxfacade.kind.HasKind(kind)
     }
 
-    /// The "component" kind token.
+    /// Return the base kind of the given kind.
     ///
-    /// Components are leaf models that don't contain other models.
-    /// They represent individual assets like a chair or a lamp.
-    public static var component: Token {
-        guard let ref = KindTokens_Component() else {
-            fatalError("Failed to create component kind token")
-        }
-        return Token(handle: ref)
+    /// If there is no base (i.e., the kind is a root of the hierarchy),
+    /// returns nil.
+    ///
+    /// - Parameter kind: The kind to query.
+    /// - Returns: The base kind token, or nil if none.
+    public static func baseKind(of kind: TfToken) -> TfToken? {
+        let base = cxxfacade.kind.GetBaseKind(kind)
+        return base.IsEmpty() ? nil : base
     }
 
-    /// The "group" kind token.
+    /// Test whether derivedKind is the same as or derived from baseKind.
     ///
-    /// Groups are models that can contain other models.
-    /// They're used for organizing related models together.
-    public static var group: Token {
-        guard let ref = KindTokens_Group() else {
-            fatalError("Failed to create group kind token")
-        }
-        return Token(handle: ref)
+    /// This checks if derivedKind has baseKind in its ancestor chain
+    /// (either directly or indirectly through parent kinds).
+    ///
+    /// It is not required that either kind be registered: if they are
+    /// unknown but equal, returns true; otherwise if either is unknown,
+    /// returns false.
+    ///
+    /// - Parameters:
+    ///   - derivedKind: The potential derived kind.
+    ///   - baseKind: The potential base kind.
+    /// - Returns: True if derivedKind is same as or derived from baseKind.
+    public static func isA(_ derivedKind: TfToken, baseKind: TfToken) -> Bool {
+        return cxxfacade.kind.IsA(derivedKind, baseKind)
     }
 
-    /// The "assembly" kind token.
+    /// Return all kinds known to the registry.
     ///
-    /// Assemblies are published groups that can be referenced.
-    /// They represent complete, publishable assets like a room or a building.
-    public static var assembly: Token {
-        guard let ref = KindTokens_Assembly() else {
-            fatalError("Failed to create assembly kind token")
+    /// - Returns: Array of all registered kind tokens.
+    public static func allKinds() -> [TfToken] {
+        let kinds = cxxfacade.kind.GetAllKinds()
+        var result: [TfToken] = []
+        for i in 0..<kinds.size() {
+            result.append(kinds[i])
         }
-        return Token(handle: ref)
+        return result
     }
 
-    /// The "subcomponent" kind token.
+    /// Returns true if kind is a model (i.e., IsA(kind, "model")).
     ///
-    /// Subcomponents are parts below the component level.
-    /// They represent pieces that don't stand alone as complete assets.
-    public static var subcomponent: Token {
-        guard let ref = KindTokens_Subcomponent() else {
-            fatalError("Failed to create subcomponent kind token")
-        }
-        return Token(handle: ref)
+    /// - Parameter kind: The kind to check.
+    /// - Returns: True if kind is any type of model.
+    public static func isModel(_ kind: TfToken) -> Bool {
+        return cxxfacade.kind.IsModel(kind)
+    }
+
+    /// Returns true if kind is a group (i.e., IsA(kind, "group")).
+    ///
+    /// - Parameter kind: The kind to check.
+    /// - Returns: True if kind is a group or derived from group.
+    public static func isGroup(_ kind: TfToken) -> Bool {
+        return cxxfacade.kind.IsGroup(kind)
+    }
+
+    /// Returns true if kind is an assembly (i.e., IsA(kind, "assembly")).
+    ///
+    /// - Parameter kind: The kind to check.
+    /// - Returns: True if kind is an assembly or derived from assembly.
+    public static func isAssembly(_ kind: TfToken) -> Bool {
+        return cxxfacade.kind.IsAssembly(kind)
+    }
+
+    /// Returns true if kind is a component (i.e., IsA(kind, "component")).
+    ///
+    /// - Parameter kind: The kind to check.
+    /// - Returns: True if kind is a component or derived from component.
+    public static func isComponent(_ kind: TfToken) -> Bool {
+        return cxxfacade.kind.IsComponent(kind)
+    }
+
+    /// Returns true if kind is a subcomponent (i.e., IsA(kind, "subcomponent")).
+    ///
+    /// - Parameter kind: The kind to check.
+    /// - Returns: True if kind is a subcomponent or derived from subcomponent.
+    public static func isSubComponent(_ kind: TfToken) -> Bool {
+        return cxxfacade.kind.IsSubComponent(kind)
+    }
+}
+
+// MARK: - TfToken Kind Extensions
+
+extension TfToken {
+    /// Check if this token represents a model kind.
+    ///
+    /// Returns true if this kind is "model" or derived from it.
+    public var isModelKind: Bool {
+        return KindRegistry.isModel(self)
+    }
+
+    /// Check if this token represents a group kind.
+    ///
+    /// Returns true if this kind is "group" or derived from it.
+    public var isGroupKind: Bool {
+        return KindRegistry.isGroup(self)
+    }
+
+    /// Check if this token represents an assembly kind.
+    ///
+    /// Returns true if this kind is "assembly" or derived from it.
+    public var isAssemblyKind: Bool {
+        return KindRegistry.isAssembly(self)
+    }
+
+    /// Check if this token represents a component kind.
+    ///
+    /// Returns true if this kind is "component" or derived from it.
+    public var isComponentKind: Bool {
+        return KindRegistry.isComponent(self)
+    }
+
+    /// Check if this token represents a subcomponent kind.
+    ///
+    /// Returns true if this kind is "subcomponent" or derived from it.
+    public var isSubComponentKind: Bool {
+        return KindRegistry.isSubComponent(self)
+    }
+
+    /// Get the base kind of this kind, if any.
+    ///
+    /// Returns nil if this kind is a root or not registered.
+    public var baseKind: TfToken? {
+        return KindRegistry.baseKind(of: self)
+    }
+
+    /// Check if this kind is the same as or derived from another kind.
+    ///
+    /// - Parameter baseKind: The potential base kind.
+    /// - Returns: True if this kind is same as or derived from baseKind.
+    public func isA(baseKind: TfToken) -> Bool {
+        return KindRegistry.isA(self, baseKind: baseKind)
     }
 }

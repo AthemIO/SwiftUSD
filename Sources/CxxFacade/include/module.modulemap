@@ -1,0 +1,34 @@
+module CxxFacade [system] {
+    requires cplusplus
+
+    header "CxxFacade.h"
+
+    module Base {
+        header "base/Tf.hpp"
+        header "base/Gf.hpp"
+        header "base/Vt.hpp"
+        export *
+    }
+
+    module Usd {
+        header "usd/Sdf.hpp"
+        header "usd/Kind.hpp"
+        header "usd/Usd.hpp"
+        export *
+    }
+
+    module Schemas {
+        header "usdGeom/UsdGeom.hpp"
+        header "usdShade/UsdShade.hpp"
+        header "usdLux/UsdLux.hpp"
+        header "usdSkel/UsdSkel.hpp"
+        export *
+    }
+
+    module Imaging {
+        header "imaging/Hydra.hpp"
+        export *
+    }
+
+    export *
+}
