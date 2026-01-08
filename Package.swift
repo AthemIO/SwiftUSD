@@ -25,6 +25,7 @@ let package = Package(
     platforms: platforms,
     products: [
         .library(name: "SwiftUSD", targets: ["SwiftUSD"]),
+        .library(name: "PixarUSD", targets: ["SwiftUSD"]),
         .library(name: "CxxFacade", targets: ["CxxFacade"]),
     ],
     targets: [
@@ -56,6 +57,8 @@ let package = Package(
                 .unsafeFlags(["-L/Users/jonathanpeterson/dev/SwiftUSD/Vendor/USD/darwin/lib"]),
                 .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "/Users/jonathanpeterson/dev/SwiftUSD/Vendor/USD/darwin/lib"]),
                 .linkedLibrary("usd_arch"),
+                .linkedLibrary("usd_plug"),
+                .linkedLibrary("usd_ar"),
                 .linkedLibrary("usd_work"),
                 .linkedLibrary("usd_tf"),
                 .linkedLibrary("usd_gf"),
@@ -70,6 +73,7 @@ let package = Package(
                 .linkedLibrary("usd_hd"),
                 .linkedLibrary("usd_hdSt"),
                 .linkedLibrary("usd_hdx"),
+                .linkedLibrary("usd_cameraUtil"),
                 .linkedLibrary("usd_hgi"),
                 .linkedLibrary("usd_hgiMetal"),
                 .linkedLibrary("usd_glf"),
