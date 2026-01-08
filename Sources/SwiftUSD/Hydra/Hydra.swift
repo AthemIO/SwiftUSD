@@ -401,6 +401,13 @@ extension HydraEngine: CustomStringConvertible {
     public mutating func setEnablePresentation(_ enabled: Bool) {
         SetEnablePresentation(enabled)
     }
+
+    /// Enable or disable shadow rendering globally
+    /// - Parameter enabled: Whether shadows should be rendered
+    /// - Note: Per-light shadow settings (via UsdLuxShadowAPI) must also be enabled for shadows to appear
+    public mutating func setEnableShadows(_ enabled: Bool) {
+        SetEnableShadows(enabled)
+    }
 }
 
 // MARK: - Utility Functions
@@ -415,6 +422,71 @@ public func getDefaultRendererPluginId() -> String {
 /// - Returns: True if color correction is capable
 public func isColorCorrectionCapable() -> Bool {
     return cxxfacade.hydra.IsColorCorrectionCapable()
+}
+
+// MARK: - Shadow Engine Handle (for raw PixarUSD interop)
+
+/// Swift wrapper for the shadow-enabled engine handle.
+/// Use this when you need shadow support with raw PixarUSD bindings.
+public final class ShadowEngine {
+    private var handle: UnsafeMutablePointer<cxxfacade.hydra.ShadowEngineHandle>?
+
+    /// Create a shadow-enabled engine with default settings
+    public init?(gpuEnabled: Bool = true) {
+        handle = cxxfacade.hydra.CreateShadowEngine(gpuEnabled)
+        if handle == nil { return nil }
+    }
+
+    /// Create a shadow-enabled engine with a specific renderer
+    public init?(rendererPluginId: String, gpuEnabled: Bool = true) {
+        handle = cxxfacade.hydra.CreateShadowEngineWithRenderer(std.string(rendererPluginId), gpuEnabled)
+        if handle == nil { return nil }
+    }
+
+    /// Create a shadow-enabled engine with custom HdDriver (for Metal/custom HGI)
+    /// - Parameters:
+    ///   - driverPointer: Raw pointer to an HdDriver instance
+    ///   - rootPath: Root USD path for the scene
+    ///   - rendererPluginId: Renderer plugin ID (empty for default)
+    ///   - gpuEnabled: Whether GPU rendering is enabled
+    public init?(driverPointer: UnsafeMutableRawPointer, rootPath: String = "", rendererPluginId: String = "", gpuEnabled: Bool = true) {
+        handle = cxxfacade.hydra.CreateShadowEngineWithDriver(
+            driverPointer,
+            std.string(rootPath),
+            std.string(rendererPluginId),
+            gpuEnabled
+        )
+        if handle == nil { return nil }
+    }
+
+    deinit {
+        if let handle = handle {
+            cxxfacade.hydra.DestroyShadowEngine(handle)
+        }
+    }
+
+    /// Enable or disable shadow rendering
+    public func setEnableShadows(_ enabled: Bool) {
+        guard let handle = handle else { return }
+        cxxfacade.hydra.SetShadowEngineEnableShadows(handle, enabled)
+    }
+
+    /// Get the raw UsdImagingGLEngine pointer for use with PixarUSD APIs
+    public var rawEnginePointer: UnsafeMutableRawPointer? {
+        guard let handle = handle else { return nil }
+        return cxxfacade.hydra.GetShadowEngineRawPointer(handle)
+    }
+}
+
+// MARK: - Raw Engine Shadow Control
+
+/// Enable or disable shadows on a raw UsdImagingGLEngine pointer.
+/// This can be used with engines created directly via PixarUSD bindings.
+/// - Parameters:
+///   - enginePointer: Raw pointer to a UsdImagingGLEngine instance
+///   - enable: Whether to enable shadow rendering
+public func enableShadowsOnRawEngine(_ enginePointer: UnsafeMutableRawPointer, _ enable: Bool) {
+    cxxfacade.hydra.EnableShadowsOnRawEngine(enginePointer, enable)
 }
 
 // MARK: - Convenience Extensions for Stage Rendering

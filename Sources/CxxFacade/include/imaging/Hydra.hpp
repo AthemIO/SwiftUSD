@@ -397,6 +397,15 @@ public:
     void SetEnablePresentation(bool enabled);
 
     // -------------------------------------------------------------------------
+    // Shadow Control
+    // -------------------------------------------------------------------------
+
+    /// Enable or disable shadow rendering globally.
+    /// This controls whether shadows are computed and rendered for lights in the scene.
+    /// Note: Per-light shadow settings (via UsdLuxShadowAPI) must also be enabled.
+    void SetEnableShadows(bool enable);
+
+    // -------------------------------------------------------------------------
     // Implementation Access
     // -------------------------------------------------------------------------
 
@@ -416,6 +425,68 @@ std::string GetDefaultRendererPluginId();
 
 /// Check if color correction is supported on the current platform
 bool IsColorCorrectionCapable();
+
+// ============================================================================
+// Shadow-Enabled Engine Access (for use with raw PixarUSD bindings)
+// ============================================================================
+
+/// Opaque handle to a shadow-enabled UsdImagingGLEngine.
+/// This allows code using raw PixarUSD bindings to enable shadows.
+/// The actual implementation is in the cpp file.
+struct ShadowEngineHandle {
+    void* impl = nullptr;  // Internal implementation pointer
+
+    ShadowEngineHandle() = default;
+    ~ShadowEngineHandle() = default;
+    ShadowEngineHandle(const ShadowEngineHandle&) = delete;
+    ShadowEngineHandle& operator=(const ShadowEngineHandle&) = delete;
+    ShadowEngineHandle(ShadowEngineHandle&&) = default;
+    ShadowEngineHandle& operator=(ShadowEngineHandle&&) = default;
+};
+
+/// Create a shadow-enabled rendering engine with default settings.
+/// @param gpuEnabled Whether GPU rendering should be enabled
+/// @return Pointer to a new engine handle, or nullptr on failure
+ShadowEngineHandle* CreateShadowEngine(bool gpuEnabled = true);
+
+/// Create a shadow-enabled rendering engine with a specific renderer.
+/// @param rendererPluginId The renderer plugin to use (e.g., "HdStormRendererPlugin")
+/// @param gpuEnabled Whether GPU rendering should be enabled
+/// @return Pointer to a new engine handle, or nullptr on failure
+ShadowEngineHandle* CreateShadowEngineWithRenderer(const std::string& rendererPluginId, bool gpuEnabled = true);
+
+/// Create a shadow-enabled rendering engine with full control over parameters.
+/// This is for use with custom HdDriver setups (e.g., HgiMetal).
+/// @param driverPtr Pointer to an HdDriver instance (cast to void*)
+/// @param rootPath Root USD path for the scene
+/// @param rendererPluginId The renderer plugin to use (empty for default)
+/// @param gpuEnabled Whether GPU rendering should be enabled
+/// @return Pointer to a new engine handle, or nullptr on failure
+ShadowEngineHandle* CreateShadowEngineWithDriver(
+    void* driverPtr,
+    const std::string& rootPath,
+    const std::string& rendererPluginId,
+    bool gpuEnabled);
+
+/// Destroy a shadow engine handle.
+void DestroyShadowEngine(ShadowEngineHandle* handle);
+
+/// Enable or disable shadows on a shadow engine.
+void SetShadowEngineEnableShadows(ShadowEngineHandle* handle, bool enable);
+
+/// Get the raw UsdImagingGLEngine pointer from the handle.
+/// This allows interoperability with existing PixarUSD code.
+void* GetShadowEngineRawPointer(ShadowEngineHandle* handle);
+
+// ============================================================================
+// Raw Engine Shadow Control (for existing PixarUSD code)
+// ============================================================================
+
+/// Enable or disable shadows on a raw UsdImagingGLEngine pointer.
+/// This can be used with engines created directly via PixarUSD bindings.
+/// @param enginePtr Raw pointer to a UsdImagingGLEngine instance
+/// @param enable Whether to enable shadow rendering
+void EnableShadowsOnRawEngine(void* enginePtr, bool enable);
 
 } // namespace hydra
 } // namespace cxxfacade

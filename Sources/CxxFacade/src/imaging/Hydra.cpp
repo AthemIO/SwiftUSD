@@ -17,6 +17,9 @@
 #include <pxr/usdImaging/usdImagingGL/engine.h>
 #include <pxr/usdImaging/usdImagingGL/renderParams.h>
 
+// Hdx includes for shadow control
+#include <pxr/imaging/hdx/taskController.h>
+
 #include <cmath>
 
 PXR_NAMESPACE_USING_DIRECTIVE
@@ -143,6 +146,25 @@ static gf::Matrix4d fromPxrMatrix4d(const pxr::GfMatrix4d& m) {
 }
 
 // ============================================================================
+// ShadowEnabledEngine - Subclass to expose shadow control
+// ============================================================================
+
+/// Subclass of UsdImagingGLEngine that exposes shadow rendering control.
+/// This is needed because _GetTaskController() is protected in the base class.
+class ShadowEnabledEngine : public pxr::UsdImagingGLEngine {
+public:
+    // Inherit all constructors
+    using UsdImagingGLEngine::UsdImagingGLEngine;
+
+    /// Enable or disable shadow rendering via the internal task controller
+    void SetEnableShadows(bool enable) {
+        if (auto* tc = _GetTaskController()) {
+            tc->SetEnableShadows(enable);
+        }
+    }
+};
+
+// ============================================================================
 // CameraSettings Implementation
 // ============================================================================
 
@@ -230,12 +252,12 @@ CameraSettings CameraSettings::LookAt(const gf::Vec3d& eye,
 
 /// Internal implementation structure
 struct HydraEngineHandle {
-    std::unique_ptr<pxr::UsdImagingGLEngine> engine;
+    std::unique_ptr<ShadowEnabledEngine> engine;
     bool gpuEnabled = true;
     std::string currentRenderer;
 
     HydraEngineHandle() = default;
-    explicit HydraEngineHandle(std::unique_ptr<pxr::UsdImagingGLEngine> eng, bool gpu = true)
+    explicit HydraEngineHandle(std::unique_ptr<ShadowEnabledEngine> eng, bool gpu = true)
         : engine(std::move(eng)), gpuEnabled(gpu) {}
 };
 
@@ -286,7 +308,7 @@ HydraEngine HydraEngine::Create() {
     auto* handle = asHandle(engine.impl_);
 
     try {
-        handle->engine = std::make_unique<pxr::UsdImagingGLEngine>();
+        handle->engine = std::make_unique<ShadowEnabledEngine>();
         handle->gpuEnabled = handle->engine->GetGPUEnabled();
     } catch (...) {
         // Engine creation failed, leave as invalid
@@ -304,7 +326,7 @@ HydraEngine HydraEngine::Create(const std::string& rendererPluginId, bool gpuEna
         pxr::TfToken pluginId = rendererPluginId.empty() ?
             pxr::TfToken() : pxr::TfToken(rendererPluginId);
 
-        handle->engine = std::make_unique<pxr::UsdImagingGLEngine>(
+        handle->engine = std::make_unique<ShadowEnabledEngine>(
             driver, pluginId, gpuEnabled);
         handle->gpuEnabled = gpuEnabled;
         handle->currentRenderer = rendererPluginId;
@@ -534,6 +556,11 @@ void HydraEngine::SetEnablePresentation(bool enabled) {
     asHandle(impl_)->engine->SetEnablePresentation(enabled);
 }
 
+void HydraEngine::SetEnableShadows(bool enable) {
+    if (!IsValid()) return;
+    asHandle(impl_)->engine->SetEnableShadows(enable);
+}
+
 HydraEngine HydraEngine::FromImpl(void* impl) {
     HydraEngine engine;
     delete asHandle(engine.impl_);
@@ -556,6 +583,133 @@ std::string GetDefaultRendererPluginId() {
 
 bool IsColorCorrectionCapable() {
     return pxr::UsdImagingGLEngine::IsColorCorrectionCapable();
+}
+
+// ============================================================================
+// Shadow-Enabled Engine Access Implementation
+// ============================================================================
+
+/// Internal implementation for shadow engine handle
+struct ShadowEngineImpl {
+    std::unique_ptr<ShadowEnabledEngine> engine;
+
+    explicit ShadowEngineImpl(std::unique_ptr<ShadowEnabledEngine> eng)
+        : engine(std::move(eng)) {}
+};
+
+ShadowEngineHandle* CreateShadowEngine(bool gpuEnabled) {
+    try {
+        auto engine = std::make_unique<ShadowEnabledEngine>(
+            pxr::HdDriver(), pxr::TfToken(), gpuEnabled);
+        auto handle = new ShadowEngineHandle();
+        handle->impl = new ShadowEngineImpl(std::move(engine));
+        return handle;
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+ShadowEngineHandle* CreateShadowEngineWithRenderer(const std::string& rendererPluginId, bool gpuEnabled) {
+    try {
+        pxr::TfToken pluginId = rendererPluginId.empty() ?
+            pxr::TfToken() : pxr::TfToken(rendererPluginId);
+        auto engine = std::make_unique<ShadowEnabledEngine>(
+            pxr::HdDriver(), pluginId, gpuEnabled);
+        auto handle = new ShadowEngineHandle();
+        handle->impl = new ShadowEngineImpl(std::move(engine));
+        return handle;
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+ShadowEngineHandle* CreateShadowEngineWithDriver(
+    void* driverPtr,
+    const std::string& rootPath,
+    const std::string& rendererPluginId,
+    bool gpuEnabled)
+{
+    try {
+        // Cast the driver pointer back to HdDriver
+        pxr::HdDriver* driver = static_cast<pxr::HdDriver*>(driverPtr);
+        if (!driver) {
+            return nullptr;
+        }
+
+        pxr::TfToken pluginId = rendererPluginId.empty() ?
+            pxr::TfToken() : pxr::TfToken(rendererPluginId);
+
+        pxr::SdfPath root = rootPath.empty() ?
+            pxr::SdfPath::AbsoluteRootPath() : pxr::SdfPath(rootPath);
+
+        // Create engine with the provided driver and settings
+        auto engine = std::make_unique<ShadowEnabledEngine>(
+            root,
+            pxr::SdfPathVector(),  // excludedPaths
+            pxr::SdfPathVector(),  // invisedPaths
+            pxr::SdfPath::AbsoluteRootPath(),  // sceneDelegateID
+            *driver,
+            pluginId,
+            gpuEnabled);
+
+        auto handle = new ShadowEngineHandle();
+        handle->impl = new ShadowEngineImpl(std::move(engine));
+        return handle;
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+void DestroyShadowEngine(ShadowEngineHandle* handle) {
+    if (handle) {
+        delete static_cast<ShadowEngineImpl*>(handle->impl);
+        delete handle;
+    }
+}
+
+void SetShadowEngineEnableShadows(ShadowEngineHandle* handle, bool enable) {
+    if (handle && handle->impl) {
+        auto* impl = static_cast<ShadowEngineImpl*>(handle->impl);
+        if (impl->engine) {
+            impl->engine->SetEnableShadows(enable);
+        }
+    }
+}
+
+void* GetShadowEngineRawPointer(ShadowEngineHandle* handle) {
+    if (handle && handle->impl) {
+        auto* impl = static_cast<ShadowEngineImpl*>(handle->impl);
+        if (impl->engine) {
+            return static_cast<pxr::UsdImagingGLEngine*>(impl->engine.get());
+        }
+    }
+    return nullptr;
+}
+
+// ============================================================================
+// Raw Engine Shadow Control Implementation
+// ============================================================================
+
+/// Helper class to access protected _GetTaskController() on any UsdImagingGLEngine.
+/// This uses the "accessor pattern" - a derived class that exposes protected members.
+class TaskControllerAccessor : public pxr::UsdImagingGLEngine {
+public:
+    // Get the task controller from any UsdImagingGLEngine pointer.
+    // This works because _GetTaskController() is protected (accessible to derived classes)
+    // and we're using static_cast which doesn't change the object's memory layout.
+    static pxr::HdxTaskController* GetTaskController(pxr::UsdImagingGLEngine* engine) {
+        // Cast to accessor to access protected member
+        return static_cast<TaskControllerAccessor*>(engine)->_GetTaskController();
+    }
+};
+
+void EnableShadowsOnRawEngine(void* enginePtr, bool enable) {
+    if (!enginePtr) return;
+
+    auto* engine = static_cast<pxr::UsdImagingGLEngine*>(enginePtr);
+    if (auto* tc = TaskControllerAccessor::GetTaskController(engine)) {
+        tc->SetEnableShadows(enable);
+    }
 }
 
 } // namespace hydra
